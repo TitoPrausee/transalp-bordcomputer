@@ -19,7 +19,7 @@
 #define GPS_UART_RX_PIN     44      /* NEO-M9N TX -> ESP RX */
 #define GPS_UART_TX_PIN     43      /* ESP TX -> NEO-M9N RX (Konfig) */
 #define GPS_UART_BAUD       38400   /* Default; auf 115200 per UBX setzen */
-#define GPS_PPS_PIN         1       /* 1PPS Zeitsync (IRQ) */
+#define GPS_PPS_PIN         39      /* 1PPS Zeitsync (IRQ, RTC-GPIO) */
 
 /* OBD-II (falls K-Line direkt, nicht BT) */
 #define OBD_UART_NUM        UART_NUM_2
@@ -62,8 +62,8 @@
  * ============================================================ */
 
 #define BATT_ADC_UNIT       1       /* ADC1 */
-#define BATT_ADC_CHANNEL    4       /* ADC1_CH4 = GPIO4 */
-#define BATT_VOLTAGE_DIV    2.0f    /* Spannungsteiler 2:1 (max 3.3V) */
+#define BATT_ADC_CHANNEL    ADC1_CH0 /* ADC1_CH0 = GPIO1 */
+#define BATT_VOLTAGE_DIV    10.0f   /* Spannungsteiler 10:1 (100k/10k) */
 
 /* Coolant Temp: NTC 10k via ADC1_CH6 = GPIO7 */
 #define TEMP_NTC_ADC_CHANNEL    6       /* ADC1_CH6 */
@@ -102,6 +102,25 @@
 
 #define GPS_POWER_EN_PIN    5       /* High-Side MOSFET (GPS ganz aus) */
 #define BOOST_EN_PIN        6       /* MT3608 EN-Pin (5V-Rail schalten) */
+
+/* ============================================================
+ * Display Backlight (LEDC PWM)
+ * ============================================================ */
+
+#define TFT_BL_PIN          18      /* ILI9488 Backlight (LEDC PWM) */
+#define TFT_BL_LEDC_TIMER   LEDC_TIMER_1
+#define TFT_BL_LEDC_CH      LEDC_CHANNEL_1
+#define TFT_BL_FREQ_HZ      5000
+#define TFT_BL_RESOLUTION   LEDC_TIMER_10_BIT
+
+/* ============================================================
+ * Buttons (Active-LOW mit internem Pull-Up)
+ * ============================================================ */
+
+#define BTN_MENU_PIN        6       /* Taster Menu */
+#define BTN_SELECT_PIN      7       /* Taster Select */
+#define BTN_BACK_PIN        3       /* Taster Zurueck (Strapping) */
+#define BOOT_BTN_PIN        0       /* Boot-Taster */
 
 /* ============================================================
  * Display-Aufloesung
