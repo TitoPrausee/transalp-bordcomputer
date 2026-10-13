@@ -15,8 +15,9 @@
 | 05 | [`05-gehaeuse-einbau-emv.md`](05-gehaeuse-einbau-emv.md) | 3D-Druck-Gehäuse, Wasserdichtigkeit (IP-Ratings), Vibrationen/Stöße, Temperaturbereich, EMV-Schutz (Zündfunken, Abschirmung), Lastabwurf-Schutz, Stromversorgung im Motorrad-Umfeld | ~5.600 |
 | 06 | [`06-feature-roadmap.md`](06-feature-roadmap.md) | Vollständige Feature-Roadmap: Core-Features, Smart-Features (BLE+Smartphone), Safety (Crash-Detection, SOS), Tour-Features, Diagnose, Nice-to-have, Daten-Export, App-Konzept | ~6.300 |
 | 07 | [`07-display-navigation-smartphone.md`](07-display-navigation-smartphone.md) | Multi-Display-Architektur, Smartphone-Integration per BLE (CarPlay-Alternative), Turn-by-Turn Navigation UI, Companion-App-Konzept, GATT-Service-Design | ~2.400 |
+| 09 | [`09-master-plan.md`](09-master-plan.md) | Master-Plan: Umsetzungs-Roadmap mit Kosten-Nutzen-Analyse, BOM, 3 Ausbau-Stufen, 5-Phasen-Plan (10 Wochen), DTC-System, Support-Schnittstellen, QS-Strategie, Risikomatrix | ~9.800 |
 
-**Gesamt: ~33.500 Wörter** Forschungsmaterial
+**Gesamt: ~43.300 Wörter** Forschungsmaterial
 
 ## Wichtige Erkenntnisse
 
