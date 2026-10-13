@@ -72,7 +72,7 @@ Siehe [Firmware-Engineering-Guide](docs/FIRMWARE-GUIDE.md) fuer Architektur-Deta
 
 ### Fuer Bastler (Hardware)
 
-1. **Stueckliste besorgen** — Siehe [BOM.md](docs/BOM.md) (alle Komponenten mit Preisen und Quellen)
+1. **Stueckliste besorgen** — Siehe [BOM.md](docs/BOM.md) (alle Komponenten mit Preisen und Quellen) oder die kompakte [Einkaufsliste](docs/SHOPPING-LIST.md)
 2. **PCB fertigen** — Siehe [PCB-Layout](docs/PCB-LAYOUT.md) fuer Layer-Stackup und Routing-Regeln
 3. **Schaltplan verdrahten** — Siehe [Hardware.md](docs/HARDWARE.md) und [Pinmap](docs/PINMAP.md)
 4. **Gehaeuse drucken** — Siehe [Gehaeuse-Design](docs/CASE-DESIGN.md) fuer 3D-Druck-Dateien
