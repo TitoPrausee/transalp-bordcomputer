@@ -40,57 +40,57 @@ Dieses Projekt dokumentiert den Bau eines vollständigen Bordcomputers für die 
 
 ```mermaid
 graph TB
-    subgraph Vehicle['Honda Transalp 600 (PD06)']
-        CDI[CDI-Zündung<br/>Pickup-Signal]
-        TACHO[Tachowelle<br/>mechanisch]
-        TEMP[Kühlmittel<br/>Temperatursensor]
-        FUEL[Tankgeber<br/>5-90Ω]
-        OIL[Öldruckschalter]
-        LIGHT[Licht/Blinker<br/>12V]
+    subgraph Vehicle["Honda Transalp 600 PD06"]
+        CDI["CDI-Zuendung<br>Pickup-Signal"]
+        TACHO["Tachowelle<br>mechanisch"]
+        TEMP["Kuehlmittel<br>Temperatursensor"]
+        FUEL["Tankgeber<br>5-90 Ohm"]
+        OIL["Oeldruckschalter"]
+        LIGHT["Licht-Blinker<br>12V"]
     end
 
-    subgraph Sensors['Sensor-Frontend']
-        OPT[Optokoppler<br/>Galvanische Trennung]
-        IND[Induktivsensor<br/>GT101 am Zündkabel]
-        HALL[Hall-Sensor<br/>am Vorderrad]
-        NTC[NTC 10kΩ<br/>im Kühlschlauch]
-        DIV[Spannungsteiler<br/>für Tankgeber]
-        ADC_INTER[ADC-Interface<br/>esp_adc_cal]
+    subgraph Sensors["Sensor-Frontend"]
+        OPT["Optokoppler<br>Galvanische Trennung"]
+        IND["Induktivsensor<br>GT101 am Zuendkabel"]
+        HALL["Hall-Sensor<br>am Vorderrad"]
+        NTC["NTC 10kOhm<br>im Kuehlschlauch"]
+        DIV["Spannungsteiler<br>fuer Tankgeber"]
+        ADC_INTER["ADC-Interface<br>esp_adc_cal"]
     end
 
-    subgraph MCU['ESP32-S3 (Core Module)']
-        CPU[Dual-Core 240MHz<br/>16MB Flash, 8MB PSRAM]
-        RTOS[FreeRTOS<br/>Task-Scheduler]
-        SPI_BUS[SPI Bus<br/>Display + SD]
-        I2C_BUS[I2C Bus<br/>IMU + BMP280]
-        UART_BUS[UART<br/>GPS NEO-M9N]
-        BLE_STACK[NimBLE<br/>GATT Server]
+    subgraph MCU["ESP32-S3 Core Module"]
+        CPU["Dual-Core 240MHz<br>16MB Flash, 8MB PSRAM"]
+        RTOS["FreeRTOS<br>Task-Scheduler"]
+        SPI_BUS["SPI Bus<br>Display + SD"]
+        I2C_BUS["I2C Bus<br>IMU + BMP280"]
+        UART_BUS["UART<br>GPS NEO-M9N"]
+        BLE_STACK["NimBLE<br>GATT Server"]
     end
 
-    subgraph Peripherals['Peripherie']
-        GPS[u-blox NEO-M9N<br/>10Hz, 72-Kanal]
-        EPAPER[E-Paper 2.9'<br/>296×128, Partial-Refresh]
-        TFT[TFT 2.4-3.5'<br/>ILI9341/ILI9488]
-        IMU[MPU6050<br/>Gyro + Accel]
-        BMP[BMP280<br/>Temp + Baro]
-        SD[MicroSD<br/>Class 10, FAT32]
-        RELAY[4-Kanal Relais<br/>Zusatzlicht/Heizgriffe]
+    subgraph Peripherals["Peripherie"]
+        GPS["u-blox NEO-M9N<br>10Hz, 72-Kanal"]
+        EPAPER["E-Paper 2.9 Zoll<br>296x128, Partial-Refresh"]
+        TFT["TFT 2.4-3.5 Zoll<br>ILI9341-ILI9488"]
+        IMU["MPU6050<br>Gyro + Accel"]
+        BMP["BMP280<br>Temp + Baro"]
+        SD["MicroSD<br>Class 10, FAT32"]
+        RELAY["4-Kanal Relais<br>Zusatzlicht-Heizgriffe"]
     end
 
-    subgraph Power['Power-Management']
-        BATT[LiPo 18650<br/>3400mAh]
-        CHARGE[TP4056<br/>USB-C Laden]
-        BOOST[MT3608<br/>3.7V → 5V]
-        LDO[HT7333<br/>5V → 3.3V]
-        MONITOR[ADC Akku-<br/>Überwachung]
+    subgraph Power["Power-Management"]
+        BATT["LiPo 18650<br>3400mAh"]
+        CHARGE["TP4056<br>USB-C Laden"]
+        BOOST["MT3608<br>3.7V zu 5V"]
+        LDO["HT7333<br>5V zu 3.3V"]
+        MONITOR["ADC Akku-Ueberwachung"]
     end
 
-    subgraph Smartphone['Smartphone (Companion App)']
-        APP[React Native / Flutter<br/>Companion App]
-        MAPS[Native Maps API<br/>MapKit / Google Maps]
-        NAV[Turn-by-Turn<br/>Navigation Engine]
-        NOTIF[Notification<br/>Relay]
-        MEDIA[Now-Playing<br/>Media Control]
+    subgraph Smartphone["Smartphone Companion App"]
+        APP["React Native / Flutter<br>Companion App"]
+        MAPS["Native Maps API<br>MapKit / Google Maps"]
+        NAV["Turn-by-Turn<br>Navigation Engine"]
+        NOTIF["Notification Relay"]
+        MEDIA["Now-Playing<br>Media Control"]
     end
 
     CDI --> OPT
@@ -127,7 +127,7 @@ graph TB
     APP <-->|BLE GATT| BLE_STACK
     MAPS --> NAV
     NAV -->|Maneuver Data| BLE_STACK
-    NOTIF -->|Caller/SMS| BLE_STACK
+    NOTIF -->|Caller-SMS| BLE_STACK
     MEDIA -->|Track Info| BLE_STACK
 
     RTOS --> CPU
@@ -150,17 +150,17 @@ graph TB
 
 ```mermaid
 graph LR
-    subgraph Core1['Core 1 (Real-Time)']
-        GPS_TASK[gps_task<br/>10 Hz | Prio 5]
-        SENSOR_TASK[sensor_task<br/>50 Hz | Prio 4]
-        VEHICLE_TASK[vehicle_task<br/>10 Hz | Prio 4]
+    subgraph Core1["Core 1 Real-Time"]
+        GPS_TASK["gps_task<br>10 Hz - Prio 5"]
+        SENSOR_TASK["sensor_task<br>50 Hz - Prio 4"]
+        VEHICLE_TASK["vehicle_task<br>10 Hz - Prio 4"]
     end
 
-    subgraph Core0['Core 0 (UI + Comms)']
-        DISPLAY_TASK[display_task<br/>1 Hz | Prio 2]
-        LOGGER_TASK[logger_task<br/>5 Hz | Prio 3]
-        BLE_TASK[ble_task<br/>Event | Prio 3]
-        POWER_TASK[power_task<br/>1 Hz | Prio 6]
+    subgraph Core0["Core 0 UI + Comms"]
+        DISPLAY_TASK["display_task<br>1 Hz - Prio 2"]
+        LOGGER_TASK["logger_task<br>5 Hz - Prio 3"]
+        BLE_TASK["ble_task<br>Event - Prio 3"]
+        POWER_TASK["power_task<br>1 Hz - Prio 6"]
     end
 
     GPS_TASK -->|Queue| DISPLAY_TASK
@@ -200,21 +200,17 @@ stateDiagram-v2
 
     ACTIVE --> IDLE: 60s keine Interaktion + kein BT
     IDLE --> ACTIVE: BT verbindet oder Display-Interaktion
-    IDLE --> SLEEP: 5min keine Bewegung (IMU < Schwellwert)
+    IDLE --> SLEEP: 5min keine Bewegung
 
-    SLEEP --> ACTIVE: IMU-Interrupt (Bewegung)
+    SLEEP --> ACTIVE: IMU-Interrupt Bewegung
     SLEEP --> ACTIVE: BT-Verbindungsanfrage
 
-    ACTIVE --> SHUTDOWN: Akku < 3.2V
-    IDLE --> SHUTDOWN: Akku < 3.2V
-    SLEEP --> SHUTDOWN: Akku < 3.2V
+    ACTIVE --> SHUTDOWN: Akku unter 3.2V
+    IDLE --> SHUTDOWN: Akku unter 3.2V
+    SLEEP --> SHUTDOWN: Akku unter 3.2V
 
     SHUTDOWN: SD-Flush, GPS-Backup, Deep Sleep
     SHUTDOWN --> [*]
-
-    note right of ACTIVE: Vollbetrieb, Display an, alle Tasks aktiv
-    note right of IDLE: Display aus, GPS+Logger aktiv, nur Track-Aufzeichnung
-    note right of SLEEP: Nur RTC + Akku-Monitor, ~0.4mA
 ```
 
 ---
@@ -223,37 +219,37 @@ stateDiagram-v2
 
 ```mermaid
 graph TD
-    SERVER[ESP32-S3 NimBLE GATT Server]
+    SERVER["ESP32-S3 NimBLE GATT Server"]
 
-    subgraph NavService['Service: Navigation']
-        NAV_MANEUVER[Characteristic: Next Maneuver<br/>Type + Distance + Street Name]
-        NAV_ROUTE[Characteristic: Route Info<br/>Total Distance + ETA]
-        NAV_ROAD[Characteristic: Current Road<br/>Street + Speed Limit + Heading]
+    subgraph NavService["Service Navigation"]
+        NAV_MANEUVER["Characteristic: Next Maneuver<br>Type + Distance + Street Name"]
+        NAV_ROUTE["Characteristic: Route Info<br>Total Distance + ETA"]
+        NAV_ROAD["Characteristic: Current Road<br>Street + Speed Limit + Heading"]
     end
 
-    subgraph MediaService['Service: Media']
-        MEDIA_TRACK[Characteristic: Now Playing<br/>Artist + Title + Position]
-        MEDIA_CTRL[Characteristic: Media Control<br/>Play/Pause/Next/Prev]
+    subgraph MediaService["Service Media"]
+        MEDIA_TRACK["Characteristic: Now Playing<br>Artist + Title + Position"]
+        MEDIA_CTRL["Characteristic: Media Control<br>Play-Pause-Next-Prev"]
     end
 
-    subgraph PhoneService['Service: Phone']
-        PHONE_CALL[Characteristic: Incoming Call<br/>Caller Name + Number]
-        PHONE_NOTIF[Characteristic: Notification<br/>App + Title + Body]
+    subgraph PhoneService["Service Phone"]
+        PHONE_CALL["Characteristic: Incoming Call<br>Caller Name + Number"]
+        PHONE_NOTIF["Characteristic: Notification<br>App + Title + Body"]
     end
 
-    subgraph TelemetryService['Service: Telemetry (BC → Phone)']
-        TEL_LIVE[Characteristic: Live Data<br/>Speed + RPM + Temp + Fuel + Gear + Lean]
-        TEL_LOG[Characteristic: Track Export<br/>GPX/CSV via BLE Transfer]
+    subgraph TelemetryService["Service Telemetry BC to Phone"]
+        TEL_LIVE["Characteristic: Live Data<br>Speed + RPM + Temp + Fuel + Gear + Lean"]
+        TEL_LOG["Characteristic: Track Export<br>GPX-CSV via BLE Transfer"]
     end
 
-    subgraph ConfigService['Service: Config']
-        CONF_READ[Characteristic: Read Config<br/>Pinmap + Calibration + Thresholds]
-        CONF_WRITE[Characteristic: Write Config<br/>Live Parameter Changes]
+    subgraph ConfigService["Service Config"]
+        CONF_READ["Characteristic: Read Config<br>Pinmap + Calibration + Thresholds"]
+        CONF_WRITE["Characteristic: Write Config<br>Live Parameter Changes"]
     end
 
-    subgraph OTAService['Service: OTA Update']
-        OTA_CTRL[Characteristic: OTA Control<br/>Start + Chunk Count + Verify]
-        OTA_DATA[Characteristic: OTA Data<br/>4KB Chunks → Flash Partition]
+    subgraph OTAService["Service OTA Update"]
+        OTA_CTRL["Characteristic: OTA Control<br>Start + Chunk Count + Verify"]
+        OTA_DATA["Characteristic: OTA Data<br>4KB Chunks to Flash Partition"]
     end
 
     SERVER --> NavService
