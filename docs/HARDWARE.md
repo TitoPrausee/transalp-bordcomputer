@@ -39,10 +39,27 @@
 - **HT7333 LDO** 5V → 3.3V (ESP32 + Sensoren)
 - Akku-Überwachung: Spannungsteiler an ADC-Pin
 
-### OBD-II
-- **ELM327 Bluetooth** (fertiges Modul, pairing mit ESP32 BT-Classic)
-- OBD-II Adapterkabel (J1962 → 4-polig, Transalp hat OBD unten)
-- Alternativ: Direkt K-Line (ISO 9141) für nackte Fahrzeugdaten
+### Fahrzeugdaten (PD06 — direkte Sensor-Anzapfung)
+- **Tachosignal**: Tachowelle ist mechanisch → Induktiver Sensor am Tachoantrieb
+  oder GPS-Speed als Alternative (reicht für Tour-Logging)
+- **Drehzahl**: Zündimpulse abgreifen
+  Induktivsensor (z.B. GT101) am Zündkabel, oder Pick-Up-Signal abzapfen
+  ESP32 Pulse-Counter / Input-Capture für genaue Drehzahl
+- **Kühlmitteltemperatur**: KTY81-210 oder PT1000 im Kühlschlauch
+  Oder Thermistor (NTC 10kΩ) am Thermostat-Gehäuse
+- **Kraftstoffstand**: Widerstandsgeber im Tank (Honda-typisch 5-90Ω)
+  Spannungsteiler → ADC, kalibrieren gegen Tankstreifen
+- **Öldruck**: Öldruckschalter (ON/OFF, 0.5bar Schaltpunkt)
+  Oder analoger Drucksensor (z.B. VDO 0-10bar, 0.5-4.5V)
+- **Ganganzeige**: Schaltwalzen-Positionssensor (falls nachgerüstet)
+  oder Mikroschalter an Schaltwelle, oder aus Drehzahl/Geschwindigkeit berechnen
+- **Licht/Blinker**: Spannung am Kabel abgreifen (Optokoppler für Galvanische Trennung)
+  Blinker-Status für Turn-Signal-Detection im Telemetrie-Log
+
+### Steuerung (Write)
+- **Relais-Modul 4fach**: Zusatzlicht, Heizgriffe, USB-Ladung, etc.
+  Ansteuerung direkt vom ESP32 GPIO (active-low Relais-Module)
+- **Kein CAN-Injection**: PD06 hat keinen CAN-Bus, klassische Relais-Schaltung ist der Weg
 
 ### Gehäuse
 - 3D-gedruckt (PETG oder ABS), wasserresistent (IP54)
