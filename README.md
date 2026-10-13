@@ -80,7 +80,7 @@ transalp-bordcomputer/
 
 ## Status
 
-🚧 Planungsphase — Hardware-Teile bestellt, Firmware-Struktur steht.
+🚧 Planungsphase — Recherche abgeschlossen (33.500 Wörter in `docs/research/`), Hardware-Teile werden spezifiziert.
 
 ## License
 
