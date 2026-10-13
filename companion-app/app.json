@@ -1,0 +1,31 @@
+{
+  "expo": {
+    "name": "Transalp Companion",
+    "slug": "transalp-companion",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "scheme": "transalp-companion",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "backgroundColor": "#000000"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSBluetoothAlwaysUsageDescription": "Die App benoetigt Bluetooth, um sich mit dem Bordcomputer zu verbinden.",
+        "NSBluetoothPeripheralUsageDescription": "Die App benoetigt Bluetooth, um sich mit dem Bordcomputer zu verbinden.",
+        "NSLocationWhenInUseUsageDescription": "Die App nutzt die Position fuer Navigation und Wetterdaten."
+      }
+    },
+    "android": {
+      "permissions": [
+        "BLUETOOTH",
+        "BLUETOOTH_ADMIN",
+        "BLUETOOTH_CONNECT",
+        "BLUETOOTH_SCAN",
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION"
+      ]
+    }
+  }
+}
