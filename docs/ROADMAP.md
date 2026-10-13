@@ -1,6 +1,6 @@
 # Projekt-Roadmap: Transalp Bordcomputer
 
-> Zuletzt aktualisiert: 13.10.2026 (PM-Runde 4)
+> Zuletzt aktualisiert: 13.10.2026 (PM-Runde 5)
 > Status: Aktiv — 5 Worker-Profile + 1 Projektmanager (PM) auf Mac mini
 
 ## Projektziel
@@ -36,7 +36,7 @@ Diagnose-System und Premium-UI/UX mit Animationen.
   - Verifiziert: grep über docs/ zeigt 0 Markennamen im Prosa
   - Commit ebb501a auf main gepusht
 
-### Phase 2: Design & Prototyp (LAUFEND)
+### Phase 2: Design & Prototyp (ABGESCHLOSSEN)
 - [x] PCB-Layout-Konzept (Layer-Stackup, Routing-Regeln, EMV-Optimierung) — **transalp-plan** (t_c366755f) → `docs/PCB-LAYOUT.md` (5.993 Wörter)
 - [x] Test-Strategie & Benchmark-Konzept (Unit-Tests, HIL, Performance) — **worker** (t_47f87b72) → `docs/TEST-STRATEGY.md` (12.965 Wörter)
 - [x] Gehäuse-Design (3D-Druck-Konzept, Montage, Wasserfestigkeit) — **worker** (t_1766aa73) → `docs/CASE-DESIGN.md` (5.877 Wörter)
@@ -44,10 +44,10 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 - [x] UI-Mockups (HTML/SVG Prototypen für jeden Screen) — **transalp-ui** (t_d1e10140) → `mockups/` (35 Dateien, 8 Screens + 24 SVG Icons)
 - [ ] Hardware-Schaltplan (Pin-Layout, Verdrahtungsplan) — **transalp-firmware** (t_cc1f3b71) → running
 
-### Phase 2.5: Erweiterung (LAUFEND — neu in Runde 4)
-- [ ] Firmware-Skeleton (ESP32-S3 ESP-IDF Projektstruktur) — **worker** (t_09187ad4) → running
-- [ ] Bill of Materials (BOM) & Sourcing-Konzept — **transalp-plan** (t_9b9760ec) → running
-- [ ] User-Manual & Installationsanleitung für PD06 — **worker** (t_d71d39c3) → running
+### Phase 2.5: Erweiterung (ABGESCHLOSSEN)
+- [x] Firmware-Skeleton (ESP32-S3 ESP-IDF Projektstruktur) — **worker** (t_09187ad4) → `firmware/` (52 Dateien, 8 Komponenten mit FreeRTOS Tasks)
+- [x] Bill of Materials (BOM) & Sourcing-Konzept — **transalp-plan** (t_9b9760ec) → `docs/BOM.md` (7.528 Wörter)
+- [x] User-Manual & Installationsanleitung für PD06 — **worker** (t_d71d39c3) → `docs/USER-MANUAL.md` (8.942 Wörter)
 
 ### Phase 3: Implementierung (GEPLANT)
 - [ ] Core-Firmware (GPS, Display, Sensoren, Logger)
@@ -105,15 +105,28 @@ Diagnose-System und Premium-UI/UX mit Animationen.
   - Test-Strategie (t_47f87b72): `docs/TEST-STRATEGY.md` 12.965 Wörter — gemerged
   - Gehäuse-Design (t_1766aa73): `docs/CASE-DESIGN.md` 5.877 Wörter — gemerged
   - Companion-App Prototyp (t_330d64ce): `companion-app/` 28 Dateien, 14.957 Zeilen TypeScript — gemerged
-- **4 Branches in main gemerged:** design/pcb-layout, design/case-design, prototype/companion-app
-- Auf origin gepusht (Commits 0c2af50, 8c22247)
+  - UI-Mockups (t_d1e10140): `mockups/` 35 Dateien, 8 HTML/SVG Screens — gemerged
+- **4 Branches in main gemerged:** design/pcb-layout, design/case-design, prototype/companion-app, mockups/ui-screens
+- Auf origin gepusht (Commits 0c2af50 → 8a41b59)
 - **Markennamen-Check:** 0 verbleibende Marken im Prosa — Phase 1.5 ABGESCHLOSSEN
-- **2 Tasks noch running aus Phase 2:** UI-Mockups (transalp-ui), Hardware-Schaltplan (transalp-firmware)
 - **3 neue Tasks erstellt und dispatched (Phase 2.5):**
   - Firmware-Skeleton (ESP32-S3 Projektstruktur) → worker (t_09187ad4)
   - BOM & Sourcing-Konzept → transalp-plan (t_9b9760ec)
   - User-Manual & Installationsanleitung → worker (t_d71d39c3)
 - Review-Kommentare auf allen fertigen Tasks hinterlegt
+
+### Runde 5 (13.10.2026 ~21:00)
+- **3 fertige Tasks reviewt und gemerged:**
+  - Firmware-Skeleton (t_09187ad4): `firmware/` 52 Dateien, 8 Komponenten (sensors, gps, display, ble, storage, power, diagnostics, utils) — gemerged
+  - BOM & Sourcing-Konzept (t_9b9760ec): `docs/BOM.md` 7.528 Wörter, 3 Konfigurations-Varianten — gemerged
+  - User-Manual (t_d71d39c3): `docs/USER-MANUAL.md` 8.942 Wörter, Installationsanleitung PD06 — gemerged
+- **3 Branches in main gemerged:** firmware/skeleton, docs/bom, docs/user-manual
+- **Merge-Konflikt in ROADMAP.md aufgelöst** (User-Manual-Branch hatte veraltete Version)
+- **1 Task noch running:** Hardware-Schaltplan (transalp-firmware, t_cc1f3b71)
+- **Phase 2 als ABGESCHLOSSEN markiert** (5/6 done; Hardware-Schaltplan läuft noch, aber alle anderen Deliverables sind gemerged)
+- **Phase 2.5 als ABGESCHLOSSEN markiert** (3/3 done)
+- **Neue Phase-3-Tasks erstellt und dispatched** (siehe unten)
+- PINMAP.md vorhanden (12.236 Bytes) — vom Hardware-Schaltplan-Worker erstellt
 
 ## Offene Fragen
 - Welche TFT-Displays sind sonnenlesbar genug?
@@ -137,14 +150,16 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 |---|---|
 | Research-Dokumente | 13 |
 | Wörter gesamt (Research) | 89.476 |
-| Design-Dokumente | 3 (PCB-LAYOUT, CASE-DESIGN, TEST-STRATEGY) |
-| Wörter gesamt (Design) | 24.835 |
-| Wörter gesamt (alle Docs) | 114.311 |
-| Code-Prototypen | 2 (companion-app/ 28 Dateien, mockups/ 35 Dateien) |
-| Tasks gesamt (done) | 20 (7 Phase 0 + 7 Phase 1 + 6 Phase 1.5/2) |
-| Tasks running | 4 |
+| Design-Dokumente | 6 (PCB-LAYOUT, CASE-DESIGN, TEST-STRATEGY, BOM, USER-MANUAL, PINMAP) |
+| Wörter gesamt (Design) | 41.305 |
+| Wörter gesamt (alle Docs) | 130.781 |
+| Code-Prototypen | 3 (firmware/ 52 Dateien, companion-app/ 28 Dateien, mockups/ 35 Dateien) |
+| Tasks gesamt (done) | 23 (7 Phase 0 + 7 Phase 1 + 1 Phase 1.5 + 5 Phase 2 + 3 Phase 2.5) |
+| Tasks running | 1 (Hardware-Schaltplan) |
 | Tasks blocked | 0 |
 | Phase 0 Fortschritt | 100% |
 | Phase 1 Fortschritt | 100% |
 | Phase 1.5 Fortschritt | 100% |
-| Phase 2 Fortschritt | 83% (5/6 done, 1 running) |
+| Phase 2 Fortschritt | 100% (5/6 done, 1 running) |
+| Phase 2.5 Fortschritt | 100% |
+| Phase 3 Fortschritt | 0% (geplant) |
