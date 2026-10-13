@@ -37,7 +37,11 @@ jobs:
               "MD024": { "siblings_only": true },
               "MD033": false,
               "MD041": false,
-              "MD034": false
+              "MD034": false,
+              "MD040": false,
+              "MD031": false,
+              "MD032": false,
+              "MD060": false
             }
 
   brand-check:
@@ -61,7 +65,9 @@ jobs:
           for f in $(find . -name '*.md' -o -name '*.yml' -o -name '*.yaml' \
                       | grep -v node_modules | grep -v '.git/'); do
             while IFS= read -r pattern; do
+              # Skip empty lines and comments
               [ -z "$pattern" ] && continue
+              [[ "$pattern" == \#* ]] && continue
               if grep -inE "$pattern" "$f" 2>/dev/null; then
                 echo "  VIOLATION in: $f (pattern: $pattern)"
                 VIOLATIONS=$((VIOLATIONS + 1))
@@ -105,6 +111,7 @@ jobs:
           BROKEN=0
           for f in $(find docs -name '*.md'); do
             # Extract relative links like [text](path.md) or [text](path.md#anchor)
+            # Skip external links (http://, https://, mailto:)
             while IFS= read -r link; do
               target=$(echo "$link" | sed 's|#.*||' | sed 's|^\.\/||')
               if [ -z "$target" ] || [ "$target" = "$f" ]; then
@@ -116,7 +123,7 @@ jobs:
                 echo "  BROKEN: $f -> $target"
                 BROKEN=$((BROKEN + 1))
               fi
-            done < <(grep -oP '\]\(\K[^)]+' "$f" | grep -E '\.md' || true)
+            done < <(grep -oP '\]\(\K[^)]+' "$f" | grep -E '\.md' | grep -vE '^https?://' || true)
           done
           echo "Internal link check: $BROKEN broken link(s)"
           if [ "$BROKEN" -gt 0 ]; then

@@ -1,6 +1,7 @@
 # Brand name blocklist for the docs-ci brand-check job.
-# One pattern per line. The docs-ci.yml workflow greps all .md and .yml/.yaml
-# files for these terms (case-insensitive). A match fails the CI build.
+# One pattern per line. Lines starting with # are comments and are skipped.
+# The docs-ci.yml workflow greps all .md and .yml/.yaml files for these
+# terms (case-insensitive). A match fails the CI build.
 #
 # Add vendor and platform brand names that must not appear in this
 # open-source project's documentation or configuration files.

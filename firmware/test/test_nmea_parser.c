@@ -115,7 +115,7 @@ void test_gga_valid_fix(void)
 
     TEST_ASSERT_TRUE(result);
     TEST_ASSERT_TRUE(data.has_fix);
-    TEST_ASSERT_EQUAL(1, data.fix_quality); /* GPS_FIX_3D = 1 (per enum) */
+    TEST_ASSERT_EQUAL(GPS_FIX_3D, data.fix_quality); /* GGA quality 1 = 3D fix */
     TEST_ASSERT_EQUAL_UINT8(9, data.satellites);
     TEST_ASSERT_EQUAL_FLOAT(245.3f, data.altitude_m);
     TEST_ASSERT_EQUAL(14, data.hour);
@@ -199,7 +199,7 @@ void test_vtg_speed_kmh(void)
     gps_data_t data;
     memset(&data, 0, sizeof(data));
 
-    const char *body = "$GNVTG,270.0,T,268.5,M,83.9,K,45.3,N";
+    const char *body = "$GNVTG,270.0,T,268.5,M,45.3,N,83.9,K";
     char *sentence = append_checksum(body);
 
     bool result = nmea_parse(sentence, &data);
