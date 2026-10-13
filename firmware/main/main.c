@@ -7,7 +7,7 @@
 #include "gps.h"
 #include "display.h"
 #include "sensors.h"
-#include "logger.h"
+#include "storage.h"
 #include "ble.h"
 #include "power.h"
 
@@ -22,7 +22,7 @@ void app_main(void)
     sensors_init();
     gps_init();
     display_init();
-    logger_init();
+    storage_init();
     ble_init();
 
     /* Tasks starten — siehe ARCHITECTURE.md für Prioritäten/Cores */

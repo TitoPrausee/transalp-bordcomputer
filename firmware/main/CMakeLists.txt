@@ -5,7 +5,7 @@ idf_component_register(
         gps
         display
         sensors
-        logger
+        storage
         ble
         power
 )
