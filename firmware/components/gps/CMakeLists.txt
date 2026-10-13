@@ -1,4 +1,4 @@
 idf_component_register(
-    SRCS "gps.c"
-    INCLUDE_DIRS "."
+    SRCS "gps_task.c" "nmea_parser.c"
+    INCLUDE_DIRS "include"
 )
