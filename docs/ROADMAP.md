@@ -1,6 +1,6 @@
 # Projekt-Roadmap: Transalp Bordcomputer
 
-> Zuletzt aktualisiert: 13.10.2026 (PM-Runde 6)
+> Zuletzt aktualisiert: 13.10.2026 (PM-Runde 7)
 > Status: Aktiv — 5 Worker-Profile + 1 Projektmanager (PM) auf Mac mini
 
 ## Projektziel
@@ -25,7 +25,7 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 - [x] Feature-Realisierungs-Matrix (Datenlage -> Machbarkeit) — **worker** (t_13aa20d8) → `08-feature-realization-matrix.md` (6.845 Wörter)
 - [x] Master-Plan (BOM, Kosten, Phasen, Support-Schnittstellen) — **transalp-plan** (t_66381dae) → `09-master-plan.md` (9.825 Wörter)
 - [x] Premium UI/UX Design-Konzept (Animationen, Layouts, Screens) — **transalp-ui** (t_62aba3bf) → `10-ui-ux-design.md` (8.278 Wörter)
-- [x] Firmware-Architektur (Rendering-Engine, Pipelines, BLE-Stack) — **transalp-firmware** (t_379233a5) → `11-firmware-architecture.md` (9.411 Wörter)
+- [x] Firmware-Architektur (Rendering-Engine, Pipelines, BLE-Stack) — **transalp-firmware** (t_379223a5) → `11-firmware-architecture.md` (9.411 Wörter)
 - [x] Diagnose & Support (DTC-System, Self-Test, Remote-Diagnose) — **transalp-diag** (t_b4d53b0f) → `12-diagnose-support.md` (7.593 Wörter)
 - [x] Connectivity & Companion-App (GATT-Services, App-Architektur) — **worker** (t_2c7740fa) → `13-connectivity-app.md` (7.948 Wörter)
 
@@ -52,14 +52,14 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 ### Phase 3: Implementierung (LÄUFT)
 - [x] Integrierte System-Architektur (ARCHITECTURE.md) — **transalp-ui** (t_6f1b1c07) → `docs/ARCHITECTURE.md` (8.845 Wörter)
 - [x] Rendering-Engine & Display-Treiber (TFT + E-Paper) — **transalp-firmware** (t_adf3f5ea) → `firmware/components/display/` (1.854 Zeilen, 6 Dateien)
-- [ ] Sensor-Driver (RPM, Temp, Fuel, Gear, IMU) — **worker** (t_e5d0d7c5) → running
-- [ ] GPS-Treiber & NMEA-Parser — **transalp-plan** (t_6a3a0821) → running
-- [ ] BLE-Stack & GATT-Server — **transalp-diag** (t_33c9e335) → running
+- [ ] Sensor-Driver (RPM, Temp, Fuel, Gear, IMU) — **worker** (t_e5d0d7c5) → running (Retry nach Timeout)
+- [x] GPS-Treiber & NMEA-Parser — **transalp-plan** (t_6a3a0821) → `firmware/components/gps/` (886 Zeilen: nmea_parser.c 522, gps_task.c 260, gps.h 104) — gemerged (commit ff640bd)
+- [x] BLE-Stack & GATT-Server — **transalp-diag** (t_33c9e335) → `firmware/components/ble/` (1.796 Zeilen: ble_callbacks.c 793, ble_service.c 617, ble_internal.h 139, gatt_uuids.h 166, ble.h 72, ble.c 9) — cherry-picked (commit c8483e8)
 - [ ] Storage & Logger (SD-Karte, GPX, NVS Config) — **transalp-firmware** (t_85d92039) → running
 - [ ] Power Management & Battery Monitoring — **transalp-ui** (t_1111e7f1) → running
-- [ ] OTA-Update System & Firmware-Engineering Guide — **worker** (t_4daa19c4) → running
-- [ ] Diagnose-System (DTC, Self-Test, Konsole) — geplant
-- [ ] Companion-App Integration (Dashboard, Navigation, Diagnose) — geplant
+- [x] OTA-Update System & Firmware-Engineering Guide — **worker** (t_4daa19c4) → `firmware/components/ota/` (1.609 Zeilen: ota_update.c 986, ota_secure_boot.c 269, ota_update.h 354) + `docs/FIRMWARE-GUIDE.md` (5.366 Wörter) — gemerged (commit 19bab571)
+- [ ] Diagnose-System (DTC, Self-Test, Konsole) — **transalp-diag** (t_8454dd54) → running
+- [ ] Companion-App Integration (Dashboard, Navigation, Diagnose) — **worker** (t_968d6126) → running
 
 ### Phase 4: Integration & Test (GEPLANT)
 - [ ] Hardware-Assembly
@@ -137,15 +137,28 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 
 ### Runde 6 (13.10.2026 ~21:30)
 - **3 fertige Tasks reviewt und gemerged:**
-  - Rendering-Engine & Display-Treiber (t_adf3f5ea): `firmware/components/display/` 1.854 Zeilen über 6 Dateien (tft_driver.c 406, epaper_driver.c 378, renderer.c 468, widgets.c 532) — fast-forward gemerged
-  - Integrierte System-Architektur (t_6f1b1c07): `docs/ARCHITECTURE.md` erweitert von 444 auf 8.845 Wörter — gemerged
-  - Hardware-Schaltplan (t_cc1f3b71): `docs/HARDWARE.md` 5.487 Wörter + `docs/PINMAP.md` 1.609 Wörter — cherry-picked (Branch divergierte mit Revert-Commits)
-- **Alle auf origin gepusht (Commit 10a6f86)**
+  - Rendering-Engine & Display-Treiber (t_adf3f5ea): `firmware/components/display/` 1.854 Zeilen über 6 Dateien — fast-forward gemerged
+  - Integrierte System-Architektur (t_6f1b1c07): `docs/ARCHITECTURE.md` 8.845 Wörter — gemerged
+  - Hardware-Schaltplan (t_cc1f3b71): `docs/HARDWARE.md` 5.487 Wörter + `docs/PINMAP.md` 1.609 Wörter — cherry-picked
+- **Auf origin gepusht (Commit 10a6f86)**
 - **3 neue Phase-3-Tasks erstellt und dispatched:**
-  - Storage & Logger (SD-Karte, GPX, NVS Config) → transalp-firmware (t_85d92039)
+  - Storage & Logger → transalp-firmware (t_85d92039)
   - Power Management & Battery Monitoring → transalp-ui (t_1111e7f1)
   - OTA-Update System & Firmware-Engineering Guide → worker (t_4daa19c4)
-- **6 Tasks running:** Sensor-Driver, GPS-Treiber, BLE-Stack, Storage/Logger, Power-Management, OTA/Engineering-Guide
+- **6 Tasks running**
+- Review-Kommentare auf allen 3 gemergten Tasks hinterlegt
+
+### Runde 7 (13.10.2026 ~22:00)
+- **3 fertige Tasks reviewt und gemerged:**
+  - GPS-Treiber & NMEA-Parser (t_6a3a0821): `firmware/components/gps/` 886 Zeilen (nmea_parser.c 522, gps_task.c 260, gps.h 104) — bereits in main (commit ff640bd), 29 Unit-Tests, 4 NMEA-Sentence-Types
+  - OTA-Update System & Firmware-Guide (t_4daa19c4): `firmware/components/ota/` 1.609 Zeilen + `docs/FIRMWARE-GUIDE.md` 5.366 Wörter — gemerged (commit 19bab571)
+  - BLE-Stack & GATT-Server (t_33c9e335): `firmware/components/ble/` 1.796 Zeilen, 8 GATT-Services — cherry-picked (commit c8483e8)
+- **Markennamen-Bereinigung:** 3 Verweise in FIRMWARE-GUIDE.md entfernt (Apple Silicon, Google Style Guide, Intel)
+- **Auf origin gepusht (Commits ff640bd → c8483e8)**
+- **2 neue Phase-3-Tasks erstellt und dispatched:**
+  - Diagnose-System (DTC, Self-Test, Konsole) → transalp-diag (t_8454dd54)
+  - Companion-App Integration (Dashboard, Navigation, Diagnose) → worker (t_968d6126)
+- **5 Tasks running:** Sensor-Driver, Storage/Logger, Power-Management, Diagnose-System, Companion-App
 - Review-Kommentare auf allen 3 gemergten Tasks hinterlegt
 
 ## Offene Fragen
@@ -170,17 +183,17 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 |---|---|
 | Research-Dokumente | 13 (+ README) |
 | Wörter gesamt (Research) | 89.476 |
-| Design-Dokumente | 9 (ARCHITECTURE, BOM, CASE-DESIGN, HARDWARE, PCB-LAYOUT, PINMAP, ROADMAP, TEST-STRATEGY, USER-MANUAL) |
-| Wörter gesamt (Design-Docs) | 58.426 |
-| Wörter gesamt (alle Docs) | 147.902 |
-| Code-Prototypen | 3 (firmware/ 40 C/H-Dateien, companion-app/ 28 Dateien, mockups/ 35 Dateien) |
-| Firmware Zeilen Code | 4.044 (davon 1.854 Display-Treiber) |
-| Tasks gesamt (done) | 21 |
-| Tasks running | 6 |
+| Design-Dokumente | 10 (ARCHITECTURE, BOM, CASE-DESIGN, FIRMWARE-GUIDE, HARDWARE, PCB-LAYOUT, PINMAP, ROADMAP, TEST-STRATEGY, USER-MANUAL) |
+| Wörter gesamt (Design-Docs) | 63.994 |
+| Wörter gesamt (alle Docs) | 153.470 |
+| Code-Prototypen | 3 (firmware/ 54 Dateien, companion-app/ 28 Dateien, mockups/ 35 Dateien) |
+| Firmware C/H-Zeilen | 7.727 (9 Komponenten: ble, diagnostics, display, gps, ota, power, sensors, storage, utils) |
+| Tasks done | 24 |
+| Tasks running | 5 |
 | Tasks blocked | 0 |
-| Phase 0 Fortschritt | 100% |
-| Phase 1 Fortschritt | 100% |
-| Phase 1.5 Fortschritt | 100% |
-| Phase 2 Fortschritt | 100% (6/6 done) |
-| Phase 2.5 Fortschritt | 100% (3/3 done) |
-| Phase 3 Fortschritt | ~20% (2/9 done, 6 running) |
+| Phase 0 Fortschritt | 100% ✅ |
+| Phase 1 Fortschritt | 100% ✅ |
+| Phase 1.5 Fortschritt | 100% ✅ |
+| Phase 2 Fortschritt | 100% ✅ (6/6 done) |
+| Phase 2.5 Fortschritt | 100% ✅ (3/3 done) |
+| Phase 3 Fortschritt | ~50% (5/9 done, 4 running) |
