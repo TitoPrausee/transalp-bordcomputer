@@ -943,7 +943,7 @@ ESP32-S3 unterstuetzt kein Bluetooth Classic (A2DP). TTS auf ESP32 ist ressource
 
 **Software:**
 - GPX 1.1 Format (siehe 1.7)
-- Kompatibel mit Komoot, Strava, OSMAnd, GPX Studio, Garmin Connect
+- Kompatibel mit Komoot, Strava, OSMAnd, GPX Studio, Fitness-Tracking-Plattform (Referenz)
 - Ein Datei pro Tour
 - Metadata: Datum, Tour-Name, Gesamt-Distanz, Fahrtzeit
 

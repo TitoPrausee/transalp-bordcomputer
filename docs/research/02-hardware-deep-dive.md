@@ -317,7 +317,7 @@ Der BMI270 ist der beste Kompromiss:
 - **Geringer Rausch**: Accel 160 µg/√Hz, Gyro 0.008 °/s/√Hz
 - **2KB FIFO**: Sammelt Daten, reduziert I2C-Traffic und MCU-Wake-Ups
 - **On-chip Interrupts**: Step-Counter, Activity, Any-Motion → Wake-on-Motion für Deep-Sleep
-- **Automotive-Proven Gyro**: Bosch verbaut diesen in Produktions-Fahrzeugen
+- **Automotive-Proven Gyro**: Wird in Produktions-Fahrzeugen verbaut
 
 **Warum nicht BNO085?** Der BNO085 macht Sensor-Fusion on-chip ( quaternion output). Bequem, aber:
 - 8 mA Stromverbrauch (10× mehr als BMI270)
@@ -392,7 +392,7 @@ Ist die Montage anders, muss in Software rotiert werden ( Achsen-Tausch + Vorzei
 Quellen:
 - [BMI270 Datasheet (Mouser PDF)](https://www.mouser.com/pdfdocs/Product_flyer_BMI270.pdf)
 - [BMI270 ESP Component](https://components.espressif.com/components/espp/bmi270/versions/1.0.22/readme?language=en)
-- [Bosch BMI088 (vibrationsrobust)](https://www.bosch-sensortec.com/products/motion-sensors/imus/bmi088)
+- BMI088 (vibrationsrobust, automotive-gradiger IMU-Sensor)
 - [MPU6050 vs BNO055 Discussion](https://forum.arduino.cc/t/mpu6050-vs-bno055/673029)
 
 ---
