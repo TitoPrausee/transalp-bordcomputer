@@ -19,3 +19,14 @@ CONFIG_LOG_DEFAULT_LEVEL_INFO=y
 # Partition Scheme (OTA-fähig)
 CONFIG_PARTITION_TABLE_CUSTOM=y
 CONFIG_PARTITION_TABLE_CUSTOM_FILENAME="partitions.csv"
+# OTA Support
+CONFIG_APP_ROLLBACK_ENABLE=y
+# HTTP Client (for OTA-From-URL)
+CONFIG_ESP_HTTP_CLIENT_ENABLE_HTTPS=y
+# mbedTLS (for SHA256 + RSA verification)
+CONFIG_MBEDTLS_RSA_LARGE_KEY=y
+# Secure Boot (disabled by default — enable for production)
+# CONFIG_SECURE_BOOT_V2_ENABLED=y
+# CONFIG_SECURE_SIGNED_APPS_NO_SECURE_BOOT=y
+# Flash Encryption (disabled by default — enable for production)
+# CONFIG_SECURE_FLASH_ENC_ENABLED=y
