@@ -2,7 +2,7 @@
 
 > Zuletzt aktualisiert: 14.10.2026 (PM-Runde 11)
 > Status: Aktiv — 5 Worker-Profile + 1 Projektmanager (PM) auf Mac mini
-> **Alle Phasen 0–4 ABGESCHLOSSEN ✅ — 38 Tasks done, 0 running, 0 blocked**
+> **Phasen 0–4 ABGESCHLOSSEN ✅ — Phase 5 (Polish & Release) gestartet — 5 Tasks running**
 
 ## Projektziel
 Vollständiger Open-Source Bordcomputer für die Honda Transalp 600 (PD06).
@@ -76,6 +76,13 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 - [x] Troubleshooting-Guide & FAQ — **transalp-ui** (t_4d933681) → `docs/TROUBLESHOOTING.md` (1.817 Zeilen, 9.199 Wörter) — gemerged (commit 41580e4)
 
 **Phase 4: 11/11 done — ABGESCHLOSSEN ✅**
+
+### Phase 5: Polish & Release (LÄUFT)
+- [ ] README.md v2.0: Projekt-Übersicht aktualisieren — **transalp-ui** (t_2f24c21a) → running
+- [ ] CONTRIBUTING.md: Open-Source Beitragende-Leitfaden — **transalp-plan** (t_48c61f20) → running
+- [ ] E-Paper Widget-Katalog & Display-Screen-Referenz — **transalp-firmware** (t_4b253561) → running
+- [ ] Developer Quick-Start Guide — **transalp-diag** (t_97a98c74) → running
+- [ ] Markennamen-Bereinigung Teil 2: Research-Docs — **worker** (t_b3b85edd) → running
 
 ## PM-Protokoll
 
@@ -265,7 +272,7 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 | CI/CD Workflows | 3 (firmware-ci, companion-app-ci, docs-ci) + brand-blocklist |
 | Unit-Tests | 3 (test_dtc, test_event_loop, test_nmea_parser) + ESP-IDF-Mocks |
 | Tasks done | 38 (+3 seit Runde 10) |
-| Tasks running | 0 |
+| Tasks running | 5 (README v2, CONTRIBUTING, Widget-Katalog, Dev-Quickstart, Brand-Cleanup-2) |
 | Tasks blocked | 0 |
 | Phase 0 Fortschritt | 100% ✅ |
 | Phase 1 Fortschritt | 100% ✅ |
@@ -274,3 +281,4 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 | Phase 2.5 Fortschritt | 100% ✅ (3/3 done) |
 | Phase 3 Fortschritt | 100% ✅ (10/10 done) |
 | Phase 4 Fortschritt | 100% ✅ (11/11 done) |
+| Phase 5 Fortschritt | 0/5 done, 5 running |
