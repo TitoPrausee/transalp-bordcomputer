@@ -95,7 +95,7 @@ jobs:
           find . -name '*.apk' -exec cp {} artifacts/ \; 2>/dev/null || true
 
       - name: Upload app build
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: app-build
           path: companion-app/artifacts/
@@ -142,7 +142,7 @@ jobs:
 
       - name: Upload test results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: app-test-results
           path: companion-app/coverage/
