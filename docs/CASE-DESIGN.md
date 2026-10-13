@@ -1106,10 +1106,10 @@ Die in diesem Dokument enthaltenen technischen Daten und Empfehlungen basieren
 auf der Recherche in folgenden Quellen (siehe docs/research/05-gehaeuse-einbau-emv.md
 für vollständige Quellenangaben mit Links):
 
-- CNC Kitchen: PLA vs PETG vs ASA Materialvergleich
+- Materialvergleich PLA vs PETG vs ASA (FDM-Druck)
 - Hersteller-Datenblätter für ASA-Filament (Tg, HDT, Schlagzähigkeit)
-- Kataloge für Kabelverschraubungen und Industriegehäuse (Takachi-Serie)
-- ePTFE-Schutzmembranen (GORE Protective Vents FAQ und Produktdatenblätter)
+- Kataloge für Kabelverschraubungen und Industriegehäuse
+- ePTFE-Schutzmembranen (Hersteller-FAQs und Produktdatenblätter)
 - IEC 60529: IP-Schutzklassen Definitionen
 - PCB Conformal Coating Auswahl-Leitfäden (Acryl, Silikon, Polyurethan, Epoxid)
 - ESP32-S3 Modul-Spezifikationen (Temperaturbereich -40 bis +85°C)
