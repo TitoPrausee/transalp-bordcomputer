@@ -1,5 +1,5 @@
 idf_component_register(
-    SRCS "main.c"
+    SRCS "main.c" "app_event_loop.c"
     INCLUDE_DIRS "."
     REQUIRES
         gps
@@ -8,4 +8,7 @@ idf_component_register(
         storage
         ble
         power
+        diagnostics
+        ota
+        utils
 )
