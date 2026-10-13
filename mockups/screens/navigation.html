@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Navigation-Screen</title>
+<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="../css/animations.css">
+</head>
+<body>
+<div class="mockup-frame">
+  <div class="page-label">Navigation-Screen (480x320 TFT)</div>
+  <div class="display-tft" id="nav-screen">
+
+    <!-- Maneuver-Bereich -->
+    <div style="position:absolute; top:10px; left:0; right:0; display:flex; flex-direction:column; align-items:center;">
+      <!-- Grosser Navigationspfeil -->
+      <div class="nav-arrow" id="nav-arrow-container">
+        <svg viewBox="0 0 100 100" id="nav-arrow-svg">
+          <polygon points="50,5 95,60 70,60 70,95 30,95 30,60 5,60" fill="#0A84FF"/>
+        </svg>
+      </div>
+      <!-- Distanz -->
+      <div style="font-size:36px; font-weight:600; color:var(--fg-primary); margin-top:8px;" id="nav-distance">340 m</div>
+    </div>
+
+    <!-- Strassenname -->
+    <div style="position:absolute; top:200px; left:0; right:0; text-align:center; overflow:hidden; padding: 0 20px;">
+      <div style="font-size:24px; font-weight:700; color:var(--fg-primary); white-space:nowrap;" id="nav-street">Bundesstrasse 17</div>
+    </div>
+
+    <!-- Kombinierte Info-Leiste -->
+    <div style="position:absolute; top:240px; left:0; right:0; display:flex; justify-content:space-around; align-items:center; padding: 0 16px;">
+      <div style="display:flex; align-items:baseline; gap:8px;">
+        <span style="font-size:24px; font-weight:700; color:var(--fg-primary);">5</span>
+        <span style="font-size:16px; color:var(--fg-secondary);">98</span>
+      </div>
+      <div style="font-size:16px; font-weight:600; color:var(--fg-primary);">ETA 15:42</div>
+      <div style="font-size:16px; font-weight:600; color:var(--fg-primary);">42 km</div>
+    </div>
+
+    <!-- Status-Leiste -->
+    <div class="status-bar">
+      <div class="status-item" style="color: var(--accent-blue);">
+        <svg class="icon" viewBox="0 0 24 24"><use href="../assets/icons/icon-bluetooth.svg#"/></svg>
+        <span>Verbunden</span>
+      </div>
+      <div class="status-item">
+        <span style="color:var(--accent-green);">NAV</span>
+      </div>
+      <div class="status-item">
+        <span>14:23</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// Demo: Pfeil-Morphing zwischen Maneuver-Typen
+(function() {
+  const arrows = {
+    straight: '<polygon points="50,5 95,60 70,60 70,95 30,95 30,60 5,60" fill="#0A84FF"/>',
+    left:     '<polygon points="50,5 95,60 70,60 70,80 30,80 30,95 5,95 5,60" fill="#0A84FF"/>',
+    right:    '<polygon points="50,5 95,60 95,95 70,95 70,80 30,80 30,60 5,60" fill="#0A84FF"/>',
+    uturn:    '<polygon points="50,5 95,50 80,50 80,95 20,95 20,50 5,50" fill="#0A84FF"/>',
+  };
+  const labels = { straight: '340 m', left: '180 m', right: '220 m', uturn: '90 m' };
+  const streets = { straight: 'Bundesstrasse 17', left: 'Ernst-Abbe-Strasse', right: 'Goetheallee', uturn: 'Leutraweiher Str.' };
+  const keys = Object.keys(arrows);
+  let i = 0;
+  const svg = document.getElementById('nav-arrow-svg');
+  const distEl = document.getElementById('nav-distance');
+  const streetEl = document.getElementById('nav-street');
+
+  function cycle() {
+    const key = keys[i % keys.length];
+    svg.innerHTML = arrows[key];
+    svg.style.opacity = '0.5';
+    svg.style.transition = 'opacity 300ms var(--ease-in-out)';
+    setTimeout(() => { svg.style.opacity = '1'; }, 150);
+    distEl.textContent = labels[key];
+    streetEl.textContent = streets[key];
+    i++;
+  }
+  cycle();
+  setInterval(cycle, 2500);
+})();
+</script>
+</body>
+</html>

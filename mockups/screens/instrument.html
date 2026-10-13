@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Instrument-Screen</title>
+<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="../css/animations.css">
+</head>
+<body>
+<div class="mockup-frame">
+  <div class="page-label">Instrument-Screen (480x320 TFT)</div>
+  <div class="display-tft" id="instrument-screen">
+
+    <!-- RPM Balken -->
+    <div class="rpm-bar-container">
+      <div class="rpm-bar-fill" id="rpm-fill" style="width: 55%; background: #FFD60A;"></div>
+      <div class="rpm-shift-marker"></div>
+      <div class="rpm-redline-marker" style="display:none;"></div>
+    </div>
+    <!-- RPM Sub-Text -->
+    <div style="position:absolute; top:28px; right:12px; font-size:12px; color:var(--fg-secondary);">
+      4500 rpm
+    </div>
+
+    <!-- Speed (zentriert) -->
+    <div style="position:absolute; top:60px; left:0; right:0; display:flex; flex-direction:column; align-items:center;">
+      <div class="speed-number" id="speed-num">98</div>
+      <div class="speed-unit">km/h</div>
+    </div>
+
+    <!-- Sekundaerwerte -->
+    <div class="secondary-values" style="position:absolute; top:220px; left:0; right:0;">
+      <div class="secondary-item">
+        <svg class="icon" viewBox="0 0 24 24"><use href="../assets/icons/icon-gear.svg#"/></svg>
+        <div class="value" id="gear-val" style="font-size:24px; font-weight:700;">5</div>
+        <div class="label">Gang</div>
+      </div>
+      <div class="secondary-item">
+        <svg class="icon" viewBox="0 0 24 24"><use href="../assets/icons/icon-temp.svg#"/></svg>
+        <div class="value">22 C</div>
+        <div class="label">Kuehltemp</div>
+      </div>
+      <div class="secondary-item">
+        <svg class="icon" viewBox="0 0 24 24"><use href="../assets/icons/icon-fuel.svg#"/></svg>
+        <div style="display:flex; align-items:center; gap:4px;">
+          <span class="fuel-bar"><span class="fuel-bar-fill" style="height:50%;"></span></span>
+          <span class="value">1/2</span>
+        </div>
+        <div class="label">Kraftstoff</div>
+      </div>
+      <div class="secondary-item ok">
+        <svg class="icon" viewBox="0 0 24 24"><use href="../assets/icons/icon-gps.svg#"/></svg>
+        <div class="value">9 SAT</div>
+        <div class="label">GPS</div>
+      </div>
+      <div class="secondary-item">
+        <svg class="icon" viewBox="0 0 24 24"><use href="../assets/icons/icon-battery.svg#"/></svg>
+        <div class="value">12.4V</div>
+        <div class="label">Bordspannung</div>
+      </div>
+    </div>
+
+    <!-- Uhrzeit -->
+    <div style="position:absolute; top:262px; left:0; right:0; text-align:center; font-size:24px; font-weight:700; color:var(--fg-primary);">
+      14:23
+    </div>
+
+    <!-- Status-Leiste -->
+    <div class="status-bar">
+      <div class="status-item" style="color: var(--accent-blue);">
+        <svg class="icon" viewBox="0 0 24 24"><use href="../assets/icons/icon-bluetooth.svg#"/></svg>
+        <span>Verbunden</span>
+      </div>
+      <div class="status-item">
+        <span style="color:var(--accent-green);">TOUR</span>
+      </div>
+      <div class="status-item">
+        <span>186 km heute</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// Demo: RPM Balken Animations-Zyklus
+(function() {
+  const fill = document.getElementById('rpm-fill');
+  const redlineMarker = document.querySelector('.rpm-redline-marker');
+  const states = [
+    { w: 35, c: '#30D158' },
+    { w: 55, c: '#FFD60A' },
+    { w: 72, c: '#FF6B00' },
+    { w: 55, c: '#FFD60A' },
+    { w: 88, c: '#FF3B30' },
+    { w: 50, c: '#FFD60A' },
+    { w: 38, c: '#30D158' },
+  ];
+  let i = 0;
+  function cycle() {
+    const s = states[i % states.length];
+    const prev = fill.style.width;
+    const falling = parseInt(prev) > s.w;
+    fill.classList.toggle('falling', falling);
+    fill.style.width = s.w + '%';
+    fill.style.background = s.c;
+    const isRedline = s.w >= 85;
+    fill.classList.toggle('redline', isRedline);
+    redlineMarker.style.display = isRedline ? 'block' : 'none';
+    i++;
+  }
+  cycle();
+  setInterval(cycle, 1500);
+})();
+
+// Demo: Speed Rolling
+(function() {
+  const speeds = [98, 103, 99, 105, 97, 101, 98];
+  let i = 0;
+  const el = document.getElementById('speed-num');
+  function cycle() {
+    el.textContent = speeds[i % speeds.length];
+    el.style.animation = 'none';
+    void el.offsetWidth;
+    el.style.animation = 'fade-in 100ms var(--ease-out)';
+    i++;
+  }
+  setInterval(cycle, 1500);
+})();
+
+// Demo: Gang Slide-In
+(function() {
+  const gears = [5, 6, 5, 4, 5, 6, 5];
+  let i = 0;
+  const el = document.getElementById('gear-val');
+  function cycle() {
+    el.textContent = gears[i % gears.length];
+    el.style.animation = 'none';
+    void el.offsetWidth;
+    el.style.animation = 'gear-slide-in 200ms var(--ease-out-back)';
+    i++;
+  }
+  setInterval(cycle, 2200);
+})();
+</script>
+</body>
+</html>
