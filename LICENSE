@@ -1,135 +1,75 @@
-# PolyForm Noncommercial License 1.0.0
+Copyright (c) 2026 Tito Prause
+
+PolyForm Noncommercial License 1.0.0
 
 <https://polyformproject.org/licenses/noncommercial/1.0.0>
 
-## Copyright Notice
+## Acceptance
 
-Copyright © 2026 Tito Tarek Prause. All rights reserved.
+In order to get any license under these terms, you must agree to them as both strict obligations and conditions to all your licenses.
 
-## License Summary
+## Copyright License
 
-This source-available software is licensed under the PolyForm Noncommercial
-License 1.0.0. You may use, modify, and share this software for any purpose
-that is not primarily intended for or directed toward commercial advantage
-or monetary compensation. You may not sell the software, rent it, host it
-as a paid service, or use it as a component of a commercial product.
+The licensor grants you a copyright license for the software to do everything you might do with the software that would otherwise infringe the licensor's copyright in it for any permitted purpose.  However, you may only distribute the software according to [Distribution License](#distribution-license) and make changes or new works based on the software according to [Changes and New Works License](#changes-and-new-works-license).
 
-You must preserve copyright and license notices, and disclose your
-modifications under the same license.
+## Distribution License
 
-## Full License Text
+The licensor grants you an additional copyright license to distribute copies of the software.  Your license to distribute covers distributing the software with changes and new works permitted by [Changes and New Works License](#changes-and-new-works-license).
 
-### 1. Definitions
+## Notices
 
-**"Licensor"** means the person or entity offering the Software under this
-License, being Tito Tarek Prause.
+You must ensure that anyone who gets a copy of any part of the software from you also gets a copy of these terms or the URL for them above, as well as copies of any plain-text lines beginning with `Required Notice:` that the licensor provided with the software.  For example:
 
-**"Software"** means the contents of this repository, including all source
-code, documentation, design files, schematics, and research materials.
+> Required Notice: Copyright Yoyodyne, Inc. (http://example.com)
 
-**"Licensee"** or "You" means any person or entity exercising rights under
-this License.
+## Changes and New Works License
 
-**"Commercial Use"** means any use of the Software primarily intended for
-or directed toward commercial advantage or monetary compensation. "Commercial
-Use" includes but is not limited to: (a) selling the Software or derivatives
-thereof; (b) offering the Software as a paid service or hosted product;
-(c) using the Software as a component of a product offered for sale;
-(d) using the Software internally for a business purpose where the primary
-goal is monetary gain; (e) rebranding, relicensing, or repackaging the
-Software for distribution under a different name or license, whether for
-fee or for free; or (f) using the Software in any way that generates
-revenue, directly or indirectly.
+The licensor grants you an additional copyright license to make changes and new works based on the software for any permitted purpose.
 
-**"Noncommercial Use"** means any use of the Software that is not a
-Commercial Use, including personal projects, education, academic research,
-hobbyist use, and contributions back to this project.
+## Patent License
 
-**"Modify"** or "Modification" means any change to the Software, including
-additions, deletions, adaptations, or rearrangements of any kind.
+The licensor grants you a patent license for the software that covers patent claims the licensor can license, or becomes able to license, that you would infringe by using the software.
 
-**"Derivative Works"** means any work, whether in source or object form,
-that is based on or derived from the Software, including modifications,
-translations, abridgments, condensations, or any other form in which the
-Software may be recast, transformed, or adapted.
+## Noncommercial Purposes
 
-**"Distribute"** or "Distribution" means making the Software or Derivative
-Works available to any third party, by any means.
+Any noncommercial purpose is a permitted purpose.
 
-### 2. Grant of Rights
+## Personal Uses
 
-Subject to the terms and conditions of this License, the Licensor grants
-You a worldwide, royalty-free, non-exclusive, non-transferable, non-sublicensable
-license to:
+Personal use for research, experiment, and testing for the benefit of public knowledge, personal study, private entertainment, hobby projects, amateur pursuits, or religious observance, without any anticipated commercial application, is use for a permitted purpose.
 
-1. **Use** the Software for any Noncommercial Use;
-2. **Copy** the Software for any Noncommercial Use;
-3. **Modify** the Software and create Derivative Works for any Noncommercial
-   Use;
-4. **Distribute** the Software and Derivative Works, provided that:
-   (a) You distribute under this License (or a compatible license);
-   (b) You include all original copyright and license notices; and
-   (c) You disclose the nature and scope of your Modifications.
+## Noncommercial Organizations
 
-### 3. Limitations
+Use by any charitable organization, educational institution, public research organization, public safety or health organization, environmental protection organization, or government institution is use for a permitted purpose regardless of the source of funding or obligations resulting from the funding.
 
-This License does not grant You any right to:
+## Fair Use
 
-1. **Sell, rent, lease, or sublicense** the Software or Derivative Works;
-2. **Use** the Software for any Commercial Use;
-3. **Rebrand** or **relicense** the Software under a different name, author,
-   or license for the purpose of distribution, whether for fee or for free;
-4. **Use** the Licensor's name, trademark, or other branding to endorse or
-   promote any product or service without prior written consent;
-5. **Remove or alter** any copyright, trademark, or attribution notices in
-   the Software;
-6. **Hold the Licensor liable** for any damages or losses arising from use
-   of the Software.
+You may have "fair use" rights for the software under the law.  These terms do not limit them.
 
-### 4. Conditions
+## No Other Rights
 
-You must:
+These terms do not allow you to sublicense or transfer any of your licenses to anyone else, or prevent the licensor from granting licenses to anyone else.  These terms do not imply any other licenses.
 
-1. **Preserve Notices**: Keep intact all copyright, patent, trademark, and
-   attribution notices present in the Software.
-2. **Disclose Modifications**: Clearly mark any Modifications You make and
-   include a prominent notice stating that You changed the Software.
-3. **Same License**: Distribute Derivative Works under this License or a
-   license that is at least as restrictive (compatibly noncommercial).
-4. **Attribution**: When distributing the Software or Derivative Works,
-   provide attribution to the original Licensor and, if applicable, a link
-   to the original Software repository.
+## Patent Defense
 
-### 5. Commercial Licensing
+If you make any written claim that the software infringes or contributes to infringement of any patent, your patent license for the software granted under these terms ends immediately.  If your company makes such a claim, your patent license ends immediately for work on behalf of your company.
 
-Commercial Use of the Software or Derivative Works requires a separate
-commercial license from the Licensor. To obtain a commercial license,
-contact the Licensor.
+## Violations
 
-### 6. Disclaimer of Warranty
+The first time you are notified in writing that you have violated any of these terms, or done anything with the software not covered by your licenses, your licenses can nonetheless continue if you come into full compliance with these terms, and take practical steps to correct past violations, within 32 days of receiving notice.  Otherwise, all your licenses end immediately.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT. IN NO EVENT SHALL
-THE LICENSOR BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY, WHETHER
-IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM, OUT OF, OR IN
-CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+## No Liability
 
-### 7. Termination
+***As far as the law allows, the software comes as is, without any warranty or condition, and the licensor will not be liable to you for any damages arising out of these terms or the use or nature of the software, under any kind of legal claim.***
 
-This License terminates automatically if You fail to comply with any of
-its terms. Upon termination, You must cease all use and distribution of
-the Software and Derivative Works. Sections relating to disclaimers,
-limitations of liability, and intellectual property shall survive
-termination.
+## Definitions
 
-### 8. Entire Agreement
+The **licensor** is the individual or entity offering these terms, and the **software** is the software the licensor makes available under these terms.
 
-This License constitutes the entire agreement between the Licensor and You
-concerning the Software. If any provision is held unenforceable, the
-remaining provisions shall remain in full force and effect.
+**You** refers to the individual or entity agreeing to these terms.
 
----
+**Your company** is any legal entity, sole proprietorship, or other kind of organization that you work for, plus all organizations that have control over, are under the control of, or are under common control with that organization.  **Control** means ownership of substantially all the assets of an entity, or the power to direct its management and policies by vote, contract, or otherwise.  Control can be direct or indirect.
 
-For questions about this license or to request a commercial license,
-contact: <https://github.com/TitoPrausee>
+**Your licenses** are all the licenses granted to you for the software under these terms.
+
+**Use** means anything you do with the software requiring one of your licenses.

@@ -1,0 +1,26 @@
+# CODEOWNERS fuer den Transalp Bordcomputer.
+# GitHub fordert automatisch Review von den aufgefuehrten Ownern an,
+# wenn Aenderungen in den jeweiligen Pfaden per Pull Request eingereicht
+# werden.
+#
+# Format:  <Pfad>  <GitHub-Username oder Team>
+# Dokumentation: https://docs.github.com/github/creating-cloning-and-archiving-repositories/about-code-owners
+
+# Firmware (ESP32-S3, ESP-IDF, C)
+/firmware/                     @TitoPrausee
+
+# Companion-App (React Native, TypeScript)
+/companion-app/                @TitoPrausee
+
+# Dokumentation (Markdown, Research, Guides)
+/docs/                         @TitoPrausee
+
+# GitHub-Konfiguration (CI/CD, Issue-Templates, Metadaten)
+/.github/                      @TitoPrausee
+
+# Standard-Dateien im Root
+/README.md                     @TitoPrausee
+/CONTRIBUTING.md               @TitoPrausee
+/CODE_OF_CONDUCT.md            @TitoPrausee
+/SECURITY.md                   @TitoPrausee
+/LICENSE                       @TitoPrausee

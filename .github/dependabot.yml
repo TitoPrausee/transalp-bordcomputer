@@ -1,0 +1,36 @@
+# Dependabot-Konfiguration fuer den Transalp Bordcomputer.
+# Prueft woechentlich auf veraltete Abhaengigkeiten in der Companion-App
+# (npm) und in den GitHub Actions Workflows.
+#
+# Dokumentation: https://docs.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
+
+version: 2
+
+updates:
+  # Companion-App (npm)
+  - package-ecosystem: "npm"
+    directory: "/companion-app"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "companion-app"
+    commit-message:
+      prefix: "chore(deps)"
+      include: "scope"
+
+  # GitHub Actions Workflows
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "ci-cd"
+    commit-message:
+      prefix: "chore(deps)"
+      include: "scope"
