@@ -1,29 +1,9 @@
 /*
- * ble.c — BLE-Task: Event-Loop
+ * ble.c — removed (replaced by ble_service.c + ble_callbacks.c)
  *
- * NimBLE laeuft intern in einem eigenen Host-Task (nimble_port_freertos_init).
- * Dieser Task ist fuer anwendungsseitige BLE-Events zustaendig.
+ * This file is kept as an empty translation unit so the CMakeLists.txt
+ * SRCS list can reference it for backwards compatibility.
+ * The actual BLE implementation lives in:
+ *   ble_service.c  — NimBLE stack init, GATT service table, advertising
+ *   ble_callbacks.c — Read/Write/Notify handlers, BLE task
  */
-
-#include "ble.h"
-#include "esp_log.h"
-
-static const char *TAG = "ble_task";
-
-void ble_task(void *arg)
-{
-    /*
-     * NimBLE-Host-Task wird in ble_init() gestartet.
-     * Hier: anwendungsseitige Event-Behandlung.
-     */
-
-    while (1) {
-        /* TODO: BLE-Events verarbeiten:
-         *   - Connect/Disconnect -> Event-Bus
-         *   - Neue GPS/Sensor-Daten -> Notify an App
-         *   - OTA-Chunks empfangen -> esp_ota_write
-         *   - Navigation-Daten empfangen -> an Display-Task
-         */
-        vTaskDelay(pdMS_TO_TICKS(100));
-    }
-}
