@@ -1,10 +1,8 @@
 # Transalp Bordcomputer
 
-<<<<<<< HEAD
-Custom Bordcomputer für die Honda Transalp 600 (PD06, Baujahr 1986–2000) — DIY-Projekt von Tito.
-=======
+
 > Open-Source Bordcomputer für die Honda Transalp 600 (PD06) — basierend auf ESP32-S3, GPS, E-Paper/TFT, direkter Sensor-Anzapfung und BLE-Smartphone-Integration.
->>>>>>> research/pd06-hardware
+
 
 [![License: PolyForm Noncommercial](https://img.shields.io/badge/License-PolyForm%20Noncommercial-blue.svg)](LICENSE)
 [![Platform: ESP32-S3](https://img.shields.io/badge/Platform-ESP32--S3-orange.svg)](https://www.espressif.com/en/products/socs/esp32-s3)
@@ -12,52 +10,19 @@ Custom Bordcomputer für die Honda Transalp 600 (PD06, Baujahr 1986–2000) — 
 [![Research: 34k+ words](https://img.shields.io/badge/Research-34k%2B%20words-green.svg)](docs/research/)
 [![Vehicle: PD06](https://img.shields.io/badge/Vehicle-Honda%20Transalp%20600%20(PD06)-darkgreen.svg)](#)
 
-<<<<<<< HEAD
-Eigenbau eines kompakten Bordcomputers für Motorrad-Touren (Honda Transalp 600 PD06).
-Die PD06 ist eine rein mechanische Maschine (kein CAN-Bus, kein OBD-II, keine ECU im modernen Sinn).
-Bordcomputer basiert auf ESP32-S3 als Core-Modul, erweiterbar um Sensoren, GPS und Display.
-Fahrzeugdaten werden über direkte Sensor-Anzapfung und separate Sensoren erfasst.
-=======
+
 ---
->>>>>>> research/pd06-hardware
+
 
 ## Übersicht
 
-<<<<<<< HEAD
-- **GPS-Tracking**: Positionsdaten, Geschwindigkeit, Strecke
-- **Display**: E-Paper oder TFT für sonnenlesbare Anzeige
-- **Sensoren**: Temperatur, Luftdruck, Neigung, Beschleunigung
-- **Daten-Logging**: SD-Karte für Touren-Aufzeichnung
-- **Bluetooth**: Smartphone-Anbindung für Navigation/Telefonie
-- **Power-Management**: Akku-Überwachung, automatische Schlafmodi
-- **Fahrzeugdaten (PD06-spezifisch)**: Direkte Sensor-Anzapfung — Tachosignal, Drehzahl (Zündung), Temperatur, Ganganzeige, Kraftstoffstand
-- **Zusätzliche Sensoren**: Öldruck, Umwelttemperatur, Neigung (Wheelie-Detection)
-- **Steuerung**: Relais-basiert — Zusatzlicht, Heizgriffe, USB-Ladung
-- **Wetter**: Live-Wetterdaten via BT-Internet vom Smartphone
-=======
+
 Dieses Projekt dokumentiert den Bau eines vollständigen Bordcomputers für die Honda Transalp 600 (PD06, Baujahr 1986–2000). Die PD06 ist eine rein mechanische Maschine ohne CAN-Bus, OBD-II oder elektronische Motorsteuerung. Alle Fahrzeugdaten werden über eigenständige Sensoren und direkte Signal-Anzapfung erfasst.
->>>>>>> research/pd06-hardware
+
 
 ### Kern-Features
 
-<<<<<<< HEAD
-| Komponente | Modul | Bemerkung |
-|---|---|---|
-| MCU | ESP32-S3 DevKit | WiFi+BT, genug GPIO, low power |
-| GPS | u-blox NEO-M9N | 10Hz, hochpräzise |
-| Display | Waveshare 2.9" E-Paper | sonnenlesbar, low power |
-| IMU | MPU6050 | Neigung/Beschleunigung |
-| Temp/Druck | BMP280 | Umgebung, Höhenmeter |
-| SD | MicroSD-Modul (SPI) | Daten-Logging |
-| Power | LiPo + TP4056 + Boost | 3.3V/5V Versorgung |
-| Tachosignal | Optokoppler/Induktiv | Tacho-Kabel anzapfen |
-| Drehzahl | Induktiver Sensor am Zündkabel | oder Hall-Sensor |
-| Ganganzeige | Mikroschalter/Gabellichtschranke | Schaltwalze |
-| Kraftstoffstand | Widerstandssensor im Tank | Spannungsteiler |
-| Temp Motor | KTY81/PT1000 im Kühlschlauch | oder Thermistor |
-| Öldruck | Drucksensor 0-10bar | 0.5-4.5V Output |
-| Steuerung | Relais-Modul 4fach | Licht, Heizgriffe, etc. |
-=======
+
 - **Fahrzeugdaten**: Drehzahl (CDI-Pickup), Geschwindigkeit (GPS/Hall), Kühlmitteltemperatur, Kraftstoffstand, Öldruck, Ganganzeige, Bordspannung
 - **Multi-Display**: E-Paper für Instrumente (sonnenlesbar, low power) + TFT für Navigation (dynamisch, farbig)
 - **GPS-Tracking**: 10Hz GPS mit Touren-Aufzeichnung, GPX-Export, Höhenmeter, Statistiken
@@ -67,7 +32,7 @@ Dieses Projekt dokumentiert den Bau eines vollständigen Bordcomputers für die 
 - **Safety**: Crash-Erkennung mit automatischem Notfall-SOS, Diebstahl-Warnung
 - **Power-Management**: LiPo-Backup, Deep-Sleep, Wake-on-Motion, automatische Zustandsübergänge
 - **OTA-Update**: Firmware-Update über Bluetooth mit Dual-Partition-Rollback
->>>>>>> research/pd06-hardware
+
 
 ---
 
@@ -329,19 +294,8 @@ transalp-bordcomputer/
 │       ├── 06-feature-roadmap.md
 │       └── 07-display-navigation-smartphone.md
 ├── firmware/
-<<<<<<< HEAD
-│   ├── main/                # ESP-IDF main app
-├── components/          # Wiederverwendbare Komponenten
-│   ├── gps/             # GPS-Treiber + NMEA-Parsing
-│   ├── display/         # E-Paper Treiber + UI
-│   ├── sensors/         # IMU, BMP280
-│   ├── vehicle/         # PD06-Sensoren: Drehzahl, Tacho, Gang, Temp, Kraftstoff
-│   ├── logger/          # SD-Karten Logging
-│   ├── ble/             # Bluetooth LE Kommunikation
-│   ├── power/           # Power Management
-│   └── control/         # Relais-Steuerung (Licht, Heizgriffe, etc.)
-=======
->>>>>>> research/pd06-hardware
+
+
 │   ├── CMakeLists.txt
 │   ├── partitions.csv               OTA-fähige Partition-Tabelle
 │   ├── sdkconfig.defaults           ESP-IDF Build-Konfiguration
@@ -366,11 +320,9 @@ transalp-bordcomputer/
 
 ---
 
-<<<<<<< HEAD
-🚧 Planungsphase — Recherche abgeschlossen (33.500 Wörter in `docs/research/`), Hardware-Teile werden spezifiziert.
-=======
+
 ## Hardware-Komponenten
->>>>>>> research/pd06-hardware
+
 
 | Komponente | Modul | Bemerkung |
 |---|---|---|
