@@ -1,6 +1,6 @@
 # Projekt-Roadmap: Transalp Bordcomputer
 
-> Zuletzt aktualisiert: 13.10.2026 (PM-Runde 2)
+> Zuletzt aktualisiert: 13.10.2026 (PM-Runde 3)
 > Status: Aktiv — 5 Worker-Profile + 1 Projektmanager (PM) auf Mac mini
 
 ## Projektziel
@@ -21,21 +21,27 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 
 **7 Research-Dokumente, ~39.000 Wörter in docs/research/**
 
-### Phase 1: Analyse & Planung (LAUFEND — 6 Tasks dispatched)
-- [ ] Feature-Realisierungs-Matrix (Datenlage -> Machbarkeit) — **worker** (t_13aa20d8)
-- [ ] Master-Plan (BOM, Kosten, Phasen, Support-Schnittstellen) — **transalp-plan** (t_66381dae)
-- [ ] Premium UI/UX Design-Konzept (Animationen, Layouts, Screens) — **transalp-ui** (t_62aba3bf)
-- [ ] Firmware-Architektur (Rendering-Engine, Pipelines, BLE-Stack) — **transalp-firmware** (t_379223a5)
-- [ ] Diagnose & Support (DTC-System, Self-Test, Remote-Diagnose) — **transalp-diag** (t_b4d53b0f)
-- [ ] Connectivity & Companion-App (GATT-Services, App-Architektur) — **worker** (t_2c7740fa)
+### Phase 1: Analyse & Planung (ABGESCHLOSSEN)
+- [x] Feature-Realisierungs-Matrix (Datenlage -> Machbarkeit) — **worker** (t_13aa20d8) → `08-feature-realization-matrix.md` (6.845 Wörter)
+- [x] Master-Plan (BOM, Kosten, Phasen, Support-Schnittstellen) — **transalp-plan** (t_66381dae) → `09-master-plan.md` (9.825 Wörter)
+- [x] Premium UI/UX Design-Konzept (Animationen, Layouts, Screens) — **transalp-ui** (t_62aba3bf) → `10-ui-ux-design.md` (8.278 Wörter)
+- [x] Firmware-Architektur (Rendering-Engine, Pipelines, BLE-Stack) — **transalp-firmware** (t_379223a5) → `11-firmware-architecture.md` (9.411 Wörter)
+- [x] Diagnose & Support (DTC-System, Self-Test, Remote-Diagnose) — **transalp-diag** (t_b4d53b0f) → `12-diagnose-support.md` (7.593 Wörter)
+- [x] Connectivity & Companion-App (GATT-Services, App-Architektur) — **worker** (t_2c7740fa) → `13-connectivity-app.md` (7.948 Wörter)
 
-### Phase 2: Design & Prototyp (GEPLANT)
-- [ ] UI-Mockups (HTML/SVG Prototypen für jeden Screen)
-- [ ] Hardware-Schaltplan (KiCad)
-- [ ] PCB-Layout
-- [ ] Pin-Layout und Verdrahtungsplan
-- [ ] Gehäuse-Design (Blender/FreeCAD, 3D-Druck)
-- [ ] Companion-App Prototyp (React Native)
+**6 Analyse-Dokumente, ~50.000 Wörter — alle auf main gemerged**
+
+### Phase 1.5: Qualitätsbereinigung (LAUFEND)
+- [ ] Markennamen-Entfernung in 9 Dokumenten (46 Verweise auf Apple/Google/Samsung/iOS/Android)
+- [ ] Dokument 07 zu kurz (2.421 Wörter, Minimum 3.000) — erweitern oder zusammenführen
+
+### Phase 2: Design & Prototyp (GEPLANT — Tasks in Erstellung)
+- [ ] UI-Mockups (HTML/SVG Prototypen für jeden Screen) — **transalp-ui**
+- [ ] Hardware-Schaltplan (Pin-Layout, Verdrahtungsplan, KiCad-kompatibel) — **transalp-firmware**
+- [ ] PCB-Layout-Konzept (Layer-Stackup, Routing-Regeln, EMV-Optimierung) — **transalp-plan**
+- [ ] Companion-App Prototyp (React Native Grundgerüst, BLE-Verbindung) — **transalp-diag**
+- [ ] Test-Strategie & Benchmark-Konzept (Unit-Tests, HIL, Performance) — **worker**
+- [ ] Gehäuse-Design (3D-Druck-Konzept, Montage, Wasserfestigkeit) — **worker**
 
 ### Phase 3: Implementierung (GEPLANT)
 - [ ] Core-Firmware (GPS, Display, Sensoren, Logger)
@@ -75,11 +81,23 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 - `--max-retries 3` gesetzt für bessere Fehlertoleranz
 - ROADMAP.md aktualisiert
 
+### Runde 3 (13.10.2026 ~20:10)
+- **Alle 6 Phase-1-Tasks abgeschlossen** — 0 Running, 0 Blocked
+- 6 Branches in main gemerged: feature-matrix, master-plan, ui-ux-design, firmware-arch, diagnose-support, connectivity-app
+- Alle Dokumente auf main gepusht (Commit d54ef4c)
+- **Qualitäts-Review durchgeführt:**
+  - Wortzahl alle 13 Dokumente: 89.381 Wörter gesamt
+  - Markennamen-Check: 9 Dateien mit 46 Verweisen auf Apple/Google/Samsung/iOS/Android
+  - Dokument 07 zu kurz: 2.421 Wörter (Minimum war 3.000)
+- **Neue Tasks erstellt:** Markennamen-Bereinigung + 6 Phase-2-Tasks
+- Metriken und ROADMAP aktualisiert
+
 ## Offene Fragen
 - Welche TFT-Displays sind sonnenlesbar genug?
-- Companion-App: React Native vs. Flutter?
+- Companion-App: React Native vs. Flutter? (Master-Plan empfiehlt React Native)
 - Ist ein zweiter ESP32 als Display-Controller sinnvoll?
 - Pin-Konflikte bei Dual-SPI (FSPI + HSPI) mit SD-Karte?
+- Dokument 07 erweitern oder mit 08 zusammenführen?
 
 ## Worker-Team
 | Profil | Modell | Rolle |
@@ -94,9 +112,11 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 ## Metriken
 | Metrik | Wert |
 |---|---|
-| Research-Dokumente | 7 |
-| Wörter gesamt (Research) | ~39.000 |
-| Tasks gesamt (aktiv) | 7 (1 done, 6 running) |
+| Research-Dokumente | 13 |
+| Wörter gesamt (Research) | 89.381 |
+| Tasks gesamt (done) | 14 (7 Phase 0 + 7 Phase 1) |
 | Tasks archiviert | 7 (blockiert, durch Skill-Fehler ersetzt) |
 | Phase 0 Fortschritt | 100% |
-| Phase 1 Fortschritt | 0% (6 Tasks running) |
+| Phase 1 Fortschritt | 100% |
+| Phase 1.5 Fortschritt | 0% (Markennamen-Bereinigung ausstehend) |
+| Phase 2 Fortschritt | 0% (Tasks in Erstellung) |
