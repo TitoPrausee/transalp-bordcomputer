@@ -40,7 +40,7 @@ Dieses Projekt dokumentiert den Bau eines vollständigen Bordcomputers für die 
 
 ```mermaid
 graph TB
-    subgraph Vehicle[&quot;Honda Transalp 600 (PD06)&quot;]
+    subgraph Vehicle['Honda Transalp 600 (PD06)']
         CDI[CDI-Zündung<br/>Pickup-Signal]
         TACHO[Tachowelle<br/>mechanisch]
         TEMP[Kühlmittel<br/>Temperatursensor]
@@ -49,7 +49,7 @@ graph TB
         LIGHT[Licht/Blinker<br/>12V]
     end
 
-    subgraph Sensors[&quot;Sensor-Frontend&quot;]
+    subgraph Sensors['Sensor-Frontend']
         OPT[Optokoppler<br/>Galvanische Trennung]
         IND[Induktivsensor<br/>GT101 am Zündkabel]
         HALL[Hall-Sensor<br/>am Vorderrad]
@@ -58,7 +58,7 @@ graph TB
         ADC_INTER[ADC-Interface<br/>esp_adc_cal]
     end
 
-    subgraph MCU[&quot;ESP32-S3 (Core Module)&quot;]
+    subgraph MCU['ESP32-S3 (Core Module)']
         CPU[Dual-Core 240MHz<br/>16MB Flash, 8MB PSRAM]
         RTOS[FreeRTOS<br/>Task-Scheduler]
         SPI_BUS[SPI Bus<br/>Display + SD]
@@ -67,17 +67,17 @@ graph TB
         BLE_STACK[NimBLE<br/>GATT Server]
     end
 
-    subgraph Peripherals[&quot;Peripherie&quot;]
+    subgraph Peripherals['Peripherie']
         GPS[u-blox NEO-M9N<br/>10Hz, 72-Kanal]
-        EPAPER[E-Paper 2.9&quot;<br/>296×128, Partial-Refresh]
-        TFT[TFT 2.4-3.5&quot;<br/>ILI9341/ILI9488]
+        EPAPER[E-Paper 2.9'<br/>296×128, Partial-Refresh]
+        TFT[TFT 2.4-3.5'<br/>ILI9341/ILI9488]
         IMU[MPU6050<br/>Gyro + Accel]
         BMP[BMP280<br/>Temp + Baro]
         SD[MicroSD<br/>Class 10, FAT32]
         RELAY[4-Kanal Relais<br/>Zusatzlicht/Heizgriffe]
     end
 
-    subgraph Power[&quot;Power-Management&quot;]
+    subgraph Power['Power-Management']
         BATT[LiPo 18650<br/>3400mAh]
         CHARGE[TP4056<br/>USB-C Laden]
         BOOST[MT3608<br/>3.7V → 5V]
@@ -85,7 +85,7 @@ graph TB
         MONITOR[ADC Akku-<br/>Überwachung]
     end
 
-    subgraph Smartphone[&quot;Smartphone (Companion App)&quot;]
+    subgraph Smartphone['Smartphone (Companion App)']
         APP[React Native / Flutter<br/>Companion App]
         MAPS[Native Maps API<br/>MapKit / Google Maps]
         NAV[Turn-by-Turn<br/>Navigation Engine]
@@ -150,13 +150,13 @@ graph TB
 
 ```mermaid
 graph LR
-    subgraph Core1[&quot;Core 1 (Real-Time)&quot;]
+    subgraph Core1['Core 1 (Real-Time)']
         GPS_TASK[gps_task<br/>10 Hz | Prio 5]
         SENSOR_TASK[sensor_task<br/>50 Hz | Prio 4]
         VEHICLE_TASK[vehicle_task<br/>10 Hz | Prio 4]
     end
 
-    subgraph Core0[&quot;Core 0 (UI + Comms)&quot;]
+    subgraph Core0['Core 0 (UI + Comms)']
         DISPLAY_TASK[display_task<br/>1 Hz | Prio 2]
         LOGGER_TASK[logger_task<br/>5 Hz | Prio 3]
         BLE_TASK[ble_task<br/>Event | Prio 3]
@@ -225,33 +225,33 @@ stateDiagram-v2
 graph TD
     SERVER[ESP32-S3 NimBLE GATT Server]
 
-    subgraph NavService[&quot;Service: Navigation&quot;]
+    subgraph NavService['Service: Navigation']
         NAV_MANEUVER[Characteristic: Next Maneuver<br/>Type + Distance + Street Name]
         NAV_ROUTE[Characteristic: Route Info<br/>Total Distance + ETA]
         NAV_ROAD[Characteristic: Current Road<br/>Street + Speed Limit + Heading]
     end
 
-    subgraph MediaService[&quot;Service: Media&quot;]
+    subgraph MediaService['Service: Media']
         MEDIA_TRACK[Characteristic: Now Playing<br/>Artist + Title + Position]
         MEDIA_CTRL[Characteristic: Media Control<br/>Play/Pause/Next/Prev]
     end
 
-    subgraph PhoneService[&quot;Service: Phone&quot;]
+    subgraph PhoneService['Service: Phone']
         PHONE_CALL[Characteristic: Incoming Call<br/>Caller Name + Number]
         PHONE_NOTIF[Characteristic: Notification<br/>App + Title + Body]
     end
 
-    subgraph TelemetryService[&quot;Service: Telemetry (BC → Phone)&quot;]
+    subgraph TelemetryService['Service: Telemetry (BC → Phone)']
         TEL_LIVE[Characteristic: Live Data<br/>Speed + RPM + Temp + Fuel + Gear + Lean]
         TEL_LOG[Characteristic: Track Export<br/>GPX/CSV via BLE Transfer]
     end
 
-    subgraph ConfigService[&quot;Service: Config&quot;]
+    subgraph ConfigService['Service: Config']
         CONF_READ[Characteristic: Read Config<br/>Pinmap + Calibration + Thresholds]
         CONF_WRITE[Characteristic: Write Config<br/>Live Parameter Changes]
     end
 
-    subgraph OTAService[&quot;Service: OTA Update&quot;]
+    subgraph OTAService['Service: OTA Update']
         OTA_CTRL[Characteristic: OTA Control<br/>Start + Chunk Count + Verify]
         OTA_DATA[Characteristic: OTA Data<br/>4KB Chunks → Flash Partition]
     end
