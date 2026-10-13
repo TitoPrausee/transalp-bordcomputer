@@ -27,7 +27,7 @@ jobs:
       matrix:
         idf-version: ['v5.2', 'v5.3', 'v5.4']
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Setup ESP-IDF
         uses: espressif/esp-idf-ci-action@v1
@@ -92,7 +92,7 @@ jobs:
     name: Unit Tests (Unity + GCC)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Install build tools
         run: |
@@ -173,7 +173,7 @@ jobs:
     name: Static Analysis (cppcheck + clang-format)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Install tools
         run: |
