@@ -49,7 +49,7 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 - [x] Bill of Materials (BOM) & Sourcing-Konzept — **transalp-plan** (t_9b9760ec) → `docs/BOM.md` (7.528 Wörter)
 - [x] User-Manual & Installationsanleitung für PD06 — **worker** (t_d71d39c3) → `docs/USER-MANUAL.md` (8.942 Wörter)
 
-### Phase 3: Implementierung (FAST ABGESCHLOSSEN — 9/10 done)
+### Phase 3: Implementierung (ABGESCHLOSSEN — 10/10 done)
 - [x] Integrierte System-Architektur (ARCHITECTURE.md) — **transalp-ui** (t_6f1b1c07) → `docs/ARCHITECTURE.md` (8.845 Wörter)
 - [x] Rendering-Engine & Display-Treiber (TFT + E-Paper) — **transalp-firmware** (t_adf3f5ea) → `firmware/components/display/` (2.034 Zeilen, 6 Dateien)
 - [x] Sensor-Driver (RPM, Temp, Fuel, Gear, IMU) — **worker** (t_e5d0d7c5) → `firmware/components/sensors/` (1.225 Zeilen: rpm.c 158, temperature.c 296, fuel_level.c 145, gear_indicator.c 96, imu.c 238, sensors.c 211, sensors.h 81) — gemerged (commit 2360962a)
@@ -59,7 +59,7 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 - [x] Power Management & Battery Monitoring — **transalp-ui** (t_1111e7f1) → `firmware/components/power/` (1.357 Zeilen: power.c 418, power_manager.c 718, power.h 221) — gemerged (commit 2d756192)
 - [x] OTA-Update System & Firmware-Engineering Guide — **worker** (t_4daa19c4) → `firmware/components/ota/` (1.609 Zeilen: ota_update.c 986, ota_secure_boot.c 269, ota_update.h 354) + `docs/FIRMWARE-GUIDE.md` (5.366 Wörter) — gemerged (commit 19bab571)
 - [x] Diagnose-System (DTC, Self-Test, Konsole) — **transalp-diag** (t_8454dd54) → `firmware/components/diagnostics/` (1.861 Zeilen: diagnostics.c 670, dtc.c 400, selftest.c 582, diagnostics.h 207) — gemerged (commit 2d756192)
-- [ ] Companion-App Integration (Dashboard, Navigation, Diagnose) — **worker** (t_968d6126) → running
+- [x] Companion-App Integration (Dashboard, Navigation, Diagnose) — **worker** (t_968d6126) → `companion-app/src/` (11 Dateien, ~4.713 Zeilen TS/TSX: BleManager, DashboardScreen, NavigationScreen, DiagnoseScreen, SettingsScreen, binary-parsers) — gemerged (commit d5326b4b)
 
 ### Phase 4: Integration & Test (LÄUFT)
 - [x] Firmware Integration & Build-System (main.c, Event-Loop, CMake) — **transalp-firmware** (t_95f1b701) → `firmware/main/` (915 Zeilen: main.c 571, app_event_loop.c 215, app_event_loop.h 129) — gemerged (commit 3d9b9ef6)
@@ -216,8 +216,9 @@ Diagnose-System und Premium-UI/UX mit Animationen.
   - API-Dokumentation: BLE GATT Interface Reference → transalp-firmware (t_2d00106d)
   - Release-Notes v1.0 & Changelog-Konzept → transalp-plan (t_321097f7)
   - Troubleshooting-Guide & FAQ → transalp-ui (t_4d933681)
-- **5 Tasks running:** Companion-App (worker), API-Reference (firmware), Release-Notes (plan), Troubleshooting (ui)
+- **4 Tasks running:** API-Reference (firmware), Release-Notes (plan), Troubleshooting (ui)
 - Review-Kommentare auf allen 5 gemergten Tasks hinterlegt
+- **Companion-App Integration (t_968d6126) nachträglich entdeckt und gemerged:** 11 Dateien, ~4.713 Zeilen TS/TSX (BleManager, Dashboard, Navigation, Diagnose, Settings, binary-parsers) — gemerged (commit d5326b4b). tsc --noEmit 0 errors. **PHASE 3 = 100% ERLEDIGT**
 
 ## Offene Fragen
 - Welche TFT-Displays sind sonnenlesbar genug?
@@ -248,13 +249,13 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 | Firmware C/H-Zeilen | 15.319 (10 Komponenten + main + test-suite) |
 | CI/CD Workflows | 3 (firmware-ci, companion-app-ci, docs-ci) + brand-blocklist |
 | Unit-Tests | 3 (test_dtc, test_event_loop, test_nmea_parser) + ESP-IDF-Mocks |
-| Tasks done | 34 (+5 seit Runde 9: Feldtest, Performance, CI/CD, TCO, Security) |
-| Tasks running | 5 (Companion-App, API-Reference, Release-Notes, Troubleshooting) |
+| Tasks done | 35 (+6 seit Runde 9: Feldtest, Performance, CI/CD, TCO, Security, Companion-App) |
+| Tasks running | 4 (API-Reference, Release-Notes, Troubleshooting) |
 | Tasks blocked | 0 |
 | Phase 0 Fortschritt | 100% ✅ |
 | Phase 1 Fortschritt | 100% ✅ |
 | Phase 1.5 Fortschritt | 100% ✅ |
 | Phase 2 Fortschritt | 100% ✅ (6/6 done) |
 | Phase 2.5 Fortschritt | 100% ✅ (3/3 done) |
-| Phase 3 Fortschritt | 90% (9/10 done, 1 running: Companion-App) |
+| Phase 3 Fortschritt | 100% ✅ (10/10 done) |
 | Phase 4 Fortschritt | 8/11 done, 3 running (Feldtest, Performance, CI/CD, TCO, Security done; API-Ref, Release-Notes, Troubleshooting running) |
