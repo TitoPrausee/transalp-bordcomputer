@@ -62,10 +62,14 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 - [ ] Companion-App Integration (Dashboard, Navigation, Diagnose) — **worker** (t_968d6126) → running
 
 ### Phase 4: Integration & Test (LÄUFT)
-- [ ] Firmware Integration & Build-System (main.c, Event-Loop, CMake) — **transalp-firmware** (t_95f1b701) → running
-- [ ] Hardware-Test-Bench & Benchmark-Spezifikation — **transalp-diag** (t_dd852a50) → running
-- [ ] Montage-Anleitung & Einbau-Konzept für PD06 — **transalp-plan** (t_9f608f6e) → running
+- [x] Firmware Integration & Build-System (main.c, Event-Loop, CMake) — **transalp-firmware** (t_95f1b701) → `firmware/main/` (915 Zeilen: main.c 571, app_event_loop.c 215, app_event_loop.h 129) — gemerged (commit 3d9b9ef6)
+- [x] Hardware-Test-Bench & Benchmark-Spezifikation — **transalp-diag** (t_dd852a50) → `docs/HARDWARE-TEST-BENCH.md` (1.042 Zeilen) + `docs/BENCHMARK-SPEC.md` (529 Zeilen) — gemerged (commit ffaca698)
+- [x] Montage-Anleitung & Einbau-Konzept für PD06 — **transalp-plan** (t_9f608f6e) → `docs/INSTALLATION-GUIDE.md` (1.659 Zeilen) — gemerged (commit 0529bf9)
 - [ ] Feldtest-Protokoll & Evaluations-Kriterien — **transalp-ui** (t_8451c1c9) → running
+- [ ] Performance-Optimierung & Profiling-Konzept — **transalp-firmware** (t_d8927032) → running
+- [ ] CI/CD-Pipeline & Automated Testing — **transalp-diag** (t_727233a1) → running
+- [ ] Total Cost of Ownership & Budget-Analyse — **transalp-plan** (t_28e4c582) → running
+- [ ] Sicherheitsanalyse & Threat Model (STRIDE) — **worker** (t_6eab2b4d) → running
 
 ## PM-Protokoll
 
@@ -176,6 +180,23 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 - **6 Tasks running:** Companion-App (worker) + 4 neue Phase-4-Tasks
 - Review-Kommentare auf allen 4 gemergten Tasks hinterlegt
 
+### Runde 9 (13.10.2026 ~23:00)
+- **3 fertige Tasks reviewt und gemerged:**
+  - Firmware Integration & Build-System (t_95f1b701): `firmware/main/` 915 Zeilen (main.c 571, app_event_loop.c 215, app_event_loop.h 129) — 10-Schritt Startup-Sequenz, 8 FreeRTOS Tasks mit Core-Affinity, Event-Bus — gemerged (commit 3d9b9ef6)
+  - Hardware-Test-Bench & Benchmark (t_dd852a50): `docs/HARDWARE-TEST-BENCH.md` 1.042 Zeilen + `docs/BENCHMARK-SPEC.md` 529 Zeilen — Signal-Simulatoren, Test-Prozeduren, Benchmark-Zielwerte — gemerged (commit ffaca698)
+  - Montage-Anleitung (t_9f608f6e): `docs/INSTALLATION-GUIDE.md` 1.659 Zeilen — PD06-Einbau: PCB, Verkabelung, Display, Inbetriebnahme — gemerged (commit 0529bf9)
+- **Wiederkehrendes Merge-Problem erkannt:** Worker committen auf Feature-Branches aber mergen nicht nach main. Auf main waren nur Stub-Versionen. Feature-Branches selektiv gemerged (nur relevante Dateien um Konflikte zu vermeiden).
+- **Markennamen-Check:** 0 Marken in neuen Dateien
+- **Auf origin gepusht (Commits 3d9b9ef6 → ffaca698 → 0529bf9)**
+- **Firmware-Gesamt: 14.053 C/H-Zeilen** (+791: integration layer main.c + event loop)
+- **4 neue Phase-4-Tasks erstellt und dispatched:**
+  - Performance-Optimierung & Profiling → transalp-firmware (t_d8927032)
+  - CI/CD-Pipeline & Automated Testing → transalp-diag (t_727233a1)
+  - Total Cost of Ownership & Budget → transalp-plan (t_28e4c582)
+  - Sicherheitsanalyse & Threat Model → worker (t_6eab2b4d, ursprünglich transalp-research zugedacht, aber Profil nicht auf Disk)
+- **6 Tasks running:** Companion-App, Feldtest-Protokoll, Performance, CI/CD, TCO, Security
+- Review-Kommentare auf allen 3 gemergten Tasks hinterlegt
+
 ## Offene Fragen
 - Welche TFT-Displays sind sonnenlesbar genug?
 - Companion-App: React Native vs. Flutter? (Master-Plan empfiehlt React Native)
@@ -198,18 +219,18 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 |---|---|
 | Research-Dokumente | 14 (+ README) |
 | Wörter gesamt (Research) | 89.476 |
-| Design-Dokumente | 10 (ARCHITECTURE, BOM, CASE-DESIGN, FIRMWARE-GUIDE, HARDWARE, PCB-LAYOUT, PINMAP, ROADMAP, TEST-STRATEGY, USER-MANUAL) |
-| Wörter gesamt (Design-Docs) | 63.994 |
-| Wörter gesamt (alle Docs) | 153.470 |
-| Code-Prototypen | 3 (firmware/ 57 Dateien, companion-app/ 20 Dateien, mockups/ 35 Dateien) |
-| Firmware C/H-Zeilen | 13.262 (9 Komponenten: sensors 1.225, power 1.357, diagnostics 1.861, ble 1.796, gps 886, ota 1.609, display 2.034, storage 1.844, main 152) |
-| Tasks done | 29 (+4: Sensor, Power, Diagnostics, Storage) |
-| Tasks running | 6 (Companion-App + 4 Phase-4-Tasks) |
+| Design-Dokumente | 12 (ARCHITECTURE, BENCHMARK-SPEC, BOM, CASE-DESIGN, FIRMWARE-GUIDE, HARDWARE, HARDWARE-TEST-BENCH, INSTALLATION-GUIDE, PCB-LAYOUT, PINMAP, TEST-STRATEGY, USER-MANUAL) |
+| Wörter gesamt (Design-Docs) | 80.920 |
+| Wörter gesamt (alle Docs) | 170.396 |
+| Code-Prototypen | 3 (firmware/ 57 Dateien, companion-app/ 2926 Dateien, mockups/ 35 Dateien) |
+| Firmware C/H-Zeilen | 14.053 (10 Komponenten: sensors 1.225, power 1.357, diagnostics 1.861, ble 1.796, gps 886, ota 1.609, display 2.034, storage 1.844, main 571, event_loop 344, utils/board_config ~326) |
+| Tasks done | 29 (+3 seit Runde 8: Firmware Integration, Test-Bench, Installation Guide) |
+| Tasks running | 6 (Companion-App, Feldtest, Performance, CI/CD, TCO, Security) |
 | Tasks blocked | 0 |
 | Phase 0 Fortschritt | 100% ✅ |
 | Phase 1 Fortschritt | 100% ✅ |
 | Phase 1.5 Fortschritt | 100% ✅ |
 | Phase 2 Fortschritt | 100% ✅ (6/6 done) |
 | Phase 2.5 Fortschritt | 100% ✅ (3/3 done) |
-| Phase 3 Fortschritt | 90% (9/10 done, 1 running) |
-| Phase 4 Fortschritt | GESTARTET (4 Tasks running) |
+| Phase 3 Fortschritt | 90% (9/10 done, 1 running: Companion-App) |
+| Phase 4 Fortschritt | LAUFEND (3/8 done, 5 running) |
