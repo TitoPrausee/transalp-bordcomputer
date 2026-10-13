@@ -427,19 +427,4 @@ Dieses Projekt steht unter der **PolyForm Noncommercial License 1.0.0**.
 
 Siehe [LICENSE](LICENSE) für den vollständigen Lizenztext.
 
----
 
-## Mitwirkende
-
-**Tito Tarek Prause** — Projektersteller & Maintainer
-
-Beiträge via Pull Request willkommen. Durch das Einreichen eines Beitrags stimmen Sie zu, dass Ihre Änderungen unter derselben PolyForm Noncommercial Lizenz stehen.
-
----
-
-## Danksagung
-
-- [Espressif](https://www.espressif.com/) für ESP-IDF und ESP32-S3
-- [u-blox](https://www.u-blox.com/) für NEO-M9N GPS-Module
-- Honda Transalp 600 Community (ADV Rider, Honda-Forum.de)
-- Alle Open-Source-Projekte, deren Libraries und Dokumentation in der Recherche referenziert wurden
