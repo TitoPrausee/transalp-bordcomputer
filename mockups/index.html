@@ -1,96 +1,269 @@
 <!DOCTYPE html>
-<html lang="de">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bordcomputer UI Mockups</title>
-<link rel="stylesheet" href="css/style.css">
-<link rel="stylesheet" href="css/animations.css">
+<html lang="de"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bordcomputer – Screens</title>
 <style>
-body { background: #0a0a0c; }
-.index-header { font-size: 28px; margin-top: 20px; }
-.index-subtitle { margin-bottom: 32px; }
-.screen-grid { max-width: 960px; }
-.screen-card-thumb iframe {
-  transform: scale(0.55);
-}
-</style>
-</head>
-<body>
-<div class="index-header">Bordcomputer UI Mockups</div>
-<div class="index-subtitle">Interaktive HTML/SVG Prototypen - 480x320 TFT</div>
+@property --v{syntax:'<integer>';inherits:true;initial-value:0}
+@property --f{syntax:'<number>';inherits:true;initial-value:0}
+@property --g{syntax:'<integer>';inherits:true;initial-value:1}
+@property --p{syntax:'<integer>';inherits:true;initial-value:0}
+@property --n{syntax:'<integer>';inherits:true;initial-value:0}
+:root{--page:#0c0c0c;--bg:#000;--text:#fff;--muted:#8c8c8c;--line:#1d1d1d;--acc:#f0a020;--ok:#3ddc84;--bad:#e5322d;--font:"SF Pro Display",-apple-system,"Helvetica Neue","Inter",Arial,sans-serif;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--page:#0c0c0c}}
+:root[data-theme="dark"]{--page:#0c0c0c}
+body{margin:0;background:var(--page);color:var(--text);font-family:var(--font)}
+main{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr));gap:28px;padding:24px;max-width:1500px;margin:auto}
+figure{margin:0}figcaption{color:var(--muted);font-size:14px;margin-top:10px}
+.fr{aspect-ratio:1;position:relative;overflow:hidden;border-radius:20px;background:var(--bg);outline:1px solid var(--line)}
+.s{width:480px;height:480px;position:absolute;left:0;top:0;transform-origin:0 0;font-variant-numeric:tabular-nums}
+.a{position:absolute}.c{left:0;right:0;text-align:center}.v{font-weight:200}.u{color:var(--muted);font-weight:300}
+.l{font-size:10px;letter-spacing:2px;color:var(--muted)}
+.bar{left:30px;right:30px;top:16px;display:flex;justify-content:space-between;font-size:12px;color:var(--muted);letter-spacing:1px}
+.dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--ok);margin-right:6px;animation:dp 2s infinite}
+.num{counter-reset:v var(--v)}.num::after{content:counter(v)}
+.gr{counter-reset:g var(--g)}.gr::after{content:counter(g)}
+.cnt{counter-reset:c var(--n)}.cnt::after{content:counter(c)}
+.drv{animation:drive 16s ease-in-out infinite}
+.sp{stroke-dasharray:calc(var(--v)/200) 2}
+.seg{stroke-dasharray:calc(clamp(0,(var(--f) - var(--a))*8,1)) 2}
+.ic{fill:none;stroke:#fff;stroke-width:14;stroke-linecap:round;stroke-linejoin:round}
+.ph{animation:ph 16s infinite}
+.rl{animation:redl 16s infinite}
+.am{fill:none;stroke:var(--acc);stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.dist{animation:dist 16s infinite}.dist::after{content:counter(c) " m"}
+@keyframes dp{50%{opacity:.3}}
+@keyframes drive{0%{--v:0;--f:.11;--g:1}10%{--v:26;--f:.6;--g:1}10.5%{--v:26;--f:.4;--g:2}24%{--v:62;--f:.66;--g:2}24.5%{--v:62;--f:.45;--g:3}42%{--v:112;--f:.72;--g:3}42.5%{--v:112;--f:.52;--g:4}62%{--v:156;--f:.74;--g:4}62.5%{--v:156;--f:.55;--g:5}80%{--v:188;--f:.88;--g:5}92%{--v:40;--f:.3;--g:2}100%{--v:0;--f:.11;--g:1}}
+@keyframes redl{0%,78%{opacity:.3}80%{opacity:1}83%{opacity:.2}86%{opacity:1}89%{opacity:.2}92%,100%{opacity:.3}}
+@keyframes hl{0%,24%{opacity:1}28%,100%{opacity:.3}}
+@keyframes ph{0%{opacity:0;translate:0 14px}5%,22%{opacity:1;translate:0 0}25%,100%{opacity:0;translate:0 -14px}}
+@keyframes dist{0%{--n:450}22%{--n:40}25%{--n:450}47%{--n:40}50%{--n:450}72%{--n:40}75%{--n:450}97%{--n:40}100%{--n:450}}
+.tank{animation:tank 14s linear infinite}
+.fp{stroke-dasharray:var(--f) 2}
+.pc{counter-reset:p var(--p)}.pc::after{content:counter(p) " %"}
+@keyframes tank{0%{--f:.85;--p:85;--n:442}76%,80%{--f:.1;--p:10;--n:52}96%,100%{--f:.85;--p:85;--n:442}}
+@keyframes fcol{0%,70%{stroke:var(--acc)}71%,82%{stroke:var(--bad)}83%,100%{stroke:var(--acc)}}
+@keyframes fcolt{0%,70%{color:#fff}71%,82%{color:var(--bad)}83%,100%{color:#fff}}
+@keyframes fblink{0%,70%{opacity:1}72%{opacity:.2}76%{opacity:1}80%{opacity:.2}83%,100%{opacity:1}}
+@keyframes btxt2{0%,30%{opacity:0;letter-spacing:24px}46%,92%{opacity:1;letter-spacing:8px}100%{opacity:0}}
+/* Diagnose */
+.t{background:#0f0f0f;border-radius:10px;padding:10px;height:46px;font-size:12px;position:relative}
+.t small{display:block;margin-top:6px;font-size:11px;color:var(--c)}
+.t b{position:absolute;right:10px;top:12px;width:8px;height:8px;border-radius:50%;background:#444;animation:chk 8s infinite;animation-delay:var(--d)}
+@keyframes chk{0%,25%{background:#444}30%,90%{background:var(--c)}100%{background:#444}}
+@keyframes fill{0%{transform:scaleX(0)}80%,92%{transform:scaleX(1)}100%{transform:scaleX(0)}}
+@keyframes pct{0%{--n:0}80%,92%{--n:100}100%{--n:0}}
+.row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--line);font-size:13px}
+/* Einstellungen */
+.set{left:28px;right:28px;height:62px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);font-size:16px;font-weight:300}
+.tg{width:52px;height:30px;border-radius:15px;background:#262626;position:relative;animation:tgb 6s infinite;animation-delay:var(--d,0s)}
+.tg i{position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;animation:tgk 6s infinite;animation-delay:var(--d,0s)}
+@keyframes tgb{0%,45%{background:#262626}50%,95%{background:var(--acc)}100%{background:#262626}}
+@keyframes tgk{0%,45%{translate:0 0}50%,95%{translate:22px 0}100%{translate:0 0}}
+.sl{width:200px;height:4px;background:#262626;border-radius:2px;position:relative}
+.sl i{position:absolute;left:0;top:0;height:4px;border-radius:2px;background:#fff;animation:slf 6s ease-in-out infinite}
+.sl b{position:absolute;top:-8px;margin-left:-10px;width:20px;height:20px;border-radius:50%;background:#fff;animation:slk 6s ease-in-out infinite}
+@keyframes slf{0%,100%{width:30%}50%{width:85%}}
+@keyframes slk{0%,100%{left:30%}50%{left:85%}}
+.seg3{display:flex;background:#161616;border-radius:8px;position:relative;font-size:13px}
+.seg3 span{width:56px;text-align:center;padding:7px 0;position:relative;z-index:1}
+.seg3 i{position:absolute;left:0;top:0;width:56px;height:100%;border-radius:8px;background:#333;animation:sg 6s infinite}
+@keyframes sg{0%,28%{translate:0 0}33%,61%{translate:56px 0}66%,95%{translate:112px 0}100%{translate:0 0}}
+/* Tour */
+.st{width:200px}.st .big{font-size:56px;font-weight:200;line-height:1.1}
+.up{animation:up 8s infinite}.up::after{content:counter(c)}
+@keyframes up{0%{--n:0}35%,90%{--n:var(--t)}100%{--n:0}}
+.z2::after{content:counter(c,decimal-leading-zero)}
+#bars{display:flex;align-items:flex-end;gap:4px;height:140px}
+#bars i{flex:1;height:calc(var(--h)*1%);background:#d9d9d9;border-radius:2px 2px 0 0;transform-origin:bottom;animation:grow 8s infinite;animation-delay:calc(var(--i)*40ms)}
+@keyframes grow{0%{transform:scaleY(0)}30%,90%{transform:scaleY(1)}100%{transform:scaleY(0)}}
+/* Boot */
+.bt{fill:none;stroke:#fff;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+@keyframes bdot{0%{r:0;opacity:0}6%{r:5;opacity:1}16%{r:5;opacity:1}22%,100%{r:5;opacity:0}}
+@keyframes bring{0%,10%{stroke-dashoffset:1}28%,92%{stroke-dashoffset:0}100%{stroke-dashoffset:0;opacity:0}}
+@keyframes bsil{0%,28%{stroke-dashoffset:1}55%,92%{stroke-dashoffset:0}100%{opacity:0}}
+@keyframes btxt{0%,45%{opacity:0}58%,92%{opacity:1}100%{opacity:0}}
+@keyframes bbar{0%,58%{transform:scaleX(0)}90%{transform:scaleX(1)}96%{transform:scaleX(1);opacity:1}100%{transform:scaleX(1);opacity:0}}
+/* toti-Logo im Boot */
+.lg .wm rect,.lg .wm circle{transform-box:fill-box}
+.lg .lb{transform-origin:50% 100%}
+.lg .lb,.lg .lx{fill:var(--text)}
+.lg .lx,.lg .ld{transform-origin:50% 50%}
+.lg .la{transform-origin:0 50%}
+.go .wm{animation:lfade 8s both}
+.go .la{animation:lax .9s cubic-bezier(.7,0,.2,1) both}
+.go .lb{animation:lup .7s cubic-bezier(.7,0,.2,1) var(--d) both}
+.go .lx{animation:lwide .5s cubic-bezier(.7,0,.2,1) calc(var(--d) + .5s) both}
+.go .lr{animation:ldraw 1s cubic-bezier(.6,0,.3,1) var(--d) both}
+.go .ld{animation:ldrop .7s cubic-bezier(.3,1.6,.5,1) 1.9s both,lbeat 3s ease-in-out 2.8s infinite}
+.go .lp{animation:lrip 3s ease-out 2.8s infinite both}
+.go .lbar{animation:bbar 8s both}
+@keyframes lfade{0%,94%{opacity:1}100%{opacity:0}}
+@keyframes lax{from{transform:scaleX(0)}}
+@keyframes lup{from{transform:scaleY(0)}}
+@keyframes lwide{from{transform:scaleX(0)}}
+@keyframes ldraw{from{stroke-dashoffset:1}}
+@keyframes ldrop{from{transform:translateY(-120px) scale(.4);opacity:0}}
+@keyframes lbeat{50%{transform:scale(.82)}}
+@keyframes lrip{from{r:32;opacity:0}15%{opacity:.7}to{r:72;opacity:0}}
+@media (prefers-reduced-motion:reduce){.go *{animation:none!important}}
+/* Warnung */
+.w{inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;animation:ph3 12s infinite,wbg .9s infinite}
+@keyframes ph3{0%,30%{opacity:1}33%,100%{opacity:0}}
+@keyframes wbg{0%,100%{background:#3a0707}50%{background:#c4161c}}
+@keyframes wbl{50%{opacity:.15}}
+@media (prefers-reduced-motion:reduce){*{animation-play-state:paused!important}}
+</style></head><body>
+<svg width="0" height="0" style="position:absolute"><defs>
+<symbol id="as" viewBox="0 0 160 200"><path d="M80 190V30M40 72L80 30L120 72"/></symbol>
+<symbol id="ar" viewBox="0 0 160 200"><path d="M40 190V110Q40 70 80 70H130M100 36L132 70L100 104"/></symbol>
+<symbol id="ak1" viewBox="0 0 160 200"><g stroke-width="11"><circle cx="80" cy="72" r="30"/><path d="M90 190V101"/><path opacity=".3" d="M80 42V24 M50 72H32 M69.7 100.2L63 118"/><path d="M110 72H142M129 59L142 72L129 85"/></g></symbol>
+<symbol id="ak2" viewBox="0 0 160 200"><g stroke-width="11"><circle cx="80" cy="72" r="30"/><path d="M90 190V101"/><path opacity=".3" d="M110 72H128 M50 72H32 M69.7 100.2L63 118"/><path d="M80 42V10M67 23L80 10L93 23"/></g></symbol>
+<symbol id="ak3" viewBox="0 0 160 200"><g stroke-width="11"><circle cx="80" cy="72" r="30"/><path d="M90 190V101"/><path opacity=".3" d="M110 72H128 M80 42V24 M69.7 100.2L63 118"/><path d="M50 72H18M31 59L18 72L31 85"/></g></symbol>
+<symbol id="ak4" viewBox="0 0 160 200"><g stroke-width="11"><circle cx="80" cy="72" r="30"/><path d="M90 190V101"/><path opacity=".3" d="M110 72H128 M80 42V24 M50 72H32"/><path d="M69.7 100.2L58.8 130.3M75 123L58.8 130.3L51 114"/></g></symbol>
+</defs></svg>
+<main>
 
-<div class="screen-grid">
+<figure><div class="fr"><div class="s drv">
+<svg class="a" width="480" height="480"><g data-ring="240,240,161,3,s"></g><g data-ring="240,240,146,12,r"></g></svg>
+<div class="a bar"><span>14:32</span><span><i class="dot"></i>BLE · TOUR</span><span>9 SAT · 12.6 V</span></div>
+<div class="a c num v" style="top:124px;font-size:176px;line-height:1"></div>
+<div class="a c" style="top:320px;font-size:22px">km/h</div>
+<div class="a c" style="top:384px"><div class="gr v" style="font-size:44px;line-height:1"></div><div class="l">GANG</div></div>
+<div class="a" style="left:30px;top:56px"><div class="v" style="font-size:28px">90<span class="u" style="font-size:16px"> °C</span></div><div class="l">COOLANT</div></div>
+<div class="a" style="right:30px;top:56px;text-align:right"><div class="v" style="font-size:28px">62<span class="u" style="font-size:16px"> %</span></div><div style="width:70px;height:4px;background:#222;margin:4px 0 4px auto"><div style="width:62%;height:4px;background:var(--acc)"></div></div><div class="l">FUEL</div></div>
+<div class="a" style="left:30px;bottom:30px"><div class="v" style="font-size:28px">124.3<span class="u" style="font-size:16px"> km</span></div><div class="l">TRIP</div></div>
+<svg class="a am rl" style="right:30px;bottom:34px" width="34" height="34" viewBox="0 0 34 34"><path d="M17 4L31 29H3Z"/><path d="M17 13v8"/><circle cx="17" cy="25" r=".5"/></svg>
+</div></div><figcaption>Instrument</figcaption></figure>
+<figure><div class="fr"><div class="s tank">
+<svg class="a" width="480" height="480"><path d="M125.1 365.3A170 170 0 1 1 354.9 365.3" fill="none" stroke="#1d1d1d" stroke-width="10" stroke-linecap="round"/><path class="fp" d="M125.1 365.3A170 170 0 1 1 354.9 365.3" pathLength="1" fill="none" stroke="#f0a020" stroke-width="10" stroke-linecap="round" style="animation:fcol 14s linear infinite"/><path d="M83.9 257.1L58.1 259.9" stroke="#e5322d" stroke-width="3" stroke-linecap="round"/></svg>
+<svg class="a am" style="left:224px;top:92px;animation:fcol 14s linear infinite,fblink 14s linear infinite" width="32" height="42" viewBox="0 0 32 42"><rect x="2" y="3" width="18" height="34" rx="2"/><path d="M6 9h10v8H6z"/><path d="M20 14h4a4 4 0 0 1 4 4v14a3 3 0 0 0 6 0V12l-5-5"/></svg>
+<div class="a c" style="top:134px;animation:fcolt 14s linear infinite"><div class="cnt v" style="font-size:150px;line-height:1"></div></div>
+<div class="a c" style="top:288px;font-size:22px;color:var(--muted)">km Restreichweite</div>
+<div class="a c" style="top:384px"><div class="pc v" style="font-size:44px;line-height:1"></div><div class="l">TANK</div></div>
+</div></div><figcaption>Tankanzeige mit Restreichweite</figcaption></figure>
 
-  <a class="screen-card" href="screens/instrument.html">
-    <div class="screen-card-thumb">
-      <iframe src="screens/instrument.html" scrolling="no" sandbox="allow-scripts"></iframe>
-    </div>
-    <div class="screen-card-title">Instrument</div>
-    <div class="screen-card-desc">Speed, RPM-Balken, Gang, Kuehlmitteltemp, Kraftstoffstand, Uhrzeit</div>
-  </a>
 
-  <a class="screen-card" href="screens/navigation.html">
-    <div class="screen-card-thumb">
-      <iframe src="screens/navigation.html" scrolling="no" sandbox="allow-scripts"></iframe>
-    </div>
-    <div class="screen-card-title">Navigation</div>
-    <div class="screen-card-desc">Manoevrier-Pfeil mit Morphing, Distanz, Strassenname, ETA, Tacho-Mini</div>
-  </a>
+<figure><div class="fr"><div class="s drv">
+<svg class="a ic ph" style="left:40px;top:110px" width="160" height="200"><use href="#as"/></svg>
+<svg class="a ic ph" style="left:40px;top:110px;animation-delay:-12s" width="160" height="200"><use href="#ar"/></svg>
+<svg class="a ic ph" style="left:40px;top:110px;animation-delay:-8s;scale:-1 1" width="160" height="200"><use href="#ar"/></svg>
+<svg class="a ic ph" style="left:40px;top:110px;animation-delay:-4s" width="160" height="200"><use href="#ak2"/></svg>
+<div class="a cnt dist v" style="left:236px;top:128px;font-size:84px;line-height:1"></div>
+<div class="a" style="left:236px;top:240px;font-size:26px;font-weight:300;width:220px"><span class="a ph">Hauptstraße</span><span class="a ph" style="animation-delay:-12s">Bahnhofstraße</span><span class="a ph" style="animation-delay:-8s">Am Markt</span><span class="a ph" style="animation-delay:-4s">2. Ausfahrt</span></div>
+<div class="a" style="left:30px;bottom:30px"><div class="v" style="font-size:28px">15:08</div><div class="l">ETA · 12.4 KM</div></div>
+<div class="a" style="right:28px;bottom:28px;width:96px;height:96px"><svg class="a" width="96" height="96"><g data-ring="48,48,44,3,s"></g></svg><div class="a c num v" style="top:30px;font-size:34px;line-height:1"></div><div class="a c l" style="top:66px;letter-spacing:1px">km/h</div></div>
+</div></div><figcaption>Navigation</figcaption></figure>
 
-  <a class="screen-card" href="screens/split.html">
-    <div class="screen-card-thumb">
-      <iframe src="screens/split.html" scrolling="no" sandbox="allow-scripts"></iframe>
-    </div>
-    <div class="screen-card-title">Split</div>
-    <div class="screen-card-desc">Instrumente links (240px), Navigation rechts (240px)</div>
-  </a>
-
-  <a class="screen-card" href="screens/diagnose.html">
-    <div class="screen-card-thumb">
-      <iframe src="screens/diagnose.html" scrolling="no" sandbox="allow-scripts"></iframe>
-    </div>
-    <div class="screen-card-title">Diagnose</div>
-    <div class="screen-card-desc">Sensor-Status-Grid, DTC-Liste, Self-Test mit Animation</div>
-  </a>
-
-  <a class="screen-card" href="screens/settings.html">
-    <div class="screen-card-thumb">
-      <iframe src="screens/settings.html" scrolling="no" sandbox="allow-scripts"></iframe>
-    </div>
-    <div class="screen-card-title">Settings</div>
-    <div class="screen-card-desc">Helligkeit, BLE-Pairing, Log-Intervall, System-Konfiguration</div>
-  </a>
-
-  <a class="screen-card" href="screens/tour-statistik.html">
-    <div class="screen-card-thumb">
-      <iframe src="screens/tour-statistik.html" scrolling="no" sandbox="allow-scripts"></iframe>
-    </div>
-    <div class="screen-card-title">Tour-Statistik</div>
-    <div class="screen-card-desc">Count-Up-Animation, Hoehenprofil, Strecke, Dauer, avg/max Speed</div>
-  </a>
-
-  <a class="screen-card" href="screens/boot.html">
-    <div class="screen-card-thumb">
-      <iframe src="screens/boot.html" scrolling="no" sandbox="allow-scripts"></iframe>
-    </div>
-    <div class="screen-card-title">Boot</div>
-    <div class="screen-card-desc">Logo-Animation: Punkt zu Kreis, Silhouette, Loading-Bar</div>
-  </a>
-
-  <a class="screen-card" href="screens/warning.html">
-    <div class="screen-card-thumb">
-      <iframe src="screens/warning.html" scrolling="no" sandbox="allow-scripts"></iframe>
-    </div>
-    <div class="screen-card-title">Warning</div>
-    <div class="screen-card-desc">Vollbild-Warnung: Oeldruck, Temperatur, Bordspannung - pulsierend</div>
-  </a>
-
+<figure><div class="fr"><div class="s drv">
+<div class="a" style="left:240px;top:0;width:1px;height:480px;background:var(--line)"></div>
+<svg class="a" width="240" height="480"><g data-ring="120,190,92,3,s"></g><g data-ring="120,190,82,9,r"></g></svg>
+<div class="a num v" style="left:0;width:240px;text-align:center;top:146px;font-size:84px;line-height:1"></div>
+<div class="a l" style="left:0;width:240px;text-align:center;top:236px;letter-spacing:1px">km/h</div>
+<div class="a" style="left:20px;bottom:28px;font-size:20px;font-weight:300">90 °C<span class="u" style="margin-left:14px">62 %</span></div>
+<div class="a v" style="left:170px;bottom:24px;font-size:34px;line-height:1"><span class="gr"></span></div>
+<svg class="a ic ph" style="left:300px;top:60px" width="100" height="125"><use href="#as"/></svg>
+<svg class="a ic ph" style="left:300px;top:60px;animation-delay:-12s" width="100" height="125"><use href="#ar"/></svg>
+<svg class="a ic ph" style="left:300px;top:60px;animation-delay:-8s;scale:-1 1" width="100" height="125"><use href="#ar"/></svg>
+<svg class="a ic ph" style="left:300px;top:60px;animation-delay:-4s" width="100" height="125"><use href="#ak2"/></svg>
+<div class="a cnt dist v" style="left:270px;top:216px;font-size:48px;line-height:1"></div>
+<div class="a" style="left:270px;top:284px;font-size:18px;font-weight:300"><span class="a ph">Hauptstraße</span><span class="a ph" style="animation-delay:-12s">Bahnhofstraße</span><span class="a ph" style="animation-delay:-8s">Am Markt</span><span class="a ph" style="animation-delay:-4s">2. Ausfahrt</span></div>
+<div class="a" style="left:270px;bottom:28px"><div class="v" style="font-size:20px">15:08</div><div class="l">ETA</div></div>
+</div></div><figcaption>Split: Instrumente und Navigation</figcaption></figure>
+<figure><div class="fr"><div class="s">
+<div class="a" style="left:28px;top:40px;width:424px;height:400px;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr">
+<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;animation:hl 8s infinite;animation-delay:0s"><svg class="ic" width="100" height="125"><use href="#ak1"/></svg><div style="font-size:18px;font-weight:300;margin-top:8px">1. Ausfahrt</div><div class="l" style="margin-top:4px">RECHTS</div></div>
+<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;animation:hl 8s infinite;animation-delay:-6s"><svg class="ic" width="100" height="125"><use href="#ak2"/></svg><div style="font-size:18px;font-weight:300;margin-top:8px">2. Ausfahrt</div><div class="l" style="margin-top:4px">GERADEAUS</div></div>
+<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;animation:hl 8s infinite;animation-delay:-4s"><svg class="ic" width="100" height="125"><use href="#ak3"/></svg><div style="font-size:18px;font-weight:300;margin-top:8px">3. Ausfahrt</div><div class="l" style="margin-top:4px">LINKS</div></div>
+<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;animation:hl 8s infinite;animation-delay:-2s"><svg class="ic" width="100" height="125"><use href="#ak4"/></svg><div style="font-size:18px;font-weight:300;margin-top:8px">4. Ausfahrt</div><div class="l" style="margin-top:4px">ZURÜCK</div></div>
 </div>
+</div></div><figcaption>Kreisverkehr: alle Ausfahrten</figcaption></figure>
 
-<div style="margin-top:40px; font-size:12px; color:var(--fg-tertiary); text-align:center;">
-  Display-Aufloesung: 480x320 (ILI9488 TFT) | Dark-Mode | Inter/Roboto | CSS-Animationen
+
+<figure><div class="fr"><div class="s">
+<div class="a" style="left:28px;top:24px;font-size:18px;font-weight:300">Diagnose</div>
+<div class="a l" style="right:28px;top:30px"><span class="cnt" style="animation:pct 8s infinite"></span> %</div>
+<div class="a" style="left:28px;top:60px;width:424px;height:4px;background:#1d1d1d"><div style="height:4px;background:var(--text);transform-origin:left;animation:fill 8s infinite"></div></div>
+<div class="a" style="left:28px;top:84px;display:grid;grid-template-columns:repeat(4,98px);gap:10px">
+<div class="t" style="--c:var(--ok);--d:.4s"><b></b>Öldruck<small>OK</small></div>
+<div class="t" style="--c:var(--ok);--d:.8s"><b></b>Kühlmittel<small>OK</small></div>
+<div class="t" style="--c:var(--acc);--d:1.2s"><b></b>Spannung<small>WARN</small></div>
+<div class="t" style="--c:var(--ok);--d:1.6s"><b></b>Kraftstoff<small>OK</small></div>
+<div class="t" style="--c:var(--ok);--d:2s"><b></b>GPS<small>OK</small></div>
+<div class="t" style="--c:var(--ok);--d:2.4s"><b></b>BLE<small>OK</small></div>
+<div class="t" style="--c:var(--ok);--d:2.8s"><b></b>Lufttemp<small>OK</small></div>
+<div class="t" style="--c:var(--bad);--d:3.2s"><b></b>Drehzahl<small>ERROR</small></div>
 </div>
+<div class="a l" style="left:28px;top:250px">FEHLERCODES</div>
+<div class="a" style="left:28px;right:28px;top:270px">
+<div class="row"><span style="color:var(--bad)">P0335</span><span>Kurbelwellensensor</span></div>
+<div class="row"><span style="color:var(--acc)">P0562</span><span>Systemspannung niedrig</span></div>
+<div class="row"><span style="color:var(--acc)">P0118</span><span>Kühlmittelsensor Signal hoch</span></div>
+</div>
+</div></div><figcaption>Diagnose</figcaption></figure>
 
-</body>
-</html>
+<figure><div class="fr"><div class="s">
+<div class="a" style="left:28px;top:24px;font-size:18px;font-weight:300">Einstellungen</div>
+<div class="a set" style="top:70px"><span>Helligkeit</span><div class="sl"><i></i><b></b></div></div>
+<div class="a set" style="top:132px"><span>Nachtmodus</span><div class="tg"><i></i></div></div>
+<div class="a set" style="top:194px"><span>BLE-Kopplung</span><span style="font-size:13px;color:var(--muted)"><i class="dot"></i>BORD-01 · verbunden</span></div>
+<div class="a set" style="top:256px"><span>Log-Intervall</span><div class="seg3"><i></i><span>1 s</span><span>5 s</span><span>10 s</span></div></div>
+<div class="a set" style="top:318px;border:0"><span>Tour-Modus</span><div class="tg" style="--d:-3s"><i></i></div></div>
+</div></div><figcaption>Einstellungen</figcaption></figure>
+
+<figure><div class="fr"><div class="s">
+<div class="a st" style="left:28px;top:26px"><div class="l">STRECKE</div><div class="big"><span class="cnt up" style="--t:143"></span><span class="u" style="font-size:18px"> km</span></div></div>
+<div class="a st" style="left:252px;top:26px"><div class="l">DAUER</div><div class="big"><span class="cnt up" style="--t:3"></span>:<span class="cnt up z2" style="--t:12"></span></div></div>
+<div class="a st" style="left:28px;top:122px"><div class="l">Ø GESCHWINDIGKEIT</div><div class="big"><span class="cnt up" style="--t:68"></span><span class="u" style="font-size:18px"> km/h</span></div></div>
+<div class="a st" style="left:252px;top:122px"><div class="l">MAX</div><div class="big"><span class="cnt up" style="--t:124"></span><span class="u" style="font-size:18px"> km/h</span></div></div>
+<div class="a l" style="left:28px;top:262px">HÖHENPROFIL</div>
+<div class="a" style="left:28px;right:28px;top:290px"><div id="bars"></div></div>
+</div></div><figcaption>Tour-Statistik</figcaption></figure>
+
+<figure><div class="fr"><div class="s">
+<svg id="boot" class="a lg go" width="480" height="480" viewBox="0 0 480 480">
+<g class="wm" transform="translate(-10 43) scale(.5)">
+<rect class="la" x="142" y="484" width="716" height="2" fill="#2a2a2a"/>
+<rect class="lb" style="--d:.3s" x="185" y="160" width="64" height="290"/>
+<rect class="lx" style="--d:.3s" x="142" y="230" width="150" height="40"/>
+<path class="lr" style="--d:.6s" d="M446 262A78 78 0 1 1 446 418A78 78 0 1 1 446 262" fill="none" stroke="var(--text)" stroke-width="64" pathLength="1" stroke-dasharray="1"/>
+<rect class="lb" style="--d:.9s" x="643" y="160" width="64" height="290"/>
+<rect class="lx" style="--d:.9s" x="600" y="230" width="150" height="40"/>
+<rect class="lb" style="--d:1.2s" x="794" y="230" width="64" height="220"/>
+<circle class="lp" cx="826" cy="170" r="32" fill="none" stroke="var(--acc)" stroke-width="3" opacity="0"/>
+<circle class="ld" cx="826" cy="170" r="32" fill="var(--acc)"/>
+</g>
+<rect x="160" y="346" width="160" height="3" fill="#222"/>
+<rect class="lbar" x="160" y="346" width="160" height="3" fill="#f0a020" style="transform-origin:160px 0"/>
+</svg>
+</div></div><figcaption>Boot</figcaption></figure>
+
+<figure><div class="fr"><div class="s">
+<div class="a w ph3x" style="animation-delay:0s,0s"><svg width="110" height="110" viewBox="0 0 34 34" style="animation:wbl .6s infinite"><path d="M17 4L31 29H3Z" fill="none" stroke="#fff" stroke-width="2" stroke-linejoin="round"/><path d="M17 13v8" stroke="#fff" stroke-width="2" stroke-linecap="round"/><circle cx="17" cy="25" r="1" fill="#fff"/></svg><div style="font-size:44px;font-weight:300;margin-top:12px">ÖLDRUCK</div><div class="v" style="font-size:80px;line-height:1.1">0.4 bar</div><div style="font-size:18px">Sofort anhalten</div></div>
+<div class="a w" style="animation-delay:-8s,0s"><svg width="110" height="110" viewBox="0 0 34 34" style="animation:wbl .6s infinite"><path d="M17 4L31 29H3Z" fill="none" stroke="#fff" stroke-width="2" stroke-linejoin="round"/><path d="M17 13v8" stroke="#fff" stroke-width="2" stroke-linecap="round"/><circle cx="17" cy="25" r="1" fill="#fff"/></svg><div style="font-size:44px;font-weight:300;margin-top:12px">TEMPERATUR</div><div class="v" style="font-size:80px;line-height:1.1">118 °C</div><div style="font-size:18px">Motor abstellen</div></div>
+<div class="a w" style="animation-delay:-4s,0s"><svg width="110" height="110" viewBox="0 0 34 34" style="animation:wbl .6s infinite"><path d="M17 4L31 29H3Z" fill="none" stroke="#fff" stroke-width="2" stroke-linejoin="round"/><path d="M17 13v8" stroke="#fff" stroke-width="2" stroke-linecap="round"/><circle cx="17" cy="25" r="1" fill="#fff"/></svg><div style="font-size:44px;font-weight:300;margin-top:12px">BORDSPANNUNG</div><div class="v" style="font-size:80px;line-height:1.1">10.8 V</div><div style="font-size:18px">Ladesystem prüfen</div></div>
+</div></div><figcaption>Warnung (überlagert alles)</figcaption></figure>
+
+</main>
+<script>
+(function(){
+var A0=132.5,SP=275,C=['#3ddc84','#8fe25f','#d6e04a','#f5c030','#f0a020','#ee7b27','#e8472d','#e5322d'];
+function P(cx,cy,r,a){a=a*Math.PI/180;return (cx+r*Math.cos(a)).toFixed(1)+' '+(cy+r*Math.sin(a)).toFixed(1)}
+function arc(cx,cy,r,a,b){return 'M'+P(cx,cy,r,a)+'A'+r+' '+r+' 0 '+(b-a>180?1:0)+' 1 '+P(cx,cy,r,b)}
+document.querySelectorAll('[data-ring]').forEach(function(g){
+  var p=g.dataset.ring.split(','),cx=+p[0],cy=+p[1],r=+p[2],w=+p[3],h='';
+  if(p[4]==='s'){var d=arc(cx,cy,r,A0,A0+SP);
+    h='<path d="'+d+'" fill="none" stroke="#1d1d1d" stroke-width="'+w+'" stroke-linecap="round"/><path class="sp" d="'+d+'" pathLength="1" fill="none" stroke="#e6e6e6" stroke-width="'+w+'" stroke-linecap="round"/>';
+  }else{
+    h='<path d="'+arc(cx,cy,r,A0,A0+SP)+'" fill="none" stroke="#161616" stroke-width="'+w+'"/>';
+    for(var i=0;i<8;i++)h+='<path class="seg" style="--a:'+i/8+'" d="'+arc(cx,cy,r,A0+SP*i/8,A0+SP*(i+1)/8)+'" pathLength="1" fill="none" stroke="'+C[i]+'" stroke-width="'+w+'"/>';
+  }
+  g.innerHTML=h;
+});
+var b='';for(var i=0;i<28;i++){var v=Math.round(45+28*Math.sin(i/4.2)+14*Math.sin(i*1.9));b+='<i style="--h:'+v+';--i:'+i+'"></i>'}
+document.getElementById('bars').innerHTML=b;
+var bs=document.getElementById('boot');setInterval(function(){bs.classList.remove('go');void bs.getBoundingClientRect();bs.classList.add('go')},8000);
+function fit(){document.querySelectorAll('.fr').forEach(function(f){f.firstElementChild.style.transform='scale('+f.clientWidth/480+')'})}
+addEventListener('resize',fit);fit();
+})();
+</script>
+</body></html>
