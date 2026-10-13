@@ -224,7 +224,7 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 | Wörter gesamt (alle Docs) | 170.396 |
 | Code-Prototypen | 3 (firmware/ 57 Dateien, companion-app/ 2926 Dateien, mockups/ 35 Dateien) |
 | Firmware C/H-Zeilen | 14.053 (10 Komponenten: sensors 1.225, power 1.357, diagnostics 1.861, ble 1.796, gps 886, ota 1.609, display 2.034, storage 1.844, main 571, event_loop 344, utils/board_config ~326) |
-| Tasks done | 32 (+3: Firmware Integration, Test-Bench, Installation Guide) |
+| Tasks done | 29 (+3 seit Runde 8: Firmware Integration, Test-Bench, Installation Guide) |
 | Tasks running | 6 (Companion-App, Feldtest, Performance, CI/CD, TCO, Security) |
 | Tasks blocked | 0 |
 | Phase 0 Fortschritt | 100% ✅ |
