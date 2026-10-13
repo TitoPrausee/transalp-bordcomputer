@@ -1,6 +1,6 @@
 # Projekt-Roadmap: Transalp Bordcomputer
 
-> Zuletzt aktualisiert: 13.10.2026 (PM-Runde 7)
+> Zuletzt aktualisiert: 13.10.2026 (PM-Runde 10)
 > Status: Aktiv — 5 Worker-Profile + 1 Projektmanager (PM) auf Mac mini
 
 ## Projektziel
@@ -65,11 +65,14 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 - [x] Firmware Integration & Build-System (main.c, Event-Loop, CMake) — **transalp-firmware** (t_95f1b701) → `firmware/main/` (915 Zeilen: main.c 571, app_event_loop.c 215, app_event_loop.h 129) — gemerged (commit 3d9b9ef6)
 - [x] Hardware-Test-Bench & Benchmark-Spezifikation — **transalp-diag** (t_dd852a50) → `docs/HARDWARE-TEST-BENCH.md` (1.042 Zeilen) + `docs/BENCHMARK-SPEC.md` (529 Zeilen) — gemerged (commit ffaca698)
 - [x] Montage-Anleitung & Einbau-Konzept für PD06 — **transalp-plan** (t_9f608f6e) → `docs/INSTALLATION-GUIDE.md` (1.659 Zeilen) — gemerged (commit 0529bf9)
-- [ ] Feldtest-Protokoll & Evaluations-Kriterien — **transalp-ui** (t_8451c1c9) → running
-- [ ] Performance-Optimierung & Profiling-Konzept — **transalp-firmware** (t_d8927032) → running
-- [ ] CI/CD-Pipeline & Automated Testing — **transalp-diag** (t_727233a1) → running
-- [ ] Total Cost of Ownership & Budget-Analyse — **transalp-plan** (t_28e4c582) → running
-- [ ] Sicherheitsanalyse & Threat Model (STRIDE) — **worker** (t_6eab2b4d) → running
+- [x] Feldtest-Protokoll & Evaluations-Kriterien — **transalp-ui** (t_8451c1c9) → `docs/FIELDTEST-PROTOCOL.md` (1.227 Zeilen, 8.236 Wörter) — gemerged (commit a217e78)
+- [x] Performance-Optimierung & Profiling-Konzept — **transalp-firmware** (t_d8927032) → `docs/PERFORMANCE-OPTIMIZATION.md` (2.187 Zeilen, 8.639 Wörter) — gemerged (commit a217e78)
+- [x] CI/CD-Pipeline & Automated Testing — **transalp-diag** (t_727233a1) → `docs/CI-CD-PIPELINE.md` (694 Zeilen) + `.github/workflows/` (3 CI-Workflows) + `firmware/test/` (3 Unit-Tests + Mocks) — gemerged (commit 44c8e66f)
+- [x] Total Cost of Ownership & Budget-Analyse — **transalp-plan** (t_28e4c582) → `docs/TCO-ANALYSIS.md` (865 Zeilen, 6.110 Wörter) — gemerged (commit a217e78)
+- [x] Sicherheitsanalyse & Threat Model (STRIDE) — **worker** (t_6eab2b4d) → `docs/SECURITY-ANALYSIS.md` (1.472 Zeilen, 5.909 Wörter) — gemerged (commit a217e78)
+- [ ] API-Dokumentation: BLE GATT Interface Reference — **transalp-firmware** (t_2d00106d) → running
+- [ ] Release-Notes v1.0 & Changelog-Konzept — **transalp-plan** (t_321097f7) → running
+- [ ] Troubleshooting-Guide & FAQ — **transalp-ui** (t_4d933681) → running
 
 ## PM-Protokoll
 
@@ -197,6 +200,25 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 - **6 Tasks running:** Companion-App, Feldtest-Protokoll, Performance, CI/CD, TCO, Security
 - Review-Kommentare auf allen 3 gemergten Tasks hinterlegt
 
+### Runde 10 (13.10.2026 ~23:30)
+- **5 fertige Tasks reviewt und gemerged:**
+  - Feldtest-Protokoll (t_8451c1c9): `docs/FIELDTEST-PROTOCOL.md` 1.227 Zeilen, 8.236 Wörter — 8 Test-Phasen, 25 Metriken mit Pass/Fail-Schwellen — gemerged (commit a217e78)
+  - Performance-Optimierung (t_d8927032): `docs/PERFORMANCE-OPTIMIZATION.md` 2.187 Zeilen, 8.639 Wörter — CPU/Speicher/Rendering/Sensor/BLE/Power-Optimierung + Profiling-Strategie — gemerged (commit a217e78)
+  - TCO & Budget (t_28e4c582): `docs/TCO-ANALYSIS.md` 865 Zeilen, 6.110 Wörter — 3 Szenarien (80/327/417 EUR), ROI 38-66%, 5-Jahres-Lifecycle — gemerged (commit a217e78)
+  - Sicherheitsanalyse (t_6eab2b4d): `docs/SECURITY-ANALYSIS.md` 1.472 Zeilen, 5.909 Wörter — STRIDE mit 19 Threats, MoSCoW-Mitigation-Plan, Code-Snippets — gemerged (commit a217e78)
+  - CI/CD-Pipeline (t_727233a1): `docs/CI-CD-PIPELINE.md` 694 Zeilen + 3 GitHub-Workflow-Files + `firmware/test/` (3 Unit-Tests + ESP-IDF-Mocks) — gemerged (commit 44c8e66f)
+- **Security-Analysis Revert aufgehoben:** Vorheriger Commit (3c56f872) hatte die Sicherheitsanalyse revertiert; neu gemerged mit korrektem Inhalt
+- **Markennamen-Check:** 0 Marken in allen neuen Dateien — VERIFIZIERT
+- **Auf origin gepusht (Commits a217e78 → 44c8e66f)**
+- **Firmware-Gesamt: 15.319 C/H-Zeilen** (+1.266: CI/CD Test-Suite + Mocks)
+- **Design-Docs: 18 Dateien, ~115K Wörter** (+5 neue: FIELDTEST-PROTOCOL, PERFORMANCE-OPTIMIZATION, CI-CD-PIPELINE, TCO-ANALYSIS, SECURITY-ANALYSIS)
+- **3 neue Tasks erstellt und dispatched (Phase 4 Dokumentation):**
+  - API-Dokumentation: BLE GATT Interface Reference → transalp-firmware (t_2d00106d)
+  - Release-Notes v1.0 & Changelog-Konzept → transalp-plan (t_321097f7)
+  - Troubleshooting-Guide & FAQ → transalp-ui (t_4d933681)
+- **5 Tasks running:** Companion-App (worker), API-Reference (firmware), Release-Notes (plan), Troubleshooting (ui)
+- Review-Kommentare auf allen 5 gemergten Tasks hinterlegt
+
 ## Offene Fragen
 - Welche TFT-Displays sind sonnenlesbar genug?
 - Companion-App: React Native vs. Flutter? (Master-Plan empfiehlt React Native)
@@ -219,13 +241,15 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 |---|---|
 | Research-Dokumente | 14 (+ README) |
 | Wörter gesamt (Research) | 89.476 |
-| Design-Dokumente | 12 (ARCHITECTURE, BENCHMARK-SPEC, BOM, CASE-DESIGN, FIRMWARE-GUIDE, HARDWARE, HARDWARE-TEST-BENCH, INSTALLATION-GUIDE, PCB-LAYOUT, PINMAP, TEST-STRATEGY, USER-MANUAL) |
-| Wörter gesamt (Design-Docs) | 80.920 |
-| Wörter gesamt (alle Docs) | 170.396 |
-| Code-Prototypen | 3 (firmware/ 57 Dateien, companion-app/ 2926 Dateien, mockups/ 35 Dateien) |
-| Firmware C/H-Zeilen | 14.053 (10 Komponenten: sensors 1.225, power 1.357, diagnostics 1.861, ble 1.796, gps 886, ota 1.609, display 2.034, storage 1.844, main 571, event_loop 344, utils/board_config ~326) |
-| Tasks done | 29 (+3 seit Runde 8: Firmware Integration, Test-Bench, Installation Guide) |
-| Tasks running | 6 (Companion-App, Feldtest, Performance, CI/CD, TCO, Security) |
+| Design-Dokumente | 18 (ARCHITECTURE, BENCHMARK-SPEC, BOM, CASE-DESIGN, CI-CD-PIPELINE, FIELDTEST-PROTOCOL, FIRMWARE-GUIDE, HARDWARE, HARDWARE-TEST-BENCH, INSTALLATION-GUIDE, PCB-LAYOUT, PERFORMANCE-OPTIMIZATION, PINMAP, SECURITY-ANALYSIS, TCO-ANALYSIS, TEST-STRATEGY, USER-MANUAL, ROADMAP) |
+| Wörter gesamt (Design-Docs) | 115.052 |
+| Wörter gesamt (alle Docs) | 204.528 |
+| Code-Prototypen | 3 (firmware/ 57+17 Dateien, companion-app/ 5.778 Zeilen TS/TSX, mockups/ 35 Dateien) |
+| Firmware C/H-Zeilen | 15.319 (10 Komponenten + main + test-suite) |
+| CI/CD Workflows | 3 (firmware-ci, companion-app-ci, docs-ci) + brand-blocklist |
+| Unit-Tests | 3 (test_dtc, test_event_loop, test_nmea_parser) + ESP-IDF-Mocks |
+| Tasks done | 34 (+5 seit Runde 9: Feldtest, Performance, CI/CD, TCO, Security) |
+| Tasks running | 5 (Companion-App, API-Reference, Release-Notes, Troubleshooting) |
 | Tasks blocked | 0 |
 | Phase 0 Fortschritt | 100% ✅ |
 | Phase 1 Fortschritt | 100% ✅ |
@@ -233,4 +257,4 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 | Phase 2 Fortschritt | 100% ✅ (6/6 done) |
 | Phase 2.5 Fortschritt | 100% ✅ (3/3 done) |
 | Phase 3 Fortschritt | 90% (9/10 done, 1 running: Companion-App) |
-| Phase 4 Fortschritt | LAUFEND (3/8 done, 5 running) |
+| Phase 4 Fortschritt | 8/11 done, 3 running (Feldtest, Performance, CI/CD, TCO, Security done; API-Ref, Release-Notes, Troubleshooting running) |
