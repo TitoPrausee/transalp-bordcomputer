@@ -1,7 +1,8 @@
 # Projekt-Roadmap: Transalp Bordcomputer
 
-> Zuletzt aktualisiert: 13.10.2026 (PM-Runde 10)
+> Zuletzt aktualisiert: 14.10.2026 (PM-Runde 11)
 > Status: Aktiv — 5 Worker-Profile + 1 Projektmanager (PM) auf Mac mini
+> **Alle Phasen 0–4 ABGESCHLOSSEN ✅ — 38 Tasks done, 0 running, 0 blocked**
 
 ## Projektziel
 Vollständiger Open-Source Bordcomputer für die Honda Transalp 600 (PD06).
@@ -61,7 +62,7 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 - [x] Diagnose-System (DTC, Self-Test, Konsole) — **transalp-diag** (t_8454dd54) → `firmware/components/diagnostics/` (1.861 Zeilen: diagnostics.c 670, dtc.c 400, selftest.c 582, diagnostics.h 207) — gemerged (commit 2d756192)
 - [x] Companion-App Integration (Dashboard, Navigation, Diagnose) — **worker** (t_968d6126) → `companion-app/src/` (11 Dateien, ~4.713 Zeilen TS/TSX: BleManager, DashboardScreen, NavigationScreen, DiagnoseScreen, SettingsScreen, binary-parsers) — gemerged (commit d5326b4b)
 
-### Phase 4: Integration & Test (LÄUFT)
+### Phase 4: Integration & Test (ABGESCHLOSSEN — 11/11 done)
 - [x] Firmware Integration & Build-System (main.c, Event-Loop, CMake) — **transalp-firmware** (t_95f1b701) → `firmware/main/` (915 Zeilen: main.c 571, app_event_loop.c 215, app_event_loop.h 129) — gemerged (commit 3d9b9ef6)
 - [x] Hardware-Test-Bench & Benchmark-Spezifikation — **transalp-diag** (t_dd852a50) → `docs/HARDWARE-TEST-BENCH.md` (1.042 Zeilen) + `docs/BENCHMARK-SPEC.md` (529 Zeilen) — gemerged (commit ffaca698)
 - [x] Montage-Anleitung & Einbau-Konzept für PD06 — **transalp-plan** (t_9f608f6e) → `docs/INSTALLATION-GUIDE.md` (1.659 Zeilen) — gemerged (commit 0529bf9)
@@ -70,9 +71,11 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 - [x] CI/CD-Pipeline & Automated Testing — **transalp-diag** (t_727233a1) → `docs/CI-CD-PIPELINE.md` (694 Zeilen) + `.github/workflows/` (3 CI-Workflows) + `firmware/test/` (3 Unit-Tests + Mocks) — gemerged (commit 44c8e66f)
 - [x] Total Cost of Ownership & Budget-Analyse — **transalp-plan** (t_28e4c582) → `docs/TCO-ANALYSIS.md` (865 Zeilen, 6.110 Wörter) — gemerged (commit a217e78)
 - [x] Sicherheitsanalyse & Threat Model (STRIDE) — **worker** (t_6eab2b4d) → `docs/SECURITY-ANALYSIS.md` (1.472 Zeilen, 5.909 Wörter) — gemerged (commit a217e78)
-- [ ] API-Dokumentation: BLE GATT Interface Reference — **transalp-firmware** (t_2d00106d) → running
-- [ ] Release-Notes v1.0 & Changelog-Konzept — **transalp-plan** (t_321097f7) → running
-- [ ] Troubleshooting-Guide & FAQ — **transalp-ui** (t_4d933681) → running
+- [x] API-Dokumentation: BLE GATT Interface Reference — **transalp-firmware** (t_2d00106d) → `docs/API-REFERENCE.md` (1.692 Zeilen, 7.297 Wörter) — gemerged (commit 41580e4)
+- [x] Release-Notes v1.0 & Changelog-Konzept — **transalp-plan** (t_321097f7) → `docs/RELEASE-NOTES.md` (967 Zeilen, 5.146 Wörter) — gemerged (commit 41580e4)
+- [x] Troubleshooting-Guide & FAQ — **transalp-ui** (t_4d933681) → `docs/TROUBLESHOOTING.md` (1.817 Zeilen, 9.199 Wörter) — gemerged (commit 41580e4)
+
+**Phase 4: 11/11 done — ABGESCHLOSSEN ✅**
 
 ## PM-Protokoll
 
@@ -220,6 +223,18 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 - Review-Kommentare auf allen 5 gemergten Tasks hinterlegt
 - **Companion-App Integration (t_968d6126) nachträglich entdeckt und gemerged:** 11 Dateien, ~4.713 Zeilen TS/TSX (BleManager, Dashboard, Navigation, Diagnose, Settings, binary-parsers) — gemerged (commit d5326b4b). tsc --noEmit 0 errors. **PHASE 3 = 100% ERLEDIGT**
 
+### Runde 11 (14.10.2026 ~00:00)
+- **3 fertige Tasks reviewt und gemerged:**
+  - API-Dokumentation BLE GATT (t_2d00106d): `docs/API-REFERENCE.md` 1.692 Zeilen, 7.297 Wörter — 8 GATT-Services mit UUIDs, Characteristics, Datenformaten, OTA-Protokoll — gemerged (commit 41580e4)
+  - Release-Notes v1.0 (t_321097f7): `docs/RELEASE-NOTES.md` 967 Zeilen, 5.146 Wörter — Feature-Liste mit Status, Hardware-Anforderungen, bekannte Einschränkungen, Changelog-Konzept — gemerged (commit 41580e4)
+  - Troubleshooting-Guide (t_4d933681): `docs/TROUBLESHOOTING.md` 1.817 Zeilen, 9.199 Wörter — Hardware/Software/BLE/GPS/SD/Power-Probleme, FAQ, Serial-Console-Guide — gemerged (commit 41580e4)
+- **Markennamen-Check:** 0 Marken in allen 3 neuen Dokumenten — VERIFIZIERT
+- **Auf origin gepusht (Commit 41580e4)**
+- **PHASE 4 = 100% ABGESCHLOSSEN** 🎉 — Alle 11 Phase-4-Tasks done
+- **Alle Projektphasen 0–4 abgeschlossen** — 38 Tasks gesamt, 0 running, 0 blocked
+- **Gesamtdokumentation: 226.524 Wörter** über 35 Dokumente (14 Research + 21 Design-Docs)
+- Review-Kommentare auf allen 3 gemergten Tasks hinterlegt
+
 ## Offene Fragen
 - Welche TFT-Displays sind sonnenlesbar genug?
 - Companion-App: React Native vs. Flutter? (Master-Plan empfiehlt React Native)
@@ -242,15 +257,15 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 |---|---|
 | Research-Dokumente | 14 (+ README) |
 | Wörter gesamt (Research) | 89.476 |
-| Design-Dokumente | 18 (ARCHITECTURE, BENCHMARK-SPEC, BOM, CASE-DESIGN, CI-CD-PIPELINE, FIELDTEST-PROTOCOL, FIRMWARE-GUIDE, HARDWARE, HARDWARE-TEST-BENCH, INSTALLATION-GUIDE, PCB-LAYOUT, PERFORMANCE-OPTIMIZATION, PINMAP, SECURITY-ANALYSIS, TCO-ANALYSIS, TEST-STRATEGY, USER-MANUAL, ROADMAP) |
-| Wörter gesamt (Design-Docs) | 115.052 |
-| Wörter gesamt (alle Docs) | 204.528 |
-| Code-Prototypen | 3 (firmware/ 57+17 Dateien, companion-app/ 5.778 Zeilen TS/TSX, mockups/ 35 Dateien) |
-| Firmware C/H-Zeilen | 15.319 (10 Komponenten + main + test-suite) |
+| Design-Dokumente | 21 (+3: API-REFERENCE, RELEASE-NOTES, TROUBLESHOOTING) |
+| Wörter gesamt (Design-Docs) | 137.048 |
+| Wörter gesamt (alle Docs) | 226.524 |
+| Code-Prototypen | 3 (firmware/ 57+17 Dateien, companion-app/ 5.957 Zeilen TS/TSX, mockups/ 35 Dateien) |
+| Firmware C/H-Zeilen | 15.297 (10 Komponenten + main + test-suite) |
 | CI/CD Workflows | 3 (firmware-ci, companion-app-ci, docs-ci) + brand-blocklist |
 | Unit-Tests | 3 (test_dtc, test_event_loop, test_nmea_parser) + ESP-IDF-Mocks |
-| Tasks done | 35 (+6 seit Runde 9: Feldtest, Performance, CI/CD, TCO, Security, Companion-App) |
-| Tasks running | 4 (API-Reference, Release-Notes, Troubleshooting) |
+| Tasks done | 38 (+3 seit Runde 10) |
+| Tasks running | 0 |
 | Tasks blocked | 0 |
 | Phase 0 Fortschritt | 100% ✅ |
 | Phase 1 Fortschritt | 100% ✅ |
@@ -258,4 +273,4 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 | Phase 2 Fortschritt | 100% ✅ (6/6 done) |
 | Phase 2.5 Fortschritt | 100% ✅ (3/3 done) |
 | Phase 3 Fortschritt | 100% ✅ (10/10 done) |
-| Phase 4 Fortschritt | 8/11 done, 3 running (Feldtest, Performance, CI/CD, TCO, Security done; API-Ref, Release-Notes, Troubleshooting running) |
+| Phase 4 Fortschritt | 100% ✅ (11/11 done) |
