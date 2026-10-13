@@ -1,6 +1,6 @@
 # Projekt-Roadmap: Transalp Bordcomputer
 
-> Zuletzt aktualisiert: 13.10.2026 (PM-Runde 3)
+> Zuletzt aktualisiert: 13.10.2026 (PM-Runde 4)
 > Status: Aktiv — 5 Worker-Profile + 1 Projektmanager (PM) auf Mac mini
 
 ## Projektziel
@@ -31,17 +31,23 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 
 **6 Analyse-Dokumente, ~50.000 Wörter — alle auf main gemerged**
 
-### Phase 1.5: Qualitätsbereinigung (LAUFEND)
-- [ ] Markennamen-Entfernung in 9 Dokumenten (46 Verweise auf Marken-/Plattform-Namen)
-- [ ] Dokument 07 zu kurz (2.421 Wörter, Minimum 3.000) — erweitern oder zusammenführen
+### Phase 1.5: Qualitätsbereinigung (ABGESCHLOSSEN)
+- [x] Markennamen-Entfernung in 9 Dokumenten (46 Verweise entfernt) — **worker** (t_91456da9)
+  - Verifiziert: grep über docs/ zeigt 0 Markennamen im Prosa
+  - Commit ebb501a auf main gepusht
 
-### Phase 2: Design & Prototyp (GEPLANT — Tasks in Erstellung)
-- [ ] UI-Mockups (HTML/SVG Prototypen für jeden Screen) — **transalp-ui**
-- [ ] Hardware-Schaltplan (Pin-Layout, Verdrahtungsplan, KiCad-kompatibel) — **transalp-firmware**
-- [ ] PCB-Layout-Konzept (Layer-Stackup, Routing-Regeln, EMV-Optimierung) — **transalp-plan**
-- [ ] Companion-App Prototyp (React Native Grundgerüst, BLE-Verbindung) — **transalp-diag**
-- [ ] Test-Strategie & Benchmark-Konzept (Unit-Tests, HIL, Performance) — **worker**
-- [ ] Gehäuse-Design (3D-Druck-Konzept, Montage, Wasserfestigkeit) — **worker**
+### Phase 2: Design & Prototyp (LAUFEND)
+- [x] PCB-Layout-Konzept (Layer-Stackup, Routing-Regeln, EMV-Optimierung) — **transalp-plan** (t_c366755f) → `docs/PCB-LAYOUT.md` (5.993 Wörter)
+- [x] Test-Strategie & Benchmark-Konzept (Unit-Tests, HIL, Performance) — **worker** (t_47f87b72) → `docs/TEST-STRATEGY.md` (12.965 Wörter)
+- [x] Gehäuse-Design (3D-Druck-Konzept, Montage, Wasserfestigkeit) — **worker** (t_1766aa73) → `docs/CASE-DESIGN.md` (5.877 Wörter)
+- [ ] UI-Mockups (HTML/SVG Prototypen für jeden Screen) — **transalp-ui** (t_d1e10140) → running
+- [ ] Hardware-Schaltplan (Pin-Layout, Verdrahtungsplan) — **transalp-firmware** (t_cc1f3b71) → running
+- [ ] Companion-App Prototyp (React Native Grundgerüst, BLE) — **transalp-diag** (t_330d64ce) → running (prototype/companion-app Branch erstellt)
+
+### Phase 2.5: Erweiterung (LAUFEND — neu in Runde 4)
+- [ ] Firmware-Skeleton (ESP32-S3 ESP-IDF Projektstruktur) — **worker** (t_09187ad4) → running
+- [ ] Bill of Materials (BOM) & Sourcing-Konzept — **transalp-plan** (t_9b9760ec) → running
+- [ ] User-Manual & Installationsanleitung für PD06 — **worker** (t_d71d39c3) → running
 
 ### Phase 3: Implementierung (GEPLANT)
 - [ ] Core-Firmware (GPS, Display, Sensoren, Logger)
@@ -92,6 +98,23 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 - **Neue Tasks erstellt:** Markennamen-Bereinigung + 6 Phase-2-Tasks
 - Metriken und ROADMAP aktualisiert
 
+### Runde 4 (13.10.2026 ~20:35)
+- **4 neue fertige Tasks reviewt:**
+  - Markennamen-Bereinigung (t_91456da9): 8 Dateien bereinigt, 0 verbleibend — VERIFIZIERT
+  - PCB-Layout-Konzept (t_c366755f): `docs/PCB-LAYOUT.md` 5.993 Wörter — gemerged
+  - Test-Strategie (t_47f87b72): `docs/TEST-STRATEGY.md` 12.965 Wörter — gemerged
+  - Gehäuse-Design (t_1766aa73): `docs/CASE-DESIGN.md` 5.877 Wörter — gemerged
+- **3 Branches in main gemerged:** design/pcb-layout, design/case-design (inkl. test-strategy)
+- Auf origin gepusht (Commit 0c2af50)
+- **Markennamen-Check:** 0 verbleibende Marken im Prosa — Phase 1.5 ABGESCHLOSSEN
+- **3 Tasks noch running:** UI-Mockups, Hardware-Schaltplan, Companion-App Prototyp
+- **3 neue Tasks erstellt und dispatched (Phase 2.5):**
+  - Firmware-Skeleton (ESP32-S3 Projektstruktur) → worker (t_09187ad4)
+  - BOM & Sourcing-Konzept → transalp-plan (t_9b9760ec)
+  - User-Manual & Installationsanleitung → worker (t_d71d39c3)
+- Companion-App Prototyp auf Branch `prototype/companion-app` hat erste React Native Struktur
+- Review-Kommentare auf allen 4 fertigen Tasks hinterlegt
+
 ## Offene Fragen
 - Welche TFT-Displays sind sonnenlesbar genug?
 - Companion-App: React Native vs. Flutter? (Master-Plan empfiehlt React Native)
@@ -101,7 +124,7 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 
 ## Worker-Team
 | Profil | Modell | Rolle |
-|---|---|---|
+---|---|---|
 | transalp-pm | glm-5.2 | Projektmanager (Cronjob) |
 | worker | glm-5.2 | Allrounder |
 | transalp-plan | glm-5.2 | Planung, Kosten, Roadmap |
@@ -113,10 +136,14 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 | Metrik | Wert |
 |---|---|
 | Research-Dokumente | 13 |
-| Wörter gesamt (Research) | 89.381 |
-| Tasks gesamt (done) | 14 (7 Phase 0 + 7 Phase 1) |
-| Tasks archiviert | 7 (blockiert, durch Skill-Fehler ersetzt) |
+| Wörter gesamt (Research) | 89.476 |
+| Design-Dokumente | 3 (PCB-LAYOUT, CASE-DESIGN, TEST-STRATEGY) |
+| Wörter gesamt (Design) | 24.835 |
+| Wörter gesamt (alle Docs) | 114.311 |
+| Tasks gesamt (done) | 18 (7 Phase 0 + 7 Phase 1 + 4 Phase 1.5/2) |
+| Tasks running | 6 |
+| Tasks blocked | 0 |
 | Phase 0 Fortschritt | 100% |
 | Phase 1 Fortschritt | 100% |
-| Phase 1.5 Fortschritt | 0% (Markennamen-Bereinigung ausstehend) |
-| Phase 2 Fortschritt | 0% (Tasks in Erstellung) |
+| Phase 1.5 Fortschritt | 100% |
+| Phase 2 Fortschritt | 50% (3/6 done, 3 running) |
