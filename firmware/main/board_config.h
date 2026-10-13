@@ -65,6 +65,37 @@
 #define BATT_ADC_CHANNEL    4       /* ADC1_CH4 = GPIO4 */
 #define BATT_VOLTAGE_DIV    2.0f    /* Spannungsteiler 2:1 (max 3.3V) */
 
+/* Coolant Temp: NTC 10k via ADC1_CH6 = GPIO7 */
+#define TEMP_NTC_ADC_CHANNEL    6       /* ADC1_CH6 */
+/* DS18B20 1-Wire (digital, primary coolant sensor) */
+#define TEMP_ONEWIRE_PIN        15
+
+/* Fuel Level: via ADC1_CH2 = GPIO3 */
+#define FUEL_ADC_CHANNEL        2       /* ADC1_CH2 */
+
+/* ============================================================
+ * RPM Pulse Counter (PCNT)
+ * ============================================================ */
+
+#define RPM_PCNT_PIN            16      /* Optokoppler-Ausgang */
+#define RPM_PCNT_HIGH_LIMIT     10000
+#define RPM_PULSES_PER_REV      1       /* 1 Pickup-Puls pro Umdrehung */
+#define RPM_MAX_VALUE           8000    /* Redline ~7500 */
+
+/* ============================================================
+ * Sensor-Konstanten
+ * ============================================================ */
+
+/* NTC 10k B3950 (Kuehlmittel-Temperatur, Fallback) */
+#define NTC_R25                 10000.0f
+#define NTC_B_VALUE             3950.0f
+#define NTC_SERIES_R            10000.0f
+#define TEMP_OVERTEMP_C         120.0f
+
+/* Kraftstoffstand */
+#define TANK_CAPACITY_L         17.0f
+#define FUEL_RESERVE_L          3.0f
+
 /* ============================================================
  * Power Control
  * ============================================================ */

@@ -28,6 +28,9 @@
 #define EVT_SHUTDOWN           (1 << 11)
 #define EVT_OTA_START          (1 << 12)
 #define EVT_OTA_DONE           (1 << 13)
+#define EVT_OVERTEMPERATURE     (1 << 14)
+#define EVT_FUEL_LOW            (1 << 15)
+#define EVT_RPM_TIMEOUT         (1 << 16)
 
 /* API */
 void event_bus_init(void);
