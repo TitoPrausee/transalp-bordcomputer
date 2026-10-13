@@ -1,6 +1,6 @@
 # Projekt-Roadmap: Transalp Bordcomputer
 
-> Zuletzt aktualisiert: 13.10.2026 (PM-Runde 5)
+> Zuletzt aktualisiert: 13.10.2026 (PM-Runde 6)
 > Status: Aktiv — 5 Worker-Profile + 1 Projektmanager (PM) auf Mac mini
 
 ## Projektziel
@@ -25,7 +25,7 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 - [x] Feature-Realisierungs-Matrix (Datenlage -> Machbarkeit) — **worker** (t_13aa20d8) → `08-feature-realization-matrix.md` (6.845 Wörter)
 - [x] Master-Plan (BOM, Kosten, Phasen, Support-Schnittstellen) — **transalp-plan** (t_66381dae) → `09-master-plan.md` (9.825 Wörter)
 - [x] Premium UI/UX Design-Konzept (Animationen, Layouts, Screens) — **transalp-ui** (t_62aba3bf) → `10-ui-ux-design.md` (8.278 Wörter)
-- [x] Firmware-Architektur (Rendering-Engine, Pipelines, BLE-Stack) — **transalp-firmware** (t_379223a5) → `11-firmware-architecture.md` (9.411 Wörter)
+- [x] Firmware-Architektur (Rendering-Engine, Pipelines, BLE-Stack) — **transalp-firmware** (t_379233a5) → `11-firmware-architecture.md` (9.411 Wörter)
 - [x] Diagnose & Support (DTC-System, Self-Test, Remote-Diagnose) — **transalp-diag** (t_b4d53b0f) → `12-diagnose-support.md` (7.593 Wörter)
 - [x] Connectivity & Companion-App (GATT-Services, App-Architektur) — **worker** (t_2c7740fa) → `13-connectivity-app.md` (7.948 Wörter)
 
@@ -42,20 +42,24 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 - [x] Gehäuse-Design (3D-Druck-Konzept, Montage, Wasserfestigkeit) — **worker** (t_1766aa73) → `docs/CASE-DESIGN.md` (5.877 Wörter)
 - [x] Companion-App Prototyp (React Native Grundgerüst, BLE) — **transalp-diag** (t_330d64ce) → `companion-app/` (28 Dateien, 14.957 Zeilen TypeScript)
 - [x] UI-Mockups (HTML/SVG Prototypen für jeden Screen) — **transalp-ui** (t_d1e10140) → `mockups/` (35 Dateien, 8 Screens + 24 SVG Icons)
-- [ ] Hardware-Schaltplan (Pin-Layout, Verdrahtungsplan) — **transalp-firmware** (t_cc1f3b71) → running
+- [x] Hardware-Schaltplan (Pin-Layout, Verdrahtungsplan) — **transalp-firmware** (t_cc1f3b71) → `docs/HARDWARE.md` (5.487 Wörter) + `docs/PINMAP.md` (1.609 Wörter)
 
 ### Phase 2.5: Erweiterung (ABGESCHLOSSEN)
 - [x] Firmware-Skeleton (ESP32-S3 ESP-IDF Projektstruktur) — **worker** (t_09187ad4) → `firmware/` (52 Dateien, 8 Komponenten mit FreeRTOS Tasks)
 - [x] Bill of Materials (BOM) & Sourcing-Konzept — **transalp-plan** (t_9b9760ec) → `docs/BOM.md` (7.528 Wörter)
 - [x] User-Manual & Installationsanleitung für PD06 — **worker** (t_d71d39c3) → `docs/USER-MANUAL.md` (8.942 Wörter)
 
-### Phase 3: Implementierung (GEPLANT)
-- [ ] Core-Firmware (GPS, Display, Sensoren, Logger)
-- [ ] Rendering-Engine + Animations-Framework
-- [ ] BLE-Stack + GATT-Services
-- [ ] Diagnose-System (DTC, Self-Test, Konsole)
-- [ ] Companion-App (Dashboard, Navigation, Diagnose)
-- [ ] OTA-Update-Pipeline
+### Phase 3: Implementierung (LÄUFT)
+- [x] Integrierte System-Architektur (ARCHITECTURE.md) — **transalp-ui** (t_6f1b1c07) → `docs/ARCHITECTURE.md` (8.845 Wörter)
+- [x] Rendering-Engine & Display-Treiber (TFT + E-Paper) — **transalp-firmware** (t_adf3f5ea) → `firmware/components/display/` (1.854 Zeilen, 6 Dateien)
+- [ ] Sensor-Driver (RPM, Temp, Fuel, Gear, IMU) — **worker** (t_e5d0d7c5) → running
+- [ ] GPS-Treiber & NMEA-Parser — **transalp-plan** (t_6a3a0821) → running
+- [ ] BLE-Stack & GATT-Server — **transalp-diag** (t_33c9e335) → running
+- [ ] Storage & Logger (SD-Karte, GPX, NVS Config) — **transalp-firmware** (t_85d92039) → running
+- [ ] Power Management & Battery Monitoring — **transalp-ui** (t_1111e7f1) → running
+- [ ] OTA-Update System & Firmware-Engineering Guide — **worker** (t_4daa19c4) → running
+- [ ] Diagnose-System (DTC, Self-Test, Konsole) — geplant
+- [ ] Companion-App Integration (Dashboard, Navigation, Diagnose) — geplant
 
 ### Phase 4: Integration & Test (GEPLANT)
 - [ ] Hardware-Assembly
@@ -117,22 +121,38 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 
 ### Runde 5 (13.10.2026 ~21:00)
 - **3 fertige Tasks reviewt und gemerged:**
-  - Firmware-Skeleton (t_09187ad4): `firmware/` 52 Dateien, 8 Komponenten (sensors, gps, display, ble, storage, power, diagnostics, utils) — gemerged
-  - BOM & Sourcing-Konzept (t_9b9760ec): `docs/BOM.md` 7.528 Wörter, 3 Konfigurations-Varianten — gemerged
-  - User-Manual (t_d71d39c3): `docs/USER-MANUAL.md` 8.942 Wörter, Installationsanleitung PD06 — gemerged
+  - Firmware-Skeleton (t_09187ad4): `firmware/` 52 Dateien, 8 Komponenten — gemerged
+  - BOM & Sourcing-Konzept (t_9b9760ec): `docs/BOM.md` 7.528 Wörter — gemerged
+  - User-Manual (t_d71d39c3): `docs/USER-MANUAL.md` 8.942 Wörter — gemerged
 - **3 Branches in main gemerged:** firmware/skeleton, docs/bom, docs/user-manual
-- **Merge-Konflikt in ROADMAP.md aufgelöst** (User-Manual-Branch hatte veraltete Version)
-- **1 Task noch running:** Hardware-Schaltplan (transalp-firmware, t_cc1f3b71)
-- **Phase 2 als ABGESCHLOSSEN markiert** (5/6 done; Hardware-Schaltplan läuft noch, aber alle anderen Deliverables sind gemerged)
-- **Phase 2.5 als ABGESCHLOSSEN markiert** (3/3 done)
-- **Neue Phase-3-Tasks erstellt und dispatched** (siehe unten)
-- PINMAP.md vorhanden (12.236 Bytes) — vom Hardware-Schaltplan-Worker erstellt
+- **Merge-Konflikt in ROADMAP.md aufgelöst**
+- **Phase 2 als ABGESCHLOSSEN markiert**
+- **Phase 2.5 als ABGESCHLOSSEN markiert**
+- **5 Phase-3-Tasks erstellt und dispatched:**
+  - Sensor-Driver → worker (t_e5d0d7c5)
+  - Rendering-Engine & Display-Treiber → transalp-firmware (t_adf3f5ea)
+  - GPS-Treiber & NMEA-Parser → transalp-plan (t_6a3a0821)
+  - BLE-Stack & GATT-Server → transalp-diag (t_33c9e335)
+  - Integrierte System-Architektur → transalp-ui (t_6f1b1c07)
+
+### Runde 6 (13.10.2026 ~21:30)
+- **3 fertige Tasks reviewt und gemerged:**
+  - Rendering-Engine & Display-Treiber (t_adf3f5ea): `firmware/components/display/` 1.854 Zeilen über 6 Dateien (tft_driver.c 406, epaper_driver.c 378, renderer.c 468, widgets.c 532) — fast-forward gemerged
+  - Integrierte System-Architektur (t_6f1b1c07): `docs/ARCHITECTURE.md` erweitert von 444 auf 8.845 Wörter — gemerged
+  - Hardware-Schaltplan (t_cc1f3b71): `docs/HARDWARE.md` 5.487 Wörter + `docs/PINMAP.md` 1.609 Wörter — cherry-picked (Branch divergierte mit Revert-Commits)
+- **Alle auf origin gepusht (Commit 10a6f86)**
+- **3 neue Phase-3-Tasks erstellt und dispatched:**
+  - Storage & Logger (SD-Karte, GPX, NVS Config) → transalp-firmware (t_85d92039)
+  - Power Management & Battery Monitoring → transalp-ui (t_1111e7f1)
+  - OTA-Update System & Firmware-Engineering Guide → worker (t_4daa19c4)
+- **6 Tasks running:** Sensor-Driver, GPS-Treiber, BLE-Stack, Storage/Logger, Power-Management, OTA/Engineering-Guide
+- Review-Kommentare auf allen 3 gemergten Tasks hinterlegt
 
 ## Offene Fragen
 - Welche TFT-Displays sind sonnenlesbar genug?
 - Companion-App: React Native vs. Flutter? (Master-Plan empfiehlt React Native)
 - Ist ein zweiter ESP32 als Display-Controller sinnvoll?
-- Pin-Konflikte bei Dual-SPI (FSPI + HSPI) mit SD-Karte?
+- Pin-Konflikte bei Dual-SPI (FSPI + HSPI) mit SD-Karte? → Gelöst: Shared FSPI Bus mit CS-Multiplexing
 - Dokument 07 erweitern oder mit 08 zusammenführen?
 
 ## Worker-Team
@@ -148,18 +168,19 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 ## Metriken
 | Metrik | Wert |
 |---|---|
-| Research-Dokumente | 13 |
+| Research-Dokumente | 13 (+ README) |
 | Wörter gesamt (Research) | 89.476 |
-| Design-Dokumente | 6 (PCB-LAYOUT, CASE-DESIGN, TEST-STRATEGY, BOM, USER-MANUAL, PINMAP) |
-| Wörter gesamt (Design) | 41.305 |
-| Wörter gesamt (alle Docs) | 130.781 |
-| Code-Prototypen | 3 (firmware/ 52 Dateien, companion-app/ 28 Dateien, mockups/ 35 Dateien) |
-| Tasks gesamt (done) | 23 (7 Phase 0 + 7 Phase 1 + 1 Phase 1.5 + 5 Phase 2 + 3 Phase 2.5) |
-| Tasks running | 1 (Hardware-Schaltplan) |
+| Design-Dokumente | 9 (ARCHITECTURE, BOM, CASE-DESIGN, HARDWARE, PCB-LAYOUT, PINMAP, ROADMAP, TEST-STRATEGY, USER-MANUAL) |
+| Wörter gesamt (Design-Docs) | 58.426 |
+| Wörter gesamt (alle Docs) | 147.902 |
+| Code-Prototypen | 3 (firmware/ 40 C/H-Dateien, companion-app/ 28 Dateien, mockups/ 35 Dateien) |
+| Firmware Zeilen Code | 4.044 (davon 1.854 Display-Treiber) |
+| Tasks gesamt (done) | 21 |
+| Tasks running | 6 |
 | Tasks blocked | 0 |
 | Phase 0 Fortschritt | 100% |
 | Phase 1 Fortschritt | 100% |
 | Phase 1.5 Fortschritt | 100% |
-| Phase 2 Fortschritt | 100% (5/6 done, 1 running) |
-| Phase 2.5 Fortschritt | 100% |
-| Phase 3 Fortschritt | 0% (geplant) |
+| Phase 2 Fortschritt | 100% (6/6 done) |
+| Phase 2.5 Fortschritt | 100% (3/3 done) |
+| Phase 3 Fortschritt | ~20% (2/9 done, 6 running) |
