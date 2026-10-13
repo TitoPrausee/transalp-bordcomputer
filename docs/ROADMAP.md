@@ -41,7 +41,7 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 - [x] Test-Strategie & Benchmark-Konzept (Unit-Tests, HIL, Performance) — **worker** (t_47f87b72) → `docs/TEST-STRATEGY.md` (12.965 Wörter)
 - [x] Gehäuse-Design (3D-Druck-Konzept, Montage, Wasserfestigkeit) — **worker** (t_1766aa73) → `docs/CASE-DESIGN.md` (5.877 Wörter)
 - [x] Companion-App Prototyp (React Native Grundgerüst, BLE) — **transalp-diag** (t_330d64ce) → `companion-app/` (28 Dateien, 14.957 Zeilen TypeScript)
-- [ ] UI-Mockups (HTML/SVG Prototypen für jeden Screen) — **transalp-ui** (t_d1e10140) → running
+- [x] UI-Mockups (HTML/SVG Prototypen für jeden Screen) — **transalp-ui** (t_d1e10140) → `mockups/` (35 Dateien, 8 Screens + 24 SVG Icons)
 - [ ] Hardware-Schaltplan (Pin-Layout, Verdrahtungsplan) — **transalp-firmware** (t_cc1f3b71) → running
 
 ### Phase 2.5: Erweiterung (LAUFEND — neu in Runde 4)
@@ -140,11 +140,11 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 | Design-Dokumente | 3 (PCB-LAYOUT, CASE-DESIGN, TEST-STRATEGY) |
 | Wörter gesamt (Design) | 24.835 |
 | Wörter gesamt (alle Docs) | 114.311 |
-| Code-Prototypen | 1 (companion-app/, 28 Dateien) |
-| Tasks gesamt (done) | 19 (7 Phase 0 + 7 Phase 1 + 5 Phase 1.5/2) |
-| Tasks running | 5 |
+| Code-Prototypen | 2 (companion-app/ 28 Dateien, mockups/ 35 Dateien) |
+| Tasks gesamt (done) | 20 (7 Phase 0 + 7 Phase 1 + 6 Phase 1.5/2) |
+| Tasks running | 4 |
 | Tasks blocked | 0 |
 | Phase 0 Fortschritt | 100% |
 | Phase 1 Fortschritt | 100% |
 | Phase 1.5 Fortschritt | 100% |
-| Phase 2 Fortschritt | 67% (4/6 done, 2 running) |
+| Phase 2 Fortschritt | 83% (5/6 done, 1 running) |
