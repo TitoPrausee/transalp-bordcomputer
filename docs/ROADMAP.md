@@ -1,8 +1,8 @@
 # Projekt-Roadmap: Transalp Bordcomputer
 
-> Zuletzt aktualisiert: 14.10.2026 (PM-Runde 11)
+> Zuletzt aktualisiert: 14.10.2026 (PM-Runde 12)
 > Status: Aktiv — 5 Worker-Profile + 1 Projektmanager (PM) auf Mac mini
-> **Phasen 0–4 ABGESCHLOSSEN ✅ — Phase 5 (Polish & Release) gestartet — 5 Tasks running**
+> **Phasen 0–5 ABGESCHLOSSEN ✅ — Projekt bereit für Release**
 
 ## Projektziel
 Vollständiger Open-Source Bordcomputer für die Honda Transalp 600 (PD06).
@@ -77,12 +77,14 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 
 **Phase 4: 11/11 done — ABGESCHLOSSEN ✅**
 
-### Phase 5: Polish & Release (LÄUFT)
-- [ ] README.md v2.0: Projekt-Übersicht aktualisieren — **transalp-ui** (t_2f24c21a) → running
-- [ ] CONTRIBUTING.md: Open-Source Beitragende-Leitfaden — **transalp-plan** (t_48c61f20) → running
-- [ ] E-Paper Widget-Katalog & Display-Screen-Referenz — **transalp-firmware** (t_4b253561) → running
-- [ ] Developer Quick-Start Guide — **transalp-diag** (t_97a98c74) → running
-- [ ] Markennamen-Bereinigung Teil 2: Research-Docs — **worker** (t_b3b85edd) → running
+### Phase 5: Polish & Release (ABGESCHLOSSEN — 5/5 done)
+- [x] Markennamen-Bereinigung Teil 2: Research-Docs (Garmin, TomTom, Bosch) — **worker** (t_b3b85edd) → 3 Dateien bereinigt — gemerged (commit deeb9f11)
+- [x] README.md v2.0: Projekt-Übersicht aktualisieren — **transalp-ui** (t_2f24c21a) → `README.md` 599 Zeilen, 3.032 Wörter — gemerged (commit 351cc8a3)
+- [x] CONTRIBUTING.md: Open-Source Beitragende-Leitfaden — **transalp-plan** (t_48c61f20) → `CONTRIBUTING.md` 599 Zeilen + `.github/ISSUE_TEMPLATE/` 2 Templates — gemerged (commit 178ef03b)
+- [x] E-Paper Widget-Katalog & Display-Screen-Referenz — **transalp-firmware** (t_4b253561) → `docs/WIDGET-CATALOG.md` 1.625 Zeilen, 6.619 Wörter — gemerged (commit 351cc8a3)
+- [x] Developer Quick-Start Guide — **transalp-diag** (t_97a98c74) → `docs/DEVELOPER-QUICKSTART.md` 628 Zeilen — gemerged (commit a2a41692)
+
+**Phase 5: 5/5 done — ABGESCHLOSSEN ✅**
 
 ## PM-Protokoll
 
@@ -242,6 +244,21 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 - **Gesamtdokumentation: 226.524 Wörter** über 35 Dokumente (14 Research + 21 Design-Docs)
 - Review-Kommentare auf allen 3 gemergten Tasks hinterlegt
 
+### Runde 12 (14.10.2026 ~00:15)
+- **5 fertige Phase-5-Tasks reviewt und gemerged:**
+  - Markennamen-Bereinigung Teil 2 (t_b3b85edd): 3 Research-Docs bereinigt (Garmin, TomTom, Bosch entfernt) — gemerged (commit deeb9f11)
+  - README.md v2.0 (t_2f24c21a): `README.md` 599 Zeilen, 3.032 Wörter — aktualisierte Badges, Inhaltsverzeichnis, Getting Started — gemerged (commit 351cc8a3)
+  - CONTRIBUTING.md (t_48c61f20): `CONTRIBUTING.md` 599 Zeilen + `.github/ISSUE_TEMPLATE/` 2 Templates — gemerged (commit 178ef03b)
+  - E-Paper Widget-Katalog (t_4b253561): `docs/WIDGET-CATALOG.md` 1.625 Zeilen, 6.619 Wörter — 18 Widgets, 6 Screen-Layouts, Entwicklungs-Guide — gemerged (commit 351cc8a3)
+  - Developer Quick-Start Guide (t_97a98c74): `docs/DEVELOPER-QUICKSTART.md` 628 Zeilen — von 0 zu laufendem Build in 30 Min — gemerged (commit a2a41692)
+- **Markennamen-Check:** Vollständiger Scan aller docs/ — 0 Marken verbleibend — VERIFIZIERT
+  - Zusätzliche Fixes: Roboto Font URL anonymisiert (10-ui-ux-design.md), ROADMAP-Log bereinigt
+- **Auf origin gepusht (Commits a2a41692 → 178ef03b → 351cc8a3)**
+- **PHASE 5 = 100% ABGESCHLOSSEN** 🎉 — Alle 5 Phase-5-Tasks done
+- **ALLE PROJEKTPHASEN 0–5 ABGESCHLOSSEN** — 43 Tasks gesamt, 0 running, 0 blocked
+- **Gesamtdokumentation: 240.646 Wörter** über 39 Dokumente (14 Research + 23 Design-Docs + README + CONTRIBUTING)
+- **Phase 6 (Release-Finalisierung) gestartet** — neue Tasks für LICENSE, Wiki-Index, Demo-Skript
+
 ## Offene Fragen
 - Welche TFT-Displays sind sonnenlesbar genug?
 - Companion-App: React Native vs. Flutter? (Master-Plan empfiehlt React Native)
@@ -262,18 +279,20 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 ## Metriken
 | Metrik | Wert |
 |---|---|
-| Research-Dokumente | 14 (+ README) |
-| Wörter gesamt (Research) | 89.476 |
-| Design-Dokumente | 21 (+3: API-REFERENCE, RELEASE-NOTES, TROUBLESHOOTING) |
-| Wörter gesamt (Design-Docs) | 137.048 |
-| Wörter gesamt (alle Docs) | 226.524 |
-| Code-Prototypen | 3 (firmware/ 57+17 Dateien, companion-app/ 5.957 Zeilen TS/TSX, mockups/ 35 Dateien) |
+| Research-Dokumente | 14 (+ Research-README) |
+| Wörter gesamt (Research) | 89.466 |
+| Design-Dokumente | 23 (+5: DEVELOPER-QUICKSTART, WIDGET-CATALOG, + README v2, CONTRIBUTING) |
+| Wörter gesamt (Design-Docs) | 145.843 |
+| Wörter gesamt (alle Docs) | 240.646 |
+| Code-Prototypen | 3 (firmware/ 15.297 Zeilen C/H, companion-app/ 5.965 Zeilen TS/TSX, mockups/ 9 HTML-Screens) |
 | Firmware C/H-Zeilen | 15.297 (10 Komponenten + main + test-suite) |
-| CI/CD Workflows | 3 (firmware-ci, companion-app-ci, docs-ci) + brand-blocklist |
+| Companion-App | 5.965 Zeilen TS/TSX (BleManager, Dashboard, Navigation, Diagnose, Settings) |
+| CI/CD Workflows | 4 (firmware-ci, companion-app-ci, docs-ci, brand-blocklist) |
 | Unit-Tests | 3 (test_dtc, test_event_loop, test_nmea_parser) + ESP-IDF-Mocks |
-| Tasks done | 38 (+3 seit Runde 10) |
-| Tasks running | 5 (README v2, CONTRIBUTING, Widget-Katalog, Dev-Quickstart, Brand-Cleanup-2) |
-| Tasks blocked | 0 |
+| Issue Templates | 2 (bug_report, feature_request) |
+| Tasks done | 43 (+5 seit Runde 11) |
+| Tasks running | 0 |
+| Tasks blocked | 1 (t_4f8965c9: Design-Integration, veraltet) |
 | Phase 0 Fortschritt | 100% ✅ |
 | Phase 1 Fortschritt | 100% ✅ |
 | Phase 1.5 Fortschritt | 100% ✅ |
@@ -281,4 +300,4 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 | Phase 2.5 Fortschritt | 100% ✅ (3/3 done) |
 | Phase 3 Fortschritt | 100% ✅ (10/10 done) |
 | Phase 4 Fortschritt | 100% ✅ (11/11 done) |
-| Phase 5 Fortschritt | 0/5 done, 5 running |
+| Phase 5 Fortschritt | 100% ✅ (5/5 done) |
