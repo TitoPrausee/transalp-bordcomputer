@@ -23,7 +23,7 @@ jobs:
     name: Markdown Lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Run markdownlint
         uses: DavidAnson/markdownlint-cli2-action@v17
@@ -44,7 +44,7 @@ jobs:
     name: Brand Name Check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Scan for trademarked brand names
         run: |
@@ -77,7 +77,7 @@ jobs:
     name: Link Validation
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Install lychee
         run: |
@@ -127,7 +127,7 @@ jobs:
     name: Document Word Count Check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Check minimum word counts
         run: |
