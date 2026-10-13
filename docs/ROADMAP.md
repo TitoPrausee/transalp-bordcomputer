@@ -49,25 +49,23 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 - [x] Bill of Materials (BOM) & Sourcing-Konzept — **transalp-plan** (t_9b9760ec) → `docs/BOM.md` (7.528 Wörter)
 - [x] User-Manual & Installationsanleitung für PD06 — **worker** (t_d71d39c3) → `docs/USER-MANUAL.md` (8.942 Wörter)
 
-### Phase 3: Implementierung (LÄUFT)
+### Phase 3: Implementierung (FAST ABGESCHLOSSEN — 9/10 done)
 - [x] Integrierte System-Architektur (ARCHITECTURE.md) — **transalp-ui** (t_6f1b1c07) → `docs/ARCHITECTURE.md` (8.845 Wörter)
-- [x] Rendering-Engine & Display-Treiber (TFT + E-Paper) — **transalp-firmware** (t_adf3f5ea) → `firmware/components/display/` (1.854 Zeilen, 6 Dateien)
-- [ ] Sensor-Driver (RPM, Temp, Fuel, Gear, IMU) — **worker** (t_e5d0d7c5) → running (Retry nach Timeout)
+- [x] Rendering-Engine & Display-Treiber (TFT + E-Paper) — **transalp-firmware** (t_adf3f5ea) → `firmware/components/display/` (2.034 Zeilen, 6 Dateien)
+- [x] Sensor-Driver (RPM, Temp, Fuel, Gear, IMU) — **worker** (t_e5d0d7c5) → `firmware/components/sensors/` (1.225 Zeilen: rpm.c 158, temperature.c 296, fuel_level.c 145, gear_indicator.c 96, imu.c 238, sensors.c 211, sensors.h 81) — gemerged (commit 2360962a)
 - [x] GPS-Treiber & NMEA-Parser — **transalp-plan** (t_6a3a0821) → `firmware/components/gps/` (886 Zeilen: nmea_parser.c 522, gps_task.c 260, gps.h 104) — gemerged (commit ff640bd)
 - [x] BLE-Stack & GATT-Server — **transalp-diag** (t_33c9e335) → `firmware/components/ble/` (1.796 Zeilen: ble_callbacks.c 793, ble_service.c 617, ble_internal.h 139, gatt_uuids.h 166, ble.h 72, ble.c 9) — cherry-picked (commit c8483e8)
-- [ ] Storage & Logger (SD-Karte, GPX, NVS Config) — **transalp-firmware** (t_85d92039) → running
-- [ ] Power Management & Battery Monitoring — **transalp-ui** (t_1111e7f1) → running
+- [x] Storage & Logger (SD-Karte, GPX, NVS Config) — **transalp-firmware** (t_85d92039) → `firmware/components/storage/` (1.844 Zeilen: sd_card.c 457, logger.c 579, config.c 646, storage.c 162) — gemerged (commit 9cebea86)
+- [x] Power Management & Battery Monitoring — **transalp-ui** (t_1111e7f1) → `firmware/components/power/` (1.357 Zeilen: power.c 418, power_manager.c 718, power.h 221) — gemerged (commit 2d756192)
 - [x] OTA-Update System & Firmware-Engineering Guide — **worker** (t_4daa19c4) → `firmware/components/ota/` (1.609 Zeilen: ota_update.c 986, ota_secure_boot.c 269, ota_update.h 354) + `docs/FIRMWARE-GUIDE.md` (5.366 Wörter) — gemerged (commit 19bab571)
-- [ ] Diagnose-System (DTC, Self-Test, Konsole) — **transalp-diag** (t_8454dd54) → running
+- [x] Diagnose-System (DTC, Self-Test, Konsole) — **transalp-diag** (t_8454dd54) → `firmware/components/diagnostics/` (1.861 Zeilen: diagnostics.c 670, dtc.c 400, selftest.c 582, diagnostics.h 207) — gemerged (commit 2d756192)
 - [ ] Companion-App Integration (Dashboard, Navigation, Diagnose) — **worker** (t_968d6126) → running
 
-### Phase 4: Integration & Test (GEPLANT)
-- [ ] Hardware-Assembly
-- [ ] Motorrad-Einbau
-- [ ] Feldtest
-- [ ] Performance-Optimierung
-- [ ] Test-Strategie und Benchmarks
-- [ ] Dokumentation (User-Manual, Installationsanleitung)
+### Phase 4: Integration & Test (LÄUFT)
+- [ ] Firmware Integration & Build-System (main.c, Event-Loop, CMake) — **transalp-firmware** (t_95f1b701) → running
+- [ ] Hardware-Test-Bench & Benchmark-Spezifikation — **transalp-diag** (t_dd852a50) → running
+- [ ] Montage-Anleitung & Einbau-Konzept für PD06 — **transalp-plan** (t_9f608f6e) → running
+- [ ] Feldtest-Protokoll & Evaluations-Kriterien — **transalp-ui** (t_8451c1c9) → running
 
 ## PM-Protokoll
 
@@ -161,6 +159,23 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 - **5 Tasks running:** Sensor-Driver, Storage/Logger, Power-Management, Diagnose-System, Companion-App
 - Review-Kommentare auf allen 3 gemergten Tasks hinterlegt
 
+### Runde 8 (13.10.2026 ~22:30)
+- **4 fertige Tasks reviewt und gemerged:**
+  - Sensor-Driver (t_e5d0d7c5): `firmware/components/sensors/` 1.225 Zeilen (rpm.c 158, temperature.c 296, fuel_level.c 145, gear_indicator.c 96, imu.c 238, sensors.c 211, sensors.h 81) — gemerged (commit 2360962a)
+  - Power Management (t_1111e7f1): `firmware/components/power/` 1.357 Zeilen (power.c 418, power_manager.c 718, power.h 221) — gemerged (commit 2d756192)
+  - Diagnose-System (t_8454dd54): `firmware/components/diagnostics/` 1.861 Zeilen (diagnostics.c 670, dtc.c 400, selftest.c 582, diagnostics.h 207) — gemerged (commit 2d756192)
+  - Storage & Logger (t_85d92039): `firmware/components/storage/` 1.844 Zeilen (sd_card.c 457, logger.c 579, config.c 646, storage.c 162) — gemerged (commit 9cebea86)
+- **Kritischer Fix:** Merge-Konflikt-Nachwirkung behoben — Feature-Branch-Merges hatten versehentlich Stub-Versionen statt voller Implementierungen auf main belassen. Alle 4 Komponenten von ihren Feature-Branches restauriert (commit 02f591b0). Firmware-Gesamt: 13.262 C/H-Zeilen über 9 Komponenten.
+- **Markennamen-Check:** 0 Marken in restaurierten Dateien
+- **Auf origin gepusht (Commits 2d756192 → 9cebea86 → 02f591b0)**
+- **Phase 4 gestartet — 4 neue Tasks erstellt und dispatched:**
+  - Firmware Integration & Build-System → transalp-firmware (t_95f1b701)
+  - Hardware-Test-Bench & Benchmark-Spezifikation → transalp-diag (t_dd852a50)
+  - Montage-Anleitung & Einbau-Konzept für PD06 → transalp-plan (t_9f608f6e)
+  - Feldtest-Protokoll & Evaluations-Kriterien → transalp-ui (t_8451c1c9)
+- **6 Tasks running:** Companion-App (worker) + 4 neue Phase-4-Tasks
+- Review-Kommentare auf allen 4 gemergten Tasks hinterlegt
+
 ## Offene Fragen
 - Welche TFT-Displays sind sonnenlesbar genug?
 - Companion-App: React Native vs. Flutter? (Master-Plan empfiehlt React Native)
@@ -181,19 +196,20 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 ## Metriken
 | Metrik | Wert |
 |---|---|
-| Research-Dokumente | 13 (+ README) |
+| Research-Dokumente | 14 (+ README) |
 | Wörter gesamt (Research) | 89.476 |
 | Design-Dokumente | 10 (ARCHITECTURE, BOM, CASE-DESIGN, FIRMWARE-GUIDE, HARDWARE, PCB-LAYOUT, PINMAP, ROADMAP, TEST-STRATEGY, USER-MANUAL) |
 | Wörter gesamt (Design-Docs) | 63.994 |
 | Wörter gesamt (alle Docs) | 153.470 |
-| Code-Prototypen | 3 (firmware/ 54 Dateien, companion-app/ 28 Dateien, mockups/ 35 Dateien) |
-| Firmware C/H-Zeilen | 7.727 (9 Komponenten: ble, diagnostics, display, gps, ota, power, sensors, storage, utils) |
-| Tasks done | 24 |
-| Tasks running | 5 |
+| Code-Prototypen | 3 (firmware/ 57 Dateien, companion-app/ 20 Dateien, mockups/ 35 Dateien) |
+| Firmware C/H-Zeilen | 13.262 (9 Komponenten: sensors 1.225, power 1.357, diagnostics 1.861, ble 1.796, gps 886, ota 1.609, display 2.034, storage 1.844, main 152) |
+| Tasks done | 29 (+4: Sensor, Power, Diagnostics, Storage) |
+| Tasks running | 6 (Companion-App + 4 Phase-4-Tasks) |
 | Tasks blocked | 0 |
 | Phase 0 Fortschritt | 100% ✅ |
 | Phase 1 Fortschritt | 100% ✅ |
 | Phase 1.5 Fortschritt | 100% ✅ |
 | Phase 2 Fortschritt | 100% ✅ (6/6 done) |
 | Phase 2.5 Fortschritt | 100% ✅ (3/3 done) |
-| Phase 3 Fortschritt | ~50% (5/9 done, 4 running) |
+| Phase 3 Fortschritt | 90% (9/10 done, 1 running) |
+| Phase 4 Fortschritt | GESTARTET (4 Tasks running) |
