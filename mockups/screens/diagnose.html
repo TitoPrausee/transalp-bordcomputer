@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diagnose-Screen</title>
+<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="../css/animations.css">
+</head>
+<body>
+<div class="mockup-frame">
+  <div class="page-label">Diagnose-Screen (480x320 TFT)</div>
+  <div class="display-tft" id="diag-screen">
+
+    <!-- Header -->
+    <div style="display:flex; justify-content:space-between; align-items:center; padding:6px 12px; border-bottom:1px solid var(--bg-panel);">
+      <span style="font-size:24px; font-weight:700;">DIAGNOSE</span>
+      <button class="btn btn-primary" id="selftest-btn">SELF-TEST</button>
+    </div>
+
+    <!-- Sensor-Liste -->
+    <div style="padding:4px 0; font-size:12px;" id="sensor-list">
+      <div class="sensor-row" data-sensor="0">
+        <span style="width:60px;">GPS</span>
+        <span style="width:70px; color:var(--fg-secondary);">NEO-M9N</span>
+        <span class="sensor-status-ok" style="width:24px;">OK</span>
+        <span style="flex:1; text-align:right;">9 SAT  HDOP 1.2</span>
+      </div>
+      <div class="sensor-row" data-sensor="1">
+        <span style="width:60px;">IMU</span>
+        <span style="width:70px; color:var(--fg-secondary);">MPU6050</span>
+        <span class="sensor-status-ok" style="width:24px;">OK</span>
+        <span style="flex:1; text-align:right;">Roll: +5.2</span>
+      </div>
+      <div class="sensor-row" data-sensor="2">
+        <span style="width:60px;">Baro</span>
+        <span style="width:70px; color:var(--fg-secondary);">BMP280</span>
+        <span class="sensor-status-ok" style="width:24px;">OK</span>
+        <span style="flex:1; text-align:right;">842 m  1013 hPa</span>
+      </div>
+      <div class="sensor-row" data-sensor="3">
+        <span style="width:60px;">Temp</span>
+        <span style="width:70px; color:var(--fg-secondary);">KTY81</span>
+        <span class="sensor-status-ok" style="width:24px;">OK</span>
+        <span style="flex:1; text-align:right;">22 C</span>
+      </div>
+      <div class="sensor-row" data-sensor="4">
+        <span style="width:60px;">Fuel</span>
+        <span style="width:70px; color:var(--fg-secondary);">Geber</span>
+        <span class="sensor-status-ok" style="width:24px;">OK</span>
+        <span style="flex:1; text-align:right;">1/2  45%</span>
+      </div>
+      <div class="sensor-row" data-sensor="5">
+        <span style="width:60px;">RPM</span>
+        <span style="width:70px; color:var(--fg-secondary);">PCNT</span>
+        <span class="sensor-status-ok" style="width:24px;">OK</span>
+        <span style="flex:1; text-align:right;">4500</span>
+      </div>
+      <div class="sensor-row" data-sensor="6">
+        <span style="width:60px;">Volt</span>
+        <span style="width:70px; color:var(--fg-secondary);">ADC</span>
+        <span class="sensor-status-ok" style="width:24px;">OK</span>
+        <span style="flex:1; text-align:right;">12.4V</span>
+      </div>
+    </div>
+
+    <!-- Fehlercode-Bereich -->
+    <div style="padding:8px 12px; border-top:1px solid var(--bg-panel);">
+      <div style="font-size:12px; color:var(--fg-secondary); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px;">Fehlercodes</div>
+      <div style="font-size:12px; color:var(--accent-green);">Keine aktiven Fehler</div>
+    </div>
+
+    <!-- Letzter Self-Test -->
+    <div style="padding:4px 12px; font-size:10px; color:var(--fg-tertiary);">
+      Letzter Selbst-Test: 13.10.2026 14:20 - Alle Systeme OK
+    </div>
+
+    <!-- Footer Navigation -->
+    <div style="position:absolute; bottom:0; left:0; right:0; height:30px; display:flex; border-top:1px solid var(--bg-panel); background:var(--bg-deep);">
+      <div style="flex:1; display:flex; align-items:center; justify-content:center; font-size:10px; color:var(--fg-secondary); border-right:1px solid var(--bg-panel);">Sensor-Details</div>
+      <div style="flex:1; display:flex; align-items:center; justify-content:center; font-size:10px; color:var(--accent-blue); border-right:1px solid var(--bg-panel);">Fehlerverlauf</div>
+      <div style="flex:1; display:flex; align-items:center; justify-content:center; font-size:10px; color:var(--fg-secondary);">Reset</div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// Self-Test Animation
+(function() {
+  const btn = document.getElementById('selftest-btn');
+  const rows = document.querySelectorAll('.sensor-row');
+  let testing = false;
+
+  btn.addEventListener('click', function() {
+    if (testing) return;
+    testing = true;
+    btn.textContent = 'TESTE...';
+    btn.style.color = 'var(--accent-yellow)';
+    btn.style.borderColor = 'var(--accent-yellow)';
+
+    rows.forEach((row, i) => {
+      const statusEl = row.children[2];
+      statusEl.textContent = '...';
+      statusEl.className = 'sensor-status-warn';
+      setTimeout(() => {
+        row.classList.add('active');
+        setTimeout(() => {
+          row.classList.remove('active');
+          statusEl.textContent = 'OK';
+          statusEl.className = 'sensor-status-ok';
+        }, 200);
+        if (i === rows.length - 1) {
+          setTimeout(() => {
+            btn.textContent = 'SELF-TEST';
+            btn.style.color = '';
+            btn.style.borderColor = '';
+            testing = false;
+          }, 300);
+        }
+      }, i * 200);
+    });
+  });
+})();
+</script>
+</body>
+</html>

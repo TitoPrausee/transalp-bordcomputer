@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bordcomputer UI Mockups</title>
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/animations.css">
+<style>
+body { background: #0a0a0c; }
+.index-header { font-size: 28px; margin-top: 20px; }
+.index-subtitle { margin-bottom: 32px; }
+.screen-grid { max-width: 960px; }
+.screen-card-thumb iframe {
+  transform: scale(0.55);
+}
+</style>
+</head>
+<body>
+<div class="index-header">Bordcomputer UI Mockups</div>
+<div class="index-subtitle">Interaktive HTML/SVG Prototypen - 480x320 TFT</div>
+
+<div class="screen-grid">
+
+  <a class="screen-card" href="screens/instrument.html">
+    <div class="screen-card-thumb">
+      <iframe src="screens/instrument.html" scrolling="no" sandbox="allow-scripts"></iframe>
+    </div>
+    <div class="screen-card-title">Instrument</div>
+    <div class="screen-card-desc">Speed, RPM-Balken, Gang, Kuehlmitteltemp, Kraftstoffstand, Uhrzeit</div>
+  </a>
+
+  <a class="screen-card" href="screens/navigation.html">
+    <div class="screen-card-thumb">
+      <iframe src="screens/navigation.html" scrolling="no" sandbox="allow-scripts"></iframe>
+    </div>
+    <div class="screen-card-title">Navigation</div>
+    <div class="screen-card-desc">Manoevrier-Pfeil mit Morphing, Distanz, Strassenname, ETA, Tacho-Mini</div>
+  </a>
+
+  <a class="screen-card" href="screens/split.html">
+    <div class="screen-card-thumb">
+      <iframe src="screens/split.html" scrolling="no" sandbox="allow-scripts"></iframe>
+    </div>
+    <div class="screen-card-title">Split</div>
+    <div class="screen-card-desc">Instrumente links (240px), Navigation rechts (240px)</div>
+  </a>
+
+  <a class="screen-card" href="screens/diagnose.html">
+    <div class="screen-card-thumb">
+      <iframe src="screens/diagnose.html" scrolling="no" sandbox="allow-scripts"></iframe>
+    </div>
+    <div class="screen-card-title">Diagnose</div>
+    <div class="screen-card-desc">Sensor-Status-Grid, DTC-Liste, Self-Test mit Animation</div>
+  </a>
+
+  <a class="screen-card" href="screens/settings.html">
+    <div class="screen-card-thumb">
+      <iframe src="screens/settings.html" scrolling="no" sandbox="allow-scripts"></iframe>
+    </div>
+    <div class="screen-card-title">Settings</div>
+    <div class="screen-card-desc">Helligkeit, BLE-Pairing, Log-Intervall, System-Konfiguration</div>
+  </a>
+
+  <a class="screen-card" href="screens/tour-statistik.html">
+    <div class="screen-card-thumb">
+      <iframe src="screens/tour-statistik.html" scrolling="no" sandbox="allow-scripts"></iframe>
+    </div>
+    <div class="screen-card-title">Tour-Statistik</div>
+    <div class="screen-card-desc">Count-Up-Animation, Hoehenprofil, Strecke, Dauer, avg/max Speed</div>
+  </a>
+
+  <a class="screen-card" href="screens/boot.html">
+    <div class="screen-card-thumb">
+      <iframe src="screens/boot.html" scrolling="no" sandbox="allow-scripts"></iframe>
+    </div>
+    <div class="screen-card-title">Boot</div>
+    <div class="screen-card-desc">Logo-Animation: Punkt zu Kreis, Silhouette, Loading-Bar</div>
+  </a>
+
+  <a class="screen-card" href="screens/warning.html">
+    <div class="screen-card-thumb">
+      <iframe src="screens/warning.html" scrolling="no" sandbox="allow-scripts"></iframe>
+    </div>
+    <div class="screen-card-title">Warning</div>
+    <div class="screen-card-desc">Vollbild-Warnung: Oeldruck, Temperatur, Bordspannung - pulsierend</div>
+  </a>
+
+</div>
+
+<div style="margin-top:40px; font-size:12px; color:var(--fg-tertiary); text-align:center;">
+  Display-Aufloesung: 480x320 (ILI9488 TFT) | Dark-Mode | Inter/Roboto | CSS-Animationen
+</div>
+
+</body>
+</html>

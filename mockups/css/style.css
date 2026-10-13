@@ -1,0 +1,726 @@
+/* ============================================
+   Bordcomputer UI - Shared Styles
+   Design language: dark mode, reduction, depth, flow
+   ============================================ */
+
+:root {
+  /* Basis-Palette */
+  --bg-void:    #000000;
+  --bg-deep:    #0A0A0C;
+  --bg-panel:   #1C1C1E;
+  --bg-raised:  #2C2C2E;
+  --bg-overlay: #3A3A3C;
+  --fg-primary:   #FFFFFF;
+  --fg-secondary: #8E8E93;
+  --fg-tertiary:  #48484A;
+
+  /* Akzentfarben */
+  --accent-amber:  #FF9500;
+  --accent-orange: #FF6B00;
+  --accent-red:    #FF3B30;
+  --accent-blue:   #0A84FF;
+  --accent-green:  #30D158;
+  --accent-cyan:   #40C8E0;
+  --accent-yellow: #FFD60A;
+
+  /* Timing-Funktionen */
+  --ease-out:      cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --ease-in-out:   cubic-bezier(0.42, 0.0, 0.58, 1.0);
+  --ease-out-back: cubic-bezier(0.34, 1.56, 0.64, 1.0);
+  --ease-in:       cubic-bezier(0.42, 0.0, 1.0, 1.0);
+  --linear:        linear;
+
+  /* Display-Aufloesungen */
+  --tft-w: 480px;
+  --tft-h: 320px;
+  --epaper-w: 250px;
+  --epaper-h: 122px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #111;
+  font-family: 'Inter', 'Roboto', 'Segoe UI', system-ui, sans-serif;
+  color: var(--fg-primary);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  padding: 40px 20px;
+  min-height: 100vh;
+}
+
+/* ============================================
+   Display Frame - simuliert das echte Display
+   ============================================ */
+
+.display-tft {
+  width: var(--tft-w);
+  height: var(--tft-h);
+  background: var(--bg-void);
+  border: 4px solid #333;
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+  flex-shrink: 0;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+}
+
+.display-tft.scale-2x {
+  transform: scale(1.5);
+  transform-origin: top center;
+  margin-bottom: 160px;
+}
+
+.display-epaper {
+  width: var(--epaper-w);
+  height: var(--epaper-h);
+  background: #f4f0e8;
+  border: 4px solid #333;
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+  flex-shrink: 0;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+}
+
+/* ============================================
+   Typografie
+   ============================================ */
+
+.font-speed    { font-size: 72px; font-weight: 700; letter-spacing: -2px; }
+.font-rpm-digit{ font-size: 36px; font-weight: 600; }
+.font-heading  { font-size: 24px; font-weight: 700; }
+.font-body     { font-size: 16px; font-weight: 400; }
+.font-label    { font-size: 12px; font-weight: 500; }
+.font-tiny     { font-size: 10px; font-weight: 400; }
+
+/* ============================================
+   Panels & Cards
+   ============================================ */
+
+.panel {
+  background: var(--bg-panel);
+  border: 1px solid var(--bg-raised);
+  border-radius: 6px;
+  padding: 8px;
+}
+
+.panel-raised {
+  background: var(--bg-raised);
+  border: 1px solid var(--bg-overlay);
+  border-radius: 6px;
+}
+
+/* ============================================
+   RPM Balken
+   ============================================ */
+
+.rpm-bar-container {
+  position: relative;
+  width: 460px;
+  height: 24px;
+  background: var(--bg-panel);
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 10px 10px 0;
+}
+
+.rpm-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 120ms var(--ease-out), background 120ms var(--ease-out);
+  position: relative;
+}
+
+.rpm-bar-fill.falling {
+  transition: width 250ms var(--ease-in-out), background 250ms var(--ease-in-out);
+}
+
+.rpm-bar-fill.redline {
+  animation: redline-pulse 0.5s var(--ease-in-out) infinite alternate;
+}
+
+/* Shift-Light Marker bei 85% */
+.rpm-shift-marker {
+  position: absolute;
+  top: 0;
+  right: 15%;
+  width: 2px;
+  height: 100%;
+  background: var(--accent-yellow);
+  z-index: 2;
+}
+
+/* Redline Marker bei 95% */
+.rpm-redline-marker {
+  position: absolute;
+  top: -2px;
+  right: 5%;
+  width: 2px;
+  height: 28px;
+  background: var(--accent-red);
+  z-index: 3;
+  animation: redline-blink 0.5s steps(2) infinite;
+}
+
+/* ============================================
+   Speed Display
+   ============================================ */
+
+.speed-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.speed-number {
+  font-size: 72px;
+  font-weight: 700;
+  color: var(--fg-primary);
+  line-height: 1;
+  letter-spacing: -2px;
+}
+
+.speed-unit {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--fg-secondary);
+  margin-top: 2px;
+}
+
+/* ============================================
+   Status Leiste
+   ============================================ */
+
+.status-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+  font-size: 10px;
+  color: var(--fg-secondary);
+  border-top: 1px solid var(--bg-panel);
+  background: var(--bg-deep);
+}
+
+.status-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.status-item svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* ============================================
+   Sekundaerwerte (Instrument Screen)
+   ============================================ */
+
+.secondary-values {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 4px 12px;
+}
+
+.secondary-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.secondary-item .value {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--fg-primary);
+}
+
+.secondary-item .label {
+  font-size: 10px;
+  color: var(--fg-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.secondary-item.warning .value { color: var(--accent-yellow); }
+.secondary-item.critical .value { color: var(--accent-red); }
+.secondary-item.ok .value { color: var(--accent-green); }
+.secondary-item.info .value { color: var(--accent-blue); }
+
+/* ============================================
+   Icons (inline SVG styling)
+   ============================================ */
+
+.icon {
+  width: 16px;
+  height: 16px;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+}
+
+.icon-lg { width: 24px; height: 24px; }
+.icon-xl { width: 32px; height: 32px; }
+
+/* ============================================
+   Navigation Pfeil
+   ============================================ */
+
+.nav-arrow {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.nav-arrow svg {
+  width: 100px;
+  height: 100px;
+  fill: var(--accent-blue);
+  transition: transform 300ms var(--ease-in-out);
+}
+
+/* ============================================
+   Buttons
+   ============================================ */
+
+.btn {
+  padding: 6px 16px;
+  border: 1px solid var(--bg-overlay);
+  border-radius: 4px;
+  background: var(--bg-raised);
+  color: var(--fg-primary);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: background 150ms var(--ease-out);
+}
+
+.btn:hover {
+  background: var(--bg-overlay);
+}
+
+.btn:active {
+  transform: scale(0.96);
+}
+
+.btn-danger {
+  border-color: var(--accent-red);
+  color: var(--accent-red);
+}
+
+.btn-primary {
+  border-color: var(--accent-blue);
+  color: var(--accent-blue);
+}
+
+/* ============================================
+   Slider
+   ============================================ */
+
+.slider {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.slider-track {
+  width: 100px;
+  height: 4px;
+  background: var(--bg-raised);
+  border-radius: 2px;
+  position: relative;
+}
+
+.slider-fill {
+  height: 100%;
+  background: var(--accent-blue);
+  border-radius: 2px;
+  transition: width 150ms var(--ease-out);
+}
+
+.slider-thumb {
+  position: absolute;
+  top: -4px;
+  width: 12px;
+  height: 12px;
+  background: var(--fg-primary);
+  border-radius: 50%;
+  transition: left 150ms var(--ease-out);
+}
+
+/* ============================================
+   Toggle
+   ============================================ */
+
+.toggle {
+  width: 36px;
+  height: 20px;
+  background: var(--bg-raised);
+  border-radius: 10px;
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.toggle.on { background: var(--accent-green); }
+
+.toggle::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  background: var(--fg-primary);
+  border-radius: 50%;
+  transition: left 150ms var(--ease-out);
+}
+
+.toggle.on::after {
+  left: 18px;
+}
+
+/* ============================================
+   Page Header / Label
+   ============================================ */
+
+.page-label {
+  font-size: 14px;
+  color: var(--fg-secondary);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.mockup-frame {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ============================================
+   E-Paper Specific
+   ============================================ */
+
+.epaper-content {
+  color: #000;
+  background: #f4f0e8;
+  width: 100%;
+  height: 100%;
+  padding: 4px;
+  font-family: 'Inter', 'Roboto', monospace;
+  display: flex;
+  flex-direction: column;
+}
+
+.epaper-content * {
+  color: #000;
+}
+
+/* ============================================
+   Sensor Grid (Diagnose Screen)
+   ============================================ */
+
+.sensor-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 8px;
+  font-size: 12px;
+  border-bottom: 1px solid var(--bg-panel);
+}
+
+.sensor-row.active {
+  background: var(--bg-raised);
+  animation: sensor-highlight 200ms var(--ease-out);
+}
+
+.sensor-status-ok   { color: var(--accent-green); }
+.sensor-status-err  { color: var(--accent-red); }
+.sensor-status-warn { color: var(--accent-yellow); }
+
+/* ============================================
+   Warning Overlay
+   ============================================ */
+
+.warning-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  animation: fade-in 150ms var(--ease-out);
+}
+
+.warning-icon {
+  animation: warning-pulse 1s var(--ease-in-out) infinite alternate;
+}
+
+.warning-text {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--accent-red);
+  text-align: center;
+  animation: warning-pulse 1s var(--ease-in-out) infinite alternate;
+}
+
+.warning-subtext {
+  font-size: 14px;
+  color: var(--fg-secondary);
+}
+
+/* ============================================
+   Fuel Bar
+   ============================================ */
+
+.fuel-bar {
+  display: inline-block;
+  width: 8px;
+  height: 24px;
+  border: 1px solid var(--fg-secondary);
+  border-radius: 2px;
+  position: relative;
+  overflow: hidden;
+}
+
+.fuel-bar-fill {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--accent-green);
+  transition: height 400ms var(--ease-in-out), background 400ms var(--ease-in-out);
+}
+
+.fuel-bar-fill.low {
+  background: var(--accent-yellow);
+  animation: fuel-pulse 1s var(--ease-in-out) infinite alternate;
+}
+
+.fuel-bar-fill.critical {
+  background: var(--accent-red);
+  animation: fuel-pulse 0.5s var(--ease-in-out) infinite alternate;
+}
+
+/* ============================================
+   Count-Up (Tour Statistik)
+   ============================================ */
+
+.count-up {
+  font-size: 48px;
+  font-weight: 700;
+  color: var(--fg-primary);
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: var(--fg-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 4px;
+}
+
+/* ============================================
+   Height Profile Bars
+   ============================================ */
+
+.height-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  height: 60px;
+}
+
+.height-bar {
+  flex: 1;
+  background: var(--accent-blue);
+  border-radius: 2px 2px 0 0;
+  min-height: 4px;
+  opacity: 0.8;
+}
+
+/* ============================================
+   Boot Animation
+   ============================================ */
+
+.boot-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: var(--bg-void);
+}
+
+.boot-logo-circle {
+  width: 60px;
+  height: 60px;
+  border: 2px solid var(--fg-primary);
+  border-radius: 50%;
+  animation: boot-circle-grow 400ms var(--ease-out) 200ms both;
+}
+
+.boot-silhouette {
+  width: 2px;
+  height: 40px;
+  background: var(--fg-primary);
+  animation: boot-line-grow 400ms var(--ease-out) 600ms both;
+}
+
+.boot-title {
+  font-size: 12px;
+  color: var(--fg-secondary);
+  letter-spacing: 1px;
+  animation: fade-in 400ms var(--ease-out) 1000ms both;
+}
+
+.boot-progress-track {
+  width: 200px;
+  height: 2px;
+  background: var(--bg-raised);
+  border-radius: 1px;
+  overflow: hidden;
+  animation: fade-in 200ms var(--ease-out) 1400ms both;
+}
+
+.boot-progress-bar {
+  height: 100%;
+  background: var(--accent-blue);
+  border-radius: 1px;
+  animation: boot-progress-fill 600ms var(--ease-in-out) 1400ms both;
+}
+
+/* ============================================
+   DTC List
+   ============================================ */
+
+.dtc-entry {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px;
+  font-size: 12px;
+  border-bottom: 1px solid var(--bg-panel);
+}
+
+.dtc-code {
+  font-family: 'Courier New', monospace;
+  color: var(--accent-red);
+  font-weight: 600;
+}
+
+.dtc-desc {
+  color: var(--fg-secondary);
+  flex: 1;
+}
+
+/* ============================================
+   Screen Transition (for index page demos)
+   ============================================ */
+
+.screen-enter {
+  animation: slide-in-right 250ms var(--ease-in-out) both;
+}
+
+.screen-exit {
+  animation: slide-out-left 250ms var(--ease-in-out) both;
+}
+
+/* ============================================
+   Index Page Styles
+   ============================================ */
+
+.index-header {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--fg-primary);
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.index-subtitle {
+  font-size: 14px;
+  color: var(--fg-secondary);
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.screen-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 24px;
+  max-width: 900px;
+  width: 100%;
+}
+
+.screen-card {
+  background: var(--bg-panel);
+  border: 1px solid var(--bg-raised);
+  border-radius: 8px;
+  overflow: hidden;
+  text-decoration: none;
+  color: var(--fg-primary);
+  transition: transform 150ms var(--ease-out), border-color 150ms var(--ease-out);
+}
+
+.screen-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--accent-blue);
+}
+
+.screen-card-thumb {
+  width: 100%;
+  aspect-ratio: 480/320;
+  background: var(--bg-void);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.screen-card-thumb iframe {
+  width: 480px;
+  height: 320px;
+  border: 0;
+  transform-origin: top left;
+  pointer-events: none;
+}
+
+.screen-card-title {
+  padding: 12px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.screen-card-desc {
+  padding: 0 12px 12px;
+  font-size: 12px;
+  color: var(--fg-secondary);
+}

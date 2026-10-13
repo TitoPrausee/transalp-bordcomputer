@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Settings-Screen</title>
+<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="../css/animations.css">
+</head>
+<body>
+<div class="mockup-frame">
+  <div class="page-label">Settings-Screen (480x320 TFT)</div>
+  <div class="display-tft" id="settings-screen">
+
+    <!-- Header -->
+    <div style="display:flex; justify-content:space-between; align-items:center; padding:6px 12px; border-bottom:1px solid var(--bg-panel);">
+      <span style="font-size:24px; font-weight:700;">EINSTELLUNGEN</span>
+      <button class="btn" style="font-size:10px;">
+        <span style="display:inline-flex; align-items:center; gap:4px;">
+          <svg class="icon" style="width:12px; height:12px;" viewBox="0 0 24 24"><use href="../assets/icons/icon-chevron-left.svg#"/></svg>
+          Zurueck
+        </span>
+      </button>
+    </div>
+
+    <!-- Scrollbare Liste -->
+    <div style="height:284px; overflow-y:auto; padding:4px 0;">
+
+      <!-- Display -->
+      <div style="padding:2px 12px; font-size:16px; font-weight:700; color:var(--fg-secondary);">Display</div>
+      <div style="padding:4px 12px; display:flex; justify-content:space-between; align-items:center; font-size:12px;">
+        <span>Helligkeit</span>
+        <div class="slider">
+          <div class="slider-track">
+            <div class="slider-fill" style="width:70%;"></div>
+            <div class="slider-thumb" style="left:70px;"></div>
+          </div>
+          <span style="color:var(--fg-secondary);">70%</span>
+        </div>
+      </div>
+      <div style="padding:4px 12px; display:flex; justify-content:space-between; align-items:center; font-size:12px;">
+        <span>Dark Mode</span>
+        <span class="toggle on"></span>
+      </div>
+      <div style="padding:4px 12px; display:flex; justify-content:space-between; align-items:center; font-size:12px;">
+        <span>Auto-Dim</span>
+        <span class="toggle on"></span>
+      </div>
+
+      <!-- Sensoren -->
+      <div style="padding:6px 12px 2px; font-size:16px; font-weight:700; color:var(--fg-secondary);">Sensoren</div>
+      <div style="padding:4px 12px; display:flex; justify-content:space-between; align-items:center; font-size:12px;">
+        <span>GPS-Rate</span>
+        <span style="color:var(--accent-blue);">10 Hz</span>
+      </div>
+      <div style="padding:4px 12px; display:flex; justify-content:space-between; align-items:center; font-size:12px;">
+        <span>RPM-Redline</span>
+        <span style="color:var(--accent-red);">8000</span>
+      </div>
+      <div style="padding:4px 12px; display:flex; justify-content:space-between; align-items:center; font-size:12px;">
+        <span>Shift-Light</span>
+        <span style="color:var(--accent-yellow);">7000</span>
+      </div>
+      <div style="padding:4px 12px; display:flex; justify-content:space-between; align-items:center; font-size:12px;">
+        <span>BMP QNH</span>
+        <span style="color:var(--fg-primary);">1013 hPa</span>
+      </div>
+
+      <!-- Bluetooth -->
+      <div style="padding:6px 12px 2px; font-size:16px; font-weight:700; color:var(--fg-secondary);">Bluetooth</div>
+      <div style="padding:4px 12px; display:flex; justify-content:space-between; align-items:center; font-size:12px;">
+        <span>Geraetename</span>
+        <span style="color:var(--fg-primary);">Transalp-BC</span>
+      </div>
+      <div style="padding:4px 12px; display:flex; justify-content:space-between; align-items:center; font-size:12px;">
+        <span>Pairing-Liste</span>
+        <span style="color:var(--fg-secondary);">2 Geraete</span>
+      </div>
+      <div style="padding:4px 12px; display:flex; justify-content:space-between; align-items:center; font-size:12px;">
+        <span style="display:flex; align-items:center; gap:4px;">
+          <svg class="icon" style="width:14px; height:14px;" viewBox="0 0 24 24"><use href="../assets/icons/icon-bluetooth.svg#"/></svg>
+          Verbindung
+        </span>
+        <span style="color:var(--accent-green);">Verbunden</span>
+      </div>
+
+      <!-- Logging -->
+      <div style="padding:6px 12px 2px; font-size:16px; font-weight:700; color:var(--fg-secondary);">Logging</div>
+      <div style="padding:4px 12px; display:flex; justify-content:space-between; align-items:center; font-size:12px;">
+        <span>Format</span>
+        <span style="color:var(--fg-primary);">CSV + Binary</span>
+      </div>
+      <div style="padding:4px 12px; display:flex; justify-content:space-between; align-items:center; font-size:12px;">
+        <span>Intervall</span>
+        <span style="color:var(--fg-primary);">5 s</span>
+      </div>
+      <div style="padding:4px 12px; display:flex; justify-content:space-between; align-items:center; font-size:12px;">
+        <span>SD-Karte</span>
+        <span style="color:var(--fg-secondary);">8 GB, 2.1 GB frei</span>
+      </div>
+
+      <!-- System -->
+      <div style="padding:6px 12px 2px; font-size:16px; font-weight:700; color:var(--fg-secondary);">System</div>
+      <div style="padding:4px 12px; display:flex; justify-content:space-between; align-items:center; font-size:12px;">
+        <span>Firmware</span>
+        <span style="color:var(--fg-secondary);">v1.2.0</span>
+      </div>
+      <div style="padding:4px 12px; display:flex; justify-content:space-between; align-items:center; font-size:12px;">
+        <span>OTA-Update</span>
+        <span style="color:var(--accent-blue);">Nach Updates suchen</span>
+      </div>
+      <div style="padding:4px 12px; display:flex; justify-content:space-between; align-items:center; font-size:12px;">
+        <span>Werkseinstellung</span>
+        <span style="color:var(--accent-red);">Reset</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// Toggle Demo
+document.querySelectorAll('.toggle').forEach(t => {
+  t.addEventListener('click', () => t.classList.toggle('on'));
+});
+</script>
+</body>
+</html>

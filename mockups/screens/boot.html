@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Boot-Screen</title>
+<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="../css/animations.css">
+</head>
+<body>
+<div class="mockup-frame">
+  <div class="page-label">Boot-Screen (480x320 TFT)</div>
+  <div class="display-tft" id="boot-screen">
+
+    <div class="boot-container">
+      <!-- Punkt zu Kreis -->
+      <div class="boot-logo-circle"></div>
+      <!-- Silhouette-Strich -->
+      <div class="boot-silhouette"></div>
+      <!-- Titel -->
+      <div class="boot-title">TRANSALP BORDCOMPUTER</div>
+      <!-- Progress Bar -->
+      <div class="boot-progress-track">
+        <div class="boot-progress-bar"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// Boot-Animation wiederholt sich alle 4 Sekunden
+(function() {
+  const screen = document.getElementById('boot-screen');
+  const container = screen.querySelector('.boot-container');
+
+  function replay() {
+    const clone = container.cloneNode(true);
+    screen.replaceChild(clone, container);
+    void clone.offsetWidth;
+    setTimeout(replay, 4000);
+  }
+  setTimeout(replay, 4000);
+})();
+</script>
+</body>
+</html>

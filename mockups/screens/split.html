@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Split-Screen</title>
+<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="../css/animations.css">
+</head>
+<body>
+<div class="mockup-frame">
+  <div class="page-label">Split-Screen (480x320 TFT)</div>
+  <div class="display-tft" id="split-screen">
+
+    <!-- Trennlinie bei X=240 -->
+    <div style="position:absolute; top:0; bottom:40px; left:240px; width:1px; background:var(--bg-panel);"></div>
+
+    <!-- Linke Haelfte: Instrumente (0-240) -->
+    <div style="position:absolute; top:0; left:0; width:240px; height:280px;">
+
+      <!-- RPM Balken (reduziert) -->
+      <div style="position:relative; width:200px; height:16px; background:var(--bg-panel); border-radius:3px; overflow:hidden; margin:10px auto 0;">
+        <div style="height:100%; width:55%; background:var(--accent-yellow); border-radius:3px; transition: width 120ms var(--ease-out);"></div>
+        <div style="position:absolute; top:0; right:15%; width:2px; height:100%; background:var(--accent-yellow);"></div>
+      </div>
+      <div style="text-align:center; font-size:10px; color:var(--fg-secondary); margin-top:2px;">4500 rpm</div>
+
+      <!-- Speed (zentriert, kleiner) -->
+      <div style="position:absolute; top:50px; left:0; right:0; display:flex; flex-direction:column; align-items:center;">
+        <div style="font-size:48px; font-weight:700; color:var(--fg-primary); line-height:1; letter-spacing:-1px;">98</div>
+        <div style="font-size:10px; color:var(--fg-secondary);">km/h</div>
+      </div>
+
+      <!-- Status-Grid 3x2 -->
+      <div style="position:absolute; top:160px; left:8px; right:8px; display:grid; grid-template-columns:1fr 1fr 1fr; gap:4px;">
+        <div style="text-align:center;">
+          <div style="font-size:14px; font-weight:600;">5</div>
+          <div style="font-size:9px; color:var(--fg-secondary);">GANG</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-size:14px; font-weight:600;">22C</div>
+          <div style="font-size:9px; color:var(--fg-secondary);">TEMP</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-size:14px; font-weight:600;">1/2</div>
+          <div style="font-size:9px; color:var(--fg-secondary);">FUEL</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-size:14px; font-weight:600; color:var(--accent-green);">9</div>
+          <div style="font-size:9px; color:var(--fg-secondary);">SAT</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-size:14px; font-weight:600;">12.4V</div>
+          <div style="font-size:9px; color:var(--fg-secondary);">VOLT</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-size:14px; font-weight:600;">842m</div>
+          <div style="font-size:9px; color:var(--fg-secondary);">HOEHE</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Rechte Haelfte: Navigation (240-480) -->
+    <div style="position:absolute; top:0; left:240px; width:240px; height:280px;">
+
+      <!-- Nav-Pfeil (kleiner, 60x60) -->
+      <div style="position:absolute; top:20px; left:0; right:0; display:flex; justify-content:center;">
+        <svg width="60" height="60" viewBox="0 0 100 100">
+          <polygon points="50,5 95,60 70,60 70,95 30,95 30,60 5,60" fill="#0A84FF"/>
+        </svg>
+      </div>
+
+      <!-- Distanz -->
+      <div style="position:absolute; top:90px; left:0; right:0; text-align:center; font-size:24px; font-weight:700; color:var(--fg-primary);">340 m</div>
+
+      <!-- Strassenname -->
+      <div style="position:absolute; top:130px; left:8px; right:8px; text-align:center; font-size:12px; color:var(--fg-primary); overflow:hidden; white-space:nowrap;">
+        Bundesstrasse 17
+      </div>
+
+      <!-- ETA + Rest-Distanz -->
+      <div style="position:absolute; top:160px; left:0; right:0; display:flex; justify-content:space-around; font-size:12px;">
+        <div><span style="color:var(--fg-secondary);">ETA</span> <strong>15:42</strong></div>
+        <div><span style="color:var(--fg-secondary);">REST</span> <strong>42 km</strong></div>
+      </div>
+
+      <!-- Next Maneuver Preview -->
+      <div style="position:absolute; bottom:8px; right:8px; opacity:0.5; display:flex; align-items:center; gap:4px;">
+        <svg width="24" height="24" viewBox="0 0 100 100">
+          <polygon points="50,5 95,60 70,60 70,80 30,80 30,95 5,95 5,60" fill="#0A84FF"/>
+        </svg>
+        <span style="font-size:10px; color:var(--fg-secondary);">1.2 km</span>
+      </div>
+    </div>
+
+    <!-- Status-Leiste -->
+    <div class="status-bar">
+      <div class="status-item" style="color: var(--accent-blue);">
+        <svg class="icon" viewBox="0 0 24 24"><use href="../assets/icons/icon-bluetooth.svg#"/></svg>
+        <span>Verbunden</span>
+      </div>
+      <div class="status-item">
+        <span style="color:var(--accent-blue);">SPLIT</span>
+      </div>
+      <div class="status-item">
+        <span>14:23</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>
