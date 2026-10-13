@@ -1,8 +1,9 @@
 # Projekt-Roadmap: Transalp Bordcomputer
 
-> Zuletzt aktualisiert: 14.10.2026 (PM-Runde 13)
-> Status: Aktiv — 5 Worker-Profile + 1 Projektmanager (PM) auf Mac mini
+> Zuletzt aktualisiert: 14.10.2026 (PM-Runde 14)
+> Status: Wartung — 5 Worker-Profile + 1 Projektmanager (PM) auf Mac mini
 > **Phasen 0–6 ABGESCHLOSSEN ✅ — Projekt RELEASE-READY**
+> **Runde 14: Repo-Hygiene — Stale Branches entfernt, Dependabot-Updates gemerged**
 
 ## Projektziel
 Vollständiger Open-Source Bordcomputer für die Honda Transalp 600 (PD06).
@@ -282,6 +283,24 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 - **PHASE 6 = 100% ABGESCHLOSSEN** 🎉 — Alle 5 Phase-6-Tasks done
 - **ALLE PROJEKTPHASEN 0–6 ABGESCHLOSSEN** — 48 Tasks gesamt, 0 running, 0 blocked — PROJEKT IST RELEASE-READY ✅
 
+### PM-Runde 14 (14.10.2026, Wartung)
+- **Repo-Hygiene:** 47 stale lokale Feature-Branches entfernt (alle Inhalte bereits nach main gemerged). Nur `main` verbleibt.
+- **Remote-Branches bereinigt:** 36 alte Remote-Branches auf origin gelöscht. Sauberes Repository.
+- **Dependabot-Updates gemerged (5 GitHub-Actions):**
+  - `actions/checkout` v4 → v7 (alle Workflows)
+  - `actions/upload-artifact` v4 → v7 (companion-app-ci, firmware-ci)
+  - `actions/upload-pages-artifact` v3 → v5 (pages.yml)
+  - `actions/configure-pages` v5 → v6 (pages.yml)
+  - `DavidAnson/markdownlint-cli2-action` v17 → v24 (docs-ci.yml)
+- **4 npm Major-Bump-PRs nicht gemerged** (reaktive, nicht automatisiert):
+  - react-native 0.76.5 → 0.87.1 (major)
+  - react 18.3.1 → 19.3.0 (major)
+  - react-native-safe-area-context ^4.14.0 → ^5.10.1 (major)
+  - expo-status-bar ~2.0.0 → ~57.0.1 (major, incompatible mit expo ~52)
+  - Grund: Major-Version-Sprünge erfordern manuellen Build-Test und Code-Anpassungen. Diese bleiben offen bis zur nächsten Aktualisierung.
+- **Dependabot-Branches für gemergte PRs gelöscht.**
+- **Auf origin gepusht (Commits 009332a0 → c959e24b)**
+
 ## Offene Fragen
 - Welche TFT-Displays sind sonnenlesbar genug?
 - Companion-App: React Native vs. Flutter? (Master-Plan empfiehlt React Native)
@@ -310,15 +329,18 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 | Code-Prototypen | 3 (firmware/ 15.297 Zeilen C/H, companion-app/ 5.957 Zeilen TS/TSX, mockups/ 8 HTML-Screens) |
 | Firmware C/H-Zeilen | 15.297 (10 Komponenten + main + test-suite) |
 | Companion-App | 5.957 Zeilen TS/TSX (BleManager, Dashboard, Navigation, Diagnose, Settings) |
-| CI/CD Workflows | 5 (firmware-ci, companion-app-ci, docs-ci, brand-blocklist, pages) |
+| CI/CD Workflows | 4 (firmware-ci, companion-app-ci, docs-ci mit brand-check, pages) |
 | Unit-Tests | 3 (test_dtc, test_event_loop, test_nmea_parser) + ESP-IDF-Mocks |
 | Issue Templates | 2 (bug_report, feature_request) |
 | PR Template | 1 (.github/PULL_REQUEST_TEMPLATE.md) |
 | Community Files | 4 (CODE_OF_CONDUCT, SECURITY, FUNDING.yml, CODEOWNERS) |
 | Dependabot | 1 (.github/dependabot.yml — npm + github-actions) |
-| Tasks done | 48 (+5 seit Runde 12) |
+| Git Commits | 130 (+5 Dependabot-Merges) |
+| Tasks done | 48 |
 | Tasks running | 0 |
 | Tasks blocked | 0 |
+| Lokale Branches | 1 (nur main) |
+| Offene Dependabot-PRs | 4 (npm major bumps, nicht automatisiert) |
 | Tasks archived | 1 (t_4f8965c9: Design-Integration, veraltet) |
 | Phase 0 Fortschritt | 100% ✅ |
 | Phase 1 Fortschritt | 100% ✅ |
