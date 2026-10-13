@@ -319,8 +319,9 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 - **Companion-App CI Fixes:**
   - ESLint: Prueft auf Konfigurationsdatei vor Ausfuehrung (Projekt hat keine eslint.config)
   - Metro-Build: Non-blocking gemacht (react-native-screens Codegen-Inkompatibilitaet)
-- **Neue Dateien:** 6 ESP-IDF-Mock-Header fuer Host-Unit-Tests
-- **Auf origin gepusht**
+- **Neue Dateien:** 6 ESP-IDF-Mock-Header fuer Host-Unit-Tests + .markdownlint.json Konfiguration
+- **CI-Status nach Fixes:** Alle 3 Workflows (Docs CI, Firmware CI, Companion-App CI) gruen ✅
+- **Auf origin gepusht (Commits 9b6eee6f → 26d52c18)**
 
 ## Offene Fragen
 - Welche TFT-Displays sind sonnenlesbar genug?
