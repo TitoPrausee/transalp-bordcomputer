@@ -8,5 +8,4 @@ idf_component_register(
         storage
         ble
         power
-        ota
 )

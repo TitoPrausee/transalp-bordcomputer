@@ -10,7 +10,6 @@
 #include "storage.h"
 #include "ble.h"
 #include "power.h"
-#include "ota_update.h"
 
 static const char *TAG = "main";
 
@@ -25,9 +24,6 @@ void app_main(void)
     display_init();
     storage_init();
     ble_init();
-
-    /* OTA-Subsystem initialisieren (prueft Boot-State, ggf. Rollback) */
-    ota_init(NULL, NULL);
 
     /* Tasks starten — siehe ARCHITECTURE.md für Prioritäten/Cores */
     xTaskCreatePinnedToCore(gps_task,     "gps",     4096, NULL, 5, NULL, 1);
