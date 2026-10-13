@@ -848,16 +848,15 @@ Das ersetzt nicht die TVS-Diode, aber glättet kurzzeitige Einbrüche.
 
 ### 8.1 Aftermarket-Dashboards und Motorrad-Navi
 
-**Garmin Zumo series (z.B. Zumo XT2):**
+**Motorrad-Navigationsgerät (Referenzprodukt):**
 - Gehäuse: ruggedized Kunststoff, IPX7 (1m Wassersäule 30 min)
 - Montage: RAM-Mount Kugelgelenk + Crossbar-Adapter
 - Display: 6" transflektiv LCD (nicht E-Paper)
 - Temperatur: -20°C bis +60°C Betrieb
 - Lernpunkt: transflektives Display für Sonne, ruggedized Design,
   austauschbare Batterie
-- [Garmin Zumo XT2 Specs](https://www.garmin.com/en-US/p/745529)
 
-**TomTom RIDER 550:**
+**Motorrad-Navigationsgerät (Referenzprodukt, zweites Modell):**
 - Gehäuse: Gummierte Oberfläche, IPX5 (Spritzwasser, nicht eintauchen)
 - Montage: RAM-Mount kompatibel
 - Temperatur: -10°C bis +50°C
@@ -891,7 +890,7 @@ Zusammenfassung der Design-Prinzipien, die sich aus kommerziellen
 Motorrad-Elektronik-Produkten ableiten lassen:
 
 1. **IP67 als Minimum, IP65 für hochdruck-gefahrte Bereiche**
-   - Kommerzielle Produkte (Garmin Zumo) nutzen IPX7 oder IP67
+   - Kommerzielle Produkte (Motorrad-Navigationsgeräte) nutzen IPX7 oder IP67
 2. **RAM-Mount als Standard-Halterung**
    - Fast alle kommerziellen Produkte nutzen RAM-Mount kompatibel
    - Gibt es in jeder erdenklichen Konfiguration
@@ -975,7 +974,7 @@ Transalp-Bordcomputer-Projekt:
 - [STMicro Load Dump Protection](https://www.st.com/resource/en/application_note/dm00180430-load-dump-protection-with-tvs-diodes-stmicroelectronics.pdf)
 - [Analog Devices MOSFET Reverse Polarity Protection](https://www.analog.com/en/design-notes/protecting-circuits-using-mosfets-as-reverse-polarity-protection.html)
 - [Vishay Capacitors for Load Dump](https://www.vishay.com/docs/29022/aluminumcapacitorsforload_dump.pdf)
-- [Garmin Zumo XT2](https://www.garmin.com/en-US/p/745529)
+- Motorrad-Navigationsgerät (Referenzprodukt)
 - [TrailTech Voyager Pro](https://www.trailtech.net/voyager-pro)
 - [Quad Lock Motorcycle Mount Guide](https://aerostich.com/pages/quad-lock-motorcycle-mount-guide)
 - [Motorcycle PCB Assembly Guidelines](https://bigmateph.com/motorcycle-pcb-assembly-guidelines)
