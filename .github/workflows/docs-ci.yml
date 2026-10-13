@@ -1,0 +1,157 @@
+name: Docs CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/**'
+      - '.github/workflows/docs-ci.yml'
+  pull_request:
+    paths:
+      - 'docs/**'
+      - '.github/workflows/docs-ci.yml'
+
+concurrency:
+  group: docs-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  markdown-lint:
+    name: Markdown Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run markdownlint
+        uses: DavidAnson/markdownlint-cli2-action@v17
+        with:
+          globs: |
+            docs/**/*.md
+          config: |
+            {
+              "default": true,
+              "MD013": false,
+              "MD024": { "siblings_only": true },
+              "MD033": false,
+              "MD041": false,
+              "MD034": false
+            }
+
+  brand-check:
+    name: Brand Name Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Scan for trademarked brand names
+        run: |
+          echo "=== Brand name scan ==="
+          VIOLATIONS=0
+          # Read patterns from the blocklist file (one regex per line).
+          # The blocklist lives in .github/brand-blocklist.txt so that the
+          # workflow file itself does not contain the banned words.
+          BLOCKLIST=".github/brand-blocklist.txt"
+          if [ ! -f "$BLOCKLIST" ]; then
+            echo "Blocklist not found — skipping brand check"
+            exit 0
+          fi
+          for f in $(find . -name '*.md' -o -name '*.yml' -o -name '*.yaml' \
+                      | grep -v node_modules | grep -v '.git/'); do
+            while IFS= read -r pattern; do
+              [ -z "$pattern" ] && continue
+              if grep -inE "$pattern" "$f" 2>/dev/null; then
+                echo "  VIOLATION in: $f (pattern: $pattern)"
+                VIOLATIONS=$((VIOLATIONS + 1))
+              fi
+            done < "$BLOCKLIST"
+          done
+          echo "Brand check: $VIOLATIONS violation(s)"
+          if [ "$VIOLATIONS" -gt 0 ]; then
+            exit 1
+          fi
+
+  link-check:
+    name: Link Validation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install lychee
+        run: |
+          curl -sL https://github.com/lycheeverse/lychee/releases/download/v0.15.1/lychee-v0.15.1-x86_64-unknown-linux-gnu.tar.gz \
+            | tar xz -C /tmp
+          sudo mv /tmp/lychee /usr/local/bin/
+
+      - name: Validate links
+        run: |
+          lychee \
+            --no-progress \
+            --max-concurrency 8 \
+            --timeout 20 \
+            --max-retries 3 \
+            --accept 200,301,302,403,999 \
+            --exclude-loopback \
+            --root-dir . \
+            'docs/**/*.md' \
+            '*.md' \
+            || true
+
+      - name: Internal link integrity
+        run: |
+          echo "=== Internal link check ==="
+          BROKEN=0
+          for f in $(find docs -name '*.md'); do
+            # Extract relative links like [text](path.md) or [text](path.md#anchor)
+            while IFS= read -r link; do
+              target=$(echo "$link" | sed 's|#.*||' | sed 's|^\.\/||')
+              if [ -z "$target" ] || [ "$target" = "$f" ]; then
+                continue
+              fi
+              dir=$(dirname "$f")
+              resolved="$dir/$target"
+              if [ ! -f "$resolved" ]; then
+                echo "  BROKEN: $f -> $target"
+                BROKEN=$((BROKEN + 1))
+              fi
+            done < <(grep -oP '\]\(\K[^)]+' "$f" | grep -E '\.md' || true)
+          done
+          echo "Internal link check: $BROKEN broken link(s)"
+          if [ "$BROKEN" -gt 0 ]; then
+            exit 1
+          fi
+
+  word-count:
+    name: Document Word Count Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check minimum word counts
+        run: |
+          echo "=== Word count check ==="
+          FAILURES=0
+          for f in $(find docs -maxdepth 1 -name '*.md'); do
+            wc_out=$(wc -w < "$f")
+            if [ "$wc_out" -lt 500 ]; then
+              echo "  TOO SHORT: $f ($wc_out words, need 500)"
+              FAILURES=$((FAILURES + 1))
+            else
+              echo "  OK: $f ($wc_out words)"
+            fi
+          done
+          for f in $(find docs/research -name '*.md' 2>/dev/null); do
+            wc_out=$(wc -w < "$f")
+            if [ "$wc_out" -lt 1000 ]; then
+              echo "  TOO SHORT: $f ($wc_out words, need 1000)"
+              FAILURES=$((FAILURES + 1))
+            else
+              echo "  OK: $f ($wc_out words)"
+            fi
+          done
+          echo "Word count check: $FAILURES failure(s)"
+          if [ "$FAILURES" -gt 0 ]; then
+            exit 1
+          fi

@@ -1,0 +1,13 @@
+# Brand name blocklist for the docs-ci brand-check job.
+# One pattern per line. The docs-ci.yml workflow greps all .md and .yml/.yaml
+# files for these terms (case-insensitive). A match fails the CI build.
+#
+# Add vendor and platform brand names that must not appear in this
+# open-source project's documentation or configuration files.
+\b[Aa]pple\b
+\b[Gg]oogle\b
+\b[Ss]amsung\b
+\b[Mm]icrosoft\b
+\b[Ff]acebook\b
+\b[Tt]witter\b
+\b[Ii]nstagram\b
