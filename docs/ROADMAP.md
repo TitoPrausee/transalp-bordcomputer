@@ -40,9 +40,9 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 - [x] PCB-Layout-Konzept (Layer-Stackup, Routing-Regeln, EMV-Optimierung) — **transalp-plan** (t_c366755f) → `docs/PCB-LAYOUT.md` (5.993 Wörter)
 - [x] Test-Strategie & Benchmark-Konzept (Unit-Tests, HIL, Performance) — **worker** (t_47f87b72) → `docs/TEST-STRATEGY.md` (12.965 Wörter)
 - [x] Gehäuse-Design (3D-Druck-Konzept, Montage, Wasserfestigkeit) — **worker** (t_1766aa73) → `docs/CASE-DESIGN.md` (5.877 Wörter)
+- [x] Companion-App Prototyp (React Native Grundgerüst, BLE) — **transalp-diag** (t_330d64ce) → `companion-app/` (28 Dateien, 14.957 Zeilen TypeScript)
 - [ ] UI-Mockups (HTML/SVG Prototypen für jeden Screen) — **transalp-ui** (t_d1e10140) → running
 - [ ] Hardware-Schaltplan (Pin-Layout, Verdrahtungsplan) — **transalp-firmware** (t_cc1f3b71) → running
-- [ ] Companion-App Prototyp (React Native Grundgerüst, BLE) — **transalp-diag** (t_330d64ce) → running (prototype/companion-app Branch erstellt)
 
 ### Phase 2.5: Erweiterung (LAUFEND — neu in Runde 4)
 - [ ] Firmware-Skeleton (ESP32-S3 ESP-IDF Projektstruktur) — **worker** (t_09187ad4) → running
@@ -99,21 +99,21 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 - Metriken und ROADMAP aktualisiert
 
 ### Runde 4 (13.10.2026 ~20:35)
-- **4 neue fertige Tasks reviewt:**
+- **5 fertige Tasks reviewt und gemerged:**
   - Markennamen-Bereinigung (t_91456da9): 8 Dateien bereinigt, 0 verbleibend — VERIFIZIERT
   - PCB-Layout-Konzept (t_c366755f): `docs/PCB-LAYOUT.md` 5.993 Wörter — gemerged
   - Test-Strategie (t_47f87b72): `docs/TEST-STRATEGY.md` 12.965 Wörter — gemerged
   - Gehäuse-Design (t_1766aa73): `docs/CASE-DESIGN.md` 5.877 Wörter — gemerged
-- **3 Branches in main gemerged:** design/pcb-layout, design/case-design (inkl. test-strategy)
-- Auf origin gepusht (Commit 0c2af50)
+  - Companion-App Prototyp (t_330d64ce): `companion-app/` 28 Dateien, 14.957 Zeilen TypeScript — gemerged
+- **4 Branches in main gemerged:** design/pcb-layout, design/case-design, prototype/companion-app
+- Auf origin gepusht (Commits 0c2af50, 8c22247)
 - **Markennamen-Check:** 0 verbleibende Marken im Prosa — Phase 1.5 ABGESCHLOSSEN
-- **3 Tasks noch running:** UI-Mockups, Hardware-Schaltplan, Companion-App Prototyp
+- **2 Tasks noch running aus Phase 2:** UI-Mockups (transalp-ui), Hardware-Schaltplan (transalp-firmware)
 - **3 neue Tasks erstellt und dispatched (Phase 2.5):**
   - Firmware-Skeleton (ESP32-S3 Projektstruktur) → worker (t_09187ad4)
   - BOM & Sourcing-Konzept → transalp-plan (t_9b9760ec)
   - User-Manual & Installationsanleitung → worker (t_d71d39c3)
-- Companion-App Prototyp auf Branch `prototype/companion-app` hat erste React Native Struktur
-- Review-Kommentare auf allen 4 fertigen Tasks hinterlegt
+- Review-Kommentare auf allen fertigen Tasks hinterlegt
 
 ## Offene Fragen
 - Welche TFT-Displays sind sonnenlesbar genug?
@@ -124,7 +124,7 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 
 ## Worker-Team
 | Profil | Modell | Rolle |
----|---|---|
+|---|---|---|
 | transalp-pm | glm-5.2 | Projektmanager (Cronjob) |
 | worker | glm-5.2 | Allrounder |
 | transalp-plan | glm-5.2 | Planung, Kosten, Roadmap |
@@ -140,10 +140,11 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 | Design-Dokumente | 3 (PCB-LAYOUT, CASE-DESIGN, TEST-STRATEGY) |
 | Wörter gesamt (Design) | 24.835 |
 | Wörter gesamt (alle Docs) | 114.311 |
-| Tasks gesamt (done) | 18 (7 Phase 0 + 7 Phase 1 + 4 Phase 1.5/2) |
-| Tasks running | 6 |
+| Code-Prototypen | 1 (companion-app/, 28 Dateien) |
+| Tasks gesamt (done) | 19 (7 Phase 0 + 7 Phase 1 + 5 Phase 1.5/2) |
+| Tasks running | 5 |
 | Tasks blocked | 0 |
 | Phase 0 Fortschritt | 100% |
 | Phase 1 Fortschritt | 100% |
 | Phase 1.5 Fortschritt | 100% |
-| Phase 2 Fortschritt | 50% (3/6 done, 3 running) |
+| Phase 2 Fortschritt | 67% (4/6 done, 2 running) |
