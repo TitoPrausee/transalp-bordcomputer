@@ -1,0 +1,25 @@
+# Build
+firmware/build/
+firmware/sdkconfig
+firmware/sdkconfig.old
+firmware/managed_components/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Hardware
+hardware/kicad/*-backups/
+hardware/kicad/*.bak
+hardware/case/*.stl.tmp
+
+# OS
+.DS_Store
