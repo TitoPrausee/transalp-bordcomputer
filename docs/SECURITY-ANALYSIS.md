@@ -1446,7 +1446,7 @@ Sicherheitsrelevante Aspekte. Sie soll vor jedem Release durchlaufen werden.
 
 ## Anhang: Referenzen
 
-- **STRIDE-Modell:** Microsoft Threat Modeling, SDL
+- **STRIDE-Modell:** Spoofing, Tampering, Repudiation, Information Disclosure, Denial of Service, Elevation of Privilege
 - **BLE Security:** Bluetooth Core Specification 4.2 (LE Secure Connections)
 - **ESP32-S3 Secure Boot V2:** ESP-IDF Documentation, Security Features
 - **RSA-3072:** NIST FIPS 186-4, Digital Signature Standard

@@ -5,12 +5,12 @@
 [![License: PolyForm Noncommercial](https://img.shields.io/badge/License-PolyForm%20Noncommercial-blue.svg)](LICENSE)
 [![Platform: ESP32-S3](https://img.shields.io/badge/Platform-ESP32--S3-orange.svg)](https://www.espressif.com/en/products/socs/esp32-s3)
 [![Framework: ESP-IDF](https://img.shields.io/badge/Framework-ESP--IDF-red.svg)](https://docs.espressif.com/projects/esp-idf/)
-[![Research: 226K+ words](https://img.shields.io/badge/Research-226K%2B%20words-green.svg)](docs/research/)
+[![Research: 89K+ words](https://img.shields.io/badge/Research-89K%2B%20words-green.svg)](docs/research/)
 [![Firmware: 15K+ LOC](https://img.shields.io/badge/Firmware-15K%2B%20LOC_C%2FH-blue.svg)](firmware/)
-[![Companion-App: 5K+ LOC](https://img.shields.io/badge/Companion--App-5K%2B%20LOC_TS-yellow.svg)](companion-app/)
-[![Docs: 35+ documents](https://img.shields.io/badge/Docs-35%2B%20documents-brightgreen.svg)](docs/)
+[![Companion-App: 6K+ LOC](https://img.shields.io/badge/Companion--App-6K%2B%20LOC_TS-yellow.svg)](companion-app/)
+[![Docs: 39+ documents](https://img.shields.io/badge/Docs-39%2B%20documents-brightgreen.svg)](docs/)
 [![Tests: 3 unit tests](https://img.shields.io/badge/Tests-3%20unit%20tests%20%2B%20CI%2FCD-success.svg)](.github/workflows/)
-[![Phases 0-4 Complete](https://img.shields.io/badge/Phases-0--4%20Complete-9cf.svg)](docs/ROADMAP.md)
+[![Phases 0-6 Complete](https://img.shields.io/badge/Phases-0--6%20Complete-9cf.svg)](docs/ROADMAP.md)
 [![Vehicle: PD06](https://img.shields.io/badge/Vehicle-Honda%20Transalp%20600%20(PD06)-darkgreen.svg)](#)
 
 

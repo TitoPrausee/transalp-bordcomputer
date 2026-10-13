@@ -1,8 +1,8 @@
 # Projekt-Roadmap: Transalp Bordcomputer
 
-> Zuletzt aktualisiert: 14.10.2026 (PM-Runde 12)
+> Zuletzt aktualisiert: 14.10.2026 (PM-Runde 13)
 > Status: Aktiv — 5 Worker-Profile + 1 Projektmanager (PM) auf Mac mini
-> **Phasen 0–5 ABGESCHLOSSEN ✅ — Projekt bereit für Release**
+> **Phasen 0–6 ABGESCHLOSSEN ✅ — Projekt RELEASE-READY**
 
 ## Projektziel
 Vollständiger Open-Source Bordcomputer für die Honda Transalp 600 (PD06).
@@ -85,6 +85,15 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 - [x] Developer Quick-Start Guide — **transalp-diag** (t_97a98c74) → `docs/DEVELOPER-QUICKSTART.md` 628 Zeilen — gemerged (commit a2a41692)
 
 **Phase 5: 5/5 done — ABGESCHLOSSEN ✅**
+
+### Phase 6: Release-Finalisierung (ABGESCHLOSSEN — 5/5 done)
+- [x] LICENSE-Datei: PolyForm Noncommercial 1.0.0 — **worker** (t_d1a47278) → `LICENSE` 704 Wörter, offizieller Volltext mit 15 Sektionen — gemerged (commit 9b345c1)
+- [x] Dokumentations-Index / Projekt-Wiki — **transalp-ui** (t_3fe5cda3) → `docs/INDEX.md` 4.548 Wörter — zentraler Einstiegspunkt mit Schnelleinstieg, 26+ Dokumente verlinkt, Mermaid-Abhängigkeits-Graph — gemerged (commit 9b345c1)
+- [x] Demo-Video-Skript & Projekt-Präsentation — **transalp-plan** (t_bde41d63) → `docs/DEMO-SCRIPT.md` 3.726 Wörter — 6-Szenen Skript (Intro, Hardware, Firmware, App, Einbau, Fazit) + 15-Slide Präsentationskonzept — gemerged (commit 9b345c1)
+- [x] GitHub Repository-Metadata & Polish — **transalp-firmware** (t_e478e7b2) → `.github/PULL_REQUEST_TEMPLATE.md` (242 Wörter), `CODE_OF_CONDUCT.md` (920 Wörter, Contributor Covenant 2.1), `.github/FUNDING.yml`, `.github/dependabot.yml`, `.github/CODEOWNERS`, `SECURITY.md` (432 Wörter) — gemerged (commit 9b345c1)
+- [x] English Project Summary & Translation Guide — **transalp-diag** (t_e87ab87f) → `docs/ENGLISH-SUMMARY.md` 4.556 Wörter — Project Overview, Feature Summary, Document Index mit englischen Beschreibungen, Translation Guide — gemerged (commit 9b345c1)
+
+**Phase 6: 5/5 done — ABGESCHLOSSEN ✅**
 
 ## PM-Protokoll
 
@@ -259,6 +268,20 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 - **Gesamtdokumentation: 240.646 Wörter** über 39 Dokumente (14 Research + 23 Design-Docs + README + CONTRIBUTING)
 - **Phase 6 (Release-Finalisierung) gestartet** — neue Tasks für LICENSE, Wiki-Index, Demo-Skript
 
+### Runde 13 (14.10.2026 ~00:30)
+- **5 fertige Phase-6-Tasks reviewt und gemerged:**
+  - LICENSE-Datei (t_d1a47278): `LICENSE` 704 Wörter — offizieller PolyForm Noncommercial 1.0.0 Volltext mit 15 Sektionen, Copyright (c) 2026 Tito Prause — gemerged von docs/license (commit 16962884)
+  - Dokumentations-Index (t_3fe5cda3): `docs/INDEX.md` 4.548 Wörter — Schnelleinstieg-Pfade, vollständiger Dokumenten-Baum, Mermaid-Abhängigkeits-Graph, Lese-Reihenfolge — gemerged von docs/english-summary (commit 5829344f)
+  - Demo-Video-Skript (t_bde41d63): `docs/DEMO-SCRIPT.md` 3.726 Wörter — 6-Szenen Skript mit Voice-Over, Mockup-Referenzen + 15-Slide Präsentationskonzept — gemerged von docs/demo-script (commit 9de8fcd6)
+  - GitHub Repository-Metadata (t_e478e7b2): 6 Dateien — PULL_REQUEST_TEMPLATE.md, CODE_OF_CONDUCT.md (Contributor Covenant 2.1), FUNDING.yml, dependabot.yml, CODEOWNERS, SECURITY.md — gemerged von docs/repo-polish (commit e3d56bee)
+  - English Project Summary (t_e87ab87f): `docs/ENGLISH-SUMMARY.md` 4.556 Wörter — Project Overview, Feature Summary, Document Index mit englischen Beschreibungen, Translation Guide — gemerged von docs/english-summary (commit 1352e3b2)
+- **Selektives Merge-Verfahren:** Mehrere Worker hatten sich überschneidende Branches (docs/license, docs/repo-polish, docs/index enthielten dieselben Dateien). Beste Version jeder Datei selektiv nach main gemerged.
+- **Markennamen-Check:** SECURITY-ANALYSIS.md: "Microsoft" durch STRIDE-Akronym-Erklärung ersetzt; FIRMWARE-GUIDE.md: "Meta-Generator" zu "Generator" korrigiert. "Amazon" als Einkaufsquellen-Referenz in BOM.md ist legitim (keine Markenplatzierung).
+- **README.md Badges aktualisiert:** Research 89K+, Companion-App 6K+, Docs 39+, Phases 0-6 Complete
+- **Auf origin gepusht (Commit 9b345c1)**
+- **PHASE 6 = 100% ABGESCHLOSSEN** 🎉 — Alle 5 Phase-6-Tasks done
+- **ALLE PROJEKTPHASEN 0–6 ABGESCHLOSSEN** — 48 Tasks gesamt, 0 running, 0 blocked — PROJEKT IST RELEASE-READY ✅
+
 ## Offene Fragen
 - Welche TFT-Displays sind sonnenlesbar genug?
 - Companion-App: React Native vs. Flutter? (Master-Plan empfiehlt React Native)
@@ -281,18 +304,22 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 |---|---|
 | Research-Dokumente | 14 (+ Research-README) |
 | Wörter gesamt (Research) | 89.466 |
-| Design-Dokumente | 23 (+5: DEVELOPER-QUICKSTART, WIDGET-CATALOG, + README v2, CONTRIBUTING) |
-| Wörter gesamt (Design-Docs) | 145.843 |
-| Wörter gesamt (alle Docs) | 240.646 |
-| Code-Prototypen | 3 (firmware/ 15.297 Zeilen C/H, companion-app/ 5.965 Zeilen TS/TSX, mockups/ 9 HTML-Screens) |
+| Design-Dokumente | 26 (+3: INDEX, DEMO-SCRIPT, ENGLISH-SUMMARY) |
+| Wörter gesamt (Design-Docs) | 158.926 |
+| Wörter gesamt (alle Docs + LICENSE + COC + SECURITY) | 256.711 |
+| Code-Prototypen | 3 (firmware/ 15.297 Zeilen C/H, companion-app/ 5.957 Zeilen TS/TSX, mockups/ 8 HTML-Screens) |
 | Firmware C/H-Zeilen | 15.297 (10 Komponenten + main + test-suite) |
-| Companion-App | 5.965 Zeilen TS/TSX (BleManager, Dashboard, Navigation, Diagnose, Settings) |
-| CI/CD Workflows | 4 (firmware-ci, companion-app-ci, docs-ci, brand-blocklist) |
+| Companion-App | 5.957 Zeilen TS/TSX (BleManager, Dashboard, Navigation, Diagnose, Settings) |
+| CI/CD Workflows | 5 (firmware-ci, companion-app-ci, docs-ci, brand-blocklist, pages) |
 | Unit-Tests | 3 (test_dtc, test_event_loop, test_nmea_parser) + ESP-IDF-Mocks |
 | Issue Templates | 2 (bug_report, feature_request) |
-| Tasks done | 43 (+5 seit Runde 11) |
+| PR Template | 1 (.github/PULL_REQUEST_TEMPLATE.md) |
+| Community Files | 4 (CODE_OF_CONDUCT, SECURITY, FUNDING.yml, CODEOWNERS) |
+| Dependabot | 1 (.github/dependabot.yml — npm + github-actions) |
+| Tasks done | 48 (+5 seit Runde 12) |
 | Tasks running | 0 |
-| Tasks blocked | 1 (t_4f8965c9: Design-Integration, veraltet) |
+| Tasks blocked | 0 |
+| Tasks archived | 1 (t_4f8965c9: Design-Integration, veraltet) |
 | Phase 0 Fortschritt | 100% ✅ |
 | Phase 1 Fortschritt | 100% ✅ |
 | Phase 1.5 Fortschritt | 100% ✅ |
@@ -301,3 +328,4 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 | Phase 3 Fortschritt | 100% ✅ (10/10 done) |
 | Phase 4 Fortschritt | 100% ✅ (11/11 done) |
 | Phase 5 Fortschritt | 100% ✅ (5/5 done) |
+| Phase 6 Fortschritt | 100% ✅ (5/5 done) |

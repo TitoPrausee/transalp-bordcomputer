@@ -53,7 +53,7 @@ Nach dem `export.sh` stehen folgende Tools zur Verfuegung:
 - `idf.py` — Hauptkommando (build, flash, monitor, menuconfig)
 - `xtensa-esp32s3-elf-gcc` — Cross-Compiler
 - `ninja` — Build-Backend
-- `cmake` — Build-System-Meta-Generator
+- `cmake` — Build-System-Generator
 
 #### Projekt-Struktur
 
