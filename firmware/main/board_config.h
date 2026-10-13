@@ -138,4 +138,16 @@
 #define TASK_PRIO_BLE       3
 #define TASK_PRIO_POWER     6
 
+/* Event-Loop (Core 0) */
+#define TASK_STACK_EVENT_LOOP  4096
+#define TASK_PRIO_EVENT_LOOP   3
+
+/* OTA-Task (Core 0, laeuft nur bei Update) */
+#define TASK_STACK_OTA       8192
+#define TASK_PRIO_OTA        4
+
+/* Diagnostics-Task / Event-Monitor (Core 1) */
+#define TASK_STACK_DIAG      4096
+#define TASK_PRIO_DIAG       2
+
 #endif /* _BOARD_CONFIG_H_ */
