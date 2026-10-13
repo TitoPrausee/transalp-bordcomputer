@@ -1,0 +1,22 @@
+node_modules/
+.expo/
+dist/
+web-build/
+*.tsbuildinfo
+
+# Native build artifacts
+ios/
+android/
+.gradle/
+build/
+
+# Environment
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
