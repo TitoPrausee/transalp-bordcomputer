@@ -168,7 +168,7 @@ Diagnose-System und Premium-UI/UX mit Animationen.
   - GPS-Treiber & NMEA-Parser (t_6a3a0821): `firmware/components/gps/` 886 Zeilen (nmea_parser.c 522, gps_task.c 260, gps.h 104) — bereits in main (commit ff640bd), 29 Unit-Tests, 4 NMEA-Sentence-Types
   - OTA-Update System & Firmware-Guide (t_4daa19c4): `firmware/components/ota/` 1.609 Zeilen + `docs/FIRMWARE-GUIDE.md` 5.366 Wörter — gemerged (commit 19bab571)
   - BLE-Stack & GATT-Server (t_33c9e335): `firmware/components/ble/` 1.796 Zeilen, 8 GATT-Services — cherry-picked (commit c8483e8)
-- **Markennamen-Bereinigung:** 3 Verweise in FIRMWARE-GUIDE.md entfernt (Apple Silicon, Google Style Guide, Intel)
+- **Markennamen-Bereinigung:** 3 Verweise in FIRMWARE-GUIDE.md entfernt (Markennamen für Prozessoren, Style-Guides und Chips)
 - **Auf origin gepusht (Commits ff640bd → c8483e8)**
 - **2 neue Phase-3-Tasks erstellt und dispatched:**
   - Diagnose-System (DTC, Self-Test, Konsole) → transalp-diag (t_8454dd54)

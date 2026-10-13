@@ -1562,7 +1562,7 @@ mit dem LVGL Font Converter beim Build generiert.
 - GxEPD2 (E-Paper): https://github.com/ZinggJM/GxEPD2
 - esp_lvgl_port: https://github.com/espressif/esp-bsp/tree/master/components/lvgl_port
 - Inter Font (Open Source): https://github.com/rsms/inter
-- Roboto Font: https://github.com/googlefonts/roboto
+- Roboto Font: https://github.com/fontlibrary/roboto
 - Flutter fl_chart: https://github.com/imaNNeo/fl_chart
 - CSS Timing Functions (Bezier-Kurven Referenz):
   https://developer.mozilla.org/en-US/docs/Web/CSS/easing-function
