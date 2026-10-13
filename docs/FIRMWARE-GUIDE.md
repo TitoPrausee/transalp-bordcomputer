@@ -304,7 +304,7 @@ CONFIG_COMPILER_STACK_CHECK_MODE_STRONG=y
 
 ### 1.5 Cross-Compilation auf Mac und Linux
 
-ESP-IDF verwendet denselben Cross-Compiler auf Mac (Intel und Apple Silicon)
+ESP-IDF verwendet denselben Cross-Compiler auf Mac (x86- und ARM-Architektur)
 und Linux. Der Compiler ist Teil der ESP-IDF-Installation und wird durch
 das `export.sh`-Skript in den PATH aufgenommen.
 
@@ -323,9 +323,9 @@ idf.py -p /dev/cu.usbserial-XXXX flash monitor
 # Auf Linux: /dev/ttyUSB0 statt /dev/cu.usbserial-XXXX
 ```
 
-#### Apple Silicon
+#### ARM-Architektur (M1/M2/M3)
 
-Auf Apple Silicon (M1/M2/M3) laeuft der Cross-Compiler nativ. Es ist
+Auf ARM-basierten Macs (M1/M2/M3) laeuft der Cross-Compiler nativ. Es ist
 kein Rosetta erforderlich. Die ESP-IDF-Toolchain wird als ARM64-Binary
 ausgeliefert.
 
@@ -1152,7 +1152,7 @@ Alle Header-Dateien verwenden Include-Guards im `_FILE_H_`-Format:
 
 #### Include-Reihenfolge
 
-Die Include-Reihenfolge folgt dem Google C++ Style Guide, adaptiert
+Die Include-Reihenfolge folgt einem etablierten C-Style-Guide, adaptiert
 fuer C:
 
 1. **System-Headers**: `<stdint.h>`, `<stdbool.h>`, `<string.h>`
