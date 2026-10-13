@@ -59,12 +59,14 @@ static const char *TAG = "main";
  * Task Handles
  * ============================================================ */
 
-static TaskHandle_t s_task_sensor  = NULL;
-static TaskHandle_t s_task_gps     = NULL;
-static TaskHandle_t s_task_display = NULL;
-static TaskHandle_t s_task_ble     = NULL;
-static TaskHandle_t s_task_power   = NULL;
-static TaskHandle_t s_task_logger  = NULL;
+static TaskHandle_t s_task_sensor     = NULL;
+static TaskHandle_t s_task_gps        = NULL;
+static TaskHandle_t s_task_display    = NULL;
+static TaskHandle_t s_task_ble        = NULL;
+static TaskHandle_t s_task_power      = NULL;
+static TaskHandle_t s_task_logger     = NULL;
+static TaskHandle_t s_task_ota        = NULL;
+static TaskHandle_t s_task_diagnostics = NULL;
 
 /* ============================================================
  * Watchdog
@@ -329,6 +331,104 @@ static void register_subscribers(void)
 }
 
 /* ============================================================
+ * OTA Task Wrapper
+ *
+ * OTA is event-driven: this task sleeps until an OTA update
+ * is triggered (via BLE, HTTP, or SD). It monitors the OTA
+ * state machine and feeds the watchdog while idle.
+ * Runs on Core 0 (UI/Comms).
+ * ============================================================ */
+
+static void ota_task(void *arg)
+{
+    (void)arg;
+    ESP_LOGI(TAG, "OTA task started on core %d", xPortGetCoreID());
+
+    while (1) {
+        /* Feed watchdog while idle */
+        esp_task_wdt_reset();
+
+        /* Check if an OTA update is in progress */
+        ota_state_t state = ota_get_state();
+        if (state == OTA_STATE_IDLE) {
+            /* Sleep 1s between checks when idle */
+            vTaskDelay(pdMS_TO_TICKS(1000));
+        } else {
+            /* During active update, check more frequently */
+            vTaskDelay(pdMS_TO_TICKS(100));
+        }
+    }
+}
+
+/* ============================================================
+ * Diagnostics Task Wrapper
+ *
+ * The diagnostics module creates its own internal tasks (event
+ * monitor + console). This wrapper task runs periodic health
+ * checks: heap fragmentation, sensor staleness, GPS timeout.
+ * Runs on Core 1 (Real-time).
+ * ============================================================ */
+
+#define DIAG_CHECK_INTERVAL_MS  5000
+#define SENSOR_STALENESS_MS     3000
+#define GPS_STALENESS_MS         10000
+
+static void diagnostics_task(void *arg)
+{
+    (void)arg;
+    ESP_LOGI(TAG, "Diagnostics task started on core %d", xPortGetCoreID());
+
+    /* Initial delay to let other tasks stabilise */
+    vTaskDelay(pdMS_TO_TICKS(3000));
+
+    while (1) {
+        esp_task_wdt_reset();
+
+        /* Check sensor data freshness */
+        if (sensor_data_queue != NULL) {
+            sensor_data_t sd;
+            if (xQueuePeek(sensor_data_queue, &sd, pdMS_TO_TICKS(100)) == pdTRUE) {
+                uint32_t now = (uint32_t)(esp_timer_get_time() / 1000);
+                if (sd.timestamp_ms > 0 &&
+                    (now - sd.timestamp_ms) > SENSOR_STALENESS_MS) {
+                    ESP_LOGW(TAG, "Sensor data stale (%lu ms old)",
+                             (unsigned long)(now - sd.timestamp_ms));
+                    app_event_dispatch_simple(APP_EVENT_RPM_TIMEOUT);
+                }
+            }
+        }
+
+        /* Check GPS data freshness */
+        if (gps_data_queue != NULL) {
+            gps_data_t gd;
+            if (xQueuePeek(gps_data_queue, &gd, pdMS_TO_TICKS(100)) == pdTRUE) {
+                uint32_t now = (uint32_t)(esp_timer_get_time() / 1000);
+                if (gd.timestamp_ms > 0 && gd.has_fix &&
+                    (now - gd.timestamp_ms) > GPS_STALENESS_MS) {
+                    ESP_LOGW(TAG, "GPS fix stale (%lu ms old)",
+                             (unsigned long)(now - gd.timestamp_ms));
+                    app_event_dispatch_simple(APP_EVENT_GPS_FIX_LOST);
+                }
+            }
+        }
+
+        /* Check heap fragmentation */
+        uint32_t free_heap = esp_get_free_heap_size();
+        uint32_t min_heap  = esp_get_minimum_free_heap_size();
+        if (min_heap > 0 && free_heap > 0) {
+            uint32_t fragmentation_pct =
+                100 - (min_heap * 100 / free_heap);
+            if (fragmentation_pct > 50) {
+                ESP_LOGW(TAG, "Heap fragmentation high: %u%%",
+                         (unsigned)fragmentation_pct);
+            }
+        }
+
+        vTaskDelay(pdMS_TO_TICKS(DIAG_CHECK_INTERVAL_MS));
+    }
+}
+
+/* ============================================================
  * Task Creation
  *
  * Creates all FreeRTOS tasks with correct priorities and core
@@ -349,6 +449,10 @@ static void create_tasks(void)
         TASK_STACK_GPS, NULL, TASK_PRIO_GPS,
         &s_task_gps, TASK_CORE_RT);
 
+    xTaskCreatePinnedToCore(diagnostics_task, "diag_chk",
+        TASK_STACK_DIAG, NULL, TASK_PRIO_DIAG,
+        &s_task_diagnostics, TASK_CORE_RT);
+
     /* --- Core 0 (UI / Comms) --- */
 
     xTaskCreatePinnedToCore(display_task, "display",
@@ -367,14 +471,20 @@ static void create_tasks(void)
         TASK_STACK_LOGGER, NULL, TASK_PRIO_LOGGER,
         &s_task_logger, TASK_CORE_UI);
 
+    xTaskCreatePinnedToCore(ota_task, "ota",
+        TASK_STACK_OTA, NULL, TASK_PRIO_OTA,
+        &s_task_ota, TASK_CORE_UI);
+
     /* Watchdog subscription for long-running tasks */
     ESP_LOGI(TAG, "Subscribing tasks to watchdog...");
-    wdt_subscribe(s_task_sensor,  "sensor");
-    wdt_subscribe(s_task_gps,     "gps");
-    wdt_subscribe(s_task_display, "display");
-    wdt_subscribe(s_task_ble,     "ble");
-    wdt_subscribe(s_task_power,   "power");
-    wdt_subscribe(s_task_logger,  "logger");
+    wdt_subscribe(s_task_sensor,      "sensor");
+    wdt_subscribe(s_task_gps,         "gps");
+    wdt_subscribe(s_task_diagnostics, "diag_chk");
+    wdt_subscribe(s_task_display,     "display");
+    wdt_subscribe(s_task_ble,         "ble");
+    wdt_subscribe(s_task_power,       "power");
+    wdt_subscribe(s_task_logger,      "logger");
+    wdt_subscribe(s_task_ota,         "ota");
 
     ESP_LOGI(TAG, "All tasks created and WDT-subscribed");
 }
