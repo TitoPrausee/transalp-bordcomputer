@@ -32,7 +32,7 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 **6 Analyse-Dokumente, ~50.000 Wörter — alle auf main gemerged**
 
 ### Phase 1.5: Qualitätsbereinigung (LAUFEND)
-- [ ] Markennamen-Entfernung in 9 Dokumenten (46 Verweise auf Apple/Google/Samsung/iOS/Android)
+- [ ] Markennamen-Entfernung in 9 Dokumenten (46 Verweise auf Marken-/Plattform-Namen)
 - [ ] Dokument 07 zu kurz (2.421 Wörter, Minimum 3.000) — erweitern oder zusammenführen
 
 ### Phase 2: Design & Prototyp (GEPLANT — Tasks in Erstellung)
@@ -87,7 +87,7 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 - Alle Dokumente auf main gepusht (Commit d54ef4c)
 - **Qualitäts-Review durchgeführt:**
   - Wortzahl alle 13 Dokumente: 89.381 Wörter gesamt
-  - Markennamen-Check: 9 Dateien mit 46 Verweisen auf Apple/Google/Samsung/iOS/Android
+  - Markennamen-Check: 9 Dateien mit 46 Verweisen auf Marken-/Plattform-Namen
   - Dokument 07 zu kurz: 2.421 Wörter (Minimum war 3.000)
 - **Neue Tasks erstellt:** Markennamen-Bereinigung + 6 Phase-2-Tasks
 - Metriken und ROADMAP aktualisiert

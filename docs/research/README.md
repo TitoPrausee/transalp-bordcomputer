@@ -41,7 +41,7 @@
 
 ### Smartphone-Integration
 - Kein echtes CarPlay (MFi-Lizenz nötig) — eigene Companion-App als Alternative
-- App nutzt native Maps-API (iOS MapKit / Android Google Maps)
+- App nutzt native Maps-API (mobile BS A / mobile BS B)
 - BLE-GATT-Protokoll: Navigation, Media, Phone, Weather, Telemetry Services
 - Turn-by-Turn: großer Pfeil + Distanz + Straßenname auf Display
 

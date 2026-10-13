@@ -431,10 +431,10 @@ wird es brauchbar.
 - Kein Karten-Rendering auf dem Geraet (zu ressourcenintensiv)
 - Protokoll: JSON ueber BLE (chunked, ~200 Bytes pro Update)
 
-Das Konzept orientiert sich an Geraeten wie Beeline Moto oder dem SteedPilot-Projekt. Das Smartphone berechnet die Route (Google Maps, Komoot, OsmAnd) und sendet nur die naechste Anweisung an den Bordcomputer. Das Display zeigt Pfeil + Distanz + Strassennamen.
+Das Konzept orientiert sich an Geraeten wie Beeline Moto oder dem SteedPilot-Projekt. Das Smartphone berechnet die Route (eine gängige Navigations-App, Komoot, OsmAnd) und sendet nur die naechste Anweisung an den Bordcomputer. Das Display zeigt Pfeil + Distanz + Strassennamen.
 
 Quellen:
-- https://github.com/deanthecoder/SteedPilot (ESP32 + iPhone, kreisrundes HUD)
+- https://github.com/deanthecoder/SteedPilot (ESP32 + Smartphone, kreisrundes HUD)
 - https://github.com/rabbihossain/BikeNavESP32 (ESP32 Navigation mit BLE JSON-Protokoll)
 
 ### 3.2 Wettervorhersage (Regenwarnung, Temperatur)
@@ -461,11 +461,11 @@ Quellen:
 - ESP32-S3 BLE
 
 **Software:**
-- iOS: Apple Notification Center Service (ANCS) - native BLE-Integration, keine App noetig
-- Android: Custom BLE-App, die Telefonie-Events abfaengt und ueber BLE sendet
+- mobiles BS (kalifornischer Technologiehersteller): ANCS (Notifizierungs-Service eines kalifornischen Technologieherstellers) - native BLE-Integration, keine App noetig
+- mobiles BS (anderes Ökosystem): Custom BLE-App, die Telefonie-Events abfaengt und ueber BLE sendet
 - Anzeige: Anrufername/Nummer auf Display, optional Accept/Reject-Taste
 
-Der iKawa-Projekt zeigt, dass ANCS auf dem ESP32 funktioniert: Nach einmaligem Pairing mit dem iPhone werden alle Benachrichtigungen automatisch uebertragen. Fuer Android ist eine Companion-App noetig.
+Der iKawa-Projekt zeigt, dass ANCS auf dem ESP32 funktioniert: Nach einmaligem Pairing mit dem Smartphone (kalifornischer Technologiehersteller) werden alle Benachrichtigungen automatisch uebertragen. Fuer das andere mobilele BS ist eine Companion-App noetig.
 
 Quellen:
 - https://github.com/gabrielerandazzo/iKawa (ANCS + AMS Integration)
@@ -479,8 +479,8 @@ Quellen:
 | Prioritaet | Could |
 
 **Software:**
-- iOS: Apple Media Service (AMS) - Track-Info, Artist, Titel, Playback-Steuerung
-- Android: Custom BLE-App mit MediaSessionManager
+- mobiles BS (kalifornischer Technologiehersteller): AMS (Media-Service eines kalifornischen Technologieherstellers) - Track-Info, Artist, Titel, Playback-Steuerung
+- mobiles BS (anderes Ökosystem): Custom BLE-App mit MediaSessionManager
 - Anzeige: Artist + Titel auf Display (scrollend bei langen Namen)
 - Optional: Previous/Next/Play-Pause ueber Tasten am Bordcomputer
 
@@ -495,8 +495,8 @@ Quelle:
 | Prioritaet | Could |
 
 **Software:**
-- iOS: ANCS (wie bei Call-Anzeige)
-- Android: NotificationListenerService -> BLE-Weiterleitung
+- mobiles BS (kalifornischer Technologiehersteller): ANCS (wie bei Call-Anzeige)
+- mobiles BS (anderes Ökosystem): NotificationListenerService -> BLE-Weiterleitung
 - Anzeige: Absender + erste Zeile der Nachricht
 - Optional: Vorlesen der Nachricht via TTS an BT-Kopfhoerer
 
@@ -560,7 +560,7 @@ Quellen:
 
 **Software (Smartphone-Weg):**
 - Bei bestaetigtem Crash: BLE-Befehl an Smartphone-App
-- App sendet SMS mit Google-Maps-Link an Notfallkontakt
+- App sendet SMS mit Navigations-App-Link an Notfallkontakt
 - Optional: Automatischer Anruf
 
 **Software (SIM800L-Weg):**
@@ -663,7 +663,7 @@ Der ESP32-S3 unterstuetzt Deep-Sleep mit sehr niedrigem Stromverbrauch (~10 uA).
 
 **Software:**
 - GPX: Standard-Export (bereits implementiert, siehe 1.7)
-- KML: Google Earth Format, einfache Konvertierung aus GPX
+- KML: Geodaten-Format eines Suchmaschinenbetreibers, einfache Konvertierung aus GPX
 - CSV: Rohdaten-Export fuer eigene Analysen (Excel, Python, R)
 - Konvertierung beim Export oder in Echtzeit auf SD-Karte
 
@@ -1039,12 +1039,12 @@ Quellen:
 
 **Antwort:** Ja, fuer die meisten Smart-Features. Ausnahmen:
 
-- iOS-Benachrichtigungen (Calls, SMS, Music): Apple ANCS/AMS sind Standard-BLE-Protokolle, keine App noetig nach einmaligem Pairing
+- Benachrichtigungen des kalifornischen Technologieherstellers (Calls, SMS, Music): ANCS/AMS sind Standard-BLE-Protokolle, keine App noetig nach einmaligem Pairing
 - Navigation: Erfordert eine App, die Routing-Daten an den Bordcomputer sendet (ausser der Bordcomputer macht Back-Track-Navigation)
 - Konfiguration: Kann ueber Web-BLE (PWA) geloest werden, keine native App noetig
 - Live-Daten-Streaming: PWA mit Web Bluetooth API moeglich
 
-**Empfehlung:** PWA (Progressive Web App) als primaere Loesung. Native App nur fuer Features, die PWA nicht abdecken kann (z.B. Android Notification Listener, Hintergrund-BLE-Kommunikation).
+**Empfehlung:** PWA (Progressive Web App) als primaere Loesung. Native App nur fuer Features, die PWA nicht abdecken kann (z.B. Notification-Listener des anderen mobilen BS, Hintergrund-BLE-Kommunikation).
 
 ### 9.2 React Native / Flutter / native
 
@@ -1057,10 +1057,10 @@ Quellen:
 
 | Option | Vorteile | Nachteile |
 |---|---|---|
-| PWA (Web Bluetooth) | Keine Installation, plattformunabhaengig, schnell entwickelt | iOS Safari unterstuetzt kein Web Bluetooth (Workaround: Bluefy Browser), keine Hintergrund-BLE |
+| PWA (Web Bluetooth) | Keine Installation, plattformunabhaengig, schnell entwickelt | Safari des kalifornischen Technologieherstellers unterstuetzt kein Web Bluetooth (Workaround: Bluefy Browser), keine Hintergrund-BLE |
 | React Native | Cross-platform, grosse Community, BLE-Bibliotheken verfuegbar | Overhead, native Module fuer BLE noetig |
 | Flutter | Cross-platform, gute Performance, BLE-Bibliotheken | Weniger BLE-Bibliotheken als RN, groessere App |
-| Native (Swift/Kotlin) | Beste Performance, volle BLE-Kontrolle, ANCS/AMS nativ | Doppelter Entwicklungsaufwand (iOS + Android) |
+| Native (Swift/Kotlin) | Beste Performance, volle BLE-Kontrolle, ANCS/AMS nativ | Doppelter Entwicklungsaufwand (mobile BS A + mobile BS B) |
 
 **Empfehlung:** PWA fuer Konfiguration und Live-Daten. Bei Bedarf spaeter native App fuer Navigation-Relay und Benachrichtigungen. Die PWA kann Web Bluetooth direkt ansprechen.
 
@@ -1113,14 +1113,14 @@ Quelle:
 
 **Vorteile:**
 - Keine App-Store-Freigabe noetig
-- Plattformunabhaengig (Chrome, Edge, Opera auf Android/macOS/Windows/Linux)
+- Plattformunabhaengig (Chrome, Edge, Opera auf diversen mobilen BS / macOS/Windows/Linux)
 - Installierbar als PWA (Home-Screen-Icon, Offline-Modus)
 - Schnelle Entwicklung (React/Vue/vanilla JS)
 
 **Nachteile:**
-- iOS Safari unterstuetzt kein Web Bluetooth (Workaround: Bluefy Browser)
+- Safari des kalifornischen Technologieherstellers unterstuetzt kein Web Bluetooth (Workaround: Bluefy Browser)
 - Keine Hintergrund-BLE-Kommunikation (App muss im Vordergrund sein)
-- Kein Zugriff auf Android Notification Listener (fuer SMS/Call-Weiterleitung)
+- Kein Zugriff auf Notification-Listener des anderen mobilen BS (fuer SMS/Call-Weiterleitung)
 
 **Empfehlung:** PWA als primaere Loesung fuer Konfiguration, Live-Daten und Import/Export. Fuer Navigation und Benachrichtigungen eine leichtgewichtige native App (oder Integration in bestehende Navigations-Apps wie OsmAnd ueber Intent/URL-Scheme).
 
@@ -1315,7 +1315,7 @@ Moegliche Integrationen:
 - ESP32 Bike Computer (Yamaha Tracer 9): https://github.com/m-gracia/esp32-bike-computer-main
 - Hackaday: Motorcycle Dashboard from ECU: https://hackaday.com/2020/09/21/a-motorcycle-dashboard-straight-from-the-ecu
 - OpenTrailPaper (E-Paper Bike Computer): https://github.com/RaemondBW/OpenTrailPaper
-- SteedPilot (ESP32 + iPhone Navigation): https://github.com/deanthecoder/SteedPilot
+- SteedPilot (ESP32 + Smartphone Navigation): https://github.com/deanthecoder/SteedPilot
 - BikeNavESP32 (BLE Navigation Dashboard): https://github.com/rabbihossain/BikeNavESP32
 - iKawa (ANCS/AMS Kawasaki Dashboard): https://github.com/gabrielerandazzo/iKawa
 - BonoGPS (ESP32 GPS Track Logging): https://github.com/renatobo/bonogps

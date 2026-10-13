@@ -126,9 +126,9 @@ Jedes Feature aus der Roadmap (Dokument 06) wird hier bewertet nach:
 |---|---|---|---|---|---|---|---|
 | 3.1 | Turn-by-Turn Navigation | Ja | Smartphone-App -> BLE GATT -> Display | Mittel | Should | Companion-App, BLE-Stack, Display | Recherchiert |
 | 3.2 | Wettervorhersage | Ja | Smartphone-App -> Wetter-API -> BLE | Mittel | Could | Companion-App, Internet | Recherchiert |
-| 3.3 | Incoming-Call-Anzeige | Ja (iOS nativ) | iOS-Notifizierungs-Service (ANCS) | Mittel | Could | BLE-Pairing, Plattform-spezifisch | Recherchiert |
-| 3.4 | Music-Track-Info | Ja (iOS nativ) | iOS-Media-Service (AMS) | Mittel | Could | BLE-Pairing, Plattform-spezifisch | Recherchiert |
-| 3.5 | SMS/Notification-Preview | Ja | ANCS / Android-Notification-Listener | Mittel | Could | Companion-App (Android), BLE | Recherchiert |
+| 3.3 | Incoming-Call-Anzeige | Ja (mobiles BS A nativ) | Notifizierungs-Service (ANCS) eines kalifornischen Technologieherstellers | Mittel | Could | BLE-Pairing, Plattform-spezifisch | Recherchiert |
+| 3.4 | Music-Track-Info | Ja (mobiles BS A nativ) | Media-Service (AMS) eines kalifornischen Technologieherstellers | Mittel | Could | BLE-Pairing, Plattform-spezifisch | Recherchiert |
+| 3.5 | SMS/Notification-Preview | Ja | ANCS / Notification-Listener des mobilen BS B | Mittel | Could | Companion-App (mobiles BS B), BLE | Recherchiert |
 | 3.6 | POI-Logging (Wegpunkte) | Ja | GPS + Taster -> GPX | Niedrig | Should | GPS, SD-Karte, 1x GPIO-Taster | Recherchiert |
 
 ### 2.4 Safety-Features
@@ -190,7 +190,7 @@ Jedes Feature aus der Roadmap (Dokument 06) wird hier bewertet nach:
 | # | Feature | Machbar? | Datenquelle | Aufwand | Prioritaet | Abhaengigkeiten | Status |
 |---|---|---|---|---|---|---|---|
 | 9.1 | Eigene App noetig? | Ja (fuer die meisten Smart-Features) | — | Mittel | Should | BLE-Protokoll-Design | Recherchiert |
-| 9.2 | Native App (iOS/Android) | Ja | Flutter/React-Native | Hoch | Could | Doppelter Entwicklungsaufwand | Recherchiert |
+| 9.2 | Native App (mobile BS A/B) | Ja | Flutter/React-Native | Hoch | Could | Doppelter Entwicklungsaufwand | Recherchiert |
 | 9.3 | BLE-Protokoll-Design | Ja | NimBLE GATT-Services | Mittel | Must | BLE-Stack | Recherchiert |
 | 9.4 | App-Funktionen | Ja | Siehe Feature 9.1-9.5 Roadmap | Mittel | Should | Companion-App | Recherchiert |
 | 9.5 | PWA (Web-BLE) Alternative | Ja (eingeschraenkt) | Web Bluetooth API | Mittel | Should | Browser mit Web-BLE | Recherchiert |
@@ -645,7 +645,7 @@ Sensor -> Verarbeitung -> Output (Display/Log/BLE)
 
 | Komponente | Feature | Aufwand | Alternative |
 |---|---|---|---|
-| Companion-App (iOS/Android) | Nav, Wetter, Call, Music, SOS | Sehr Hoch | PWA mit Web-BLE (eingeschraenkt) |
+| Companion-App (mobile BS A/B) | Nav, Wetter, Call, Music, SOS | Sehr Hoch | PWA mit Web-BLE (eingeschraenkt) |
 | Kalman-Filter fuer GPS+IMU-Fusion | Dead Reckoning | Hoch | Complementary-Filter (einfacher) |
 | Web-Dashboard (HTML/JS) | Analyse nach Tour | Hoch | CSV-Export zu externer Software |
 | MQTT/REST-API | Home-Assistant-Integration | Hoch | BLE als API |

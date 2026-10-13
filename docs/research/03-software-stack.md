@@ -1491,7 +1491,7 @@ Möglichkeiten:
    GATT-Services lesen/schreiben. Gut für Debug, nicht für Produktion.
 
 Empfehlung: **Custom-App in Flutter** mit `flutter_blue_plus` Plugin.
-Flutter ist plattformübergreifend (iOS + Android), BLE-Plugin ist reif.
+Flutter ist plattformübergreifend (mobiles BS A + mobiles BS B), BLE-Plugin ist reif.
 Die App kann:
 - Live-Telemetry anzeigen (als Ergänzung zum E-Paper)
 - Navigation-Directions an den Bordcomputer senden

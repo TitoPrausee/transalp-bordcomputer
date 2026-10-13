@@ -662,9 +662,9 @@ Bei SPI mit 400 KB/s schreibt das System die Daten in <1% der Zeit. Der Rest ist
 | SDHC | 4–32 GB | Ja | FAT32 |
 | SDXC | 64 GB – 2 TB | Ja, mit exFAT-Support | exFAT (FAT32 bei ≤32GB) |
 
-**Empfehlung:** 8–16 GB SDHC, Class 10 (U1). Class 10 garantiert 10 MB/s min. Schreibrate. Viel mehr als SPI liefert. Keine High-End-Karte nötig — Standard-SanDisk 16GB für ~5€ reicht.
+**Empfehlung:** 8–16 GB SDHC, Class 10 (U1). Class 10 garantiert 10 MB/s min. Schreibrate. Viel mehr als SPI liefert. Keine High-End-Karte nötig — Marken-SD-Karte 16GB für ~5€ reicht.
 
-**Wichtig:** Marken-Speicherkarte kaufen. No-Name-Karten haben oft falsche Kapazitätsangaben und hohe Ausfallraten. SanDisk Ultra 16GB oder Samsung EVO 16GB.
+**Wichtig:** Marken-Speicherkarte kaufen. No-Name-Karten haben oft falsche Kapazitätsangaben und hohe Ausfallraten. Eine Marken-SD-Karte Ultra 16GB oder eine Marken-SD-Karte EVO 16GB.
 
 ### 7.3 FATFS-Performance & Schreibstrategie
 
@@ -726,7 +726,7 @@ Vorteile: Menschlich lesbar, Excel/Python direkt. Nachteile: Groß (ca. 100 Byte
   </trk>
 </gpx>
 ```
-Standard-Format für GPS-Tracks. Importierbar in jede Karten-App (Kurviger, OsmAnd, Google Earth).
+Standard-Format für GPS-Tracks. Importierbar in jede Karten-App (Kurviger, OsmAnd, Geovisualisierungs-Software).
 
 **BIN (Rohdaten):**
 Binary-Format für maximale Dichte. Struct direkt schreiben. Etwa 40% kleiner als CSV.

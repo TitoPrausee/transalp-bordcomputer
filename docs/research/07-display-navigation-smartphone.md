@@ -9,7 +9,7 @@
 
 Die bisherigen Deep Dives haben Hardware, Software-Stack, Fahrzeugdaten und Features einzeln betrachtet. Dieses Dokument behandelt die naechste Ebene: wie wird aus einem reinen Sensor-Dashboard ein vernetztes Motorrad-Cockpit mit Navigation und Smartphone-Anbindung?
 
-Die Kernfrage lautet: Wie bekommen wir Turn-by-Turn-Navigation vom Handy auf ein ESP32-S3-Display, ohne auf geschlossene Protokolle wie Apple CarPlay oder Android Auto angewiesen zu sein, und wie sieht die Hardware-Architektur aus, wenn ein oder mehrere Displays eingesetzt werden?
+Die Kernfrage lautet: Wie bekommen wir Turn-by-Turn-Navigation vom Handy auf ein ESP32-S3-Display, ohne auf geschlossene Protokolle wie CarPlay eines kalifornischen Technologieherstellers oder Auto-Protokolle eines Suchmaschinenbetreibers angewiesen zu sein, und wie sieht die Hardware-Architektur aus, wenn ein oder mehrere Displays eingesetzt werden?
 
 Die Antwort ist ein dreiteiliges System:
 1. Ein ESP32-S3-Bordcomputer mit einem oder zwei Displays, die ueber SPI angesteuert werden
@@ -157,11 +157,11 @@ Empfehlung: Fuer Phase 1 (ein Display) der direkte ESP32-S3-Anschluss mit LVGL. 
 
 ## 2. Smartphone-Integration
 
-### 2.1 Warum nicht echtes CarPlay oder Android Auto?
+### 2.1 Warum nicht echtes CarPlay oder Auto-Protokoll des Suchmaschinenbetreibers?
 
-Apple CarPlay benoetigt eine MFi-Zertifizierung (Made for iPhone) und einen dedizierten Hardware-IC (Apple Accessory Interface). Ohne MFi-Lizenz gibt es keinen Zugriff auf das CarPlay-Protokoll. Die Lizenzkosten und Hardware-Anforderungen machen CarPlay fuer ein DIY-Projekt unmoeglich.
+CarPlay des kalifornischen Technologieherstellers benoetigt eine MFi-Zertifizierung (Made for Smartphone) und einen dedizierten Hardware-IC (Accessory Interface des kalifornischen Technologieherstellers). Ohne MFi-Lizenz gibt es keinen Zugriff auf das CarPlay-Protokoll. Die Lizenzkosten und Hardware-Anforderungen machen CarPlay fuer ein DIY-Projekt unmoeglich.
 
-Android Auto ist etwas offener, benoetigt aber ebenfalls Google-zertifizierte Hardware und eine Android-Auto-Headunit-Implementierung, die nicht trivial ist.
+Das Auto-Protokoll des Suchmaschinenbetreibers ist etwas offener, benoetigt aber ebenfalls zertifizierte Hardware und eine Headunit-Implementierung, die nicht trivial ist.
 
 Beide Protokolle sind darauf ausgelegt, die Smartphone-UI auf einen externen Bildschirm zu spiegeln. Das ist nicht das Ziel hier: wir wollen keine komplette Handy-UI auf dem Motorrad-Display, sondern gezielt Navigationsdaten, Medien-Infos und Anrufbenachrichtigungen.
 
@@ -181,16 +181,15 @@ Das ist kein CarPlay-Ersatz im Sinne von Bildschirm-Spiegelung. Es ist eine redu
     |  | Companion   |  | <------> |  | BLE GATT    |  |
     |  | App         |  | GATT    |  | Server      |  |
     |  |             |  |         |  |             |  |
-    |  | - MapKit /  |  |         |  | - Nav-Data  |  |
-    |  |   Google    |  |         |  |   Parser    |  |
-    |  |   Maps API  |  |         |  | - UI-State  |  |
-    |  | - Now Play  |  |         |  |   Machine  |  |
-    |  | - Notifilter|  |         |  | - LVGL      |  |
-    |  | - TTS       |  |         |  |   Render    |  |
-    |  +-------------+  |         |  +-------------+  |
+    |  | - Maps-API  |  |         |  | - Nav-Data  |  |
+    |  |   (native)  |  |         |  |   Parser    |  |
+    |  | - Now Play  |  |         |  | - UI-State  |  |
+    |  | - Notifilter|  |         |  |   Machine  |  |
+    |  | - TTS       |  |         |  | - LVGL      |  |
+    |  +-------------+  |         |  |   Render    |  |
     |                   |          |                   |
     |  Native APIs:     |          |  Sensors:         |
-    |  - MapKit/Maps    |          |  - GPS, RPM, Temp |
+    |  - Maps (native)  |          |  - GPS, RPM, Temp |
     |  - AVAudioSession |          |  - Fuel, Gear     |
     |  - CallKit/CTCall |          |                   |
     |  - Notification Svc|          |  Display:        |
@@ -222,6 +221,6 @@ Quellen:
 
 Der ESP32-S3 hat USB-OTG und kann als USB-Host oder USB-Device laufen. Theoretisch koennte man das Handy per USB-C-Kabel verbinden. Vorteile: zuverlaessiger als BT, laedt das Handy, mehr Bandbreite.
 
-Aber: iOS bietet keinen USB-Accessory-Mode ohne MFi. Android Open Accessory (AOA) ist praktisch tot, seit Android 6.0 es deprecated hat. USB-C als Alternative zu BLE ist fuer iOS nicht verfuegbar und fuer Android nicht praktikabel.
+Aber: Das mobile BS des kalifornischen Technologieherstellers bietet keinen USB-Accessory-Mode ohne MFi. Open Accessory (AOA) des anderen mobilen BS ist praktisch tot, seit Version 6.0 es deprecated hat. USB-C als Alternative zu BLE ist fuer das eine mobile BS nicht verfuegbar und fuer das andere nicht praktikabel.
 
 Bleibt als einziger praktikabler Weg fuer beide Plattformen: BLE.

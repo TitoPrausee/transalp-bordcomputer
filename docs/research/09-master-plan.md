@@ -51,7 +51,7 @@ bietet — "Premium" bedeutet nicht immer "teuer", sondern "bester Wert".
 | 4 | Display (primär) | ILI9341 2.4" 320x240 (6) | Waveshare 3.5" IPS 1000 nits 480x320 (18) | Premium | SPI |
 | 5 | Display (sekundär) | — | E-Paper 2.13" 250x122 (12) | Standard-Stufe | SPI |
 | 6 | SD-Karten-Modul | MicroSD Breakout (2) | MicroSD Breakout (2) | Budget (kein Unterschied) | SPI |
-| 7 | MicroSD-Karte | 8GB Class 10 NoName (3) | SanDisk Ultra 16GB Class 10 (6) | Premium | — |
+| 7 | MicroSD-Karte | 8GB Class 10 NoName (3) | Marken-SD-Karte Ultra 16GB Class 10 (6) | Premium | — |
 
 #### 1.1.2 Sensoren
 
@@ -183,7 +183,7 @@ Mehrpreise gegenüber der Budget-Option.
 | Silikon-O-Ring statt NBR | +1 | -40 bis +200°C, UV-stabil | 1 EUR für dauerhafte Dichtigkeit. |
 | GORE PolyVent | +8 | Kondenswasser-Vermeidung | Verhindert Korrosion. Einmalige Investition. |
 | MP1584+TVS statt LM2596 | +1 | Höhere Effizienz, Lastabwurf-Schutz | 1 EUR für 10% weniger Wärme und Schutz gegen 40V-Spikes. |
-| SanDisk Ultra statt NoName | +3 | Zuverlässigkeit | SD-Kartenausfall = Datenverlust. 3 EUR für Sicherheit. |
+| Marken-SD-Karte Ultra statt NoName | +3 | Zuverlässigkeit | SD-Kartenausfall = Datenverlust. 3 EUR für Sicherheit. |
 
 #### Hohes Kosten-Nutzen-Verhältnis (empfohlen)
 
@@ -453,7 +453,7 @@ Live-Daten, sendet Navigationsanweisungen, ermöglicht OTA-Updates.
 **Woche 8: Navigation und OTA**
 
 - Turn-by-Turn Navigation: Companion-App nutzt native Maps-API
-  (iOS MapKit / Android Maps-API), berechnet Route, sendet
+  (mobile BS A MapKit / mobile BS B Maps-API), berechnet Route, sendet
   nur die nächste Anweisung als JSON über BLE an Bordcomputer
 - Navigations-UI auf TFT: großer Pfeil (links/rechts/geradeaus/
   Rundkehr), Distanz zum Maneuver, Straßenname (scrollend bei
@@ -472,8 +472,8 @@ Turn-by-Turn funktioniert. OTA-Update getestet.
 **Abhängigkeiten:** Phase 1-3 (Daten müssen da sein, Display muss
 anzeigen können). BLE-Hardware ist im ESP32-S3 eingebaut.
 
-**Risiken:** iOS Safari unterstützt kein Web Bluetooth (Workaround:
-Bluefy Browser). Lösung: PWA für Android, Bluefy für iOS, oder native
+**Risiken:** Safari des kalifornischen Technologieherstellers unterstützt kein Web Bluetooth (Workaround:
+Bluefy Browser). Lösung: PWA für mobiles BS B, Bluefy für mobiles BS A, oder native
 App als späterer Schritt. BLE-MTU-Aushandlung kann auf manchen
 Smartphones fehlschlagen — Fallback auf 20-Byte-Payload mit Chunking.
 
@@ -700,7 +700,7 @@ Klartext-Log mit Zeitstempel und Log-Level. Rotiert bei 1 MB
 [2026-10-13 14:23:01] INFO  Boot complete, firmware v1.2.0
 [2026-10-13 14:23:01] INFO  GPS: searching for fix...
 [2026-10-13 14:23:24] INFO  GPS: fix acquired, 9 satellites
-[2026-10-13 14:23:25] INFO  SD: 16GB SanDisk Ultra, FAT32
+[2026-10-13 14:23:25] INFO  SD: 16GB Marken-SD-Karte Ultra, FAT32
 [2026-10-13 14:23:25] INFO  BLE: advertising started
 [2026-10-13 14:25:12] WARN  P0203: Bordspannung < 12V (11.8V)
 [2026-10-13 14:25:15] INFO  P0203: resolved (12.2V)
@@ -1260,7 +1260,7 @@ JSON fallen die Werte auf kompilierte Defaults zurück.
 | Passive Bauteile (R, C) | Mouser / DigiKey | Großpackungen |
 | Gehäuse-Filament (ASA) | Prusa / Filament-Shop | Qualität |
 | GORE PolyVent | Gore direkt / Distributor | Spezialprodukt |
-| SD-Karte | SanDisk direkt / Amazon | Markenprodukt |
+| SD-Karte | Marken-Hersteller direkt / Amazon | Markenprodukt |
 | Custom PCB | JLCPCB / PCBWay | 5 Stück ab 2 EUR + Bestückung |
 | Steckverbinder | Molex / RS Components | Vibrationssicher |
 
@@ -1289,7 +1289,7 @@ Besonders folgende Komponenten werden häufig gefälscht:
 | u-blox NEO-M9N | Sehr hoch (AliExpress unter 15 EUR) | Original nur bei Mouser/DigiKey, Markierung lasergraviert |
 | DS18B20 | Hoch | Fakes liefern falsche Werte, CRC-Fehler; Test: Eiswasser = 0°C |
 | ESP32-S3 | Mittel | DevKitC-1 original hat Espressif-Logo und USB-Bridge CH343 |
-| SanDisk SD-Karte | Hoch (bei Amazon Marketplace) | Originalverpackung, Serial auf sandisk.com verifizieren |
+| Marken-SD-Karte | Hoch (bei Amazon Marketplace) | Originalverpackung, Serial auf Hersteller-Website verifizieren |
 
 ---
 
@@ -1303,7 +1303,7 @@ aber nicht Teil des 10-Wochen-Plans:
 
 | Erweiterung | Beschreibung | Aufwand | Priorität |
 |---|---|---|---|
-| Native App (React Native / Flutter) | Statt PWA für iOS und Android | 4-6 Wochen | Medium |
+| Native App (React Native / Flutter) | Statt PWA für mobile BS A und mobile BS B | 4-6 Wochen | Medium |
 | Wetter-API-Integration | Live-Wetter über Smartphone-App | 1 Woche | Low |
 | Incoming-Call (ANCS) | Anrufername auf Display | 1 Woche | Medium |
 | Music-Info (AMS) | Artist/Titel auf Display | 1 Woche | Low |
@@ -1368,7 +1368,7 @@ Diese Tabelle ist die Einkaufsliste für die empfohlene Standard-Stufe.
 | 4 | Waveshare 3.5" IPS | 480x320, 1000 nits, ILI9488 | 1 | 18 | 18 | Waveshare |
 | 5 | E-Paper 2.13" | 250x122, SSD1680 | 1 | 12 | 12 | Waveshare |
 | 6 | MicroSD Breakout | SPI, Standard | 1 | 2 | 2 | Amazon |
-| 7 | SanDisk Ultra 16GB | microSD, Class 10 | 1 | 6 | 6 | Amazon |
+| 7 | Marken-SD-Karte Ultra 16GB | microSD, Class 10 | 1 | 6 | 6 | Amazon |
 | 8 | BMI270 | IMU, 6-Achsen, I2C | 1 | 5 | 5 | Mouser |
 | 9 | BMP388 | Barometer, I2C | 1 | 5 | 5 | Mouser |
 | 10 | DS18B20 | wasserdicht, 1-Wire | 2 | 3 | 6 | Mouser |
