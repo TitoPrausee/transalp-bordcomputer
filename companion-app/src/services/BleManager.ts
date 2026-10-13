@@ -18,6 +18,7 @@
 
 import type { BleProvider, BleDevice, BleEventCallbacks, Subscription, BleError } from '../core/ble/BleProvider';
 import { BleErrorCode } from '../core/ble/BleProvider';
+import { MockBleProvider } from '../core/ble/MockBleProvider';
 import type {
   TelemetryLive,
   NavManeuver,
@@ -456,9 +457,7 @@ export function getBleManager(provider?: BleProvider): BleManager {
   if (bleManagerInstance) {
     bleManagerInstance.destroy();
   }
-  // Lazy import vermeiden: MockBleProvider direkt importieren
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const { MockBleProvider } = require('../core/ble/MockBleProvider');
+
   const p = provider ?? new MockBleProvider();
   bleManagerInstance = new BleManager(p);
   return bleManagerInstance;

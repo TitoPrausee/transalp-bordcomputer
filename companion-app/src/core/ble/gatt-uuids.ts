@@ -73,6 +73,8 @@ export const CHAR = {
   dtcList: uuid(0x7001),
   sensorStatus: uuid(0x7002),
   selfTest: uuid(0x7003),
+  systemStatus: uuid(0x7006),
+  taskInfo: uuid(0x7007),
   logExport: uuid(0x7004),
   logExportCtrl: uuid(0x7005),
 
@@ -80,6 +82,7 @@ export const CHAR = {
   otaControl: uuid(0x8001),
   otaData: uuid(0x8002),
   otaVerify: uuid(0x8003),
+  otaStatus: uuid(0x8004),
 } as const;
 
 // --- Standard-Services (Bluetooth SIG) ---
@@ -198,4 +201,51 @@ export enum NavStatus {
   Rerouting = 2,
   Arriving = 3,
   Offline = 4,
+}
+
+// --- System-Status (Teil des Telemetry-Snapshot) ---
+
+export interface SystemStatus {
+  uptime: number; // Sekunden (uint32)
+  heapFree: number; // Bytes (uint32)
+  heapTotal: number; // Bytes (uint32)
+  batteryPct: number; // Prozent (uint8)
+  cpuTemp: number; // Celsius (int8)
+  taskCount: number; // (uint8)
+  bleConnections: number; // (uint8)
+  wifiRssi: number; // dBm (int8)
+}
+
+// --- Task-Info (fuer Diagnose) ---
+
+export interface TaskInfo {
+  name: string; // 16 Bytes UTF-8
+  priority: number; // (uint8)
+  stackFree: number; // Bytes (uint16)
+  state: number; // (uint8: 0=running,1=blocked,2=suspended,3=deleted)
+}
+
+// --- OTA-Status ---
+
+export interface OtaStatus {
+  state: number; // 0=idle,1=uploading,2=verifying,3=done,4=failed
+  progress: number; // 0-100
+  firmwareVersion: string; // major.minor.patch
+  errorCode: number; // 0=ok
+  imageHash: string; // SHA256 hex
+}
+
+// --- Self-Test-Modus ---
+
+export enum SelfTestMode {
+  Quick = 0,
+  Full = 1,
+}
+
+// --- OTA-Kommando ---
+
+export enum OtaCommand {
+  Start = 0,
+  Cancel = 1,
+  Verify = 2,
 }

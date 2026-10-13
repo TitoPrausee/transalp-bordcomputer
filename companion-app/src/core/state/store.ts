@@ -21,6 +21,9 @@ import type {
   DtcEntry,
   SelfTestResult,
   WeatherCurrent,
+  SystemStatus,
+  TaskInfo,
+  OtaStatus,
 } from '../ble/gatt-uuids';
 import type { BordcomputerConfig } from './config';
 import { DEFAULT_CONFIG } from './config';
@@ -167,6 +170,18 @@ interface AppState {
   weather: WeatherCurrent;
   setWeather: (data: WeatherCurrent) => void;
 
+  // System-Status
+  systemStatus: SystemStatus | null;
+  setSystemStatus: (data: SystemStatus) => void;
+
+  // Task-Info
+  taskInfo: TaskInfo[];
+  setTaskInfo: (tasks: TaskInfo[]) => void;
+
+  // OTA-Status
+  otaStatus: OtaStatus | null;
+  setOtaStatus: (status: OtaStatus) => void;
+
   // Tours (Mock)
   tours: TourSummary[];
 
@@ -229,6 +244,18 @@ export const useAppStore = create<AppState>((set) => ({
   // Wetter
   weather: MOCK_WEATHER,
   setWeather: (data) => set({ weather: data }),
+
+  // System-Status
+  systemStatus: null,
+  setSystemStatus: (data) => set({ systemStatus: data }),
+
+  // Task-Info
+  taskInfo: [],
+  setTaskInfo: (tasks) => set({ taskInfo: tasks }),
+
+  // OTA-Status
+  otaStatus: null,
+  setOtaStatus: (status) => set({ otaStatus: status }),
 
   // Tours
   tours: MOCK_TOURS,

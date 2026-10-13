@@ -20,8 +20,11 @@ import type {
   DtcEntry,
   SelfTestResult,
   WeatherCurrent,
+  SystemStatus,
+  TaskInfo,
+  OtaStatus,
 } from './gatt-uuids';
-import { ManeuverType, NavStatus } from './gatt-uuids';
+import { ManeuverType, NavStatus, SelfTestMode } from './gatt-uuids';
 import {
   ConnectionState,
   canTransition,
@@ -52,6 +55,9 @@ export class MockBleProvider implements BleProvider {
   private intervals: ReturnType<typeof setInterval>[] = [];
   private reconnectAttempts = 0;
   private destroyed = false;
+  private bootTime = Date.now();
+  private otaProgress = 0;
+  private otaActive = false;
 
   private telemetry: TelemetryLive = {
     speed: 0,
@@ -206,7 +212,7 @@ export class MockBleProvider implements BleProvider {
     await this.delay(50);
   }
 
-  async triggerSelfTest(): Promise<void> {
+  async triggerSelfTest(_mode?: SelfTestMode): Promise<void> {
     const result: SelfTestResult = {
       result: 0, // pass
       details: [0, 0, 0, 0, 0], // GPS, RPM, Temp, Fuel, SD
@@ -225,6 +231,98 @@ export class MockBleProvider implements BleProvider {
 
   async readDtcList(): Promise<DtcEntry[]> {
     return [...this.dtcList];
+  }
+
+  async clearDtc(_code?: number): Promise<void> {
+    if (_code === undefined || _code === 0xffff) {
+      this.dtcList = [];
+    } else {
+      this.dtcList = this.dtcList.filter((d) => d.code !== _code);
+    }
+    this.emit('onDtcList', [...this.dtcList]);
+    await this.delay(50);
+  }
+
+  async readSystemStatus(): Promise<SystemStatus | null> {
+    return {
+      uptime: Math.floor((Date.now() - this.bootTime) / 1000),
+      heapFree: 145000 + Math.floor(Math.random() * 20000),
+      heapTotal: 320000,
+      batteryPct: 75 + Math.floor(Math.random() * 20),
+      cpuTemp: 42 + Math.round(Math.random() * 8),
+      taskCount: 12,
+      bleConnections: 1,
+      wifiRssi: -55 - Math.floor(Math.random() * 15),
+    };
+  }
+
+  async readTaskInfo(): Promise<TaskInfo[]> {
+    return [
+      { name: 'main', priority: 5, stackFree: 8192, state: 0 },
+      { name: 'ble_srv', priority: 7, stackFree: 4096, state: 0 },
+      { name: 'sensors', priority: 8, stackFree: 3072, state: 0 },
+      { name: 'display', priority: 6, stackFree: 6144, state: 0 },
+      { name: 'logger', priority: 4, stackFree: 5120, state: 0 },
+      { name: 'gps', priority: 7, stackFree: 3584, state: 0 },
+      { name: 'ota', priority: 3, stackFree: 2048, state: 2 },
+      { name: 'watchdog', priority: 9, stackFree: 1024, state: 0 },
+    ];
+  }
+
+  async readOtaStatus(): Promise<OtaStatus | null> {
+    return {
+      state: 0,
+      progress: 0,
+      firmwareVersion: '1.2.0',
+      errorCode: 0,
+      imageHash: '',
+    };
+  }
+
+  async startOta(_firmwareSize: number): Promise<void> {
+    this.otaProgress = 0;
+    this.otaActive = true;
+    this.emit('onOtaStatus', {
+      state: 1,
+      progress: 0,
+      firmwareVersion: '1.2.0',
+      errorCode: 0,
+      imageHash: '',
+    } as OtaStatus);
+  }
+
+  async writeOtaData(_data: Uint8Array): Promise<void> {
+    this.otaProgress = Math.min(100, this.otaProgress + 2);
+    this.emit('onOtaStatus', {
+      state: 1,
+      progress: this.otaProgress,
+      firmwareVersion: '1.2.0',
+      errorCode: 0,
+      imageHash: '',
+    } as OtaStatus);
+  }
+
+  async cancelOta(): Promise<void> {
+    this.otaActive = false;
+    this.otaProgress = 0;
+  }
+
+  async verifyOta(): Promise<void> {
+    this.emit('onOtaStatus', {
+      state: 3,
+      progress: 100,
+      firmwareVersion: '1.3.0',
+      errorCode: 0,
+      imageHash: 'a1b2c3d4',
+    } as OtaStatus);
+  }
+
+  async exportConfig(): Promise<string> {
+    return this.readConfig();
+  }
+
+  async importConfig(_configJson: string): Promise<void> {
+    await this.delay(50);
   }
 
   // --- Event-Subscription ---
