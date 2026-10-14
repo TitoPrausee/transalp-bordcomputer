@@ -2,6 +2,8 @@
 
 > Open-Source Bordcomputer fuer die Honda Transalp 600 (PD06) — basierend auf ESP32-S3, GPS, Dual-Display, direkter Sensor-Anzapfung und BLE-Smartphone-Integration.
 
+**Neu hier? Starte mit der [Geführten Tour](docs/GUIDED-TOUR.html) — 13 Stationen durch das gesamte Projekt mit Bildern, Querverweisen und Lese-Empfehlungen.**
+
 [![License: PolyForm Noncommercial](https://img.shields.io/badge/License-PolyForm%20Noncommercial-blue.svg)](LICENSE)
 [![Platform: ESP32-S3](https://img.shields.io/badge/Platform-ESP32--S3-orange.svg)](https://www.espressif.com/en/products/socs/esp32-s3)
 [![Framework: ESP-IDF](https://img.shields.io/badge/Framework-ESP--IDF-red.svg)](https://docs.espressif.com/projects/esp-idf/)

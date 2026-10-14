@@ -3,7 +3,7 @@ name: Deploy Mockups to GitHub Pages
 on:
   push:
     branches: [main]
-    paths: ['mockups/**']
+    paths: ['mockups/**', 'docs/GUIDED-TOUR.html', 'docs/images/**']
   workflow_dispatch:
 
 permissions:
@@ -25,10 +25,35 @@ jobs:
       - uses: actions/checkout@v7
       - name: Setup Pages
         uses: actions/configure-pages@v6
-      - name: Upload mockups as Pages artifact
+      - name: Assemble Pages artifact
+        run: |
+          mkdir -p _pages/mockups _pages/docs
+          cp -r mockups/* _pages/mockups/ 2>/dev/null || true
+          cp docs/GUIDED-TOUR.html _pages/docs/ 2>/dev/null || true
+          cp -r docs/images _pages/docs/images 2>/dev/null || true
+          # Index page that links to both
+          cat > _pages/index.html << 'HTMLEOF'
+          <!DOCTYPE html>
+          <html lang="de">
+          <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1">
+          <meta http-equiv="refresh" content="0; url=mockups/index.html">
+          <title>Transalp Bordcomputer</title>
+          </head>
+          <body style="margin:0;background:#0c0c0c;color:#fff;font-family:sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh">
+          <div style="text-align:center">
+          <h1 style="font-weight:300">Transalp Bordcomputer</h1>
+          <p style="color:#8c8c8c">Weiterleitung zu Mockups...</p>
+          <p><a href="mockups/index.html" style="color:#f0a020">Mockups ansehen</a> · <a href="docs/GUIDED-TOUR.html" style="color:#f0a020">Geführte Tour</a></p>
+          </div>
+          </body>
+          </html>
+          HTMLEOF
+      - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v5
         with:
-          path: ./mockups
+          path: ./_pages
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4

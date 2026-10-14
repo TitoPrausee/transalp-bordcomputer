@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bordcomputer — Geführte Tour</title>
+<style>
+@property --p{syntax:'<integer>';inherits:true;initial-value:0}
+:root{--bg:#000;--page:#0c0c0c;--card:#0f0f0f;--text:#fff;--muted:#8c8c8c;--line:#1d1d1d;--acc:#f0a020;--ok:#3ddc84;--bad:#e5322d;--font:"SF Pro Display",-apple-system,"Helvetica Neue","Inter",Arial,sans-serif;box-sizing:border-box}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--page);color:var(--text);font-family:var(--font);line-height:1.6}
+a{color:var(--acc);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* Layout */
+.shell{display:flex;min-height:100vh}
+.sidebar{width:280px;min-width:280px;background:var(--bg);border-right:1px solid var(--line);padding:24px 0;position:sticky;top:0;height:100vh;overflow-y:auto}
+.content{flex:1;padding:40px 60px;max-width:900px}
+
+/* Sidebar */
+.sidebar h2{font-size:14px;font-weight:300;color:var(--muted);letter-spacing:2px;padding:0 24px;margin-bottom:16px}
+.nav-item{display:flex;align-items:center;gap:12px;padding:10px 24px;font-size:14px;font-weight:300;color:var(--muted);cursor:pointer;transition:all .2s;border-left:3px solid transparent}
+.nav-item:hover{color:var(--text);background:var(--card)}
+.nav-item.active{color:var(--text);border-left-color:var(--acc);background:var(--card)}
+.nav-item.done{color:var(--ok)}
+.nav-num{width:28px;height:28px;border-radius:50%;background:var(--line);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;flex-shrink:0}
+.nav-item.active .nav-num{background:var(--acc);color:#000}
+.nav-item.done .nav-num{background:var(--ok);color:#000}
+
+/* Progress bar */
+.progress{padding:0 24px 20px;border-bottom:1px solid var(--line);margin-bottom:16px}
+.progress-bar{height:4px;background:var(--line);border-radius:2px;overflow:hidden;margin-top:8px}
+.progress-fill{height:100%;background:var(--acc);border-radius:2px;width:calc(var(--p)*1%)}
+.progress-label{font-size:12px;color:var(--muted)}
+
+/* Content sections */
+section{display:none;animation:fadeIn .4s ease}
+section.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+h1{font-size:32px;font-weight:200;margin-bottom:8px}
+h2{font-size:22px;font-weight:300;margin:32px 0 12px;color:var(--text)}
+h3{font-size:16px;font-weight:500;margin:24px 0 8px;color:var(--muted);letter-spacing:1px}
+p{font-weight:300;margin-bottom:16px;color:#d0d0d0}
+ul{list-style:none;padding:0}
+li{padding:6px 0;font-weight:300}
+li::before{content:"→ ";color:var(--acc)}
+
+/* Cards */
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:24px;margin:16px 0}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;margin:16px 0}
+.doc-card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px;transition:all .2s;cursor:pointer;text-decoration:none;display:block}
+.doc-card:hover{border-color:var(--acc);transform:translateY(-2px)}
+.doc-card h4{font-size:16px;font-weight:400;margin-bottom:6px;color:var(--text)}
+.doc-card p{font-size:13px;color:var(--muted);margin:0}
+.doc-card .badge{display:inline-block;font-size:11px;padding:2px 8px;border-radius:4px;background:var(--line);color:var(--ok);margin-top:8px}
+
+/* Images */
+.img-wrap{border-radius:12px;overflow:hidden;border:1px solid var(--line);margin:16px 0}
+.img-wrap img{width:100%;display:block}
+.img-caption{font-size:12px;color:var(--muted);padding:8px 12px;background:var(--card)}
+
+/* Navigation buttons */
+.nav-btns{display:flex;justify-content:space-between;margin-top:40px;padding-top:24px;border-top:1px solid var(--line)}
+.btn{padding:12px 24px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--text);font-size:14px;cursor:pointer;transition:all .2s;font-family:var(--font)}
+.btn:hover{border-color:var(--acc)}
+.btn-primary{background:var(--acc);color:#000;border-color:var(--acc)}
+
+/* Tables */
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px}
+th{text-align:left;padding:10px 12px;border-bottom:2px solid var(--line);font-weight:500;font-size:12px;letter-spacing:1px;color:var(--muted)}
+td{padding:10px 12px;border-bottom:1px solid var(--line);font-weight:300}
+
+/* Step indicator */
+.step-indicator{display:flex;gap:4px;margin-bottom:24px}
+.step-dot{width:24px;height:4px;border-radius:2px;background:var(--line);transition:background .3s}
+.step-dot.done{background:var(--ok)}
+.step-dot.active{background:var(--acc)}
+
+/* Code */
+code{background:var(--line);padding:2px 6px;border-radius:4px;font-size:13px;font-family:"SF Mono",monospace}
+pre{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:16px;overflow-x:auto;font-size:13px;margin:16px 0}
+pre code{background:none;padding:0}
+
+/* Callout */
+.callout{border-left:3px solid var(--acc);padding:12px 16px;background:var(--card);border-radius:0 8px 8px 0;margin:16px 0}
+.callout-bad{border-left-color:var(--bad)}
+
+@media(max-width:768px){
+  .shell{flex-direction:column}
+  .sidebar{position:relative;width:100%;height:auto;border-right:none;border-bottom:1px solid var(--line)}
+  .content{padding:20px}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<!-- Sidebar -->
+<nav class="sidebar">
+<div class="progress">
+<div class="progress-label">Fortschritt: <span id="pct">0</span>%</div>
+<div class="progress-bar"><div class="progress-fill" id="pfill"></div></div>
+</div>
+<h2>GEFÜHRTE TOUR</h2>
+<div id="nav-list"></div>
+</nav>
+
+<!-- Content -->
+<main class="content" id="content">
+
+<!-- Sections will be rendered here -->
+
+</main>
+</div>
+
+<script>
+const steps=[
+{
+n:1,title:"Willkommen",icon:"🏠",
+short:"Projekt-Überblick",
+body:`
+<h1>Transalp Bordcomputer</h1>
+<p>Open-Source Bordcomputer für die Honda Transalp 600 (PD06) — basierend auf ESP32-S3, GPS, Dual-Display und BLE-Smartphone-Integration.</p>
+<div class="callout">
+<b>Was dich erwartet:</b> Diese Tour führt dich durch alle 49 Dokumente, 15.000+ Zeilen Firmware-Code, 35 UI-Mockups und das komplette Hardware-Design — in logischer Reihenfolge, mit Bildern und Querverweisen.
+</div>
+<h2>Kennzahlen</h2>
+<table>
+<tr><th>Bereich</th><th>Umfang</th></tr>
+<tr><td>Forschung</td><td>14 Dokumente, 89.466 Wörter</td></tr>
+<tr><td>Firmware</td><td>15.297 Zeilen C/H (10 Komponenten)</td></tr>
+<tr><td>Companion-App</td><td>5.965 Zeilen TypeScript (React Native)</td></tr>
+<tr><td>UI-Mockups</td><td>8 Screens + 24 SVG-Icons</td></tr>
+<tr><td>Dokumentation</td><td>49 Dokumente, 261.970 Wörter</td></tr>
+<tr><td>CI/CD</td><td>4 GitHub-Workflows + 3 Unit-Tests</td></tr>
+<tr><td>Projektphasen</td><td>7 (0–6), alle abgeschlossen</td></tr>
+<tr><td>Lizenz</td><td>PolyForm Noncommercial</td></tr>
+</table>
+<h3>Start</h3>
+<a href="https://github.com/TitoPrausee/transalp-bordcomputer" class="btn btn-primary">→ GitHub Repository</a>
+<p>Live-Mockups: <a href="https://titoprausee.github.io/transalp-bordcomputer/">titoprausee.github.io/transalp-bordcomputer</a></p>
+`
+},
+{
+n:2,title:"Fahrzeug",icon:"🏍️",
+short:"Honda Transalp 600 (PD06)",
+body:`
+<h1>Das Fahrzeug: Honda Transalp 600 (PD06)</h1>
+<p>Baujahr 1987–1999. Ein rein mechanisches Motorrad — kein CAN-Bus, kein OBD-II, keine ECU. Alle Fahrzeugdaten müssen über eigene Sensoren und direkte Signal-Anzapfung erfasst werden.</p>
+<h2>Technische Daten</h2>
+<table>
+<tr><th>Spezifikation</th><th>Wert</th></tr>
+<tr><td>Motor</td><td>583cc, flüssiggekühlter 52° V-Twin, SOHC, 6 Ventile</td></tr>
+<tr><td>Leistung</td><td>50 PS (37 kW) bei 8000 rpm</td></tr>
+<tr><td>Drehmoment</td><td>48 Nm bei 5500 rpm</td></tr>
+<tr><td>Getriebe</td><td>5-Gang</td></tr>
+<tr><td>Zündung</td><td>CDI mit elektronischer Verstellung</td></tr>
+<tr><td>Tank</td><td>18 Liter (4 Liter Reserve)</td></tr>
+<tr><td>Gewicht</td><td>175 kg trocken</td></tr>
+</table>
+<div class="callout">
+<b>Wichtig:</b> Die PD06 hat keine elektronische Motorsteuerung. Das ist die Grundprämisse des gesamten Projekts — jeder Sensor muss eigenständig installiert werden.
+</div>
+<h3>Dokumente</h3>
+<div class="card-grid">
+<a class="doc-card" href="https://github.com/TitoPrausee/transalp-bordcomputer/blob/main/docs/research/04-pd06-technische-daten.md"><h4>PD06 Technische Daten</h4><p>Motor, Getriebe, Elektrik, Fahrwerk, Service-Manual-Quellen</p><span class="badge">5.000 Wörter</span></a>
+</div>
+`
+},
+{
+n:3,title:"Sensoren",icon:"📡",
+short:"Anschlusspunkte am Motorrad",
+body:`
+<h1>Sensor-Anschlusspunkte an der PD06</h1>
+<p>Jeder Sensor und jeder Anschlusspunkt am Motorrad ist dokumentiert — mit Schaltungen, Pin-Belegungen und Quellen.</p>
+<h2>CDI Pin-Out (Drehzahl)</h2>
+<p>Das Pickup-Signal wird am CDI-Stecker Pin 5 abgegriffen — über einen Optokoppler für galvanische Trennung.</p>
+<div class="img-wrap">
+<img src="images/cdi-pinout.jpg" alt="CDI Pin-Out">
+<div class="img-caption">CDI-Stecker Pin-Belegung (Quelle: cdi-shop.de)</div>
+</div>
+<div class="img-wrap">
+<img src="images/cdi-wire-jumper.jpg" alt="CDI Wire Jumper">
+<div class="img-caption">Gelbe Drahtbrücke für PD06 ohne Seitenständer-Überwachung</div>
+</div>
+<h2>Übersicht aller Sensoren</h2>
+<table>
+<tr><th>Sensor</th><th>Anzapfung</th><th>Signal</th></tr>
+<tr><td>Drehzahl (RPM)</td><td>CDI Pin 5 (Pulse Generator)</td><td>Digital (0,5–3V AC)</td></tr>
+<tr><td>Öldruck</td><td>Öldruckschalter am Kurbelgehäuse</td><td>Digital oder Analog</td></tr>
+<tr><td>Kühlmitteltemp</td><td>Kein Geber ab Werk — DS18B20</td><td>Digital (1-Wire)</td></tr>
+<tr><td>Kraftstoffstand</td><td>Tankgeber im Tank</td><td>Analog (Widerstand)</td></tr>
+<tr><td>Geschwindigkeit</td><td>Mechanischer Tachozug — Hall-Sensor</td><td>Digital</td></tr>
+<tr><td>Bordspannung</td><td>Batterie / Zündschloss</td><td>Analog (Spannungsteiler)</td></tr>
+</table>
+<h3>Dokumente</h3>
+<div class="card-grid">
+<a class="doc-card" href="https://github.com/TitoPrausee/transalp-bordcomputer/blob/main/docs/SENSOR-MOUNTING.md"><h4>SENSOR-MOUNTING.md</h4><p>Alle Anschlusspunkte, Schaltungen, Kabelverlegung, Quellen</p><span class="badge">Mit Bildern</span></a>
+<a class="doc-card" href="https://github.com/TitoPrausee/transalp-bordcomputer/blob/main/docs/research/01-sensoren-fahrzeugdaten.md"><h4>Sensoren & Fahrzeugdaten</h4><p>Recherche: CDI-Pickup, Tacho, Temp, Fuel, Öldruck, Gang</p><span class="badge">5.750 Wörter</span></a>
+</div>
+`
+},
+{
+n:4,title:"Hardware",icon:"🔧",
+short:"ESP32-S3, Displays, Power",
+body:`
+<h1>Hardware-Design</h1>
+<p>ESP32-S3-WROOM-1 als Kernplattform. Dual-Core 240MHz, BLE 5.0, 8MB PSRAM, WiFi.</p>
+<h2>Komponenten</h2>
+<table>
+<tr><th>Bauteil</th><th>Spezifikation</th><th>Preis</th></tr>
+<tr><td>ESP32-S3-WROOM-1 N8R2</td><td>8MB Flash, 2MB PSRAM, BLE 5</td><td>5,40 €</td></tr>
+<tr><td>NEO-M9N GPS</td><td>4-Konstellation, 25Hz, UART</td><td>24,60 €</td></tr>
+<tr><td>TFT 3,5" IPS</td><td>480x320, SPI, 1000 nits</td><td>18,00 €</td></tr>
+<tr><td>E-Paper 2,13"</td><td>250x122, monochrom</td><td>12,00 €</td></tr>
+<tr><td>BMI270 IMU</td><td>6-DoF, I2C/SPI</td><td>5,00 €</td></tr>
+<tr><td>BMP390 Barometer</td><td>±0,03 hPa, 0,25m</td><td>3,50 €</td></tr>
+<tr><td>18650 Backup-Akku</td><td>3400mAh, Li-Ion</td><td>6,00 €</td></tr>
+</table>
+<h3>Dokumente</h3>
+<div class="card-grid">
+<a class="doc-card" href="https://github.com/TitoPrausee/transalp-bordcomputer/blob/main/docs/HARDWARE.md"><h4>HARDWARE.md</h4><p>Schaltplan, Pin-Layout, Verdrahtungsplan, Stromversorgung</p><span class="badge">5.487 Wörter</span></a>
+<a class="doc-card" href="https://github.com/TitoPrausee/transalp-bordcomputer/blob/main/docs/PINMAP.md"><h4>PINMAP.md</h4><p>GPIO-Belegung ESP32-S3: Alle Pins mit Funktion und Konflikten</p><span class="badge">1.609 Wörter</span></a>
+<a class="doc-card" href="https://github.com/TitoPrausee/transalp-bordcomputer/blob/main/docs/PCB-LAYOUT.md"><h4>PCB-LAYOUT.md</h4><p>4-Layer-Stackup, Routing-Regeln, EMV-Optimierung</p><span class="badge">5.993 Wörter</span></a>
+<a class="doc-card" href="https://github.com/TitoPrausee/transalp-bordcomputer/blob/main/docs/CASE-DESIGN.md"><h4>CASE-DESIGN.md</h4><p>Gehäuse: 3D-Druck, IP65, Vibration, Temperatur</p><span class="badge">5.877 Wörter</span></a>
+</div>
+`
+},
+{
+n:5,title:"Einkaufsliste",icon:"🛒",
+short:"BOM & Shopping List",
+body:`
+<h1>Einkaufsliste</h1>
+<p>Die Standard-Konfiguration für den Dauereinsatz am Motorrad: 61 Bauteile, ~327 EUR.</p>
+<h2>Kosten-Übersicht</h2>
+<table>
+<tr><th>Kategorie</th><th>Preis (EUR)</th></tr>
+<tr><td>Kern-Elektronik</td><td>88,30</td></tr>
+<tr><td>Fahrzeug-Sensoren</td><td>32,10</td></tr>
+<tr><td>Power-Management</td><td>11,80</td></tr>
+<tr><td>Steuerung</td><td>7,20</td></tr>
+<tr><td>Passive Bauelemente</td><td>3,05</td></tr>
+<tr><td>PCB</td><td>34,80</td></tr>
+<tr><td>Gehäuse & Mechanik</td><td>87,66</td></tr>
+<tr><td>Kabel & Stecker</td><td>21,60</td></tr>
+<tr><td><b>Zwischensumme</b></td><td><b>286,51</b></td></tr>
+<tr><td>Contingency +15%</td><td>42,98</td></tr>
+<tr><td><b>Gesamt</b></td><td><b>329,49</b></td></tr>
+</table>
+<h3>Dokumente</h3>
+<div class="card-grid">
+<a class="doc-card" href="https://github.com/TitoPrausee/transalp-bordcomputer/blob/main/docs/SHOPPING-LIST.md"><h4>SHOPPING-LIST.md</h4><p>Kompakte Einkaufsliste mit Preisen, Quellen, Bestellreihenfolge</p><span class="badge">61 Bauteile</span></a>
+<a class="doc-card" href="https://github.com/TitoPrausee/transalp-bordcomputer/blob/main/docs/BOM.md"><h4>BOM.md</h4><p>Detailierte Stückliste mit Alternativen, Risiko-Bewertung, TCO</p><span class="badge">7.528 Wörter</span></a>
+<a class="doc-card" href="https://github.com/TitoPrausee/transalp-bordcomputer/blob/main/docs/TCO-ANALYSIS.md"><h4>TCO-ANALYSIS.md</h4><td>Total Cost of Ownership: 3 Szenarien, 5-Jahres-Lifecycle, ROI</td><span class="badge">6.110 Wörter</span></a>
+</div>
+`
+},
+{
+n:6,title:"Firmware",icon:"⚙️",
+short:"ESP-IDF, FreeRTOS, Treiber",
+body:`
+<h1>Firmware-Architektur</h1>
+<p>ESP-IDF v5.4 mit FreeRTOS SMP. 10 Komponenten, 7 FreeRTOS Tasks, 15.297 Zeilen C/H-Code.</p>
+<h2>Komponenten</h2>
+<table>
+<tr><th>Komponente</th><th>Zeilen</th><th>Funktion</th></tr>
+<tr><td>sensors/</td><td>1.225</td><td>RPM, Temp, Fuel, Gear, IMU Treiber</td></tr>
+<tr><td>display/</td><td>2.034</td><td>Rendering-Engine, TFT + E-Paper Treiber</td></tr>
+<tr><td>ble/</td><td>1.796</td><td>GATT-Server, 8 Services, 33 Characteristics</td></tr>
+<tr><td>storage/</td><td>1.844</td><td>SD-Karte, Logger, NVS Config, GPX</td></tr>
+<tr><td>power/</td><td>1.357</td><td>Power-Management, Battery Monitoring</td></tr>
+<tr><td>diagnostics/</td><td>1.861</td><td>DTC-System, Self-Test, Serial Console</td></tr>
+<tr><td>gps/</td><td>886</td><td>NMEA-Parser, GPS-Task</td></tr>
+<tr><td>ota/</td><td>1.609</td><td>OTA-Update, Secure Boot, Rollback</td></tr>
+<tr><td>main/</td><td>915</td><td>main.c, Event-Loop, CMake</td></tr>
+</table>
+<h2>Kommentar-Dichte</h2>
+<p>Durchschnittlich 18% Kommentare — mit Header-Blöcken, Pin-Referenzen, Formeln und Design-Entscheidungen pro Datei.</p>
+<div class="callout">
+<b>Code-Beispiel (rpm.c):</b> Jede Datei beginnt mit einem Header-Block der Hardware-Bezug, Formel, Pin-Mapping und Design-Entscheidung erklärt.
+</div>
+<h3>Dokumente</h3>
+<div class="card-grid">
+<a class="doc-card" href="https://github.com/TitoPrausee/transalp-bordcomputer/blob/main/docs/ARCHITECTURE.md"><h4>ARCHITECTURE.md</h4><p>System-Architektur: 8 Subsysteme, Datenfluss, Task-Modell</p><span class="badge">8.845 Wörter</span></a>
+<a class="doc-card" href="https://github.com/TitoPrausee/transalp-bordcomputer/blob/main/docs/FIRMWARE-GUIDE.md"><h4>FIRMWARE-GUIDE.md</h4><p>Build-System, 10 Komponenten, FreeRTOS, Debugging, OTA</p><span class="badge">5.363 Wörter</span></a>
+<a class="doc-card" href="https://github.com/TitoPrausee/transalp-bordcomputer/blob/main/docs/API-REFERENCE.md"><h4>API-REFERENCE.md</h4><p>BLE GATT: 8 Services, 33 Characteristics, UUIDs, Datenformate</p><span class="badge">7.297 Wörter</span></a>
+<a class="doc-card" href="https://github.com/TitoPrausee/transalp-bordcomputer/blob/main/docs/WIDGET-CATALOG.md"><h4>WIDGET-CATALOG.md</h4><p>18 Widgets, 6 Screen-Layouts, Rendering-Pipeline</p><span class="badge">6.619 Wörter</span></a>
+</div>
+`
+},
+{
+n:7,title:"UI & Design",icon:"🎨",
+short:"Mockups, Screens, Animationen",
+body:`
+<h1>UI & Design</h1>
+<p>Premium UI mit CSS-Animationen, SVG-Komponenten und Dark Mode. 8 Screens, alle animiert.</p>
+<div class="callout">
+<b>Live ansehen:</b> <a href="https://titoprausee.github.io/transalp-bordcomputer/">titoprausee.github.io/transalp-bordcomputer</a>
+</div>
+<h2>Screens</h2>
+<table>
+<tr><th>Screen</th><th>Inhalt</th><th>Animationen</th></tr>
+<tr><td>Instrument</td><td>Speed, RPM-Balken, Gang, Temp, Fuel, Trip</td><td>RPM-Füllung, Speed-Counter, Gang-Slide</td></tr>
+<tr><td>Tankanzeige</td><td>Restreichweite, Tank-Bogen, Prozent</td><td>Bogen-Füllung, Warn-Blink</td></tr>
+<tr><td>Navigation</td><td>Pfeil, Distanz, Straßenname, ETA, Mini-Tacho</td><td>Pfeil-Morphing, Distanz-Counter</td></tr>
+<tr><td>Split</td><td>Instrumente + Navigation</td><td>Beide animiert</td></tr>
+<tr><td>Kreisverkehr</td><td>Alle Ausfahrten mit Pfeilen</td><td>Highlight-Rotation</td></tr>
+<tr><td>Diagnose</td><td>Sensor-Grid, DTC-Liste, Self-Test</td><td>Status-Check-Animation</td></tr>
+<tr><td>Einstellungen</td><td>Helligkeit, BLE, Log-Intervall, Tour</td><td>Toggle, Slider, Segmented Control</td></tr>
+<tr><td>Tour-Statistik</td><td>Strecke, Dauer, Ø/Max Speed, Höhenprofil</td><td>Count-Up, Bar-Chart-Grow</td></tr>
+<tr><td>Boot</td><td>Logo-Animation, Loading-Bar</td><td>Punkt→Kreis→Silhouette→Bar</td></tr>
+<tr><td>Warnung</td><td>Vollbild rot blinkend (Öldruck, Temp, Spannung)</td><td>Pulsierend, Background-Blink</td></tr>
+</table>
+<h3>Dokumente</h3>
+<div class="card-grid">
+<a class="doc-card" href="https://github.com/TitoPrausee/transalp-bordcomputer/blob/main/docs/research/10-ui-ux-design.md"><h4>UI/UX Design-Konzept</h4><p>Animationen, Layouts, Color-Palette, Visual Language</p><span class="badge">8.278 Wörter</span></a>
+<a class="doc-card" href="https://github.com/TitoPrausee/transalp-bordcomputer/blob/main/docs/research/07-display-navigation-smartphone.md"><h4>Display & Navigation</h4><p>Multi-Display, Smartphone-Integration, Turn-by-Turn</p><span class="badge">2.434 Wörter</span></a>
+</div>
+`
+},
+{
+n:8,title:"Companion-App",icon:"📱",
+short:"React Native BLE-App",
+body:`
+<h1>Companion-App</h1>
+<p>React Native App mit BLE-Kommunikation zum Bordcomputer. 5.965 Zeilen TypeScript, 21 Dateien.</p>
+<h2>Screens</h2>
+<table>
+<tr><th>Screen</th><th>Funktion</th></tr>
+<tr><td>Dashboard</td><td>Echtzeit-Telemetrie (Speed, RPM, Temp, Fuel, GPS)</td></tr>
+<tr><td>Navigation</td><td>Turn-by-Turn vom Smartphone an Bordcomputer</td></tr>
+<tr><td>Diagnose</td><td>DTC-Liste, Sensor-Status, Self-Test auslösen</td></tr>
+<tr><td>Settings</td><td>Helligkeit, BLE-Pairing, Log-Intervall, Konfiguration</td></tr>
+<tr><td>Tours</td><td>Touren-Verwaltung, GPX-Export, Statistiken</td></tr>
+</table>
+<h2>BLE-Protokoll</h2>
+<p>8 GATT-Services mit 33 Characteristics. Binäre Datenformate für Telemetrie, Navigation, Medien, Telefon, Wetter, Konfiguration, Diagnose und OTA-Updates.</p>
+<h3>Dokumente</h3>
+<div class="card-grid">
+<a class="doc-card" href="https://github.com/TitoPrausee/transalp-bordcomputer/blob/main/docs/research/13-connectivity-app.md"><h4>Connectivity & App</h4><p>GATT-Services, App-Architektur, BLE-Protokoll-Design</p><span class="badge">7.948 Wörter</span></a>
+<a class="doc-card" href="https://github.com/TitoPrausee/transalp-bordcomputer/blob/main/docs/API-REFERENCE.md"><h4>API-Reference</h4><p>Vollständige BLE GATT-Schnittstellendefinition</p><span class="badge">7.297 Wörter</span></a>
+</div>
+`
+},
+{
+n:9,title:"Diagnose & Support",icon:"🔍",
+short:"DTC, Self-Test, Remote-Diagnose",
+body:`
+<h1>Diagnose & Support</h1>
+<p>16 DTC-Codes in 4 Kategorien, Self-Test beim Boot, Remote-Diagnose über BLE. Reparaturfreundliche Architektur.</p>
+<h2>DTC-Kategorien</h2>
+<table>
+<tr><th>Kategorie</th><th>Codes</th><th>Beispiele</th></tr>
+<tr><td>Sensor-Fehler</td><td>P0xxx</td><td>P0335 Kurbelwellensensor, P0118 Kühlmittelsensor</td></tr>
+<tr><td>System-Spannung</td><td>P05xx</td><td>P0562 Systemspannung niedrig</td></tr>
+<tr><td>Kommunikation</td><td>U0xxx</td><td>BLE-Verbindungsfehler, GPS-Signalverlust</td></tr>
+<tr><td>Hardware</td><td>B0xxx</td><td>Display-Fehler, SD-Karte, Akku</td></tr>
+</table>
+<h2>Self-Test beim Boot</h2>
+<p>7 Hardware-Checks: Display, BLE, GPS, SD-Karte, Sensoren, Akku, Display-Backlight.</p>
+<h3>Dokumente</h3>
+<div class="card-grid">
+<a class="doc-card" href="https://github.com/TitoPrausee/transalp-bordcomputer/blob/main/docs/research/12-diagnose-support.md"><h4>Diagnose & Support</h4><p>DTC-System, Self-Test, Remote-Diagnose, Reparaturfreundlichkeit</p><span class="badge">7.593 Wörter</span></a>
+<a class="doc-card" href="https://github.com/TitoPrausee/transalp-bordcomputer/blob/main/docs/TROUBLESHOOTING.md"><h4>Troubleshooting</h4><p>50+ Lösungen, Serial-Console-Guide, Debug-Tipps</p><span class="badge">9.199 Wörter</span></a>
+</div>
+`
+},
+{
+n:10,title:"Test & Qualität",icon:"✅",
+short:"CI/CD, Tests, Benchmarks",
+body:`
+<h1>Test & Qualität</h1>
+<p>4 CI/CD-Workflows, 3 Unit-Tests, Hardware-Test-Bench, Benchmark-Spezifikation, STRIDE-Sicherheitsanalyse.</p>
+<h2>CI/CD-Pipeline</h2>
+<table>
+<tr><th>Workflow</th><th>Prüft</th></tr>
+<tr><td>firmware-ci</td><td>ESP-IDF Build + Unit-Tests (DTC, Event-Loop, NMEA)</td></tr>
+<tr><td>companion-app-ci</td><td>TypeScript Type-Check (tsc --noEmit)</td></tr>
+<tr><td>docs-ci</td><td>Markennamen-Blockliste (38 Pattern)</td></tr>
+<tr><td>pages</td><td>GitHub Pages Deployment (Mockups)</td></tr>
+</table>
+<h2>Benchmark-Zielwerte</h2>
+<table>
+<tr><th>Metrik</th><th>Ziel</th></tr>
+<tr><td>CPU-Auslastung</td><td>< 70%</td></tr>
+<tr><td>Heap frei</td><td>> 2 MB</td></tr>
+<tr><td>TFT Rendering</td><td>30 FPS</td></tr>
+<tr><td>BLE-Latenz</td><td>< 100 ms</td></tr>
+<tr><td>Boot-Zeit</td><td>< 5 s</td></tr>
+</table>
+<h3>Dokumente</h3>
+<div class="card-grid">
+<a class="doc-card" href="https://github.com/TitoPrausee/transalp-bordcomputer/blob/main/docs/TEST-STRATEGY.md"><h4>TEST-STRATEGY.md</h4><p>Unit-Tests, HIL, Performance-Benchmarks, Test-Pyramide</p><span class="badge">12.965 Wörter</span></a>
+<a class="doc-card" href="https://github.com/TitoPrausee/transalp-bordcomputer/blob/main/docs/CI-CD-PIPELINE.md"><h4>CI-CD-PIPELINE.md</h4><p>4 Workflows, Unit-Tests, Markennamen-Check</p><span class="badge">3.094 Wörter</span></a>
+<a class="doc-card" href="https://github.com/TitoPrausee/transalp-bordcomputer/blob/main/docs/SECURITY-ANALYSIS.md"><h4>SECURITY-ANALYSIS.md</h4><p>STRIDE, 19 Threats, MoSCoW-Mitigation</p><span class="badge">5.909 Wörter</span></a>
+<a class="doc-card" href="https://github.com/TitoPrausee/transalp-bordcomputer/blob/main/docs/BENCHMARK-SPEC.md"><h4>BENCHMARK-SPEC.md</h4><p>Zielwerte: CPU, Heap, FPS, Latenz, Boot</p><span class="badge">3.397 Wörter</span></a>
+</div>
+`
+},
+{
+n:11,title:"Montage & Einbau",icon:"🔩",
+short:"Installation an der PD06",
+body:`
+<h1>Montage & Einbau</h1>
+<p>Schritt-für-Schritt Einbau in die Honda Transalp 600 (PD06) — PCB, Verkabelung, Display, Sensoren.</p>
+<h2>Kabelverlegung</h2>
+<pre><code>Vorderrad (Hall-Sensor)
+    │
+    ├─ am linken Gabelholm hoch
+    ├─ hinter Lenker-Abdeckung
+    ├─ hinter Tankverkleidung
+    │
+Tankgeber ─────────────────┤
+    │                       │
+CDI (Pickup Pin 5) ────────┤
+    │                       │
+Batterie (12V) ────────────┤
+    │                       │
+    └─ an Batterieklemme    │
+                            │
+                    ┌───────┴───────┐
+                    │  Bordcomputer  │
+                    │  (unter Sitz)  │
+                    └───────────────┘</code></pre>
+<h3>Dokumente</h3>
+<div class="card-grid">
+<a class="doc-card" href="https://github.com/TitoPrausee/transalp-bordcomputer/blob/main/docs/INSTALLATION-GUIDE.md"><h4>INSTALLATION-GUIDE.md</h4><p>PCB-Einbau, Verkabelung, Display-Montage, Inbetriebnahme</p><span class="badge">8.755 Wörter</span></a>
+<a class="doc-card" href="https://github.com/TitoPrausee/transalp-bordcomputer/blob/main/docs/FIELDTEST-PROTOCOL.md"><h4>FIELDTEST-PROTOCOL.md</h4><p>8 Test-Phasen, 25 Metriken, Pass/Fail-Schwellen</p><span class="badge">8.236 Wörter</span></a>
+<a class="doc-card" href="https://github.com/TitoPrausee/transalp-bordcomputer/blob/main/docs/HARDWARE-TEST-BENCH.md"><h4>HARDWARE-TEST-BENCH.md</h4><p>Signal-Simulatoren, Test-Prozeduren, HIL-Setup</p><span class="badge">6.159 Wörter</span></a>
+</div>
+`
+},
+{
+n:12,title:"Dokumentation",icon:"📚",
+short:"Wiki, Index, Alle Dokumente",
+body:`
+<h1>Vollständige Dokumentation</h1>
+<p>49 Dokumente, 261.970 Wörter. Alles ist indexiert und querverlinkt.</p>
+<h2>Empfohlene Lese-Reihenfolge</h2>
+<h3>Für Entwickler</h3>
+<ul>
+<li>README — Projekt-Übersicht</li>
+<li>DEVELOPER-QUICKSTART — Setup und Build in 30 Min</li>
+<li>ARCHITECTURE — 8 Subsysteme, Task-Modell</li>
+<li>FIRMWARE-GUIDE — 10 Komponenten, FreeRTOS</li>
+<li>API-REFERENCE — BLE GATT Interface</li>
+<li>WIDGET-CATALOG — 18 Widgets, Rendering</li>
+</ul>
+<h3>Für Hardware-Bastler</h3>
+<ul>
+<li>README — Projekt-Übersicht</li>
+<li>SHOPPING-LIST — Was besorgen?</li>
+<li>BOM — Detailierte Stückliste</li>
+<li>HARDWARE — Schaltplan und Verdrahtung</li>
+<li>PINMAP — GPIO-Belegung</li>
+<li>PCB-LAYOUT — PCB-Design</li>
+<li>CASE-DESIGN — Gehäuse (3D-Druck)</li>
+<li>SENSOR-MOUNTING — Anschlusspunkte am Motorrad</li>
+<li>INSTALLATION-GUIDE — Montage</li>
+</ul>
+<h3>Für Endanwender</h3>
+<ul>
+<li>README — Projekt-Übersicht</li>
+<li>USER-MANUAL — Bedienung, Displays, App, Touren</li>
+<li>RELEASE-NOTES — Feature-Status</li>
+<li>TROUBLESHOOTING — Bei Problemen</li>
+</ul>
+<h3>Dokumente</h3>
+<div class="card-grid">
+<a class="doc-card" href="https://github.com/TitoPrausee/transalp-bordcomputer/blob/main/docs/INDEX.md"><h4>INDEX.md</h4><p>Zentraler Einstiegspunkt — Schnelleinstieg, Dokumentations-Baum, Abhängigkeits-Graph</p><span class="badge">Wiki</span></a>
+<a class="doc-card" href="https://github.com/TitoPrausee/transalp-bordcomputer/blob/main/docs/ROADMAP.md"><h4>ROADMAP.md</h4><p>Alle Phasen (0–6), PM-Protokoll (32 Runden), Metriken</p><span class="badge">6.164 Wörter</span></a>
+<a class="doc-card" href="https://github.com/TitoPrausee/transalp-bordcomputer/blob/main/docs/DEVELOPER-QUICKSTART.md"><h4>DEVELOPER-QUICKSTART</h4><p>0 zu Build in 30 Minuten</p><span class="badge">1.948 Wörter</span></a>
+<a class="doc-card" href="https://github.com/TitoPrausee/transalp-bordcomputer/blob/main/docs/USER-MANUAL.md"><h4>USER-MANUAL.md</h4><p>Bedienung, Displays, App, Touren, Wartung</p><span class="badge">8.942 Wörter</span></a>
+</div>
+`
+},
+{
+n:13,title:"Fertig",icon:"🏁",
+short:"Projekt abgeschlossen",
+body:`
+<h1>Tour abgeschlossen</h1>
+<p>Du hast alle 12 Stationen durchlaufen. Das Projekt ist vollständig dokumentiert und RELEASE-READY.</p>
+<div class="callout">
+<b>Was nun?</b><br>
+Hardware bestellen → PCB fertigen → Firmware flashen → Einbauen → Losfahren.
+</div>
+<h2>Weitere Ressourcen</h2>
+<ul>
+<li><a href="https://github.com/TitoPrausee/transalp-bordcomputer">GitHub Repository</a> — kompletter Code, alle Dokumente</li>
+<li><a href="https://titoprausee.github.io/transalp-bordcomputer/">GitHub Pages</a> — Live-Mockups</li>
+<li><a href="https://github.com/TitoPrausee/transalp-bordcomputer/blob/main/docs/INDEX.md">Dokumentations-Index</a> — Wiki mit 49 Dokumenten</li>
+<li><a href="https://github.com/TitoPrausee/transalp-bordcomputer/blob/main/docs/SHOPPING-LIST.md">Einkaufsliste</a> — 61 Bauteile, ~327 EUR</li>
+<li><a href="https://github.com/TitoPrausee/transalp-bordcomputer/blob/main/docs/SENSOR-MOUNTING.md">Sensor-Mounting</a> — Anschlusspunkte am Motorrad</li>
+</ul>
+<h2>Service Manual</h2>
+<p>Das komplette Honda Service Manual (XL600V/650V Transalp + XRV750 Africa Twin, 1987–2007) ist im Repo enthalten:</p>
+<pre><code>docs/images/service-manual.pdf (31 MB)</code></pre>
+<p>Enthält Wiring Diagrams (Seite 9-34), Component Locations (Seite 9-25) und alle Wartungsanleitungen.</p>
+`
+}
+];
+
+// Render
+const navList=document.getElementById('nav-list');
+const content=document.getElementById('content');
+let current=0;
+
+steps.forEach((s,i)=>{
+  const el=document.createElement('div');
+  el.className='nav-item';
+  el.innerHTML=`<span class="nav-num">${s.n}</span><span>${s.icon} ${s.title}</span>`;
+  el.onclick=()=>goTo(i);
+  navList.appendChild(el);
+});
+
+function goTo(idx){
+  current=idx;
+  // Nav
+  document.querySelectorAll('.nav-item').forEach((el,i)=>{
+    el.classList.toggle('active',i===idx);
+    el.classList.toggle('done',i<idx);
+  });
+  // Content
+  content.innerHTML=`
+    <div class="step-indicator">${steps.map((s,i)=>`<div class="step-dot ${i<idx?'done':''} ${i===idx?'active':''}"></div>`).join('')}</div>
+    ${steps[idx].body}
+    <div class="nav-btns">
+      ${idx>0?`<button class="btn" onclick="goTo(${idx-1})">← ${steps[idx-1].title}</button>`:'<div></div>'}
+      ${idx<steps.length-1?`<button class="btn btn-primary" onclick="goTo(${idx+1})">${steps[idx+1].title} →</button>`:'<div></div>'}
+    </div>
+  `;
+  // Progress
+  const pct=Math.round((idx/(steps.length-1))*100);
+  document.getElementById('pct').textContent=pct;
+  document.getElementById('pfill').style.setProperty('--p',pct);
+  window.scrollTo(0,0);
+}
+
+goTo(0);
+</script>
+</body>
+</html>
