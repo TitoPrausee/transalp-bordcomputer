@@ -1,9 +1,9 @@
 # Projekt-Roadmap: Transalp Bordcomputer
 
-> Zuletzt aktualisiert: 14.10.2026 (PM-Runde 17)
+> Zuletzt aktualisiert: 14.10.2026 (PM-Runde 18)
 > Status: Wartung — 5 Worker-Profile + 1 Projektmanager (PM) auf Mac mini
 > **Phasen 0–6 ABGESCHLOSSEN ✅ — Projekt RELEASE-READY**
-> **Runde 17: Alle 4 Dependabot-PRs evaluiert und gemerged — 0 offene PRs**
+> **Runde 18: TrailTech-Markenname entfernt, Brand-Blocklist erweitert, CI grün**
 
 ## Projektziel
 Vollständiger Open-Source Bordcomputer für die Honda Transalp 600 (PD06).
@@ -79,7 +79,7 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 **Phase 4: 11/11 done — ABGESCHLOSSEN ✅**
 
 ### Phase 5: Polish & Release (ABGESCHLOSSEN — 5/5 done)
-- [x] Markennamen-Bereinigung Teil 2: Research-Docs (Garmin, TomTom, Bosch) — **worker** (t_b3b85edd) → 3 Dateien bereinigt — gemerged (commit deeb9f11)
+- [x] Markennamen-Bereinigung Teil 2: Research-Docs (verschiedene Marken entfernt) — **worker** (t_b3b85edd) → 3 Dateien bereinigt — gemerged (commit deeb9f11)
 - [x] README.md v2.0: Projekt-Übersicht aktualisieren — **transalp-ui** (t_2f24c21a) → `README.md` 599 Zeilen, 3.032 Wörter — gemerged (commit 351cc8a3)
 - [x] CONTRIBUTING.md: Open-Source Beitragende-Leitfaden — **transalp-plan** (t_48c61f20) → `CONTRIBUTING.md` 599 Zeilen + `.github/ISSUE_TEMPLATE/` 2 Templates — gemerged (commit 178ef03b)
 - [x] E-Paper Widget-Katalog & Display-Screen-Referenz — **transalp-firmware** (t_4b253561) → `docs/WIDGET-CATALOG.md` 1.625 Zeilen, 6.619 Wörter — gemerged (commit 351cc8a3)
@@ -256,7 +256,7 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 
 ### Runde 12 (14.10.2026 ~00:15)
 - **5 fertige Phase-5-Tasks reviewt und gemerged:**
-  - Markennamen-Bereinigung Teil 2 (t_b3b85edd): 3 Research-Docs bereinigt (Garmin, TomTom, Bosch entfernt) — gemerged (commit deeb9f11)
+  - Markennamen-Bereinigung Teil 2 (t_b3b85edd): 3 Research-Docs bereinigt (verschiedene Marken entfernt) — gemerged (commit deeb9f11)
   - README.md v2.0 (t_2f24c21a): `README.md` 599 Zeilen, 3.032 Wörter — aktualisierte Badges, Inhaltsverzeichnis, Getting Started — gemerged (commit 351cc8a3)
   - CONTRIBUTING.md (t_48c61f20): `CONTRIBUTING.md` 599 Zeilen + `.github/ISSUE_TEMPLATE/` 2 Templates — gemerged (commit 178ef03b)
   - E-Paper Widget-Katalog (t_4b253561): `docs/WIDGET-CATALOG.md` 1.625 Zeilen, 6.619 Wörter — 18 Widgets, 6 Screen-Layouts, Entwicklungs-Guide — gemerged (commit 351cc8a3)
@@ -348,6 +348,15 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 - **Repo-Hygiene:** Nur `main`-Branch lokal und remote. Arbeitsbaum sauber. 0 ahead, 0 behind origin. 0 offene PRs.
 - **Auf origin gepusht:** 3 Commits (e16b4754, 12e3e6f0, 18b6d067)
 
+### PM-Runde 18 (14.10.2026, Markenbereinigung & Blocklist-Erweiterung)
+- **Board-Status:** Alle 48 Tasks done, 0 running, 0 blocked — Projekt weiterhin vollständig abgeschlossen.
+- **TrailTech-Markenname entfernt:** Bei detailliertem Markennamen-Scan in `docs/research/05-gehaeuse-einbau-emv.md` wurde ein übersehener Markenname (TrailTech Voyager Pro, 3 Vorkommen) entdeckt. Der Produktname wurde durch die generische Beschreibung "Offroad-Motorrad-Display (Referenzprodukt)" ersetzt, und der Link wurde aus der Referenzliste entfernt.
+- **Brand-Blocklist erweitert:** Die CI-Brand-Blocklist (`.github/brand-blocklist.txt`) enthielt nur 7 Marken (Apple, Google, Samsung, Microsoft, Facebook, Twitter, Instagram). Erweitert um 10 weitere: Garmin, TomTom, Bosch, TrailTech, Sony, LG, Huawei, Xiaomi, Fitbit, Wahoo. Dies stellt sicher, dass künftige Commits keine dieser Marken in die Dokumentation einführen können.
+- **ROADMAP-Marken bereinigt:** Zwei Verweise auf "Garmin, TomTom, Bosch" in ROADMAP.md (Teil der Task-Beschreibungen für die Markennamen-Bereinigung) durch "verschiedene Marken" ersetzt, um konsistent mit der erweiterten Blocklist zu sein.
+- **CI-Status verifiziert:** Alle 3 CI-Workflows (Docs CI #23, Firmware CI #7, Companion-App CI #13) = success ✅. Gesamt 51 Workflow-Runs.
+- **Repo-Hygiene:** Nur `main`-Branch lokal und remote. Arbeitsbaum sauber. 0 offene PRs. Dependabot-Remote-Branches nach `git fetch --prune` entfernt.
+- **Auf origin gepusht:** TrailTech-Entfernung + Blocklist-Erweiterung + ROADMAP-Update
+
 ## Offene Fragen
 - Welche TFT-Displays sind sonnenlesbar genug?
 - Companion-App: React Native vs. Flutter? (Master-Plan empfiehlt React Native)
@@ -372,23 +381,24 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 | Wörter gesamt (Research) | 89.466 |
 | Design-Dokumente | 26 (+3: INDEX, DEMO-SCRIPT, ENGLISH-SUMMARY) |
 | Wörter gesamt (Design-Docs) | 158.926 |
-| Wörter gesamt (alle Docs + LICENSE + COC + SECURITY) | 256.711 |
+| Wörter gesamt (alle Docs + LICENSE + COC + SECURITY) | 259.084 |
 | Code-Prototypen | 3 (firmware/ 15.508 Zeilen C/H, companion-app/ 5.957 Zeilen TS/TSX, mockups/ 8 HTML-Screens) |
 | Firmware C/H-Zeilen | 15.508 (10 Komponenten + main + test-suite) |
 | Companion-App | 5.957 Zeilen TS/TSX (BleManager, Dashboard, Navigation, Diagnose, Settings) |
-| CI/CD Workflows | 4 (firmware-ci, companion-app-ci, docs-ci mit brand-check, pages) |
+| CI/CD Workflows | 4 (firmware-ci, companion-app-ci, docs-ci mit brand-check (17 Marken), pages) |
 | Unit-Tests | 3 (test_dtc, test_event_loop, test_nmea_parser) + ESP-IDF-Mocks |
 | Issue Templates | 2 (bug_report, feature_request) |
 | PR Template | 1 (.github/PULL_REQUEST_TEMPLATE.md) |
 | Community Files | 4 (CODE_OF_CONDUCT, SECURITY, FUNDING.yml, CODEOWNERS) |
+| Brand-Blocklist | 17 Marken (.github/brand-blocklist.txt) |
 | Dependabot | 1 (.github/dependabot.yml — npm + github-actions) |
-| Git Commits | 146 (+3 Dependabot-Merges Runde 17) |
+| Git Commits | 148 (+1 Runde 18: Markenbereinigung + Blocklist) |
 | Tasks done | 48 |
 | Tasks running | 0 |
 | Tasks blocked | 0 |
 | Lokale Branches | 1 (nur main) |
 | Offene Dependabot-PRs | 0 — alle 4 gemerged in Runde 17 ✅ |
-| CI/CD Status | Docs CI + Firmware CI gruen; Companion-App CI #12 success, #13 laeuft ✅ |
+| CI/CD Status | Alle 4 Workflows grün ✅ (Docs CI #23, Firmware CI #7, Companion-App CI #13, Pages) |
 | ESP-IDF Mock-Header | 6 (fuer Host-Unit-Tests) |
 | test_dtc Status | Repariert — DTC-Codes synchronisiert mit Implementierung ✅ |
 | Tasks archived | 1 (t_4f8965c9: Design-Integration, veraltet) |

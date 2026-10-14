@@ -862,13 +862,12 @@ Das ersetzt nicht die TVS-Diode, aber glättet kurzzeitige Einbrüche.
 - Temperatur: -10°C bis +50°C
 - Lernpunkt: RAM-Mount ist Industriestandard, austauschbare Halterung
 
-**TrailTech Voyager Pro:**
+**Offroad-Motorrad-Display (Referenzprodukt):**
 - Motorsport-spezifisches Display für Offroad-Motorräder
 - Gehäuse: ABS, IP65
 - Montage: Lenkerhalter-Klemmbrücke
 - Display: 4" LCD (Tagfahrtauglich)
 - Lernpunkt: Klemmbrücke statt Lenker-Montage für maximale Stabilität
-- [TrailTech Voyager Pro](https://www.trailtech.net/voyager-pro)
 
 ### 8.2 Motorrad-Elektronik-Projekte (Open Source)
 
@@ -975,7 +974,6 @@ Transalp-Bordcomputer-Projekt:
 - [Analog Devices MOSFET Reverse Polarity Protection](https://www.analog.com/en/design-notes/protecting-circuits-using-mosfets-as-reverse-polarity-protection.html)
 - [Vishay Capacitors for Load Dump](https://www.vishay.com/docs/29022/aluminumcapacitorsforload_dump.pdf)
 - Motorrad-Navigationsgerät (Referenzprodukt)
-- [TrailTech Voyager Pro](https://www.trailtech.net/voyager-pro)
 - [Quad Lock Motorcycle Mount Guide](https://aerostich.com/pages/quad-lock-motorcycle-mount-guide)
 - [Motorcycle PCB Assembly Guidelines](https://bigmateph.com/motorcycle-pcb-assembly-guidelines)
 - [NiMotion IP Rating Guide](https://www.nimotion.com/blog/detail/ip-rating-motor-protection-guide)

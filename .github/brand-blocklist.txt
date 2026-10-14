@@ -12,3 +12,13 @@
 \b[Ff]acebook\b
 \b[Tt]witter\b
 \b[Ii]nstagram\b
+\b[Gg]armin\b
+\b[Tt]om[Tt]om\b
+\b[Bb]osch\b
+\b[Tt]rail[Tt]ech\b
+\b[Ss]ony\b
+\b[Lg]\b
+\b[Hh]uawei\b
+\b[Xx]iaomi\b
+\b[Ff]itbit\b
+\b[Ww]ahoo\b
