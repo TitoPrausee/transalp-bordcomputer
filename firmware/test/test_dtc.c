@@ -9,6 +9,10 @@
  * Die Tests verwenden das Unity-Test-Framework und laufen auf dem
  * Host-PC mit GCC. Da dtc.c ESP-IDF-Abhaengigkeiten hat (esp_log,
  * xthal_get_ccount), werden diese durch Mocks ersetzt.
+ *
+ * Verwendet die OBD-II-konformen DTC-Codes aus diagnostics.h:
+ *   P0xxx (Powertrain), S0xxx (Sensoren), C0xxx (Communication),
+ *   B0xxx (Body), D0xxx (Diagnose-System)
  */
 
 #ifdef TEST_HOST
@@ -42,9 +46,6 @@ static inline uint32_t xthal_get_ccount(void) {
 /* Include the actual dtc.c implementation directly */
 #include "../../components/diagnostics/dtc.c"
 
-/* dtc.c has a static init function that's not in the header.
- * The header declares dtc_report etc. but dtc.c defines dtc_init().
- * We need to call it, so declare it here. */
 #endif
 
 void setUp(void)
@@ -65,18 +66,34 @@ void test_dtc_code_enum_values(void)
     TEST_ASSERT_EQUAL(0, (int)DTC_NONE);
 
     /* Each subsequent code should increment by 1 */
-    TEST_ASSERT_EQUAL(1, (int)DTC_GPS_NO_FIX);
-    TEST_ASSERT_EQUAL(2, (int)DTC_GPS_UART_ERROR);
-    TEST_ASSERT_EQUAL(3, (int)DTC_IMU_NOT_RESPONDING);
-    TEST_ASSERT_EQUAL(4, (int)DTC_BARO_NOT_RESPONDING);
-    TEST_ASSERT_EQUAL(5, (int)DTC_SD_MOUNT_FAILED);
-    TEST_ASSERT_EQUAL(6, (int)DTC_SD_WRITE_FAILED);
-    TEST_ASSERT_EQUAL(7, (int)DTC_BATTERY_LOW);
-    TEST_ASSERT_EQUAL(8, (int)DTC_BATTERY_CRITICAL);
-    TEST_ASSERT_EQUAL(9, (int)DTC_BLE_INIT_FAILED);
-    TEST_ASSERT_EQUAL(10, (int)DTC_DISPLAY_INIT_FAILED);
-    TEST_ASSERT_EQUAL(11, (int)DTC_SPI_BUS_ERROR);
-    TEST_ASSERT_EQUAL(12, (int)DTC_OVERTEMPERATURE);
+    TEST_ASSERT_EQUAL(1,  (int)DTC_P0101);
+    TEST_ASSERT_EQUAL(2,  (int)DTC_P0102);
+    TEST_ASSERT_EQUAL(3,  (int)DTC_P0103);
+    TEST_ASSERT_EQUAL(4,  (int)DTC_P0201);
+    TEST_ASSERT_EQUAL(5,  (int)DTC_P0202);
+    TEST_ASSERT_EQUAL(6,  (int)DTC_P0301);
+    TEST_ASSERT_EQUAL(7,  (int)DTC_P0401);
+    TEST_ASSERT_EQUAL(8,  (int)DTC_P0402);
+    TEST_ASSERT_EQUAL(9,  (int)DTC_P0403);
+    TEST_ASSERT_EQUAL(10, (int)DTC_P0404);
+
+    /* Sensor codes continue after powertrain */
+    TEST_ASSERT_EQUAL(11, (int)DTC_S0101);
+    TEST_ASSERT_EQUAL(12, (int)DTC_S0102);
+    TEST_ASSERT_EQUAL(13, (int)DTC_S0103);
+    TEST_ASSERT_EQUAL(14, (int)DTC_S0201);
+    TEST_ASSERT_EQUAL(15, (int)DTC_S0202);
+
+    /* GPS-related sensor codes */
+    TEST_ASSERT_EQUAL(20, (int)DTC_S0501);  /* GPS-Modul antwortet nicht */
+    TEST_ASSERT_EQUAL(21, (int)DTC_S0502);  /* GPS-Fix verloren */
+
+    /* Communication codes */
+    TEST_ASSERT_EQUAL(28, (int)DTC_C0101);  /* SD-Karte nicht mountbar */
+    TEST_ASSERT_EQUAL(33, (int)DTC_C0201);  /* BLE-Advertising */
+
+    /* Body codes */
+    TEST_ASSERT_EQUAL(39, (int)DTC_B0101);  /* Display-Controller */
 }
 
 /* ============================================================
@@ -88,11 +105,10 @@ void test_dtc_report_new(void)
     uint8_t count = dtc_get_active(entries, DTC_MAX_ENTRIES);
     TEST_ASSERT_EQUAL(0, count);
 
-    dtc_report(DTC_GPS_NO_FIX);
-
+    dtc_report(DTC_S0501);
     count = dtc_get_active(entries, DTC_MAX_ENTRIES);
     TEST_ASSERT_EQUAL(1, count);
-    TEST_ASSERT_EQUAL(DTC_GPS_NO_FIX, entries[0].code);
+    TEST_ASSERT_EQUAL(DTC_S0501, entries[0].code);
     TEST_ASSERT_EQUAL(1, entries[0].count);
     TEST_ASSERT_TRUE(entries[0].active);
 }
@@ -102,9 +118,9 @@ void test_dtc_report_new(void)
  * ============================================================ */
 void test_dtc_report_reoccurrence(void)
 {
-    dtc_report(DTC_SD_MOUNT_FAILED);
-    dtc_report(DTC_SD_MOUNT_FAILED);
-    dtc_report(DTC_SD_MOUNT_FAILED);
+    dtc_report(DTC_C0101);
+    dtc_report(DTC_C0101);
+    dtc_report(DTC_C0101);
 
     dtc_entry_t entries[DTC_MAX_ENTRIES];
     uint8_t count = dtc_get_active(entries, DTC_MAX_ENTRIES);
@@ -119,17 +135,17 @@ void test_dtc_report_reoccurrence(void)
  * ============================================================ */
 void test_dtc_multiple_codes(void)
 {
-    dtc_report(DTC_GPS_NO_FIX);
-    dtc_report(DTC_BATTERY_LOW);
-    dtc_report(DTC_OVERTEMPERATURE);
+    dtc_report(DTC_S0501);   /* GPS-Modul antwortet nicht */
+    dtc_report(DTC_P0401);   /* Bordspannung niedrig */
+    dtc_report(DTC_S0103);   /* Kuehlmitteltemp kritisch */
 
     dtc_entry_t entries[DTC_MAX_ENTRIES];
     uint8_t count = dtc_get_active(entries, DTC_MAX_ENTRIES);
 
     TEST_ASSERT_EQUAL(3, count);
-    TEST_ASSERT_EQUAL(DTC_GPS_NO_FIX, entries[0].code);
-    TEST_ASSERT_EQUAL(DTC_BATTERY_LOW, entries[1].code);
-    TEST_ASSERT_EQUAL(DTC_OVERTEMPERATURE, entries[2].code);
+    TEST_ASSERT_EQUAL(DTC_S0501, entries[0].code);
+    TEST_ASSERT_EQUAL(DTC_P0401, entries[1].code);
+    TEST_ASSERT_EQUAL(DTC_S0103, entries[2].code);
 }
 
 /* ============================================================
@@ -137,17 +153,17 @@ void test_dtc_multiple_codes(void)
  * ============================================================ */
 void test_dtc_clear_single(void)
 {
-    dtc_report(DTC_BATTERY_LOW);
-    dtc_report(DTC_OVERTEMPERATURE);
+    dtc_report(DTC_P0401);   /* Bordspannung niedrig */
+    dtc_report(DTC_S0103);   /* Kuehlmitteltemp kritisch */
 
-    dtc_clear(DTC_BATTERY_LOW);
+    dtc_clear(DTC_P0401);
 
     dtc_entry_t entries[DTC_MAX_ENTRIES];
     uint8_t count = dtc_get_active(entries, DTC_MAX_ENTRIES);
 
-    /* OVERTEMPERATURE still active, BATTERY_LOW cleared */
+    /* S0103 still active, P0401 cleared */
     TEST_ASSERT_EQUAL(1, count);
-    TEST_ASSERT_EQUAL(DTC_OVERTEMPERATURE, entries[0].code);
+    TEST_ASSERT_EQUAL(DTC_S0103, entries[0].code);
 }
 
 /* ============================================================
@@ -155,9 +171,9 @@ void test_dtc_clear_single(void)
  * ============================================================ */
 void test_dtc_clear_all(void)
 {
-    dtc_report(DTC_GPS_NO_FIX);
-    dtc_report(DTC_SD_WRITE_FAILED);
-    dtc_report(DTC_BLE_INIT_FAILED);
+    dtc_report(DTC_S0501);   /* GPS-Modul */
+    dtc_report(DTC_C0104);   /* SD-Schreibfehler */
+    dtc_report(DTC_C0201);  /* BLE-Advertising */
 
     dtc_clear_all();
 
@@ -171,7 +187,8 @@ void test_dtc_clear_all(void)
  * ============================================================ */
 void test_dtc_list_full(void)
 {
-    /* Fill all 16 slots with distinct codes */
+    /* Fill all DTC_MAX_ENTRIES slots with distinct codes.
+     * DTC_NONE=0 is reserved, so start at 1 (DTC_P0101). */
     for (int i = 1; i <= DTC_MAX_ENTRIES; i++) {
         dtc_report((dtc_code_t)i);
     }
@@ -194,12 +211,12 @@ void test_dtc_entry_struct(void)
     dtc_entry_t entry;
     memset(&entry, 0, sizeof(entry));
 
-    entry.code = DTC_SPI_BUS_ERROR;
+    entry.code = DTC_C0401;  /* SPI-Bus-Fehler */
     entry.timestamp_ms = 12345;
     entry.count = 5;
     entry.active = true;
 
-    TEST_ASSERT_EQUAL(DTC_SPI_BUS_ERROR, entry.code);
+    TEST_ASSERT_EQUAL(DTC_C0401, entry.code);
     TEST_ASSERT_EQUAL(12345, entry.timestamp_ms);
     TEST_ASSERT_EQUAL(5, entry.count);
     TEST_ASSERT_TRUE(entry.active);
@@ -210,15 +227,15 @@ void test_dtc_entry_struct(void)
  * ============================================================ */
 void test_dtc_timestamp_updated(void)
 {
-    dtc_report(DTC_GPS_UART_ERROR);
-    
+    dtc_report(DTC_C0402);  /* UART-Fehler (GPS) */
+
     dtc_entry_t entries[DTC_MAX_ENTRIES];
     uint8_t count = dtc_get_active(entries, DTC_MAX_ENTRIES);
     TEST_ASSERT_EQUAL(1, count);
     uint32_t first_ts = entries[0].timestamp_ms;
 
     /* Report again — timestamp should be updated (later) */
-    dtc_report(DTC_GPS_UART_ERROR);
+    dtc_report(DTC_C0402);
     count = dtc_get_active(entries, DTC_MAX_ENTRIES);
     TEST_ASSERT_EQUAL(1, count);
     TEST_ASSERT_GREATER_OR_EQUAL(first_ts, entries[0].timestamp_ms);
@@ -231,7 +248,7 @@ void test_dtc_timestamp_updated(void)
 void test_dtc_clear_nonexistent(void)
 {
     /* Should not crash */
-    dtc_clear(DTC_OVERTEMPERATURE);
+    dtc_clear(DTC_S0103);
 
     dtc_entry_t entries[DTC_MAX_ENTRIES];
     uint8_t count = dtc_get_active(entries, DTC_MAX_ENTRIES);
@@ -243,9 +260,9 @@ void test_dtc_clear_nonexistent(void)
  * ============================================================ */
 void test_dtc_get_active_limited_buffer(void)
 {
-    dtc_report(DTC_GPS_NO_FIX);
-    dtc_report(DTC_BATTERY_LOW);
-    dtc_report(DTC_OVERTEMPERATURE);
+    dtc_report(DTC_S0501);
+    dtc_report(DTC_P0401);
+    dtc_report(DTC_S0103);
 
     dtc_entry_t entries[2]; /* Smaller than number of DTCs */
     uint8_t count = dtc_get_active(entries, 2);

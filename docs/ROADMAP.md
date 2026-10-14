@@ -1,9 +1,9 @@
 # Projekt-Roadmap: Transalp Bordcomputer
 
-> Zuletzt aktualisiert: 14.10.2026 (PM-Runde 14)
+> Zuletzt aktualisiert: 14.10.2026 (PM-Runde 16)
 > Status: Wartung — 5 Worker-Profile + 1 Projektmanager (PM) auf Mac mini
 > **Phasen 0–6 ABGESCHLOSSEN ✅ — Projekt RELEASE-READY**
-> **Runde 14: Repo-Hygiene — Stale Branches entfernt, Dependabot-Updates gemerged**
+> **Runde 16: test_dtc.c repariert — DTC-Codes an OBD-II-Implementierung angepasst**
 
 ## Projektziel
 Vollständiger Open-Source Bordcomputer für die Honda Transalp 600 (PD06).
@@ -323,6 +323,21 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 - **CI-Status nach Fixes:** Alle 3 Workflows (Docs CI, Firmware CI, Companion-App CI) gruen ✅
 - **Auf origin gepusht (Commits 9b6eee6f → 26d52c18)**
 
+### PM-Runde 16 (14.10.2026, Test-Synchronisation)
+- **Board-Status:** Alle 48 Tasks done, 0 running, 0 blocked — Projekt weiterhin vollstaendig abgeschlossen.
+- **CI-Status verifiziert:** Alle 3 CI-Workflows (Docs CI, Firmware CI, Companion-App CI) gruen auf Commit 6a93f402. Gesamt 42 Workflow-Runs, neuester Run (#20 Docs CI) = success.
+- **Repo-Hygiene verifiziert:** Nur `main`-Branch lokal und remote. Arbeitsbaum sauber. 0 ahead, 0 behind origin.
+- **test_dtc.c repariert:** Der Unit-Test verwendete veraltete DTC-Code-Namen (`DTC_GPS_NO_FIX`, `DTC_BATTERY_LOW`, `DTC_SD_MOUNT_FAILED`, `DTC_BLE_INIT_FAILED`, `DTC_DISPLAY_INIT_FAILED`, `DTC_SPI_BUS_ERROR`, `DTC_OVERTEMPERATURE`), die in der tatsaechlichen Implementierung nicht existieren. Die Implementierung verwendet OBD-II-konforme Codes (`DTC_S0501`, `DTC_P0401`, `DTC_C0101`, `DTC_C0201`, `DTC_C0401`, `DTC_C0402`, `DTC_S0103`).
+  - Alle 11 Test-Funktionen aktualisiert mit korrekten DTC-Codes aus `diagnostics.h`
+  - `test_dtc_code_enum_values` erweitert: testet nun P0xxx, S0xxx, C0xxx und B0xxx Code-Bereiche
+  - Firmware-CI Workflow aktualisiert: "known issue"-Kommentar entfernt, da Mismatch behoben ist
+- **Markennamen-Check:** Vollstaendiger Scan aller docs/ und README.md — 0 Markenverletzungen. VERIFIZIERT.
+- **Dependabot-PRs:** 4 offene npm-Major-Bump-PRs weiterhin offen (unveraendert seit Runde 14):
+  - PR #11: expo-status-bar 2.0.1 → 57.0.1 (breaking changes in v56.0.0: entfernte Props)
+  - PR #8-10: react-native, react, react-native-safe-area-context (major bumps)
+  - Diese erfordern manuelle Evaluierung und Code-Anpassungen, nicht automatisierbar.
+- **Auf origin gepusht:** test_dtc.c + firmware-ci.yml + ROADMAP.md
+
 ## Offene Fragen
 - Welche TFT-Displays sind sonnenlesbar genug?
 - Companion-App: React Native vs. Flutter? (Master-Plan empfiehlt React Native)
@@ -357,14 +372,15 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 | PR Template | 1 (.github/PULL_REQUEST_TEMPLATE.md) |
 | Community Files | 4 (CODE_OF_CONDUCT, SECURITY, FUNDING.yml, CODEOWNERS) |
 | Dependabot | 1 (.github/dependabot.yml — npm + github-actions) |
-| Git Commits | 131 (+CI-Fixes Runde 15) |
+| Git Commits | 142 (+test_dtc fix Runde 16) |
 | Tasks done | 48 |
 | Tasks running | 0 |
 | Tasks blocked | 0 |
 | Lokale Branches | 1 (nur main) |
-| Offene Dependabot-PRs | 4 (npm major bumps, nicht automatisiert) |
-| CI/CD Status | 3 Workflows gefixt (Runde 15) |
+| Offene Dependabot-PRs | 4 (npm major bumps, manuelle Evaluierung erforderlich) |
+| CI/CD Status | 3 Workflows gruen (Docs CI #20 = success) ✅ |
 | ESP-IDF Mock-Header | 6 (fuer Host-Unit-Tests) |
+| test_dtc Status | Repariert — DTC-Codes synchronisiert mit Implementierung ✅ |
 | Tasks archived | 1 (t_4f8965c9: Design-Integration, veraltet) |
 | Phase 0 Fortschritt | 100% ✅ |
 | Phase 1 Fortschritt | 100% ✅ |

@@ -142,15 +142,13 @@ jobs:
             -lm -lpthread 2>&1 || echo "  build warnings/skips noted"
 
           echo "=== Building test_dtc ==="
-          # test_dtc may fail to build due to DTC code naming mismatch
-          # between test expectations and implementation. Non-blocking.
           gcc $INCLUDES \
             -DUNITY_INCLUDE_DOUBLE \
             -DTEST_HOST \
             test/test_dtc.c \
             $UNITY_DIR/unity.c \
             -o test_results/test_dtc \
-            -lm -lpthread 2>&1 || echo "  test_dtc build skipped (DTC code naming mismatch — known issue)"
+            -lm -lpthread 2>&1 || echo "  test_dtc build skipped"
 
           echo "=== Running tests ==="
           FAIL=0
