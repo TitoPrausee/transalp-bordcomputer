@@ -472,7 +472,7 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 
 ### PM-Runde 31 (14.10.2026, Wartungs-Audit)
 - **Board-Status:** 49 done, 0 running, 0 blocked. Alle Worker idle.
-- **CI-Status:** Docs CI #46 (2eb7aee) — Success. Alle 4 Workflows grün.
+- **CI-Status:** Docs CI #47 (dd27bc5) — Success. Alle 4 Workflows grün.
 - **Kaputten Link behoben:** In `docs/research/06-feature-roadmap.md` Zeile 1344 hatte die Markenbergabe eine URL zerstört (`https://www.Online-Marktplatz/itm/...`). Ersetzt durch generische Beschreibung mit Suchhinweis.
 - **Remote-Branch bereinigt:** Veralteten Branch `cleanup/distributor-vendor-names` auf origin gelöscht und lokal entfernt. Nur noch `main` aktiv.
 - **Marken-Scan:** grep mit allen 38 Blocklist-Mustern über alle .md/.c/.h/.ts/.tsx-Dateien → 0 echte Verstöße (nur False Positives durch deutsche Komposita wie "Zeitmessung", "Voltmeter", "VDOP").
@@ -522,7 +522,7 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 | Tasks blocked | 0 |
 | Lokale Branches | 1 (nur main) |
 | Offene Dependabot-PRs | 0 — alle 4 gemerged in Runde 17 ✅ |
-| CI/CD Status | Alle 4 Workflows grün ✅ (Docs CI #46, Firmware CI #7, Companion-App CI #13, Pages #2) |
+| CI/CD Status | Alle 4 Workflows grün ✅ (Docs CI #47, Firmware CI #7, Companion-App CI #13, Pages #2) |
 | ESP-IDF Mock-Header | 6 (fuer Host-Unit-Tests) |
 | test_dtc Status | Repariert — DTC-Codes synchronisiert mit Implementierung ✅ |
 | Tasks archived | 1 (t_4f8965c9: Design-Integration, veraltet) |
