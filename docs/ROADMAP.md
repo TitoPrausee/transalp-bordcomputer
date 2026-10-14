@@ -1,9 +1,9 @@
 # Projekt-Roadmap: Transalp Bordcomputer
 
-> Zuletzt aktualisiert: 14.10.2026 (PM-Runde 21)
+> Zuletzt aktualisiert: 14.10.2026 (PM-Runde 22)
 > Status: Wartung — 5 Worker-Profile + 1 Projektmanager (PM) auf Mac mini
 > **Phasen 0–6 ABGESCHLOSSEN ✅ — Projekt RELEASE-READY**
-> **Runde 21: Markenbereinigung Teil 3 — China-Marktplatz und Einplatinencomputer-Marke entfernt, Blocklist erweitert**
+> **Runde 22: Wartungs-Verifikation — CI #32 bestätigt, 0 Markenverstöße, Metriken korrigiert**
 
 ## Projektziel
 Vollständiger Open-Source Bordcomputer für die Honda Transalp 600 (PD06).
@@ -398,6 +398,13 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 - **Text-Qualität korrigiert:** Chinesisches Zeichen (Encoding-Fehler) in software-stack.md entfernt. "ESP-IDF Framework" Redundanz in RELEASE-NOTES korrigiert. Englischer Text in ENGLISH-SUMMARY geglättet.
 - **Keine neuen Tasks nötig:** Projekt weiterhin im Wartungsmodus. Alle Phasen 0–6 vollständig abgeschlossen.
 
+### PM-Runde 22 (14.10.2026, Wartungs-Verifikation)
+- **Board-Status:** Alle 48 Tasks done, 0 running, 0 blocked — unverändert.
+- **Markenscan:** Lokaler Scan mit der 26-Marken-Blocklist durchgeführt — **0 Verstöße**. CI bestätigt dies mit Docs CI #32 = success.
+- **CI-Status verifiziert:** Alle 4 Workflows grün: Docs CI #32, Firmware CI #7, Companion-App CI #13, Pages #2. 0 offene PRs, 0 offene Issues.
+- **Korrekturen in ROADMAP:** CI-Run-Nummer von #31 auf #32 aktualisiert. Wortanzahl von 252.019 auf 252.389 korrigiert (exakte Zählung).
+- **Keine neuen Tasks nötig:** Projekt weiterhin im Wartungsmodus.
+
 ## Offene Fragen
 - Welche TFT-Displays sind sonnenlesbar genug?
 - Companion-App: React Native vs. Flutter? (Master-Plan empfiehlt React Native)
@@ -422,7 +429,7 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 | Wörter gesamt (Research) | 89.466 |
 | Design-Dokumente | 26 (+3: INDEX, DEMO-SCRIPT, ENGLISH-SUMMARY) |
 | Wörter gesamt (Design-Docs) | 158.926 |
-| Wörter gesamt (alle Docs + LICENSE + COC + SECURITY) | 252.019 |
+| Wörter gesamt (alle Docs + LICENSE + COC + SECURITY) | 252.389 |
 | Code-Prototypen | 3 (firmware/ 15.508 Zeilen C/H, companion-app/ 5.957 Zeilen TS/TSX, mockups/ 8 HTML-Screens) |
 | Firmware C/H-Zeilen | 15.508 (10 Komponenten + main + test-suite) |
 | Companion-App | 5.957 Zeilen TS/TSX (BleManager, Dashboard, Navigation, Diagnose, Settings) |
@@ -439,7 +446,7 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 | Tasks blocked | 0 |
 | Lokale Branches | 1 (nur main) |
 | Offene Dependabot-PRs | 0 — alle 4 gemerged in Runde 17 ✅ |
-| CI/CD Status | Alle 4 Workflows grün ✅ (Docs CI #31, Firmware CI #7, Companion-App CI #13, Pages) |
+| CI/CD Status | Alle 4 Workflows grün ✅ (Docs CI #32, Firmware CI #7, Companion-App CI #13, Pages #2) |
 | ESP-IDF Mock-Header | 6 (fuer Host-Unit-Tests) |
 | test_dtc Status | Repariert — DTC-Codes synchronisiert mit Implementierung ✅ |
 | Tasks archived | 1 (t_4f8965c9: Design-Integration, veraltet) |
