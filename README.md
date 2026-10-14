@@ -8,7 +8,7 @@
 [![Research: 89K+ words](https://img.shields.io/badge/Research-89K%2B%20words-green.svg)](docs/research/)
 [![Firmware: 15K+ LOC](https://img.shields.io/badge/Firmware-15K%2B%20LOC_C%2FH-blue.svg)](firmware/)
 [![Companion-App: 6K+ LOC](https://img.shields.io/badge/Companion--App-6K%2B%20LOC_TS-yellow.svg)](companion-app/)
-[![Docs: 39+ documents](https://img.shields.io/badge/Docs-39%2B%20documents-brightgreen.svg)](docs/)
+[![Docs: 49 documents](https://img.shields.io/badge/Docs-49%20documents-brightgreen.svg)](docs/)
 [![Tests: 3 unit tests](https://img.shields.io/badge/Tests-3%20unit%20tests%20%2B%20CI%2FCD-success.svg)](.github/workflows/)
 [![Phases 0-6 Complete](https://img.shields.io/badge/Phases-0--6%20Complete-9cf.svg)](docs/ROADMAP.md)
 [![Vehicle: PD06](https://img.shields.io/badge/Vehicle-Honda%20Transalp%20600%20(PD06)-darkgreen.svg)](#)
@@ -552,7 +552,7 @@ Details: [CI/CD-Pipeline-Dokumentation](docs/CI-CD-PIPELINE.md)
 
 ## Projekt-Roadmap
 
-Alle fuenf Projektphasen sind abgeschlossen:
+Alle sieben Projektphasen sind abgeschlossen:
 
 | Phase | Beschreibung | Status |
 |---|---|---|
@@ -563,7 +563,8 @@ Alle fuenf Projektphasen sind abgeschlossen:
 | Phase 2.5 | Erweiterung (3 Tasks) | 100% Done |
 | Phase 3 | Implementierung (10 Tasks) | 100% Done |
 | Phase 4 | Integration & Test (11 Tasks) | 100% Done |
-| Phase 5 | Polish & Release (laeuft) | In Arbeit |
+| Phase 5 | Polish & Release (5 Tasks) | 100% Done |
+| Phase 6 | Projekt-Wiki & Community (5 Tasks) | 100% Done |
 
 Vollstaendige Roadmap mit PM-Protokoll: [docs/ROADMAP.md](docs/ROADMAP.md)
 

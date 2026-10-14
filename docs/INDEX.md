@@ -1,7 +1,7 @@
 # Dokumentations-Index / Projekt-Wiki
 
 > Zentraler Einstiegspunkt fuer die gesamte Dokumentation des Transalp Bordcomputer-Projekts.
-> Stand: Oktober 2026 — Phasen 0-5 abgeschlossen, 39 Dokumente, 241.539 Woerter gesamt.
+> Stand: Oktober 2026 — Phasen 0-6 abgeschlossen (RELEASE-READY), 49 Dokumente, 261.970 Woerter gesamt.
 > Plattform: ESP32-S3-WROOM-1, ESP-IDF v5.4, FreeRTOS SMP
 > Fahrzeug: Honda XL600V Transalp 600 (PD06), Baujahr 1986-1999
 
@@ -28,7 +28,7 @@ Nicht sicher, wo Sie anfangen sollen? Waehlen Sie Ihr Ziel:
 |---|---|---|
 | README | Projekt-Uebersicht mit Inhaltsverzeichnis, Feature-Liste, Metriken und Systemarchitektur-Diagramm. Der Ausgangspunkt fuer jeden Leser. | [README.md](../README.md) |
 | ARCHITECTURE | Integrierte System-Architektur mit 8 Subsystemen, Datenfluss-Pipeline, FreeRTOS Task-Modell, Hardware-Schnittstellen und Komponenten-Details. | [docs/ARCHITECTURE.md](ARCHITECTURE.md) |
-| ROADMAP | Vollstaendige Projekt-Roadmap mit allen Phasen (0-5), PM-Protokoll (12 Runden), Metriken und Worker-Team. Zeigt den gesamten Entstehungsprozess. | [docs/ROADMAP.md](ROADMAP.md) |
+| ROADMAP | Vollstaendige Projekt-Roadmap mit allen Phasen (0-6), PM-Protokoll (32 Runden), Metriken und Worker-Team. Zeigt den gesamten Entstehungsprozess. | [docs/ROADMAP.md](ROADMAP.md) |
 
 ### Ich will entwickeln
 
@@ -79,7 +79,7 @@ Nicht sicher, wo Sie anfangen sollen? Waehlen Sie Ihr Ziel:
 
 ## 2. Vollstaendiger Dokumentations-Baum
 
-Alle 39 Dokumente gruppiert nach Projektphase und Thema. Woerterzahlen aus `wc -w` (Oktober 2026).
+Alle 49 Dokumente gruppiert nach Projektphase und Thema. Woerterzahlen aus `wc -w` (Oktober 2026).
 
 ### Phase 0: Recherche (14 Dokumente, ~89.466 Woerter)
 
@@ -188,7 +188,7 @@ Polish-Phase: Widget-Katalog, Developer-Quickstart und Begleitdokumente fuer die
 | Phase 5: Polish & Release | 4 | 13.904 | Fertig |
 | Phase 6: Projekt-Wiki | 1 | ~3.200 | Fertig |
 | Root / Begleitend | 2 | 3.679 | Fertig |
-| **Gesamt** | **39+** | **~241.539** | **Fertig** |
+| **Gesamt** | **49** | **~261.970** | **Fertig** |
 
 ---
 
@@ -318,15 +318,15 @@ Firmware-Dokumentation: Engineering-Guide, Widget-Katalog und API-Referenz.
 
 | Dokument | Thema | Woerter |
 |---|---|---|
-| [ROADMAP.md](ROADMAP.md) | Projekt-Roadmap: Alle Phasen (0-5), PM-Protokoll (12 Runden), Metriken, Worker-Team | 2.972 |
+| [ROADMAP.md](ROADMAP.md) | Projekt-Roadmap: Alle Phasen (0-6), PM-Protokoll (32 Runden), Metriken, Worker-Team | 6.164 |
 | [RELEASE-NOTES.md](RELEASE-NOTES.md) | Release-Notes v1.0: Feature-Liste mit Status, Hardware-Anforderungen, Changelog | 5.146 |
 | [TCO-ANALYSIS.md](TCO-ANALYSIS.md) | Total Cost of Ownership: 3 Szenarien, 5-Jahres-Lifecycle, ROI 38-66% | 6.110 |
 
 **Projekt-Management-Highlights:**
 
-- 43 Tasks ueber 5 Projektphasen, alle abgeschlossen
+- 49 Tasks ueber 7 Projektphasen, alle abgeschlossen
 - 6 Worker-Profile: transalp-pm, worker, transalp-plan, transalp-ui, transalp-firmware, transalp-diag
-- 12 PM-Runden dokumentiert in der Roadmap
+- 32 PM-Runden dokumentiert in der Roadmap
 - 3 TCO-Szenarien: Basis (80 EUR), Standard (327 EUR), Premium (417 EUR)
 - ROI von 38-66% je nach Ausbau-Stufe ueber 5 Jahre
 
@@ -589,7 +589,7 @@ Dann nach Inbetriebnahme:
 ### Fuer Projektmanager / Bewerter
 
 1. [README.md](../README.md) — Projekt-Uebersicht und Metriken
-2. [ROADMAP.md](ROADMAP.md) — Vollstaendige Roadmap mit PM-Protokoll (12 Runden)
+2. [ROADMAP.md](ROADMAP.md) — Vollstaendige Roadmap mit PM-Protokoll (32 Runden)
 3. [TCO-ANALYSIS.md](TCO-ANALYSIS.md) — Kosten und ROI (3 Szenarien)
 4. [RELEASE-NOTES.md](RELEASE-NOTES.md) — Feature-Status und Reifegrad
 5. [ARCHITECTURE.md](ARCHITECTURE.md) — System-Architektur
@@ -621,8 +621,8 @@ Dann nach Inbetriebnahme:
 
 | Metrik | Wert |
 |---|---|
-| Dokumente gesamt | 39 (14 Research + 23 Design-Docs + README + CONTRIBUTING) |
-| Woerter gesamt | ~241.539 |
+| Dokumente gesamt | 49 (14 Research + 27 Design-Docs + 8 Root/Community) |
+| Woerter gesamt | ~261.970 |
 | Research-Dokumente | 14 (inkl. Research-README) |
 | Design-Dokumente | 23 |
 | Root-Dokumente | 2 (README + CONTRIBUTING) |
@@ -690,12 +690,12 @@ Dann nach Inbetriebnahme:
 | BLE GATT-Services | 8 (33 Characteristics) |
 | DTC-Codes | 16 in 4 Kategorien |
 | FreeRTOS Tasks | 7 (gps, sensor, vehicle, display, logger, ble, power) |
-| Projektphasen | 6 (0-5), alle abgeschlossen |
-| Tasks gesamt | 43 done |
+| Projektphasen | 7 (0-6), alle abgeschlossen |
+| Tasks gesamt | 49 done |
 
 ### Dokument-Status
 
-Alle 39 Dokumente haben den Status **Fertig**. Das Projekt hat die Phasen 0-5 vollstaendig abgeschlossen. Phase 6 (Projekt-Wiki / Dokumentations-Index) wird mit diesem Dokument abgeschlossen.
+Alle 49 Dokumente haben den Status **Fertig**. Das Projekt hat die Phasen 0-6 vollstaendig abgeschlossen und ist RELEASE-READY.
 
 | Phase | Status | Dokumente |
 |---|---|---|

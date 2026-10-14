@@ -298,7 +298,7 @@ Noncommercial", „github.com/TitoPrausee/transalp-bordcomputer".
 **Voice-Over (Deutsch):**
 
 > Der Transalp Bordcomputer ist komplett Open-Source: 15.000 Zeilen
-> Firmware-Code, 6.000 Zeilen Companion-App, 240.000 Woerter Dokumentation,
+> Firmware-Code, 6.000 Zeilen Companion-App, 260.000 Woerter Dokumentation,
 > 35 UI-Mockups und 4 CI-CD-Workflows. Alles unter der PolyForm-Noncommercial-
 > Lizenz.
 >
@@ -328,8 +328,8 @@ Noncommercial", „github.com/TitoPrausee/transalp-bordcomputer".
 
 **Bullet-Points:**
 - ESP32-S3 · GPS · Dual-Display · BLE · Open-Source
-- 240.000+ Woerter Dokumentation · 15.000+ Zeilen Firmware-Code
-- 43 Tasks abgeschlossen · 5 Projektphasen done
+- 260.000+ Woerter Dokumentation · 15.500+ Zeilen Firmware-Code
+- 49 Tasks abgeschlossen · 7 Projektphasen done
 
 **Screenshot-Platzhalter:**
 - `[SCREENSHOT: mockups/screens/boot.html — Boot-Screen mit Projekt-Titel]`
@@ -607,7 +607,7 @@ Funktionsumfang.
 **Titel:** Roadmap und Community
 
 **Bullet-Points:**
-- Phase 0–5: ABGESCHLOSSEN (43 Tasks, 240.000+ Woerter)
+- Phase 0–6: ABGESCHLOSSEN (49 Tasks, 260.000+ Woerter)
 - v1.0: Kern-Features stabil, Companion-App als Prototyp
 - v1.1 (geplant): Admin-PIN, Secure Boot V2, Flash-Encryption, Rate-Limiting
 - v2.0 (geplant): App-Store-Release, 2. ESP32 als Display-Controller, WLAN
@@ -653,11 +653,11 @@ damit.
 Ein Open-Source Bordcomputer fuer die Honda Transalp 600 (PD06) — ein rein
 mechanisches Motorrad aus den Achtzigern, aufgeruestet mit ESP32-S3, GPS,
 Dual-Display und Smartphone-Anbindung. 15.000 Zeilen Firmware, 6.000 Zeilen
-Companion-App, 240.000 Woerter Dokumentation — alles Open-Source und
+Companion-App, 260.000 Woerter Dokumentation — alles Open-Source und
 nachbaubar. Sensoren greifen Fahrzeugdaten direkt ab: Drehzahl, Geschwindigkeit,
 Temperatur, Tankstand, Oeldruck. BLE-Verbindung zur App fuer Navigation,
 Diagnose und Firmware-Updates. Vom Schreibtisch-Prototyp zum
-motorradtauglichen System — dokumentiert in 5 Projektphasen mit 43 Tasks.
+motorradtauglichen System — dokumentiert in 7 Projektphasen mit 49 Tasks.
 
 ### Hashtag-Vorschlaege
 
