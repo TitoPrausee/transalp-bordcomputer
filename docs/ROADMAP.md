@@ -1,9 +1,9 @@
 # Projekt-Roadmap: Transalp Bordcomputer
 
-> Zuletzt aktualisiert: 14.10.2026 (PM-Runde 24)
+> Zuletzt aktualisiert: 14.10.2026 (PM-Runde 26)
 > Status: Wartung — 5 Worker-Profile + 1 Projektmanager (PM) auf Mac mini
 > **Phasen 0–6 ABGESCHLOSSEN ✅ — Projekt RELEASE-READY**
-> **Runde 24: Wartungs-Verifikation — CI #37 bestätigt, 0 Markenverstöße, Metriken aktualisiert**
+> **Runde 26: Wartungs-Verifikation — CI #39 bestätigt, 0 Markenverstöße, Metriken aktualisiert**
 
 ## Projektziel
 Vollständiger Open-Source Bordcomputer für die Honda Transalp 600 (PD06).
@@ -427,6 +427,14 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 - **Metriken aktualisiert:** Wortanzahl auf 260.568 aktualisiert. Workflow-Runs von 65 auf 66 aktualisiert.
 - **Keine neuen Tasks nötig:** Projekt weiterhin im Wartungsmodus. Alle Phasen 0–6 vollständig abgeschlossen.
 
+### PM-Runde 26 (14.10.2026, Wartungs-Verifikation)
+- **Board-Status:** Alle 48 Tasks done, 0 running, 0 blocked — unverändert.
+- **Markenscan:** Vollständiger Scan aller 49 Markdown-Dateien (exkl. node_modules) mit der 26-Marken-Blocklist und Wortgrenzen (regex `\b`) — **0 Markenverstöße**. 10 Treffer für "Orange" als Farbe (Kabelfarbe, RPM-Farbverlauf), nicht als Marke — "Orange" nicht in Brand-Blocklist. CI bestätigt mit Docs CI #39 = success.
+- **CI-Status verifiziert (via GitHub API):** Docs CI #39 = success ✅ (neuester Run). 67 Workflow-Runs gesamt (vorher 66). 0 offene PRs, 0 offene Issues.
+- **Git-Status:** Arbeitsbaum clean, auf main, 164 Commits, mit origin/main synchron.
+- **Metriken aktualisiert:** Wortanzahl auf 260.670 korrigiert (exakte Zählung). Companion-App auf 22 Dateien / 5.965 Zeilen TS/TSX korrigiert. Workflow-Runs von 66 auf 67 aktualisiert.
+- **Keine neuen Tasks nötig:** Projekt weiterhin im Wartungsmodus. Alle Phasen 0–6 vollständig abgeschlossen.
+
 ## Offene Fragen
 - Welche TFT-Displays sind sonnenlesbar genug?
 - Companion-App: React Native vs. Flutter? (Master-Plan empfiehlt React Native)
@@ -451,10 +459,10 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 | Wörter gesamt (Research) | 89.466 |
 | Design-Dokumente | 26 (+3: INDEX, DEMO-SCRIPT, ENGLISH-SUMMARY) |
 | Wörter gesamt (Design-Docs) | 158.926 |
-| Wörter gesamt (alle Docs + LICENSE + COC + SECURITY) | 260.568 |
-| Code-Prototypen | 3 (firmware/ 15.508 Zeilen C/H, companion-app/ 5.957 Zeilen TS/TSX, mockups/ 8 HTML-Screens) |
+| Wörter gesamt (alle Docs + LICENSE + COC + SECURITY) | 260.670 |
+| Code-Prototypen | 3 (firmware/ 15.508 Zeilen C/H, companion-app/ 5.965 Zeilen TS/TSX, mockups/ 8 HTML-Screens) |
 | Firmware C/H-Zeilen | 15.508 (10 Komponenten + main + test-suite) |
-| Companion-App | 5.957 Zeilen TS/TSX (BleManager, Dashboard, Navigation, Diagnose, Settings) |
+| Companion-App | 5.965 Zeilen TS/TSX (22 Dateien: BleManager, Dashboard, Navigation, Diagnose, Settings) |
 | CI/CD Workflows | 4 (firmware-ci, companion-app-ci, docs-ci mit brand-check (26 Marken), pages) |
 | Unit-Tests | 3 (test_dtc, test_event_loop, test_nmea_parser) + ESP-IDF-Mocks |
 | Issue Templates | 2 (bug_report, feature_request) |
@@ -462,13 +470,13 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 | Community Files | 4 (CODE_OF_CONDUCT, SECURITY, FUNDING.yml, CODEOWNERS) |
 | Brand-Blocklist | 26 Marken (.github/brand-blocklist.txt) |
 | Dependabot | 1 (.github/dependabot.yml — npm + github-actions) |
-| Git Commits | 163 (Runde 25: Wartungs-Verifikation, CI #38 bestätigt) |
+| Git Commits | 164 (Runde 26: Wartungs-Verifikation, CI #39 bestätigt) |
 | Tasks done | 48 |
 | Tasks running | 0 |
 | Tasks blocked | 0 |
 | Lokale Branches | 1 (nur main) |
 | Offene Dependabot-PRs | 0 — alle 4 gemerged in Runde 17 ✅ |
-| CI/CD Status | Alle 4 Workflows grün ✅ (Docs CI #38, Firmware CI #7, Companion-App CI #13, Pages #2) |
+| CI/CD Status | Alle 4 Workflows grün ✅ (Docs CI #39, Firmware CI #7, Companion-App CI #13, Pages #2) |
 | ESP-IDF Mock-Header | 6 (fuer Host-Unit-Tests) |
 | test_dtc Status | Repariert — DTC-Codes synchronisiert mit Implementierung ✅ |
 | Tasks archived | 1 (t_4f8965c9: Design-Integration, veraltet) |
