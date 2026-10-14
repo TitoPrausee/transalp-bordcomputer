@@ -1,9 +1,9 @@
 # Projekt-Roadmap: Transalp Bordcomputer
 
-> Zuletzt aktualisiert: 14.10.2026 (PM-Runde 31)
+> Zuletzt aktualisiert: 14.10.2026 (PM-Runde 32)
 > Status: Wartung — 5 Worker-Profile + 1 Projektmanager (PM) auf Mac mini
 > **Phasen 0–6 ABGESCHLOSSEN ✅ — Projekt RELEASE-READY**
-> **Runde 31: Wartungs-Audit — kaputten Link behoben, Remote-Branch bereinigt, Metriken aktualisiert**
+> **Runde 32: Metrik-Synchronisation — veraltete Zähler in INDEX, README, DEMO-SCRIPT und ENGLISH-SUMMARY aktualisiert**
 
 ## Projektziel
 Vollständiger Open-Source Bordcomputer für die Honda Transalp 600 (PD06).
@@ -481,6 +481,21 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 - **Metriken aktualisiert:** 49 Markdown-Dateien, 261.805 Wörter gesamt, 65 C/H-Dateien (15.508 Zeilen), 21 TS/TSX-Dateien (5.957 Zeilen).
 - **Nächste Schritte:** Wartungsmodus. Potenziell: externe Link-Verifikation (244 URLs), Dependabot-Monitoring.
 
+### PM-Runde 32 (14.10.2026, Metrik-Synchronisation)
+- **Board-Status:** 49 done, 0 running, 0 blocked. Alle Worker idle.
+- **CI-Status:** Docs CI #49 (b280a52) — Success. Alle 4 Workflows grün.
+- **Metrik-Synchronisation durchgeführt:** Phase-6-Tasks (Runden 23–26) hatten Dokumente erstellt und Metriken im ROADMAP aktualisiert, aber veraltete Zähler in anderen Dokumenten blieben unbemerkt.
+- **Aktualisierte Dateien (4):**
+  - `docs/INDEX.md`: "39 Dokumente" → "49 Dokumente", "241.539 Woerter" → "261.970 Woerter", "Phase 0-5" → "Phase 0-6", "43 Tasks" → "49 Tasks", "12 PM-Runden" → "32 PM-Runden", ROADMAP-Wortzahl 2.972 → 6.164, "Phase 5: In Arbeit" → "Phase 5+6: 100% Done"
+  - `README.md`: Badge "39+ documents" → "49 documents", Phase-Tabelle erweitert (Phase 5 "In Arbeit" → "100% Done", Phase 6 hinzugefügt), "fuenf Projektphasen" → "sieben Projektphasen"
+  - `docs/DEMO-SCRIPT.md`: "240.000 Woerter" → "260.000 Woerter" (2 Vorkommen), "43 Tasks / 5 Projektphasen" → "49 Tasks / 7 Projektphasen" (3 Vorkommen), "Phase 0-5" → "Phase 0-6"
+  - `docs/ENGLISH-SUMMARY.md`: "39 documents" → "49 documents", "240.000 words" → "262.000 words", "43 tasks" → "49 tasks", "six phases (0-5)" → "seven phases (0-6)"
+- **Marken-Scan:** 0 echte Verstöße ✅ (38 Blocklist-Muster, alle .md/.yml/.yaml-Dateien).
+- **Interne Links:** Alle internen Markdown-Links in docs/ intakt (CI bestätigt).
+- **Git-Status:** Arbeitsbaum clean, auf main, 176 Commits, mit origin/main synchron.
+- **Metriken verifiziert:** 49 Markdown-Dateien, 261.970 Wörter, 65 C/H-Dateien (15.508 Zeilen), 22 TS/TSX-Dateien (5.965 Zeilen), 8 Mockup-Screens, 24 SVG-Icons.
+- **Nächste Schritte:** Wartungsmodus. Potenziell: externe Link-Verifikation (244 URLs), Firmware-TODO-Tracking, Dependabot-Monitoring.
+
 ## Offene Fragen
 - Welche TFT-Displays sind sonnenlesbar genug?
 - Companion-App: React Native vs. Flutter? (Master-Plan empfiehlt React Native)
@@ -505,7 +520,7 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 | Wörter gesamt (Research) | 89.466 |
 | Design-Dokumente | 26 (+3: INDEX, DEMO-SCRIPT, ENGLISH-SUMMARY) |
 | Wörter gesamt (Design-Docs) | 158.926 |
-| Wörter gesamt (alle Docs + LICENSE + COC + SECURITY) | 261.805 |
+| Wörter gesamt (alle Docs + LICENSE + COC + SECURITY) | 261.970 |
 | Code-Prototypen | 3 (firmware/ 15.508 Zeilen C/H, companion-app/ 5.965 Zeilen TS/TSX, mockups/ 8 HTML-Screens) |
 | Firmware C/H-Zeilen | 15.508 (65 Dateien: 10 Komponenten + main + test-suite) |
 | Companion-App | 5.965 Zeilen TS/TSX (22 Dateien: BleManager, Dashboard, Navigation, Diagnose, Settings) |
@@ -516,13 +531,13 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 | Community Files | 4 (CODE_OF_CONDUCT, SECURITY, FUNDING.yml, CODEOWNERS) |
 | Brand-Blocklist | 38 Marken (.github/brand-blocklist.txt) |
 | Dependabot | 1 (.github/dependabot.yml — npm + github-actions) |
-| Git Commits | 175 (Runde 31: Wartungs-Audit, kaputten Link behoben, Remote-Branch bereinigt, CI #47 grün) |
+| Git Commits | 177 (Runde 32: Metrik-Synchronisation — veraltete Zähler in 4 Dokumenten aktualisiert) |
 | Tasks done | 49 |
 | Tasks running | 0 |
 | Tasks blocked | 0 |
 | Lokale Branches | 1 (nur main) |
 | Offene Dependabot-PRs | 0 — alle 4 gemerged in Runde 17 ✅ |
-| CI/CD Status | Alle 4 Workflows grün ✅ (Docs CI #47, Firmware CI #7, Companion-App CI #13, Pages #2) |
+| CI/CD Status | Alle 4 Workflows grün ✅ (Docs CI #49, Firmware CI #7, Companion-App CI #13, Pages #2) |
 | ESP-IDF Mock-Header | 6 (fuer Host-Unit-Tests) |
 | test_dtc Status | Repariert — DTC-Codes synchronisiert mit Implementierung ✅ |
 | Tasks archived | 1 (t_4f8965c9: Design-Integration, veraltet) |

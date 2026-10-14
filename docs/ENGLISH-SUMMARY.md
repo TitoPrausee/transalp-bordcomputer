@@ -114,9 +114,9 @@ and UI mockups are publicly available on the project repository.
 
 ### Project Scale
 
-The project was developed across six phases (Phases 0-5), involving
-43 tasks completed by six worker profiles and one project manager. The
-result is over 240,000 words of documentation across 39 documents,
+The project was developed across seven phases (Phases 0-6), involving
+49 tasks completed by six worker profiles and one project manager. The
+result is over 260,000 words of documentation across 49 documents,
 approximately 15,300 lines of C/H firmware code across 10 components,
 nearly 6,000 lines of TypeScript in the companion app, 35 HTML/SVG UI
 mockup files, and a CI/CD pipeline with 4 GitHub Actions workflows
@@ -356,7 +356,7 @@ category. Links point to the actual (German-language) documents.
 | [README.md](../README.md) | Project overview, architecture diagram, project structure, documentation index, feature list, hardware components, CI/CD, metrics |
 | [CONTRIBUTING.md](../CONTRIBUTING.md) | Contributing guide: how to contribute, code standards, CI/CD pipeline, review process, license, issue and PR templates |
 
-**Total: 39 documents, approximately 240,000 words.**
+**Total: 49 documents, approximately 262,000 words.**
 
 ---
 
