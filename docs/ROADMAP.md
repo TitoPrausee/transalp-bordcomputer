@@ -1,9 +1,9 @@
 # Projekt-Roadmap: Transalp Bordcomputer
 
-> Zuletzt aktualisiert: 14.10.2026 (PM-Runde 27)
+> Zuletzt aktualisiert: 14.10.2026 (PM-Runde 28)
 > Status: Wartung — 5 Worker-Profile + 1 Projektmanager (PM) auf Mac mini
 > **Phasen 0–6 ABGESCHLOSSEN ✅ — Projekt RELEASE-READY**
-> **Runde 27: Wartungs-Verifikation — CI #40 bestätigt, 0 Markenverstöße, Metriken aktualisiert**
+> **Runde 28: Wartungs-Verifikation — CI #41 bestätigt, 0 Markenverstöße, Metriken aktualisiert**
 
 ## Projektziel
 Vollständiger Open-Source Bordcomputer für die Honda Transalp 600 (PD06).
@@ -443,6 +443,14 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 - **Metriken verifiziert:** Wortanzahl 260.806 (exakte Zählung). Companion-App 22 Dateien / 5.965 Zeilen TS/TSX. Firmware 65 Dateien / 15.508 Zeilen C/H.
 - **Keine neuen Tasks nötig:** Projekt weiterhin im Wartungsmodus. Alle Phasen 0–6 vollständig abgeschlossen.
 
+### PM-Runde 28 (14.10.2026, Wartungs-Verifikation)
+- **Board-Status:** Alle 48 Tasks done, 0 running, 0 blocked — unverändert.
+- **Markenscan:** Vollständiger Scan aller 49 Markdown-Dateien (exkl. node_modules) mit der 26-Marken-Blocklist und Wortgrenzen (regex `\b`) — **0 Markenverstöße**. Verbleibende Treffer für "Arduino" sind Framework-Referenzen (ESP-IDF vs. Arduino-Framework), nicht in der CI-Blocklist enthalten.
+- **CI-Status verifiziert (via GitHub API):** Docs CI #41 = success ✅ (neuester Run, ausgelöst durch Runde 27 Commit `7c199dfc`). 69 Workflow-Runs gesamt (vorher 68). 0 offene PRs, 0 offene Issues.
+- **Git-Status:** Arbeitsbaum clean, auf main, 166 Commits, mit origin/main synchron.
+- **Metriken aktualisiert:** Wortanzahl auf 260.920 korrigiert (exakte Zählung aller 49 Markdown-Dateien). Workflow-Runs von 68 auf 69 aktualisiert.
+- **Keine neuen Tasks nötig:** Projekt weiterhin im Wartungsmodus. Alle Phasen 0–6 vollständig abgeschlossen.
+
 ## Offene Fragen
 - Welche TFT-Displays sind sonnenlesbar genug?
 - Companion-App: React Native vs. Flutter? (Master-Plan empfiehlt React Native)
@@ -467,7 +475,7 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 | Wörter gesamt (Research) | 89.466 |
 | Design-Dokumente | 26 (+3: INDEX, DEMO-SCRIPT, ENGLISH-SUMMARY) |
 | Wörter gesamt (Design-Docs) | 158.926 |
-| Wörter gesamt (alle Docs + LICENSE + COC + SECURITY) | 260.806 |
+| Wörter gesamt (alle Docs + LICENSE + COC + SECURITY) | 260.920 |
 | Code-Prototypen | 3 (firmware/ 15.508 Zeilen C/H, companion-app/ 5.965 Zeilen TS/TSX, mockups/ 8 HTML-Screens) |
 | Firmware C/H-Zeilen | 15.508 (65 Dateien: 10 Komponenten + main + test-suite) |
 | Companion-App | 5.965 Zeilen TS/TSX (22 Dateien: BleManager, Dashboard, Navigation, Diagnose, Settings) |
@@ -478,13 +486,13 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 | Community Files | 4 (CODE_OF_CONDUCT, SECURITY, FUNDING.yml, CODEOWNERS) |
 | Brand-Blocklist | 26 Marken (.github/brand-blocklist.txt) |
 | Dependabot | 1 (.github/dependabot.yml — npm + github-actions) |
-| Git Commits | 165 (Runde 27: Wartungs-Verifikation, CI #40 bestätigt) |
+| Git Commits | 166 (Runde 28: Wartungs-Verifikation, CI #41 bestätigt) |
 | Tasks done | 48 |
 | Tasks running | 0 |
 | Tasks blocked | 0 |
 | Lokale Branches | 1 (nur main) |
 | Offene Dependabot-PRs | 0 — alle 4 gemerged in Runde 17 ✅ |
-| CI/CD Status | Alle 4 Workflows grün ✅ (Docs CI #40, Firmware CI #7, Companion-App CI #13, Pages #2) |
+| CI/CD Status | Alle 4 Workflows grün ✅ (Docs CI #41, Firmware CI #7, Companion-App CI #13, Pages #2) |
 | ESP-IDF Mock-Header | 6 (fuer Host-Unit-Tests) |
 | test_dtc Status | Repariert — DTC-Codes synchronisiert mit Implementierung ✅ |
 | Tasks archived | 1 (t_4f8965c9: Design-Integration, veraltet) |
