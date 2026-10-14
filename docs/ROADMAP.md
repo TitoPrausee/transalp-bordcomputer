@@ -1,9 +1,9 @@
 # Projekt-Roadmap: Transalp Bordcomputer
 
-> Zuletzt aktualisiert: 14.10.2026 (PM-Runde 18)
+> Zuletzt aktualisiert: 14.10.2026 (PM-Runde 19)
 > Status: Wartung — 5 Worker-Profile + 1 Projektmanager (PM) auf Mac mini
 > **Phasen 0–6 ABGESCHLOSSEN ✅ — Projekt RELEASE-READY**
-> **Runde 18: Übersehener Markenname entfernt, Brand-Blocklist auf 17 erweitert, CI grün**
+> **Runde 19: Wartungs-Check — CI grün, 0 offene PRs, 0 Markenverletzungen, Commit-Anzahl korrigiert**
 
 ## Projektziel
 Vollständiger Open-Source Bordcomputer für die Honda Transalp 600 (PD06).
@@ -357,6 +357,16 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 - **Repo-Hygiene:** Nur `main`-Branch lokal und remote. Arbeitsbaum sauber. 0 offene PRs. Dependabot-Remote-Branches nach `git fetch --prune` entfernt.
 - **Auf origin gepusht:** Markenbereinigung + Blocklist-Erweiterung + ROADMAP-Update
 
+### PM-Runde 19 (14.10.2026, Wartungs-Check)
+- **Board-Status:** Alle 48 Tasks done, 0 running, 0 blocked — Projekt weiterhin vollständig abgeschlossen.
+- **CI-Status verifiziert:** Alle 3 CI-Workflows (Docs CI #27, Firmware CI #7, Companion-App CI #13) = success ✅. Gesamt 55 Workflow-Runs. (Docs CI #24 war ein transienter Failure, #25 wurde cancelled, #26 und #27 = success.)
+- **Markennamen-Scan:** Vollständiger Scan aller docs/ + README + CONTRIBUTING + CODE_OF_CONDUCT + SECURITY + LICENSE mit der erweiterten 17-Marken-Blocklist — 0 Verletzungen. VERIFIZIERT.
+- **TODO/FIXME-Scan:** Firmware-Code hat 4 TODO-Kommentare (3 in `ble_callbacks.c` für JSON-Config-Parsing, Binary-Config-Import und OTA-Write; 1 in `event_bus.c` für komplexe Events mit Payload). Companion-App hat 0 TODOs. Diese sind als bekannte zukünftige Erweiterungspunkte dokumentiert und für die aktuelle Release akzeptabel.
+- **Dependabot-Status:** 0 offene PRs. Alle 4 npm-Major-Bumps in Runde 17 gemerged. Keine neuen Dependabot-PRs seitdem.
+- **Repo-Hygiene:** Nur `main`-Branch lokal und remote. Arbeitsbaum sauber. 0 ahead, 0 behind origin. `git fetch --prune` — keine stale Remote-Branches.
+- **Commit-Anzahl korrigiert:** ROADMAP sagte 151, tatsächlich 152 Commits. Korrigiert.
+- **Keine neuen Tasks nötig:** Projekt ist release-ready und im Wartungsmodus. Alle Phasen 0–6 vollständig abgeschlossen.
+
 ## Offene Fragen
 - Welche TFT-Displays sind sonnenlesbar genug?
 - Companion-App: React Native vs. Flutter? (Master-Plan empfiehlt React Native)
@@ -392,13 +402,13 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 | Community Files | 4 (CODE_OF_CONDUCT, SECURITY, FUNDING.yml, CODEOWNERS) |
 | Brand-Blocklist | 17 Marken (.github/brand-blocklist.txt) |
 | Dependabot | 1 (.github/dependabot.yml — npm + github-actions) |
-| Git Commits | 151 (Runde 18: Markenbereinigung + Blocklist-Erweiterung) |
+| Git Commits | 152 (Runde 19: ROADMAP-Korrektur) |
 | Tasks done | 48 |
 | Tasks running | 0 |
 | Tasks blocked | 0 |
 | Lokale Branches | 1 (nur main) |
 | Offene Dependabot-PRs | 0 — alle 4 gemerged in Runde 17 ✅ |
-| CI/CD Status | Alle 4 Workflows grün ✅ (Docs CI #23, Firmware CI #7, Companion-App CI #13, Pages) |
+| CI/CD Status | Alle 4 Workflows grün ✅ (Docs CI #27, Firmware CI #7, Companion-App CI #13, Pages) |
 | ESP-IDF Mock-Header | 6 (fuer Host-Unit-Tests) |
 | test_dtc Status | Repariert — DTC-Codes synchronisiert mit Implementierung ✅ |
 | Tasks archived | 1 (t_4f8965c9: Design-Integration, veraltet) |
