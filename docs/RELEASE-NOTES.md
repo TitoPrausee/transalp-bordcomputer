@@ -318,7 +318,7 @@ gespeichert und sind ueber die Companion-App einstellbar.
 
 #### 1.4.1 ESP-IDF Version
 
-Das Projekt basiert auf ESP-IDF v5.4 (Espressif IoT Development Framework).
+Das Projekt basiert auf ESP-IDF v5.4 (dem offiziellen SDK fuer den ESP32-S3).
 ESP-IDF liefert FreeRTOS im SMP-Modus (Symmetric Multi-Processing) fuer
 den Dual-Core ESP32-S3, Treiber fuer alle Peripherie und die
 Build-Infrastruktur auf Basis von CMake und Ninja.

@@ -7,9 +7,9 @@
 
 ## 1. ESP-IDF vs. Arduino-Framework
 
-### 1.1 ESP-IDF (Espressif IoT Development Framework)
+### 1.1 ESP-IDF (ESP-IDF Framework)
 
-ESP-IDF ist das offizielle SDK von Espressif. Es basiert auf FreeRTOS und
+ESP-IDF ist das offizielle SDK vom MCU-Chiphersteller. Es basiert auf FreeRTOS und
 bietet direkten Zugriff auf alle Hardware-Peripherals des ESP32-S3.
 
 Vorteile für dieses Projekt:
@@ -39,7 +39,7 @@ Vorteile:
 
 Nachteile:
 - Weniger Kontrolle: FreeRTOS-Tasks sind hinter `loop()` versteckt
-- Arduino-Layer verbraucht额外 Heap und Flash
+- Arduino-Layer verbraucht zusaetzlich Heap und Flash
 - Partition-Layout ist fixed, OTA ist komplizierter
 - Library-Konflikte (I2C-Bus-Kollisionen zwischen Libraries)
 - Kein direkter Zugriff auf ESP-IDF-Features wie TWAI, PCNT neue API
@@ -1858,7 +1858,7 @@ sind Auto-OBD-Scanner oder Fahrrad-Computer.
 Gefundene Projekte:
 - `geeksville/Meshtastic-ESP32` — LoRa-Mesh, keine Bordcomputer-UI
 - `Daniel-Roseman/OBD2-Scanner` — OBD-II Reader, keine UI
-- `powerbroker/dashboard` — Auto-Dashboard auf Raspberry Pi, nicht ESP32
+- `powerbroker/dashboard` — Auto-Dashboard auf Einplatinencomputer, nicht ESP32
 - `btselm/ESP32-CAN-Dash` — Auto-Dashboard mit ESP32 und CAN
 
 Adaptierbar: `btselm/ESP32-CAN-Dash` — CAN-basiertes Dashboard, kann als
@@ -1902,7 +1902,7 @@ GitHub: `nopnop2002/esp-idf-mcp2515` — ESP-IDF native MCP2515-Treiber
 
 ### 10.4 OpenDashboard / moto-dashboard
 
-OpenDashboard (GitHub): meist Auto-fokussiert, oft auf Raspberry Pi oder
+OpenDashboard (GitHub): meist Auto-fokussiert, oft auf Einplatinencomputer oder
 größeren Displays. Nicht direkt adaptierbar für E-Paper.
 
 Relevante Bibliotheken aus der Open-Source-Community:

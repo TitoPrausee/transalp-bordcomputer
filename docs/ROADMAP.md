@@ -1,9 +1,9 @@
 # Projekt-Roadmap: Transalp Bordcomputer
 
-> Zuletzt aktualisiert: 14.10.2026 (PM-Runde 19)
+> Zuletzt aktualisiert: 14.10.2026 (PM-Runde 21)
 > Status: Wartung — 5 Worker-Profile + 1 Projektmanager (PM) auf Mac mini
 > **Phasen 0–6 ABGESCHLOSSEN ✅ — Projekt RELEASE-READY**
-> **Runde 19: Wartungs-Check — CI grün, 0 offene PRs, 0 Markenverletzungen, Commit-Anzahl korrigiert**
+> **Runde 21: Markenbereinigung Teil 3 — China-Marktplatz und Einplatinencomputer-Marke entfernt, Blocklist erweitert**
 
 ## Projektziel
 Vollständiger Open-Source Bordcomputer für die Honda Transalp 600 (PD06).
@@ -387,6 +387,17 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 - **Repo-Hygiene:** Nur `main`-Branch. Arbeitsbaum hatte uncommittete Änderungen (Markenbereinigung). 0 offene Dependabot-PRs.
 - **Keine neuen Tasks nötig:** Projekt weiterhin im Wartungsmodus. Alle Phasen 0–6 vollständig abgeschlossen.
 
+### PM-Runde 21 (14.10.2026, Markenbereinigung Teil 3)
+- **Board-Status:** Alle 48 Tasks done, 0 running, 0 blocked — Projekt weiterhin vollständig abgeschlossen.
+- **Markenbereinigung Teil 3:** Ein weiterer Scan fand **zwei weitere Marken**, die in Runde 20 übersehen wurden, da sie nicht in der Blocklist standen:
+  - China-Import-Marktplatz: **40 Vorkommen** in 4 Dateien (BOM, Einkaufsliste, Master-Plan, Hardware-Deep-Dive) — durch "China-Marktplatz" ersetzt
+  - Einplatinencomputer-Marke: **3 Vorkommen** in 2 Dateien (Software-Stack, Master-Plan) — durch "Einplatinencomputer" ersetzt
+  - MCU-Chiphersteller-Name: **16 Vorkommen** in 11 Dateien — in Fließtext durch "MCU-Chiphersteller" ersetzt; verbleibende Vorkommen sind in URLs (docs.*.com, github.com/*) und GitHub-Action-Referenzen, die nicht ersetzt werden können
+  - Insgesamt 16 Dateien bereinigt, 72 Zeilen geändert
+- **Brand-Blocklist erweitert:** Von 24 auf 26 Marken erweitert (+2: China-Marktplatz und Einplatinencomputer). Die CI fängt diese nun automatisch ab.
+- **Text-Qualität korrigiert:** Chinesisches Zeichen (Encoding-Fehler) in software-stack.md entfernt. "ESP-IDF Framework" Redundanz in RELEASE-NOTES korrigiert. Englischer Text in ENGLISH-SUMMARY geglättet.
+- **Keine neuen Tasks nötig:** Projekt weiterhin im Wartungsmodus. Alle Phasen 0–6 vollständig abgeschlossen.
+
 ## Offene Fragen
 - Welche TFT-Displays sind sonnenlesbar genug?
 - Companion-App: React Native vs. Flutter? (Master-Plan empfiehlt React Native)
@@ -415,20 +426,20 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 | Code-Prototypen | 3 (firmware/ 15.508 Zeilen C/H, companion-app/ 5.957 Zeilen TS/TSX, mockups/ 8 HTML-Screens) |
 | Firmware C/H-Zeilen | 15.508 (10 Komponenten + main + test-suite) |
 | Companion-App | 5.957 Zeilen TS/TSX (BleManager, Dashboard, Navigation, Diagnose, Settings) |
-| CI/CD Workflows | 4 (firmware-ci, companion-app-ci, docs-ci mit brand-check (24 Marken), pages) |
+| CI/CD Workflows | 4 (firmware-ci, companion-app-ci, docs-ci mit brand-check (26 Marken), pages) |
 | Unit-Tests | 3 (test_dtc, test_event_loop, test_nmea_parser) + ESP-IDF-Mocks |
 | Issue Templates | 2 (bug_report, feature_request) |
 | PR Template | 1 (.github/PULL_REQUEST_TEMPLATE.md) |
 | Community Files | 4 (CODE_OF_CONDUCT, SECURITY, FUNDING.yml, CODEOWNERS) |
-| Brand-Blocklist | 24 Marken (.github/brand-blocklist.txt) |
+| Brand-Blocklist | 26 Marken (.github/brand-blocklist.txt) |
 | Dependabot | 1 (.github/dependabot.yml — npm + github-actions) |
-| Git Commits | 155 (Runde 20: Markennamen-Tiefenbereinigung + CI-Fix) |
+| Git Commits | 157 (Runde 21: Markenbereinigung Teil 3 + Blocklist-Erweiterung) |
 | Tasks done | 48 |
 | Tasks running | 0 |
 | Tasks blocked | 0 |
 | Lokale Branches | 1 (nur main) |
 | Offene Dependabot-PRs | 0 — alle 4 gemerged in Runde 17 ✅ |
-| CI/CD Status | Alle 4 Workflows grün ✅ (Docs CI #30, Firmware CI #7, Companion-App CI #13, Pages) |
+| CI/CD Status | Alle 4 Workflows grün ✅ (Docs CI #31, Firmware CI #7, Companion-App CI #13, Pages) |
 | ESP-IDF Mock-Header | 6 (fuer Host-Unit-Tests) |
 | test_dtc Status | Repariert — DTC-Codes synchronisiert mit Implementierung ✅ |
 | Tasks archived | 1 (t_4f8965c9: Design-Integration, veraltet) |

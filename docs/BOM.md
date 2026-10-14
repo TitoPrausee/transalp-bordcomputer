@@ -36,7 +36,7 @@ fallen die Preise typischerweise um 20-40%.
 |---|---|---|---|---|---|---|---|---|
 | 1 | ESP32-S3-WROOM-1 N8R2 | 8MB Flash, 2MB PSRAM, BLE 5.0, 45 GPIO, PCB Trace Antenne, LGA Modul 18x25,5mm | 1 | 5,40 | 5,40 | Mouser / Digi-Key | 3-5 Tage | DevKitC-1 (13,80 EUR), ESP32-S3-WROOM-1U (IPEX) |
 | 2 | USB-C Buchse IP67 | Panel-Mount, wasserdicht, IP67, mit Dichtungsmembran | 1 | 3,50 | 3,50 | Reichelt / Online-Marktplatz | 2-4 Tage | USB-B wasserdicht, internes USB-C |
-| 3 | MicroSD-Karten-Slot | Push-Push, SMD, 8-polig, fuer SPI-Mode | 1 | 1,20 | 1,20 | LCSC / Reichelt | 5-10 Tage | Wirelle SD-Breakout (AliExpress, 0,50 EUR) |
+| 3 | MicroSD-Karten-Slot | Push-Push, SMD, 8-polig, fuer SPI-Mode | 1 | 1,20 | 1,20 | LCSC / Reichelt | 5-10 Tage | Wirelle SD-Breakout (China-Marktplatz, 0,50 EUR) |
 | 4 | MicroSD-Karte 16GB | Class 10 / U1, Markenprodukt, FAT32 | 1 | 6,00 | 6,00 | Online-Marktplatz / Reichelt | 2-3 Tage | 8GB Class 10 NoName (3,00 EUR) |
 | 5 | FPC-Connector 12-polig | 0,5mm Pitch, fuer Display-Anbindung | 1 | 0,50 | 0,50 | LCSC / Digi-Key | 5-10 Tage | JST-SM Kabel (0,80 EUR) |
 
@@ -54,11 +54,11 @@ fallen die Preise typischerweise um 20-40%.
 |---|---|---|---|---|---|---|---|---|---|
 | 9 | GPS-Modul NEO-M9N | 4-Konstellation GNSS (GPS+GLONASS+Galileo+BeiDou), 25Hz, 2,0m CEP, UART, 12,2x16mm SMD | 1 | 24,60 | 24,60 | TME / Spezial.com | 3-7 Tage | ATGM336H (3,00 EUR), NEO-M8N (15,00 EUR) |
 | 10 | GPS-Antenne | Active Patch 25x25mm, Magnetfuss, 3-5V, 28dB Gain, 1,5m Kabel | 1 | 8,00 | 8,00 | Online-Marktplatz / Reichelt | 2-4 Tage | Passive Patch (2,00 EUR), Chip-Antenne |
-| 11 | IMU BMI270 | 6-DoF (Accel+Gyro), 685µA, I2C/SPI, 2KB FIFO, 2,5x3,0mm LGA-14 | 1 | 5,00 | 5,00 | Mouser / Digi-Key / AliExpress | 5-10 Tage | MPU6050 (2,00 EUR), LSM6DS33 (5,00 EUR) |
+| 11 | IMU BMI270 | 6-DoF (Accel+Gyro), 685µA, I2C/SPI, 2KB FIFO, 2,5x3,0mm LGA-14 | 1 | 5,00 | 5,00 | Mouser / Digi-Key / China-Marktplatz | 5-10 Tage | MPU6050 (2,00 EUR), LSM6DS33 (5,00 EUR) |
 | 12 | Barometer BMP390 | 300-1250 hPa, ±0,03 hPa rel., 0,25m Aufloesung, I2C/SPI, 2x2mm LGA-10 | 1 | 3,50 | 3,50 | Mouser / Digi-Key | 5-10 Tage | BMP388 (OBSOLETE), BMP280 (2,00 EUR), DPS310 |
 | 13 | Kuehlmittel-Temp. | DS18B20 wasserdicht, digital, 1-Wire, ±0,5°C, -55 bis +125°C, Edelstahlrohr | 1 | 3,00 | 3,00 | Online-Marktplatz / Reichelt | 2-4 Tage | NTC 10k Thermistor (1,00 EUR) |
 | 14 | Oeldrucksensor | Analog 0-5 bar, 10-180 Ohm, M10x1 Gewinde, wasserdicht | 1 | 25,00 | 25,00 | Online-Marktplatz / Spezialversand | 5-10 Tage | Original-Oeldruckschalter (digital, 0 EUR) |
-| 15 | Hall-Sensor (Rad) | A3144 Unipolar, 4,5-24V, TO-92, + Magnet 5mm | 1 | 2,00 | 2,00 | Reichelt / AliExpress | 3-5 Tage | Reed-Schalter (1,00 EUR), A1101 |
+| 15 | Hall-Sensor (Rad) | A3144 Unipolar, 4,5-24V, TO-92, + Magnet 5mm | 1 | 2,00 | 2,00 | Reichelt / China-Marktplatz | 3-5 Tage | Reed-Schalter (1,00 EUR), A1101 |
 | 16 | Bordspannungs-Messung | Spannungsteiler 100k/33k, 1%, 0805 SMD | 1 | 0,10 | 0,10 | Reichelt / LCSC | 2-3 Tage | Praezisions-Spannungsteiler (0,50 EUR) |
 | 17 | Kraftstoffstand-Messung | Spannungsteiler 10k/10k + Operationsverstaerker (MCP6001) | 1 | 1,00 | 1,00 | Reichelt / LCSC | 2-3 Tage | Direkter Spannungsteiler (0,10 EUR) |
 
@@ -66,11 +66,11 @@ fallen die Preise typischerweise um 20-40%.
 
 | # | Bauteil | Spezifikation | Menge | Einzelpreis (EUR) | Gesamtpreis (EUR) | Bezugsquelle | Lieferzeit | Alternativen |
 |---|---|---|---|---|---|---|---|---|---|
-| 18 | Buck-Converter 12V->5V | MP1584EN Modul, 1,5MHz, 3A, 4,5-28V Input, 90-92% Effizienz, 22x15mm | 1 | 1,50 | 1,50 | AliExpress / Online-Marktplatz | 7-14 Tage | LM2596 Modul (2,00 EUR), TPS5430 (6,00 EUR) |
+| 18 | Buck-Converter 12V->5V | MP1584EN Modul, 1,5MHz, 3A, 4,5-28V Input, 90-92% Effizienz, 22x15mm | 1 | 1,50 | 1,50 | China-Marktplatz / Online-Marktplatz | 7-14 Tage | LM2596 Modul (2,00 EUR), TPS5430 (6,00 EUR) |
 | 19 | LDO 5V->3,3V | HT7333, 250mA, 30µVrms Rauschen, 4µA Quiescent, SOT-89 | 1 | 0,50 | 0,50 | Reichelt / LCSC | 2-5 Tage | AMS1117-3.3 (0,15 EUR), MCP1700-3302E (1,00 EUR) |
 | 20 | Backup-Akku 18650 | Li-Ion, 3400mAh, 3,7V nominal, geschuetzt mit PCB | 1 | 6,00 | 6,00 | Online-Marktplatz / Reichelt | 2-4 Tage | LiPo 1000mAh (4,00 EUR), LiFePO4 |
-| 21 | Akku-Lademodul | TP4056 Modul mit Schutz (DW01A), 5V Input, 1A Ladestrom, Micro-USB oder Type-C | 1 | 0,50 | 0,50 | AliExpress / Online-Marktplatz | 7-14 Tage | IP5306 Modul (3,00 EUR) |
-| 22 | Boost-Converter 3,7V->5V | MT3608 Modul, 2A, bis 28V Output, 17x11mm | 1 | 0,80 | 0,80 | AliExpress / Online-Marktplatz | 7-14 Tage | XL6009 Modul (1,50 EUR) |
+| 21 | Akku-Lademodul | TP4056 Modul mit Schutz (DW01A), 5V Input, 1A Ladestrom, Micro-USB oder Type-C | 1 | 0,50 | 0,50 | China-Marktplatz / Online-Marktplatz | 7-14 Tage | IP5306 Modul (3,00 EUR) |
+| 22 | Boost-Converter 3,7V->5V | MT3608 Modul, 2A, bis 28V Output, 17x11mm | 1 | 0,80 | 0,80 | China-Marktplatz / Online-Marktplatz | 7-14 Tage | XL6009 Modul (1,50 EUR) |
 | 23 | Schottky-Diode | 1N5822, 3A, 40V, DO-201AD, fuer Power-Path ORing | 2 | 0,10 | 0,20 | Reichelt / LCSC | 2-3 Tage | 1N5819 (1A, 0,05 EUR), SS34 SMD |
 | 24 | TVS-Diode | SMAJ15A, 15V Standoff, 24,4V Clamp, 400W, SMA | 2 | 0,50 | 1,00 | Reichelt / Mouser | 2-5 Tage | P6KE15A, SMBJ15A |
 | 25 | Sicherung 5A | Flachsicherung ATO/ATC, 5A, mit Inline-Halter | 1 | 1,00 | 1,00 | Reichelt / Online-Marktplatz | 2-3 Tage | PTC 3A resettable (0,80 EUR) |
@@ -96,7 +96,7 @@ fallen die Preise typischerweise um 20-40%.
 | 35 | MOSFET IRLZ44N | N-Channel, 55V, 25A, Rds(on) 22mOhm @ Vgs=5V, TO-220 | 1 | 1,50 | 1,50 | Reichelt / Mouser | 2-5 Tage | IRF520 (1,50 EUR, nicht Logic-Level), AO3400 SMD |
 | 36 | Optokoppler PC817 | 1-Kanal, Transistor-Ausgang, DIP-4, CTR 50-600% | 2 | 0,50 | 1,00 | Reichelt / LCSC | 2-5 Tage | TLP185 SMD, 6N137 (schneller) |
 | 37 | Freilaufdiode 1N5408 | 3A, 1000V, DO-201AD, fuer induktive Lasten | 2 | 0,10 | 0,20 | Reichelt / LCSC | 2-3 Tage | 1N4007 (1A), Schottky 1N5822 |
-| 38 | Relais-Modul 4-Kanal | SRD-12V, 10A, mit Optokoppler, Active-LOW | 1 | 4,00 | 4,00 | Online-Marktplatz / AliExpress | 3-7 Tage | Einzelrelais SRD-12V (1,00 EUR/Stueck) |
+| 38 | Relais-Modul 4-Kanal | SRD-12V, 10A, mit Optokoppler, Active-LOW | 1 | 4,00 | 4,00 | Online-Marktplatz / China-Marktplatz | 3-7 Tage | Einzelrelais SRD-12V (1,00 EUR/Stueck) |
 
 ### 1.7 Mechanische Teile
 
@@ -131,7 +131,7 @@ fallen die Preise typischerweise um 20-40%.
 | # | Bauteil | Spezifikation | Menge | Einzelpreis (EUR) | Gesamtpreis (EUR) | Bezugsquelle | Lieferzeit | Alternativen |
 |---|---|---|---|---|---|---|---|---|---|
 | 57 | Sensor-Kabel verdrillt | 4-adrig, AWG24, abgeschirmt (S/UTP), pro Meter | 3 | 1,50 | 4,50 | Online-Marktplatz / Reichelt | 2-4 Tage | Unabgeschirmt 4-adrig (0,80 EUR/m) |
-| 58 | JST-SM Stecker 4-polig | Wasserdicht, IP65, mit Rasterverriegelung, fuer GPS | 1 | 1,50 | 1,50 | Online-Marktplatz / AliExpress | 3-7 Tage | AMP Superseal 3-polig (2,50 EUR) |
+| 58 | JST-SM Stecker 4-polig | Wasserdicht, IP65, mit Rasterverriegelung, fuer GPS | 1 | 1,50 | 1,50 | Online-Marktplatz / China-Marktplatz | 3-7 Tage | AMP Superseal 3-polig (2,50 EUR) |
 | 59 | AMP Superseal 2-polig | IP67, 3A, fuer 12V Bordnetz | 1 | 2,50 | 2,50 | Online-Marktplatz / Spezialversand | 3-7 Tage | Deutch DTM 2-polig (3,50 EUR) |
 | 60 | AMP Superseal 3-polig | IP67, 3A, fuer ADC-Sensoren | 2 | 2,50 | 5,00 | Online-Marktplatz / Spezialversand | 3-7 Tage | Deutch DTM 3-polig |
 | 61 | AMP Superseal 4-polig | IP67, 3A, fuer Relais-Steuerung | 1 | 2,50 | 2,50 | Online-Marktplatz / Spezialversand | 3-7 Tage | Deutch DTM 4-polig |
@@ -238,7 +238,7 @@ Bestueckungs-Katalog verfuegbar (z.B. BMI270, BMP390).
 
 Einsatz im Projekt: PCB-Fertigung, SMD-Bestueckung.
 
-**AliExpress (aliexpress.com)**
+**China-Marktplatz**
 
 Chinesischer B2C-Marktplatz fuer Elektronik und Verbrauchsgueter.
 Staerken: sehr guenstige Preise fuer Module (MP1584EN 0,50 EUR,
@@ -267,13 +267,13 @@ Die folgende Tabelle vergleicht die Preise ausgewaehlter Bauteile
 ueber verschiedene Lieferanten, um die guenstigste Quelle zu
 identifizieren.
 
-| Bauteil | Mouser | Digi-Key | TME | Reichelt | AliExpress | Beste Quelle |
+| Bauteil | Mouser | Digi-Key | TME | Reichelt | China-Marktplatz | Beste Quelle |
 |---|---|---|---|---|---|---|
 | ESP32-S3-WROOM-1 N8R2 | 3,30 EUR | 5,40 EUR | n.v. | n.v. | 2,50 EUR* | Mouser (original, garantiert) |
 | NEO-M9N-00B | 14,40 EUR* | 15,72 EUR* | 24,60 EUR** | n.v. | 12,00 EUR* | TME (original, EU-Lager) |
 | BMI270 (Bare IC) | 3,40 EUR | 3,90 EUR | n.v. | n.v. | 5,00 EUR** | Mouser (original) |
 | BMP390 (Bare IC) | 3,50 EUR | 3,50 EUR | n.v. | n.v. | n.v. | Mouser / Digi-Key |
-| MP1584EN Modul | n.v. | n.v. | n.v. | 1,80 EUR | 0,50 EUR | AliExpress (Prototyp) |
+| MP1584EN Modul | n.v. | n.v. | n.v. | 1,80 EUR | 0,50 EUR | China-Marktplatz (Prototyp) |
 | HT7333 LDO | 0,50 EUR | 0,60 EUR | n.v. | 0,50 EUR | 0,20 EUR* | Reichelt (schnell) |
 | TC4427 Gate-Driver | 1,40 EUR | 1,50 EUR | n.v. | 1,50 EUR | 0,80 EUR* | Mouser |
 | IRLZ44N | 1,50 EUR | 1,60 EUR | n.v. | 1,50 EUR | 0,80 EUR* | Reichelt |
@@ -288,21 +288,21 @@ n.v. = nicht verfuegbar
 
 **Geringes Risiko (Multi-Source, grosse Lagerbestaende):**
 - Passive Bauelemente (Widerstaende, Kondensatoren, Ferrite-Beads):
-  verfuegbar bei Reichelt, Conrad, Mouser, Digi-Key, LCSC, AliExpress.
+  verfuegbar bei Reichelt, Conrad, Mouser, Digi-Key, LCSC, China-Marktplatz.
   Kein Verfuegbarkeitsrisiko.
 - Standard-Halbleiter (HT7333, AMS1117, PC817, 1N5822, IRLZ44N):
   verfuegbar bei allen grossen Distributoren.
 - Mechanische Teile (Schrauben, Abstandshalter, Kabelbinder):
   verfuegbar bei Reichelt, Online-Marktplatz, Baumarkt.
-- Module (MP1584EN, TP4056, MT3608): verfuegbar bei AliExpress, Online-Marktplatz,
-  Reichelt. Kein Risiko, aber Qualitaetsschwankungen bei AliExpress.
+- Module (MP1584EN, TP4056, MT3608): verfuegbar bei China-Marktplatz, Online-Marktplatz,
+  Reichelt. Kein Risiko, aber Qualitaetsschwankungen bei China-Marktplatz.
 
 **Mittleres Risiko (Single-Source bei einigen Lieferanten):**
 - ESP32-S3-WROOM-1-N8R2: verfuegbar bei Mouser und Digi-Key, aber
-  beide beziehen vom Hersteller Espressif. Bei Lieferengpaessen
+  beide beziehen vom MCU-Chiphersteller. Bei Lieferengpaessen
   (aktuelle Vorlaufzeit bei Digi-Key: 8 Wochen) koennen beide
   betroffen sein. Alternative: DevKitC-1 als Prototyp-Ersatz.
-- NEO-M9N GPS-Modul: verfuegbar bei TME, Mouser, Digi-Key. AliExpress-
+- NEO-M9N GPS-Modul: verfuegbar bei TME, Mouser, Digi-Key. China-Marktplatz-
   Clones unter 15 EUR sind oft Fakes (u-blox Clone oder ATGM336H
   relabeled). Originalmodul bei TME (24,60 EUR) ist die sicherste
   Quelle.
@@ -316,7 +316,7 @@ n.v. = nicht verfuegbar
   Produktion. EMPFEHLUNG: BMP390 statt BMP388 verwenden.
 - BMI270: verfuegbar bei Mouser (60.904 auf Lager) und Digi-Key
   (67.748 auf Lager). Jedoch bei Digi-Key als "Limited Supply"
-  markiert. Breakout-Boards (AliExpress) als Alternative.
+  markiert. Breakout-Boards (China-Marktplatz) als Alternative.
 - AMP Superseal Stecker: verfuegbar bei Spezialversand und Online-Marktplatz.
   Jedoch nicht bei Reichelt/Conrad. Bei Lieferengpaessen
   Alternative: Deutch DTM Serie (teurer, aber besser verfuegbar).
@@ -562,7 +562,7 @@ Die Contingency von +15% deckt folgende Risiken ab:
 | Beschaffung von Ersatzteilen | 2% | Beschädigte Bauteile, Fehlbestueckung, Nachbestellung |
 | Fertigungsfehler | 1% | PCB-Fehler, Loetfehler, Fehldrucke beim 3D-Druck |
 
-Bei Projekten mit hohem Anteil an China-Importen (AliExpress, JLCPCB,
+Bei Projekten mit hohem Anteil an China-Importen (China-Marktplatz, JLCPCB,
 LCSC) kann die Contingency auf +20% erhoeht werden, da
 Zollabwicklungen und verlaengerte Lieferzeiten haeufiger zu
 Nachbestellungen fuehren.
@@ -622,7 +622,7 @@ mit derselben API. Keine Code-Aenderungen erforderlich.
 
 **NEO-M9N -- Clone-Risiko (Hoch)**
 
-Auf AliExpress werden GPS-Module unter der Bezeichnung "NEO-M9N" ab
+Auf China-Marktplatz werden GPS-Module unter der Bezeichnung "NEO-M9N" ab
 12 EUR angeboten. Diese sind haeufig Fakes:
 - Echte u-blox NEO-M9N-00B Module kosten ab 20 EUR (TME netto)
 - Clones verwenden oft den ATGM336H Chip und relabeln das Modul
@@ -630,13 +630,13 @@ Auf AliExpress werden GPS-Module unter der Bezeichnung "NEO-M9N" ab
   u-blox-Module bei Fakes
 
 EMPFEHLUNG: NEO-M9N ausschliesslich bei autorisierten Distributoren
-(TME, Mouser, Digi-Key, Spezial.com) kaufen. Bei AliExpress nur von
+(TME, Mouser, Digi-Key, Spezial.com) kaufen. Bei China-Marktplatz nur von
 Verkaeufern mit >98% positiver Bewertung und Verifizierung.
 
 **ESP32-S3-WROOM-1 N8R2 -- Lieferengpaesse (Mittel)**
 
 Bei Digi-Key betraegt die Vorlaufzeit (Standard Lead Time) 8 Wochen,
-was auf Produktionsengpaesse beim Hersteller Espressif hindeutet.
+was auf Produktionsengpaesse beim MCU-Chiphersteller hindeutet.
 Bei Mouser ist das Modul jedoch mit 3,60 USD (ca. 3,30 EUR netto)
 sofort verfuegbar (Stand Oktober 2026). Das DevKitC-1 ist bei
 beiden Distributoren mit >1.000 Stueck auf Lager.
@@ -652,7 +652,7 @@ Als Backup: DevKitC-1 (13,80 EUR) fuer Prototyp-Phase.
 | NEO-M9N (bei Nicht-Verfuegbarkeit) | 4-6 Wochen | Import aus Asien | ATGM336H (sofort, 3 EUR), NEO-M8N |
 | AMP Superseal Stecker | 2-3 Wochen | Spezialversand | Deutch DTM (Reichelt, 2-3 Tage) |
 | JLCPCB PCB + Bestueckung | 5-8 Tage | Produktion + Versand aus China | PCBWay (aehnlich schnell), lokaler Dienstleister |
-| AliExpress Module (MP1584, TP4056, MT3608) | 7-21 Tage | Versand aus China | Online-Marktplatz Prime (2-3 Tage, +50% Preis) |
+| China-Marktplatz Module (MP1584, TP4056, MT3608) | 7-21 Tage | Versand aus China | Online-Marktplatz Prime (2-3 Tage, +50% Preis) |
 
 ### 5.3 Substitute fuer kritische Bauteile
 
@@ -677,7 +677,7 @@ Substitute mit ihrer Kompatibilitaet und den Vor- und Nachteilen.
 | NEO-M9N | 3 (TME, Mouser, Digi-Key) | Mittel | ATGM336H als Backup |
 | BMI270 | 2 (Mouser, Digi-Key) | Mittel | MPU6050 als Backup |
 | BMP390 | 2 (Mouser, Digi-Key) | Mittel | BMP280 als Backup |
-| MP1584EN Modul | 3+ (AliExpress, Online-Marktplatz, Reichelt) | Gering | Keine Massnahme noetig |
+| MP1584EN Modul | 3+ (China-Marktplatz, Online-Marktplatz, Reichelt) | Gering | Keine Massnahme noetig |
 | HT7333 | 3+ (Reichelt, Mouser, LCSC) | Gering | AMS1117 als Backup |
 | TC4427 | 2 (Mouser, Digi-Key) | Mittel | MIC4427 als Backup |
 | ASA-Filament | 3+ (Online-Marktplatz, Filament-versand) | Gering | PETG als Prototyp-Backup |
@@ -704,11 +704,11 @@ unverzueglich bestellt werden.
    Bestueckung. Sofort am Anfang bestellen, da alle anderen Schritte
    vom PCB abhaengen.
 2. NEO-M9N GPS-Modul bei TME: 3-7 Tage. Originalmodul, nicht bei
-   AliExpress bestellen (Clone-Risiko).
+   China-Marktplatz bestellen (Clone-Risiko).
 3. ESP32-S3-WROOM-1 N8R2 bei Mouser: 3-5 Tage. Sofort verfuegbar,
    aber bei Bestellung > 10 Stueck laengere Lieferzeit.
 4. BMI270 und BMP390 bei Mouser: 5-10 Tage. Original-ICs, nicht bei
-   AliExpress (Clones, falsche Specs).
+   China-Marktplatz (Clones, falsche Specs).
 5. TC4427 Gate-Driver bei Mouser: 5-10 Tage.
 6. AMP Superseal Stecker bei Spezialversand: 2-3 Wochen.
 
@@ -720,7 +720,7 @@ Diese Bauteile haben Lieferzeiten von 2-5 Tagen.
    bei Reichelt: 2-3 Tage.
 8. Standard-Halbleiter (HT7333, IRLZ44N, PC817, 1N5822, 1N5408,
    Zener, TVS) bei Reichelt: 2-5 Tage.
-9. Module (MP1584EN, TP4056, MT3608) bei AliExpress: 7-14 Tage.
+9. Module (MP1584EN, TP4056, MT3608) bei China-Marktplatz: 7-14 Tage.
    Alternative: Online-Marktplatz Prime (+50% Preis, aber 2-3 Tage).
 10. USB-C IP67 Buchse bei Reichelt: 2-4 Tage.
 11. Sensor-Kabel abgeschirmt und JST-SM Stecker bei Online-Marktplatz: 2-4 Tage.
@@ -763,7 +763,7 @@ Empfohlene Lieferanten-Gruppierung:
 | Mouser | ESP32-S3, BMI270, BMP390, TC4427, Ferrite-Beads | 6,90 | 3-5 Tage |
 | TME | NEO-M9N | 8,00 | 3-7 Tage |
 | Reichelt | Passive, Standard-ICs, Kabelverschraubungen, Abstandshalter | 4,95 | 2-3 Tage |
-| AliExpress | MP1584, TP4056, MT3608, Hall-Sensor | 0,00 (gratis) | 7-21 Tage |
+| China-Marktplatz | MP1584, TP4056, MT3608, Hall-Sensor | 0,00 (gratis) | 7-21 Tage |
 | Online-Marktplatz | Displays, Akku, Filament, Coating, Kupferfolie, Kabel | 0,00 (Prime) | 1-3 Tage |
 | Spezialversand | AMP Superseal, Oeldrucksensor, Druckausgleichsmembran | 6,90 | 3-10 Tage |
 | — | **Gesamt Versand** | **41,75** | |
@@ -792,10 +792,10 @@ Empfehlung: Bestellungen bei JLCPCB/LCSC unter 150 EUR halten,
 um Zollgebuehren zu vermeiden. Bei hoeherem Warenwert: auf
 mehrere Bestellungen aufteilen (z.B. PCB separat von Bauteilen).
 
-**AliExpress (China-Import):**
+**China-Marktplatz (China-Import):**
 
-AliExpress-Bestellungen unter 150 EUR sind zollfrei. Die
-Einfuhrumsatzsteuer wird bereits im Checkout von AliExpress
+China-Marktplatz-Bestellungen unter 150 EUR sind zollfrei. Die
+Einfuhrumsatzsteuer wird bereits im Checkout von China-Marktplatz
 erhoben (IOSS-Verfahren), so dass keine Nachzahlung beim
 Zoll anfaellt. Lieferzeit 7-21 Tage.
 
@@ -845,7 +845,7 @@ Silica-Gel (Feuchtigkeitsschutz, MSL-Klassifizierung beachten).
 | MCU / Spezial-ICs | Mouser | Digi-Key | Original, garantierte Qualitaet |
 | GPS-Modul | TME | Mouser | TME hat guenstigste Preise fuer u-blox in der EU |
 | Passive Bauelemente | Reichelt | LCSC | Reichelt schnell, LCSC guenstig bei Mengen |
-| Module (Buck, Boost, Charger) | AliExpress | Online-Marktplatz | AliExpress am guenstigsten, Online-Marktplatz am schnellsten |
+| Module (Buck, Boost, Charger) | China-Marktplatz | Online-Marktplatz | China-Marktplatz am guenstigsten, Online-Marktplatz am schnellsten |
 | Standard-Halbleiter | Reichelt | Mouser | Reichelt schnell und guenstig fuer Standard-Teile |
 | Kabel / Stecker / Verschraubungen | Online-Marktplatz | Reichelt | Online-Marktplatz fuer schnelle Beschaffung |
 | Filament / 3D-Druck-Material | Online-Marktplatz | Filament-versand | Grosse Auswahl, schnelle Lieferung |
@@ -866,7 +866,7 @@ Silica-Gel (Feuchtigkeitsschutz, MSL-Klassifizierung beachten).
 - BMP388: Digi-Key Status "Obsolete". BMP390 als direkter Ersatz,
   Digi-Key (2,43 GBP ≈ 2,85 EUR netto). Stand Oktober 2026.
 - BMP390: Mouser / Digi-Key, 3,50 EUR netto. Stand Oktober 2026.
-- MP1584EN Modul: AliExpress (0,48-1,26 EUR), LaskaKit (1,31 EUR).
+- MP1584EN Modul: China-Marktplatz (0,48-1,26 EUR), LaskaKit (1,31 EUR).
   Stand Oktober 2026.
 - JLCPCB PCB-Fertigung: 4-Layer ab 8 USD / 5 Stueck. Stand 2026.
 - Waveshare 3.5" IPS Display: 480x320, SPI, Online-Marktplatz / Waveshare.

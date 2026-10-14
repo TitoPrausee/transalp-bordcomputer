@@ -500,7 +500,7 @@ Der ESP32 (Standard-Variante) ist spezifiziert für **-40°C bis +85°C**
 Ambient-Temperatur. Es gibt auch eine +105°C-Variante, die aber nur mit
 4/8 MB Flash verfügbar ist.
 
-([Espressif ESP32 Module](https://www.espressif.com/en/products/modules/esp32),
+([ESP32 Module](https://www.espressif.com/en/products/modules/esp32),
 [ESP32-WROOM-32E Datasheet](https://www.espressif.com/sites/default/files/documentation/esp32-wroom-32e_esp32-wroom-32ue_datasheet_en.pdf))
 
 Bei 70°C Innentemperatur hat man noch 15°C Margin bis zum +85°C-Limit.
@@ -955,7 +955,7 @@ Transalp-Bordcomputer-Projekt:
 - [JADO Moto IP Guide](https://www.jadomoto.com/blogs/guides/waterproofing-and-ip-ratings-explained)
 - [Atlas PCB Conformal Coating Guide](https://atlaspcb.com/blog/pcb-conformal-coating-selection-guide)
 - [Andwin PCB Conformal Coating Guide](https://andwinpcb.com/conformal-coating-for-pcb-types-application-and-selection-guide)
-- [Espressif ESP32 Modules](https://www.espressif.com/en/products/modules/esp32)
+- [ESP32 Modules](https://www.espressif.com/en/products/modules/esp32)
 - [ESP32-WROOM-32E Datasheet](https://www.espressif.com/sites/default/files/documentation/esp32-wroom-32e_esp32-wroom-32ue_datasheet_en.pdf)
 - [LiPo Temperature Range](https://ufinebattery.com/blog/what-is-the-minimum-operating-temperature-for-lipo-batteries)
 - [REDARC Battery Temperature Guide](https://us.support.redarcelectronics.com/hc/en-us/articles/13856244101007-Why-you-should-not-charge-a-lithium-battery-below-0-C-or-32-F)

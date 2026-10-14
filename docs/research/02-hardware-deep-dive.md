@@ -2,7 +2,7 @@
 
 > Stand: Oktober 2026 — Exhaustive Recherche zur kompletten Hardware-Auslegung.
 > Fahrzeug: Honda Transalp 600 (PD06), Baujahr 1986–2000, rein mechanisch, keine ECU.
-> Alle Preise sind Richtwerte (AliExpress / Online-Marktplatz / DigiKey / Mouser, Stand 2026).
+> Alle Preise sind Richtwerte (China-Marktplatz / Online-Marktplatz / DigiKey / Mouser, Stand 2026).
 
 ## Inhalt
 
@@ -151,7 +151,7 @@ Der NEO-M9N ist die beste Wahl für einen Motorrad-Bordcomputer:
 - **Power-Save-Mode**: 7 mA bei 1 Hz cyclic → perfekt für Battery-Backup-Logging
 - **23 s Cold Start** → Akzeptabel nach Wochen ohne Strom
 
-**Preis:** ~25–35€ (Achtung: Clones von AliExpress unter 15€ sind oft Fake. Original bei Mouser/DigiKey).
+**Preis:** ~25–35€ (Achtung: Clones von China-Marktplatz unter 15€ sind oft Fake. Original bei Mouser/DigiKey).
 
 ### 2.3 Dead Reckoning (NEO-M8U) — sinnvoll für Motorrad?
 
@@ -772,7 +772,7 @@ Quellen:
 
 **Entscheidung: NimBLE**
 
-Der ESP32-S3 unterstützt nur BLE (kein BT Classic). NimBLE ist für BLE-only offiziell von Espressif empfohlen:
+Der ESP32-S3 unterstützt nur BLE (kein BT Classic). NimBLE ist für BLE-only offiziell vom MCU-Chiphersteller empfohlen:
 - 40–50% weniger RAM → mehr Heap für Application
 - 55% weniger Flash → mehr Platz für Firmware
 - Identische BLE-Features

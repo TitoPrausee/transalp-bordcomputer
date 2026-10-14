@@ -300,7 +300,7 @@ Alle 35 Dokumente gruppiert nach Phase und Thema. Woerterzahlen aus `wc -w`.
 |---|---|---|---|
 | 01 | [01-sensoren-fahrzeugdaten.md](docs/research/01-sensoren-fahrzeugdaten.md) | Drehzahl, Tacho, Kuehlmitteltemp, Kraftstoffstand, Oeldruck, Ganganzeige — Sensor-Anzapfung an der PD06 | 5.750 |
 | 02 | [02-hardware-deep-dive.md](docs/research/02-hardware-deep-dive.md) | ESP32-S3, GPS, Displays, IMU, Barometer, Power-Management — Modulauswahl und Pin-Belegungen | 6.619 |
-| 03 | [03-software-stack.md](docs/research/03-software-stack.md) | ESP-IDF vs. Arduino, FreeRTOS Task-Design, Treiber, BLE-Stack, OTA-Update, NVS-Config | 7.374 |
+| 03 | [03-software-stack.md](docs/research/03-software-stack.md) | ESP-IDF vs. Arduino-Framework, FreeRTOS Task-Design, Treiber, BLE-Stack, OTA-Update, NVS-Config | 7.374 |
 | 04 | [04-pd06-technische-daten.md](docs/research/04-pd06-technische-daten.md) | Motor-/Getriebedaten, Elektrik, Fahrwerk, Tank/Kraftstoff, Service-Manual-Quellen | 5.000 |
 | 05 | [05-gehaeuse-einbau-emv.md](docs/research/05-gehaeuse-einbau-emv.md) | 3D-Druck-Gehaeuse, Wasserdichtigkeit, Vibrationen, EMV-Schutz, Stromversorgung im Motorrad-Umfeld | 5.602 |
 | 06 | [06-feature-roadmap.md](docs/research/06-feature-roadmap.md) | Vollstaendige Feature-Roadmap: Core, Smart, Safety, Tour, Diagnose, App-Konzept | 6.317 |

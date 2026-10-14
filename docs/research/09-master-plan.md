@@ -33,7 +33,7 @@ alle Must- und die wichtigsten Should-Features ab für ca. 125 EUR.
 
 Die folgende Tabelle listet alle Komponenten mit konkreten Preisen in EUR auf.
 Preise sind Richtwerte (Stand 2026) und beziehen sich auf Einzelstückpreise bei
-AliExpress, Online-Marktplatz, Mouser oder DigiKey. Bei Stückzahlen ab 10 fallen die Preise
+China-Marktplatz, Online-Marktplatz, Mouser oder DigiKey. Bei Stückzahlen ab 10 fallen die Preise
 typischerweise um 20-40%.
 
 Jede Komponente hat einen Budget- und einen Premium-Vorschlag. Budget-Teile
@@ -305,7 +305,7 @@ auf einem Display anzeigen.
 
 **Woche 1: Setup und GPS**
 
-- ESP-IDF-Projektstruktur aufsetzen (nicht Arduino — volle Kontrolle)
+- ESP-IDF-Projektstruktur aufsetzen (nicht Arduino-Framework — volle Kontrolle)
 - FreeRTOS-Task-Architektur definieren: GPS-Task, Display-Task,
   Logger-Task, Main-Task
 - GPS-Treiber implementieren: UART-Initialisierung für NEO-M9N,
@@ -926,7 +926,7 @@ werden simulierte Signale erzeugt.
 
 **HIL-Setup:**
 
-Ein zweiter ESP32 (oder ein Raspberry Pi) fungiert als Signal-
+Ein zweiter ESP32 (oder ein Einplatinencomputer) fungiert als Signal-
 Generator und erzeugt:
 
 - **GPS:** Simulierte NMEA/UBX-Sätze über UART (definierte Positionen,
@@ -1182,9 +1182,9 @@ erzeugen Hochspannungsspitzen, die den Bordcomputer stören können.
 
 ## 6. Architektur-Entscheidungen
 
-### 6.1 ESP-IDF statt Arduino
+### 6.1 ESP-IDF statt Arduino-Framework
 
-Die Entscheidung fällt auf ESP-IDF (nicht Arduino) für die
+Die Entscheidung fällt auf ESP-IDF (nicht Arduino-Framework) für die
 Firmware-Entwicklung. Begründung:
 
 - Volle Kontrolle über FreeRTOS-Task-Prioritäten, Stack-Größen,
@@ -1268,7 +1268,7 @@ JSON fallen die Werte auf kompilierte Defaults zurück.
 
 1. **Kritische Komponenten (GPS, MCU, Sensoren):** Nur bei
    autorisierten Distributoren (Mouser, DigiKey). Clones von
-   AliExpress sind oft Fakes (besonders NEO-M9N und DS18B20).
+   China-Marktplatz sind oft Fakes (besonders NEO-M9N und DS18B20).
 2. **Mechanische Teile (Gehäuse, Halterung):** 3D-Druck selbst,
    Filament von Qualitätshersteller. GORE-Vent als Spezialprodukt
    direkt von Gore.
@@ -1286,9 +1286,9 @@ Besonders folgende Komponenten werden häufig gefälscht:
 
 | Komponente | Fälschungs-Risiko | Erkennung |
 |---|---|---|
-| u-blox NEO-M9N | Sehr hoch (AliExpress unter 15 EUR) | Original nur bei Mouser/DigiKey, Markierung lasergraviert |
+| u-blox NEO-M9N | Sehr hoch (China-Marktplatz unter 15 EUR) | Original nur bei Mouser/DigiKey, Markierung lasergraviert |
 | DS18B20 | Hoch | Fakes liefern falsche Werte, CRC-Fehler; Test: Eiswasser = 0°C |
-| ESP32-S3 | Mittel | DevKitC-1 original hat Espressif-Logo und USB-Bridge CH343 |
+| ESP32-S3 | Mittel | DevKitC-1 original hat MCU-Chiphersteller-Logo und USB-Bridge CH343 |
 | Marken-SD-Karte | Hoch (bei Online-Marktplatz Marketplace) | Originalverpackung, Serial auf Hersteller-Website verifizieren |
 
 ---
@@ -1462,7 +1462,7 @@ sein (E-Paper typisch 10-20 MHz, SD-Karte bis 40 MHz).
 | DTC | Diagnostic Trouble Code (Fehlercode) |
 | EMV | Elektromagnetische Verträglichkeit |
 | EMI | Electromagnetic Interference |
-| ESP-IDF | Espressif IoT Development Framework |
+| ESP-IDF | ESP-IDF Framework |
 | GATT | Generic Attribute Profile (BLE) |
 | GPX | GPS Exchange Format (XML-Track-Format) |
 | HIL | Hardware-in-the-Loop |

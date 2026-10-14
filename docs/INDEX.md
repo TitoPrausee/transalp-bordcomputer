@@ -87,7 +87,7 @@ Recherche-Phase: Fundament fuer alle Entscheidungen. Fahrzeugdaten, Hardware-Opt
 |---|---|---|---|---|
 | 01 | [01-sensoren-fahrzeugdaten.md](research/01-sensoren-fahrzeugdaten.md) | Drehzahl, Tacho, Kuehlmitteltemperatur, Kraftstoffstand, Oeldruck, Ganganzeige, Bordspannung — direkte Sensor-Anzapfung an der PD06 mit Schaltungen, Signalcharakteristik und ESP32-Code | 5.750 | Fertig |
 | 02 | [02-hardware-deep-dive.md](research/02-hardware-deep-dive.md) | ESP32-S3, GPS-Module, E-Paper/TFT-Displays, IMU, Barometer, Power-Management (Buck/Boost/LDO), SD-Logging, Bluetooth — Modulauswahl, Preise und Pin-Belegungen | 6.619 | Fertig |
-| 03 | [03-software-stack.md](research/03-software-stack.md) | ESP-IDF vs. Arduino, FreeRTOS Task-Design, GPS-Treiber, Display-Treiber, Sensor-Treiber, Daten-Logging, BLE-Stack, OTA-Update, NVS-Config | 7.374 | Fertig |
+| 03 | [03-software-stack.md](research/03-software-stack.md) | ESP-IDF vs. Arduino-Framework, FreeRTOS Task-Design, GPS-Treiber, Display-Treiber, Sensor-Treiber, Daten-Logging, BLE-Stack, OTA-Update, NVS-Config | 7.374 | Fertig |
 | 04 | [04-pd06-technische-daten.md](research/04-pd06-technische-daten.md) | Motor-/Getriebedaten (Leistung, Drehmoment, Uebersetzungen), Elektrik (Lichtmaschine, Regler, Batterie), Fahrwerk, Tank/Kraftstoff, Service-Manual-Quellen | 5.000 | Fertig |
 | 05 | [05-gehaeuse-einbau-emv.md](research/05-gehaeuse-einbau-emv.md) | 3D-Druck-Gehaeuse, Wasserdichtigkeit (IP-Ratings), Vibrationen/Stoesse, Temperaturbereich, EMV-Schutz (Zuendfunken, Abschirmung), Lastabwurf-Schutz | 5.602 | Fertig |
 | 06 | [06-feature-roadmap.md](research/06-feature-roadmap.md) | Vollstaendige Feature-Roadmap: Core-Features, Smart-Features (BLE+Smartphone), Safety (Crash-Detection, SOS), Tour-Features, Diagnose, App-Konzept | 6.317 | Fertig |
@@ -219,7 +219,7 @@ Die Research-Dokumente bilden das Fundament des Projekts. Sie wurden in Phase 0 
 - Drehzahl: Pickup-Signal an der CDI (Optokoppler) oder Induktivsensor am Zuendkabel.
 - Tacho: mechanische Welle — alternative: GPS-Speed oder Hall-Sensor am Vorderrad.
 - ESP32-S3 als Kernplattform (Dual-Core, BLE, PSRAM, ausreichend GPIO).
-- ESP-IDF mit FreeRTOS statt Arduino fuer volle Kontrolle.
+- ESP-IDF mit FreeRTOS statt Arduino-Framework fuer volle Kontrolle.
 - Kein echtes CarPlay (MFi-Lizenz noetig) — eigene Companion-App als Alternative per BLE-GATT.
 
 ### 3.2 Hardware-Design (5 Dokumente, ~26.494 Woerter)

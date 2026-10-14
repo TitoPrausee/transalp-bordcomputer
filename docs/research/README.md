@@ -21,7 +21,7 @@ selbstaendig lesbar, verweist aber auf verwandte Themen.
 |---|---|---|---|
 | 01 | [`01-sensoren-fahrzeugdaten.md`](01-sensoren-fahrzeugdaten.md) | Drehzahl, Tacho, Kuehlmitteltemp, Kraftstoffstand, Oeldruck, Ganganzeige, Bordspannung — direkte Sensor-Anzapfung an der PD06 mit Schaltungen, Signalcharakteristik und ESP32-Code | ~5.750 |
 | 02 | [`02-hardware-deep-dive.md`](02-hardware-deep-dive.md) | ESP32-S3, GPS-Module, E-Paper/TFT-Displays, IMU, Barometer, Power-Management (Buck/Boost/LDO), SD-Logging, Bluetooth — Modulnamen, Preise, Pin-Belegungen | ~6.600 |
-| 03 | [`03-software-stack.md`](03-software-stack.md) | ESP-IDF vs. Arduino, FreeRTOS Task-Design, GPS-Treiber, Display-Treiber, Sensor-Treiber, Daten-Logging, BLE-Stack, OTA-Update, NVS-Config, Open-Source-Projekte | ~7.400 |
+| 03 | [`03-software-stack.md`](03-software-stack.md) | ESP-IDF vs. Arduino-Framework, FreeRTOS Task-Design, GPS-Treiber, Display-Treiber, Sensor-Treiber, Daten-Logging, BLE-Stack, OTA-Update, NVS-Config, Open-Source-Projekte | ~7.400 |
 | 04 | [`04-pd06-technische-daten.md`](04-pd06-technische-daten.md) | Motor-/Getriebedaten (Leistung, Drehmoment, Uebersetzungen), Elektrik (Lichtmaschine, Regler, Batterie), Fahrwerk, Tank/Kraftstoff, Service-Manual-Quellen, Community-Wissen | ~5.000 |
 | 05 | [`05-gehaeuse-einbau-emv.md`](05-gehaeuse-einbau-emv.md) | 3D-Druck-Gehaeuse, Wasserdichtigkeit (IP-Ratings), Vibrationen/Stoesse, Temperaturbereich, EMV-Schutz (Zuendfunken, Abschirmung), Lastabwurf-Schutz, Stromversorgung im Motorrad-Umfeld | ~5.600 |
 | 06 | [`06-feature-roadmap.md`](06-feature-roadmap.md) | Vollstaendige Feature-Roadmap: Core-Features, Smart-Features (BLE+Smartphone), Safety (Crash-Detection, SOS), Tour-Features, Diagnose, Nice-to-have, Daten-Export, App-Konzept | ~6.300 |
@@ -51,7 +51,7 @@ selbstaendig lesbar, verweist aber auf verwandte Themen.
 - Power: 12V Bordnetz → Buck → 5V → LDO → 3.3V, LiPo-Backup fuer Power-Loss
 
 ### Software
-- ESP-IDF mit FreeRTOS (nicht Arduino) fuer volle Kontrolle
+- ESP-IDF mit FreeRTOS (nicht Arduino-Framework) fuer volle Kontrolle
 - Modulare Task-Architektur: GPS, Display, Sensoren, Logger, BLE, Power
 - OTA-Update ueber BLE mit Dual-Partition-Rollback
 
@@ -97,7 +97,7 @@ Die Forschungsdokumente wurden in einem iterativen Prozess erstellt:
    Power-Management-Komponenten untersucht.
 
 3. **Phase 0c — Software-Architektur**: Die Software-Entscheidung fiel
-   auf ESP-IDF mit FreeRTOS statt Arduino, um volle Kontrolle ueber
+   auf ESP-IDF mit FreeRTOS statt Arduino-Framework, um volle Kontrolle ueber
    Task-Scheduling, Speicher-Management und Treiber-Integration zu
    haben. Die Task-Architektur wurde modular entworfen: GPS, Display,
    Sensoren, Logger, BLE und Power laufen als eigenstaendige FreeRTOS-Tasks

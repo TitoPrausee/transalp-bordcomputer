@@ -1178,7 +1178,7 @@ Bohrungen: M2.5-Befestigungslöcher in den Ecken
 - docs/research/05-gehaeuse-einbau-emv.md — EMV, Vibration, Wasserdichtigkeit
 - docs/research/11-firmware-architecture.md — Sensor-Pipeline, Treiber-Pins
 - docs/PINMAP.md — Vollstaendige Pin-Tabelle (Referenz fuer board_config.h)
-- ESP32-S3 Datasheet (Espressif) — Pin-Mux, ADC-Kanaele, Strapping-Pins
+- ESP32-S3 Datasheet (MCU-Chiphersteller) — Pin-Mux, ADC-Kanaele, Strapping-Pins
 - MP1584 Datasheet (MPS) — Buck-Converter Spezifikation
 - HT7333 Datasheet (Holtek) — LDO Spezifikation
 - PC817 Datasheet (Sharp) — Optokoppler

@@ -29,3 +29,5 @@
 \b[Aa]cumen\b
 \b[Aa]mazon\b
 \b[Ee][Bb]ay\b
+\b[Aa]li[Ee]xpress\b
+\bRaspberry\s?[Pp]i\b

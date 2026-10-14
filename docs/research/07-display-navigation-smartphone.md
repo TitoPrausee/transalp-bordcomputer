@@ -97,7 +97,7 @@ Ein Full-Screen-Framebuffer fuer 480x320 bei 16-bit RGB565 benoetigt 480 * 320 *
 
 Loesung: PSRAM. Der ESP32-S3 mit N8R8-Konfiguration hat 8 MB octal PSRAM. Dort passen mehrere Framebuffer problemlos. Wichtig: SPI-DMA kann nicht direkt von PSRAM lesen. Das ESP-IDF-LCD-Treiber bietet dafuer den "Bounce Buffer"-Modus, bei dem Daten in kleinen Bloecken vom PSRAM-Framebuffer in interne SRAM-Bounce-Buffer kopiert und von dort per DMA an das Display gesendet werden.
 
-Der empfohlene Ansatz nach Espressif-Dokumentation:
+Der empfohlene Ansatz laut SDK-Dokumentation:
 - Framebuffer im PSRAM (full PSRAM canvas)
 - Kleiner DMA-faehiger SRAM-Buffer als Transfer-Buffer (trans_size)
 - In der Flush-Callback: Daten in Bloecken von PSRAM nach SRAM kopieren und pro Block an das Display senden

@@ -36,11 +36,11 @@
 
 | # | Bauteil | Spezifikation | Menge | Preis (EUR) | Quelle |
 |---|---|---|---|---|---|
-| 17 | MP1584EN Buck-Modul | 12V→5V, 1,5MHz, 3A, 4,5-28V Input, 22x15mm | 1 | 1,50 | AliExpress |
+| 17 | MP1584EN Buck-Modul | 12V→5V, 1,5MHz, 3A, 4,5-28V Input, 22x15mm | 1 | 1,50 | China-Marktplatz |
 | 18 | HT7333 LDO | 5V→3,3V, 250mA, 30µVrms Rauschen, SOT-89 | 1 | 0,50 | Reichelt |
 | 19 | 18650 Li-Ion Akku | 3400mAh, 3,7V, geschützt mit PCB (Backup) | 1 | 6,00 | Online-Marktplatz |
-| 20 | TP4056 Lademodul | 5V Input, 1A Ladestrom, USB-C, mit Schutz | 1 | 0,50 | AliExpress |
-| 21 | MT3608 Boost-Modul | 3,7V→5V, 2A, bis 28V Output, 17x11mm | 1 | 0,80 | AliExpress |
+| 20 | TP4056 Lademodul | 5V Input, 1A Ladestrom, USB-C, mit Schutz | 1 | 0,50 | China-Marktplatz |
+| 21 | MT3608 Boost-Modul | 3,7V→5V, 2A, bis 28V Output, 17x11mm | 1 | 0,80 | China-Marktplatz |
 | 22 | TVS-Diode SMAJ15A | 15V Standoff, 24,4V Clamp, 400W, SMA | 2 | 1,00 | Reichelt |
 | 23 | Schottky-Diode 1N5822 | 3A, 40V, DO-201AD, für Power-Path ORing | 2 | 0,20 | Reichelt |
 | 24 | Sicherung 5A | Flachsicherung ATO/ATC + Inline-Halter | 1 | 1,00 | Reichelt |
@@ -131,7 +131,7 @@
 
 ### Phase 1: Langlaufend (Woche 1)
 1. PCB-Fertigung bei JLCPCB (5-8 Tage)
-2. NEO-M9N bei TME (3-7 Tage, kein AliExpress — Clone-Risiko)
+2. NEO-M9N bei TME (3-7 Tage, kein China-Marktplatz — Clone-Risiko)
 3. ESP32-S3-WROOM-1 bei Mouser (3-5 Tage)
 4. BMI270 + BMP390 bei Mouser (5-10 Tage)
 5. TC4427 bei Mouser (5-10 Tage)
@@ -140,7 +140,7 @@
 ### Phase 2: Mittellaufend (Woche 2)
 7. Passive Bauelemente bei Reichelt (2-3 Tage)
 8. Standard-Halbleiter bei Reichelt (2-5 Tage)
-9. Module bei AliExpress: MP1584EN, TP4056, MT3608 (7-14 Tage)
+9. Module bei China-Marktplatz: MP1584EN, TP4056, MT3608 (7-14 Tage)
 10. USB-C IP67 bei Reichelt (2-4 Tage)
 11. Sensor-Kabel + JST-SM bei Online-Marktplatz (2-4 Tage)
 12. Ferritkerne bei Online-Marktplatz (2-4 Tage)

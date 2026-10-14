@@ -65,7 +65,7 @@ die Companion-App (React Native).
 
 #### Firmware (ESP-IDF v5.x)
 
-Die Firmware basiert auf dem ESP-IDF (Espressif IoT Development
+Die Firmware basiert auf dem ESP-IDF (dem offiziellen IoT Development
 Framework) in der Version v5.4. Die komplette Einrichtung des
 ESP-IDF, inklusive Cross-Compiler und Build-Tools, ist in
 [`docs/FIRMWARE-GUIDE.md`](docs/FIRMWARE-GUIDE.md) beschrieben.

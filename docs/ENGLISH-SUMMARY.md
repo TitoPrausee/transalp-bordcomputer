@@ -42,7 +42,7 @@ complete, documented, open-source alternative.
 
 The system is built around the ESP32-S3, a powerful dual-core
 microcontroller running at 240 MHz with 16 MB of flash and 8 MB of
-PSRAM. The firmware is developed using ESP-IDF (Espressif IoT
+PSRAM. The firmware is developed using ESP-IDF (the official IoT
 Development Framework) v5.4 with FreeRTOS in Symmetric Multi-Processing
 (SMP) mode, enabling true parallel task execution across both CPU
 cores. The project does not use the Arduino framework — it targets
@@ -278,7 +278,7 @@ category. Links point to the actual (German-language) documents.
 |---|----------|-------------------|-------|
 | 01 | [01-sensoren-fahrzeugdaten.md](research/01-sensoren-fahrzeugdaten.md) | Vehicle sensors: RPM, speed, coolant temperature, fuel level, oil pressure, gear indication, board voltage — direct sensor tapping on the PD06 with circuit diagrams, signal characteristics, and ESP32 code | ~5,750 |
 | 02 | [02-hardware-deep-dive.md](research/02-hardware-deep-dive.md) | Hardware deep dive: ESP32-S3, GPS modules, E-Paper/TFT displays, IMU, barometer, power management (buck/boost/LDO), SD logging, Bluetooth — module selection, prices, pin assignments | ~6,600 |
-| 03 | [03-software-stack.md](research/03-software-stack.md) | Software stack: ESP-IDF vs. Arduino, FreeRTOS task design, GPS driver, display driver, sensor driver, data logging, BLE stack, OTA update, NVS config, open-source projects | ~7,400 |
+| 03 | [03-software-stack.md](research/03-software-stack.md) | Software stack: ESP-IDF vs. Arduino-Framework, FreeRTOS task design, GPS driver, display driver, sensor driver, data logging, BLE stack, OTA update, NVS config, open-source projects | ~7,400 |
 | 04 | [04-pd06-technische-daten.md](research/04-pd06-technische-daten.md) | PD06 technical data: engine and transmission specs (power, torque, ratios), electrical system (alternator, regulator, battery), chassis, tank and fuel, service manual sources | ~5,000 |
 | 05 | [05-gehaeuse-einbau-emv.md](research/05-gehaeuse-einbau-emv.md) | Enclosure, installation, and EMC: 3D-printed case design, water resistance (IP ratings), vibration and shock, temperature range, EMC protection (ignition interference, shielding), load-dump protection, power supply in motorcycle environment | ~5,600 |
 | 06 | [06-feature-roadmap.md](research/06-feature-roadmap.md) | Feature roadmap: core features, smart features (BLE + smartphone), safety (crash detection, SOS), tour features, diagnostics, nice-to-have, data export, app concept | ~6,300 |

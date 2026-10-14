@@ -945,7 +945,7 @@ ein Board dieser Komplexitaet (ca. 50 Bauteile) liegen bei
    Sensoren vermeiden: ADC1 GPIO1-10 verwenden).
 
 2. **Footprints waehlen**: WROOM-1-Footprint aus dem
-   Espressif-KiCad-Library. USB-C IP67-Footprint vom Hersteller.
+   MCU-Chiphersteller-KiCad-Library. USB-C IP67-Footprint vom Hersteller.
    Alle passiven Bauteile als 0805-SMD.
 
 3. **Placement nach Abschnitt 3**: Komponenten nach dem
@@ -989,7 +989,7 @@ ein Board dieser Komplexitaet (ca. 50 Bauteile) liegen bei
   Conformal Coating, Vibration
 - 09-master-plan.md: BOM, Kosten-Schaetzung
 - 11-firmware-architecture.md: SPI-Bus-Struktur, Task-Architektur
-- Espressif ESP32-S3 Datasheet:
+- ESP32-S3 Datasheet:
   https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf
 - JLCPCB Capabilities:
   https://jlcpcb.com/capabilities/pcb-capabilities
