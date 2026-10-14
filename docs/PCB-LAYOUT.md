@@ -578,7 +578,7 @@ fuer EMV-Stoerungen. Massnahmen:
 
 **Geschirmte Kabel:**
 
-- Externe Sensoren (Kuehlmitteltemp NTC, Oeldruck VDO, Kraftstoffgeber)
+- Externe Sensoren (Kuehlmitteltemp NTC, Oeldruck Aftermarket, Kraftstoffgeber)
   werden mit abgeschirmten Kabeln (geflochtener Schirm, SFTP) angeschlossen
 - Schirm an EINEM Ende auf Masse legen (Gehaeuseseite / PCB-GND am
   Steckverbinder), um Masseschleifen zu vermeiden

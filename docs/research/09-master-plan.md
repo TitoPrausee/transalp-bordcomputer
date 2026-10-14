@@ -33,7 +33,7 @@ alle Must- und die wichtigsten Should-Features ab für ca. 125 EUR.
 
 Die folgende Tabelle listet alle Komponenten mit konkreten Preisen in EUR auf.
 Preise sind Richtwerte (Stand 2026) und beziehen sich auf Einzelstückpreise bei
-AliExpress, Amazon, Mouser oder DigiKey. Bei Stückzahlen ab 10 fallen die Preise
+AliExpress, Online-Marktplatz, Mouser oder DigiKey. Bei Stückzahlen ab 10 fallen die Preise
 typischerweise um 20-40%.
 
 Jede Komponente hat einen Budget- und einen Premium-Vorschlag. Budget-Teile
@@ -60,7 +60,7 @@ bietet — "Premium" bedeutet nicht immer "teuer", sondern "bester Wert".
 | 8 | IMU | MPU6050 (2) | BMI270 (5) | Premium | I2C |
 | 9 | Barometer | BMP280 (2) | BMP388 (5) | Premium | I2C |
 | 10 | Kühlmitteltemp | NTC 10k Thermistor (1) | DS18B20 wasserdicht (3) | Premium | 1-Wire |
-| 11 | Öldrucksensor | — (Originalschalter, digital) | VDO 0-5 bar analog (25) | Standard-Stufe | ADC |
+| 11 | Öldrucksensor | — (Originalschalter, digital) | Aftermarket 0-5 bar analog (25) | Standard-Stufe | ADC |
 | 12 | Kraftstoffstand | Spannungsteiler am Originalgeber (1) | Spannungsteiler + OpAmp (3) | Premium | ADC |
 | 13 | Bordspannung | Spannungsteiler 100k/33k (1) | Spannungsteiler + RC-Filter (2) | Budget (reicht) | ADC |
 | 14 | Zündimpuls (RPM) | PC817 Optokoppler (1) | PC817 + Zener + RC-Filter (3) | Premium | GPIO/IRQ |
@@ -136,7 +136,7 @@ saubere Perfboard-Lösung.
 | Kategorie | Summe (EUR) |
 |---|---|
 | Kern-System (WROOM-1 N8R2, NEO-M9N, Waveshare 3.5" IPS, SD) | 56 |
-| Sensoren (BMI270, BMP388, DS18B20 x2, VDO Öldruck, PC817+, OpAmp) | 42 |
+| Sensoren (BMI270, BMP388, DS18B20 x2, Aftermarket Öldruck, PC817+, OpAmp) | 42 |
 | Power (MP1584+TVS, HT7333, 18650, TP4056, MT3608, Diode) | 11 |
 | Konnektivität (Buzzer, Relais, IRLZ44N+TC4427) | 8 |
 | Gehäuse (ASA, Silikon, PG7+PG9, GORE Vent, RAM-Mount) | 28 |
@@ -192,7 +192,7 @@ Mehrpreise gegenüber der Budget-Option.
 | Waveshare 3.5" IPS 1000 nits | +12 | Sonnenlesbarkeit | 1000 nits ist das Minimum für direktes Sonnenlicht am Lenker. |
 | E-Paper 2.13" als Zweitdisplay | +12 | Statische Werte immer sichtbar | TFT aus = Kraftstoff/Trip immer noch da. Low Power. |
 | 18650 Backup-Akku | +8 | Power-Loss-Schutz, Diebstahlschutz | 8 EUR für Datensicherheit und Tiefgaragen-Tracking. |
-| VDO Öldrucksensor | +25 | Analoge Öldruckanzeige | Teuerster Einzelposten. Lohnt sich für Motoren über 50.000 km. |
+| Aftermarket Öldrucksensor | +25 | Analoge Öldruckanzeige | Teuerster Einzelposten. Lohnt sich für Motoren über 50.000 km. |
 | IRLZ44N+TC4427 für Heizgriffe | +2 | Stufenlose PWM-Regelung | 2 EUR für komfortable Heizgriff-Steuerung. |
 
 #### Mittleres Kosten-Nutzen-Verhältnis (optional)
@@ -358,7 +358,7 @@ und Bordspannung an.
 - Kraftstoffstand: ADC-Lesung am Originalgeber, Kennlinien-Kalibrierung
   (Widerstand -> Füllstand, nicht-linear), Reichweitenberechnung
   aus Verbrauch (gleitender Durchschnitt über 50 km)
-- Öldruck: Falls analoger VDO-Sensor verbaut: ADC-Lesung,
+- Öldruck: Falls analoger Aftermarket-Sensor verbaut: ADC-Lesung,
   Widerstand-zu-Druck-Umrechnung, Warnung bei < 0.5 bar Leerlauf
   oder < 1.5 bar bei höherer Drehzahl
 - Falls nur Originalschalter: Warnung bei Öldruckabfall (digital)
@@ -1255,12 +1255,12 @@ JSON fallen die Werte auf kompilierte Defaults zurück.
 | u-blox NEO-M9N | Mouser / DigiKey | Original (Clones sind oft Fakes) |
 | BMI270, BMP388 | Mouser / DigiKey | Original-Sensoren (nicht Clone) |
 | DS18B20 | Mouser / DigiKey | Original (Fakes im Umlauf) |
-| Displays (Waveshare) | Waveshare Store / Amazon | Original |
-| VDO Öldrucksensor | KFZ-Teileshop / eBay | Spezifisches Bauteil |
+| Displays (Waveshare) | Waveshare Store / Online-Marktplatz | Original |
+| Aftermarket Öldrucksensor | KFZ-Teileshop / Online-Marktplatz | Spezifisches Bauteil |
 | Passive Bauteile (R, C) | Mouser / DigiKey | Großpackungen |
 | Gehäuse-Filament (ASA) | Prusa / Filament-Shop | Qualität |
 | GORE PolyVent | Gore direkt / Distributor | Spezialprodukt |
-| SD-Karte | Marken-Hersteller direkt / Amazon | Markenprodukt |
+| SD-Karte | Marken-Hersteller direkt / Online-Marktplatz | Markenprodukt |
 | Custom PCB | JLCPCB / PCBWay | 5 Stück ab 2 EUR + Bestückung |
 | Steckverbinder | Molex / RS Components | Vibrationssicher |
 
@@ -1289,7 +1289,7 @@ Besonders folgende Komponenten werden häufig gefälscht:
 | u-blox NEO-M9N | Sehr hoch (AliExpress unter 15 EUR) | Original nur bei Mouser/DigiKey, Markierung lasergraviert |
 | DS18B20 | Hoch | Fakes liefern falsche Werte, CRC-Fehler; Test: Eiswasser = 0°C |
 | ESP32-S3 | Mittel | DevKitC-1 original hat Espressif-Logo und USB-Bridge CH343 |
-| Marken-SD-Karte | Hoch (bei Amazon Marketplace) | Originalverpackung, Serial auf Hersteller-Website verifizieren |
+| Marken-SD-Karte | Hoch (bei Online-Marktplatz Marketplace) | Originalverpackung, Serial auf Hersteller-Website verifizieren |
 
 ---
 
@@ -1367,32 +1367,32 @@ Diese Tabelle ist die Einkaufsliste für die empfohlene Standard-Stufe.
 | 3 | Active Patch Antenne 25x25 | GPS-Antenne mit Verstärker | 1 | 8 | 8 | Mouser |
 | 4 | Waveshare 3.5" IPS | 480x320, 1000 nits, ILI9488 | 1 | 18 | 18 | Waveshare |
 | 5 | E-Paper 2.13" | 250x122, SSD1680 | 1 | 12 | 12 | Waveshare |
-| 6 | MicroSD Breakout | SPI, Standard | 1 | 2 | 2 | Amazon |
-| 7 | Marken-SD-Karte Ultra 16GB | microSD, Class 10 | 1 | 6 | 6 | Amazon |
+| 6 | MicroSD Breakout | SPI, Standard | 1 | 2 | 2 | Online-Marktplatz |
+| 7 | Marken-SD-Karte Ultra 16GB | microSD, Class 10 | 1 | 6 | 6 | Online-Marktplatz |
 | 8 | BMI270 | IMU, 6-Achsen, I2C | 1 | 5 | 5 | Mouser |
 | 9 | BMP388 | Barometer, I2C | 1 | 5 | 5 | Mouser |
 | 10 | DS18B20 | wasserdicht, 1-Wire | 2 | 3 | 6 | Mouser |
-| 11 | VDO Öldrucksensor | 0-5 bar, 10-180 Ohm | 1 | 25 | 25 | KFZ-Shop |
+| 11 | Aftermarket Öldrucksensor | 0-5 bar, 10-180 Ohm | 1 | 25 | 25 | KFZ-Shop |
 | 12 | PC817 Optokoppler | RPM-Pickup | 2 | 0.50 | 1 | Mouser |
 | 13 | Zener-Diode 3.3V | Überspannungsschutz | 2 | 0.20 | 0.40 | Mouser |
-| 14 | MP1584EN Modul | Buck 12V->5V | 1 | 2 | 2 | Amazon |
+| 14 | MP1584EN Modul | Buck 12V->5V | 1 | 2 | 2 | Online-Marktplatz |
 | 15 | TVS-Diode SMAJ15A | Lastabwurf-Schutz | 2 | 0.50 | 1 | Mouser |
 | 16 | HT7333 LDO | 5V->3.3V, low noise | 1 | 0.50 | 0.50 | Mouser |
 | 17 | 18650 NCR18650B | 3400 mAh Li-Ion | 1 | 6 | 6 | Conrad |
-| 18 | TP4056 Modul | Lademodul mit Schutz | 1 | 0.50 | 0.50 | Amazon |
-| 19 | MT3608 Modul | Boost 3.7V->5V | 1 | 0.80 | 0.80 | Amazon |
+| 18 | TP4056 Modul | Lademodul mit Schutz | 1 | 0.50 | 0.50 | Online-Marktplatz |
+| 19 | MT3608 Modul | Boost 3.7V->5V | 1 | 0.80 | 0.80 | Online-Marktplatz |
 | 20 | 1N5822 Schottky | Power-Path ORing | 2 | 0.10 | 0.20 | Mouser |
-| 21 | Piezo-Buzzer | Passiv | 1 | 1 | 1 | Amazon |
-| 22 | Relais-Modul 4-Kanal | SRD-12V, Optokoppler | 1 | 4 | 4 | Amazon |
+| 21 | Piezo-Buzzer | Passiv | 1 | 1 | 1 | Online-Marktplatz |
+| 22 | Relais-Modul 4-Kanal | SRD-12V, Optokoppler | 1 | 4 | 4 | Online-Marktplatz |
 | 23 | IRLZ44N MOSFET | Heizgriffe PWM | 1 | 1.50 | 1.50 | Mouser |
 | 24 | TC4427 Gate-Driver | 3.3V->12V Gate-Drive | 1 | 2 | 2 | Mouser |
 | 25 | ASA Filament 1kg | UV-beständig, 100°C Tg | 1 | 5 | 5 | Prusa |
-| 26 | Silikon-O-Ring | Dichtung, -40 bis +200°C | 2 | 1 | 2 | Amazon |
-| 27 | PG7 Cable-Gland | IP67, für Sensorkabel | 4 | 1 | 4 | Amazon |
-| 28 | PG9 Cable-Gland | IP67, für Starkstrom | 2 | 1.50 | 3 | Amazon |
+| 26 | Silikon-O-Ring | Dichtung, -40 bis +200°C | 2 | 1 | 2 | Online-Marktplatz |
+| 27 | PG7 Cable-Gland | IP67, für Sensorkabel | 4 | 1 | 4 | Online-Marktplatz |
+| 28 | PG9 Cable-Gland | IP67, für Starkstrom | 2 | 1.50 | 3 | Online-Marktplatz |
 | 29 | GORE PolyVent XS | Druckausgleich, IP68 | 1 | 8 | 8 | Gore |
-| 30 | RAM-Mount Kugelgelenk | Lenkerhalterung 22mm | 1 | 8 | 8 | Amazon |
-| 31 | ATO Sicherungskasten | 6-fach, wasserdicht | 1 | 5 | 5 | Amazon |
+| 30 | RAM-Mount Kugelgelenk | Lenkerhalterung 22mm | 1 | 8 | 8 | Online-Marktplatz |
+| 31 | ATO Sicherungskasten | 6-fach, wasserdicht | 1 | 5 | 5 | Online-Marktplatz |
 | 32 | Verbrauchsmaterial | Kabel, Widerstände, Kondensatoren | — | 5 | 5 | Mouser |
 | | | | | **Gesamt** | **~181** | |
 | | | | | Puffer 15% | 27 | |

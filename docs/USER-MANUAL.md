@@ -862,7 +862,7 @@ Das Signal kann am Pin 5 der CDI-Box abgegriffen werden (mit Optokoppler oder ka
 
 Die Ölablassschraube der Transalp 600 hat ein Gewinde von M14 × 1,5 (metrisches Feingewinde) und ein Anzugsdrehmoment von 34 Nm. Sie befindet sich an der Unterseite des Kurbelgehäuses.
 
-Für die Motoröltemperatur-Messung kann ein Temperatursensor mit M14 × 1,5 Gewinde anstelle der originalen Ölablassschraube montiert werden. Es gibt Aftermarket-Sensoren (z.B. von Koso oder VDO), die dieses Gewinde haben und einen Temperatursensor integrieren.
+Für die Motoröltemperatur-Messung kann ein Temperatursensor mit M14 × 1,5 Gewinde anstelle der originalen Ölablassschraube montiert werden. Es gibt Aftermarket-Sensoren gängiger Motorrad-Tacho-Hersteller, die dieses Gewinde haben und einen Temperatursensor integrieren.
 
 **Vorgehensweise:**
 1. Motoröl ablassen (warm, damit es flüssiger ist — Vorsicht: heiß!).

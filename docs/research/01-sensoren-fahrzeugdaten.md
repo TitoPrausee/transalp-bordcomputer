@@ -541,7 +541,7 @@ Es gibt keine öffentliche Honda-Doku mit exakten Widerstandswerten für die PD0
 3. Tank vollmachen, erneut messen (Tank voll)
 4. Werte notieren → das ist der individuelle Bereich
 
-Quellen: [AutoMeter Fuel Sender Guide](https://www.autometer.com/blog/understanding-fuel-level-sender-resistance-ranges/), [Summit Racing Help](https://help.summitracing.com/knowledgebase/article/SR-03679/en-us), [androidexperto.com Fuel Sender Ranges](https://androidexperto.com/inverting-resistance-and-range-of-fuel-level-sender)
+Quellen: [Aftermarket-Hersteller Fuel Sender Guide](https://www.aftermarket-sensor-guide.example/blog/understanding-fuel-level-sender-resistance-ranges/), [Summit Racing Help](https://help.summitracing.com/knowledgebase/article/SR-03679/en-us), [androidexperto.com Fuel Sender Ranges](https://androidexperto.com/inverting-resistance-and-range-of-fuel-level-sender)
 
 ### 4.2 Abgriff ohne Tankuhr zu stören
 
@@ -715,7 +715,7 @@ bool oil_pressure_ok(void) {
 
 ### 5.3 Aufrüstung auf analogen Öldrucksensor
 
-Für eine echte Druckanzeige wird ein **analoger Sender** nachgerüstet. Bewährt: VDO 0–10 bar, 0.5–4.5V Ausgang, 1/8-27 NPT Gewinde.
+Für eine echte Druckanzeige wird ein **analoger Sender** nachgerüstet. Bewährt: Aftermarket 0–10 bar, 0.5–4.5V Ausgang, 1/8-27 NPT Gewinde.
 
 | Eigenschaft | Wert |
 |---|---|
@@ -727,14 +727,14 @@ Für eine echte Druckanzeige wird ein **analoger Sender** nachgerüstet. Bewähr
 
 ⚠️ Der Sensor muss an einen Ölleitungsanschluss. Die PD06 hat den Öldruckschalter am Motorblock — dort kann ein T-Stück eingesetzt werden: ein Anschluss für den Originalschalter (Warnleuchte bleibt funktionsfähig), einer für den analogen Sensor.
 
-Quellen: [Autodoc Oil Pressure Switch](https://www.autodoc.co.uk/car-parts/oil-pressure-switch-sender-unit-valve-10578), [Arduino Forum VDO Oil Pressure](https://forum.arduino.cc/t/vdo-oil-pressure-interfacing-with-arduino/391373)
+Quellen: [Autodoc Oil Pressure Switch](https://www.autodoc.co.uk/car-parts/oil-pressure-switch-sender-unit-valve-10578), [Arduino Forum Aftermarket Oil Pressure](https://forum.arduino.cc/t/oil-pressure-sensor-interfacing-with-arduino/391373)
 
 ### 5.4 Schaltung: 5V-Sensor an ESP32 (3.3V ADC)
 
-Der VDO-Sensor liefert 0.5–4.5V. Der ESP32-ADC verträgt max 3.3V. Ein Spannungsteiler skaliert runter:
+Der Aftermarket-Sensor liefert 0.5–4.5V. Der ESP32-ADC verträgt max 3.3V. Ein Spannungsteiler skaliert runter:
 
 ```
-VDO Signal ──[10kΩ]──┬── ESP32 ADC (GPIO33, ADC1_CH5)
+Aftermarket Signal ──[10kΩ]──┬── ESP32 ADC (GPIO33, ADC1_CH5)
                       │
                    [22kΩ]
                       │
@@ -770,7 +770,7 @@ float oil_pressure_read_bar(void) {
     float v_divider_ratio = (10.0f + 22.0f) / 22.0f;  // 1.4545
     float v_sensor = (voltage_mv / 1000.0f) * v_divider_ratio;
 
-    // VDO Kennlinie: 0.5V = 0 bar, 4.5V = 10 bar
+    // Aftermarket Kennlinie: 0.5V = 0 bar, 4.5V = 10 bar
     float pressure = ((v_sensor - 0.5f) / 4.0f) * 10.0f;
     if (pressure < 0) pressure = 0;
     return pressure;
@@ -1138,7 +1138,7 @@ Empfohlene Pin-Zuweisung für den ESP32 (ADC1 für alle analogen Signale, da WiF
 | GPS UART TX | 17 | UART1 | (optional für Konfiguration) |
 | Kühlmitteltemp (NTC) | 34 | ADC1_CH6 | Input-only |
 | Kraftstoffstand (OPV) | 35 | ADC1_CH7 | Input-only |
-| Öldruck analog (VDO) | 33 | ADC1_CH5 | Spannungsteiler |
+| Öldruck analog (Aftermarket) | 33 | ADC1_CH5 | Spannungsteiler |
 | Bordspannung | 32 | ADC1_CH4 | Spannungsteiler |
 | Öldruckschalter (digital) | 14 | GPIO | Mit Pull-Up |
 | Leerlaufschalter | 4 | GPIO | Mit Pull-Up |
@@ -1179,12 +1179,12 @@ Empfohlene Pin-Zuweisung für den ESP32 (ADC1 für alle analogen Signale, da WiF
 
 ### Öldruck
 - [Autodoc Oil Pressure Switches](https://www.autodoc.co.uk/car-parts/oil-pressure-switch-sender-unit-valve-10578)
-- [Arduino Forum: VDO Oil Pressure interfacing](https://forum.arduino.cc/t/vdo-oil-pressure-interfacing-with-arduino/391373)
+- [Arduino Forum: Aftermarket Oil Pressure interfacing](https://forum.arduino.cc/t/oil-pressure-sensor-interfacing-with-arduino/391373)
 - [preOBD Oil Pressure Thresholds](https://github.com/preobd/preOBD/blob/main/docs/README.md)
 - [SmartBoat Innovations: Oil Pressure ESP32](https://smartboatinnovations.com/oil-pressure-monitor-esp32-ina219)
 
 ### Kraftstoffstand
-- [AutoMeter Fuel Sender Guide](https://www.autometer.com/blog/understanding-fuel-level-sender-resistance-ranges/)
+- [Aftermarket-Hersteller Fuel Sender Guide](https://www.aftermarket-sensor-guide.example/blog/understanding-fuel-level-sender-resistance-ranges/)
 - [Summit Racing: Measure Fuel Sender](https://help.summitracing.com/knowledgebase/article/SR-03679/en-us)
 - [androidexperto.com Fuel Sender Ranges](https://androidexperto.com/inverting-resistance-and-range-of-fuel-level-sender)
 

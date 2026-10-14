@@ -2,7 +2,7 @@
 
 > Stand: Oktober 2026 — Exhaustive Recherche zur kompletten Hardware-Auslegung.
 > Fahrzeug: Honda Transalp 600 (PD06), Baujahr 1986–2000, rein mechanisch, keine ECU.
-> Alle Preise sind Richtwerte (AliExpress / Amazon / DigiKey / Mouser, Stand 2026).
+> Alle Preise sind Richtwerte (AliExpress / Online-Marktplatz / DigiKey / Mouser, Stand 2026).
 
 ## Inhalt
 

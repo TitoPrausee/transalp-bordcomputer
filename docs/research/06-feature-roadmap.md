@@ -325,7 +325,7 @@ in direkter Sonne).
 **Hardware:**
 - Die PD06 hat eine Oeldruck-Warnleuchte (Schalter, der bei zu niedrigem Druck
   aufleuchtet). Dieser Schalter ist digital (ON/OFF), nicht analog.
-- Fuer analogen Oeldruck: Oeldrucksensor mit analogem Ausgang (z.B. VDO
+- Fuer analogen Oeldruck: Oeldrucksensor mit analogem Ausgang (z.B. Aftermarket
   0-5 bar, 10-180 Ohm), der anstelle des Originalschalters in den Oelkreislauf
   eingebaut wird. Benoetigt Adaptergewinde (M10x1, M14x1.5 etc., je nach PD06).
 - Spannungsteiler + ADC zur Erfassung
@@ -1299,7 +1299,7 @@ Moegliche Integrationen:
 | Zündspulen-Pickup | RPM | 2-5 EUR | GPIO/IRQ |
 | Piezo-Buzzer | Audio | 1 EUR | GPIO |
 | WS2812B-Strip | LED | 2-3 EUR | GPIO |
-| VDO Oeldrucksensor | Oeldruck | 20-30 EUR | ADC |
+| Aftermarket Oeldrucksensor | Oeldruck | 20-30 EUR | ADC |
 | ZEEPIN TP630 | TPMS | 20-30 EUR | BLE |
 | **Gesamt (Basis)** | | **~50-70 EUR** | |
 | **Gesamt (Vollausbau)** | | **~120-150 EUR** | |
@@ -1341,7 +1341,7 @@ Moegliche Integrationen:
 - TPMS 433MHz + BLE: https://github.com/andi38/TPMS
 
 ### PD06 Transalp
-- Oeldruckschalter: https://www.ebay.com/itm/384471229975
+- Oeldruckschalter: https://www.Online-Marktplatz/itm/384471229975
 - ADVrider Forum (PD06): https://advrider.com/f/threads/africa-twin-tank-on-transalp-mod-fuel-pumps.1206792
 
 ### BLE / Web Bluetooth

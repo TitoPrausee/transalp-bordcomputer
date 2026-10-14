@@ -484,7 +484,7 @@ Quelle: [xrv.org.uk](http://xrv.org.uk/forums/transalp-technical-specs/39889-hon
 | Warnschalter-Schaltpunkt | ca. 0,2–0,4 bar (Schließer, öffnet bei Druck) |
 | Öldruck (warm) | 4,5 bar @ 6.000 U/min bei 80°C Öltemperatur |
 
-Für eine Öldruck-Anzeige mit analogen Wert muss der Serien-Schalter durch einen T-Stück-Adapter ersetzt werden, um sowohl den Warnschalter als auch einen Drucksensor (z.B. VDO, AutoMeter oder AEM) zu behalten. Der Gewindeanschluss am Motorblock ist M10 × 1,0. Ein Adapter von M10 auf 1/8 NPT ist erforderlich. Alternative: ein Öldruck-Testport am Motorblock (nicht bei allen Modelljahren vorhanden).
+Für eine Öldruck-Anzeige mit analogen Wert muss der Serien-Schalter durch einen T-Stück-Adapter ersetzt werden, um sowohl den Warnschalter als auch einen Drucksensor (z.B. Aftermarket, Aftermarket-Hersteller oder Aftermarket-Alternative) zu behalten. Der Gewindeanschluss am Motorblock ist M10 × 1,0. Ein Adapter von M10 auf 1/8 NPT ist erforderlich. Alternative: ein Öldruck-Testport am Motorblock (nicht bei allen Modelljahren vorhanden).
 
 ### Kühlmitteltemperatur
 
@@ -494,7 +494,7 @@ Für eine Öldruck-Anzeige mit analogen Wert muss der Serien-Schalter durch eine
 | Kühlmitteltemperatur-Sensor | Serienmäßig kein elektronischer Sensor; nur Thermostat |
 | Einbaupunkt für Aftermarket-Sensor | Kühlschlauch-Inline-Sensor (O-Ring-Schelle), am oberen Kühlschlauch |
 
-Die Transalp hat serienmäßig keine elektronische Kühlmitteltemperatur-Anzeige, nur eine Warnlampe (bei einigen Modellen). Für eine Temperaturanzeige muss ein Inlinesensor in den oberen Kühlschlauch (vom Motor zum Kühler) eingesetzt werden. Gängige Grössen: Innendurchmesser des Schlauchs messen (meist 32–36 mm), dann passenden Inline-Adapter kaufen (z.B. von Trail Tech, Koso oder VDO).
+Die Transalp hat serienmäßig keine elektronische Kühlmitteltemperatur-Anzeige, nur eine Warnlampe (bei einigen Modellen). Für eine Temperaturanzeige muss ein Inlinesensor in den oberen Kühlschlauch (vom Motor zum Kühler) eingesetzt werden. Gängige Grössen: Innendurchmesser des Schlauchs messen (meist 32–36 mm), dann passenden Inline-Adapter bei Aftermarket-Händlern kaufen.
 
 ### Drehzahl (RPM)
 
@@ -545,7 +545,7 @@ Für eine Ganganzeige gibt es zwei Ansätze:
 | Petcock-Stellungen | ON / RES / PRI (Unterdruck-betätigt) |
 | Tankgeber-Nachrüstung | Aftermarket-Sender (z.B. 240-33 Ohm oder 0-190 Ohm), Einbau durch Tanköffnung |
 
-Der Tank hat eine Öffnung oben, durch die der Petcock und die Kraftstoffleitung führen. Für einen elektronischen Tankgeber muss ein Schwimmer-Sensor durch diese Öffnung oder durch eine separate Bohrung im Tankdeckel installiert werden. Alternativ kann ein externer Durchfluss-Sensor im Kraftstoffschlauch montiert werden (wie bei der Koso RX-2N Serie).
+Der Tank hat eine Öffnung oben, durch die der Petcock und die Kraftstoffleitung führen. Für einen elektronischen Tankgeber muss ein Schwimmer-Sensor durch diese Öffnung oder durch eine separate Bohrung im Tankdeckel installiert werden. Alternativ kann ein externer Durchfluss-Sensor im Kraftstoffschlauch montiert werden (wie bei gängigen Aftermarket-Digitaltachos).
 
 ### Batteriespannung
 
@@ -623,17 +623,17 @@ Stahlrohrrahmen (Semi-Double-Cradle). Typische Roststellen: Unterer Rahmenbereic
 
 Die Transalp hat serienmäßig keine Ganganzeige. Nachgerüstet werden meist:
 
-- Acumen DG8 / DG10: Kabelgebunden, liest Drehzahl und Geschwindigkeit, berechnet Gang aus Ratio. Schließt an Pickup und Tacho-Signal an. Entwickelt für Carb-Bikes ohne ECU.
-- Trail Tech Vapor: Kombinierte Anzeige (Speed, RPM, Temp, Volt), Hall-Sensor am Vorderrad, Inlinesensor für Kühlmittel. Ganganzeige als Option.
-- Koso RX-2N / DB-02: Digital-Tacho mit Ganganzeige, Temperatur und Öldruck als Option. Sehr beliebt bei Transalp-Fahrern.
+- Ratio-basierte Ganganzeige (kabelgebunden): Liest Drehzahl und Geschwindigkeit, berechnet Gang aus Ratio. Schließt an Pickup und Tacho-Signal an. Entwickelt für Carb-Bikes ohne ECU.
+- Kombinierte Universal-Digitalanzeige (Speed, RPM, Temp, Volt): Hall-Sensor am Vorderrad, Inlinesensor für Kühlmittel. Ganganzeige als Option.
+- Digital-Tacho mit Ganganzeige, Temperatur und Öldruck als Option. Sehr beliebt bei Transalp-Fahrern.
 
-Quelle: ADV Rider Threads, [Koso DB-02RX](https://www.kosoeurope.com/)
+Quelle: ADV Rider Threads, diverse Aftermarket-Digitaltachos.
 
 **Öldruck-Anzeigen**
 
-- VDO Vision Cockpit: Mechanisches Uhrwerk, Capillary-Rohr, sehr zuverlässig
-- AutoMeter: Elektrisch, 1/8 NPT oder 1/8 BSP
-- Koso DB-03R: Digital, Öldruck + Öltemperatur kombiniert, Sensor 1/8 BSP (nahezu identisch mit NPT in dieser Größe)
+- Mechanisches Uhrwerk, Capillary-Rohr, sehr zuverlässig
+- Elektrische Variante, 1/8 NPT oder 1/8 BSP
+- Digital, Öldruck + Öltemperatur kombiniert, Sensor 1/8 BSP (nahezu identisch mit NPT in dieser Größe)
 
 Wichtig: Der Öldruckanschluss am PD06-Motorblock ist M10 × 1,0. Es braucht einen Adapter M10→1/8 NPT oder M10→1/8 BSP, je nach Sensor. Die original Öldruckwarnleuchte sollte unbedingt erhalten bleiben (T-Stück-Adapter).
 
@@ -673,8 +673,8 @@ Aus ADV Rider und xrv.org.uk Forenthreads (Stand 2024):
 
 1. **Drehzahl**: Standard, über Pickup oder Zündspule. Sehr zuverlässig.
 2. **Geschwindigkeit**: Entweder mechanisch (Tachowelle) oder Hall-Sensor am Vorderrad.
-3. **Kühlmitteltemperatur**: Am häufigsten nachgerüstet. Koso-Inline-Sensor oder direkter Anschluss an den Thermostat-Sender.
-4. **Batteriespannung**: Einfachste Nachrüstung, Koso und Trail Tech haben das an Bord.
+3. **Kühlmitteltemperatur**: Am häufigsten nachgerüstet. Inline-Sensor oder direkter Anschluss an den Thermostat-Sender.
+4. **Batteriespannung**: Einfachste Nachrüstung, gängige Aftermarket-Tachos haben das an Bord.
 5. **Öldruck**: Seltener, da Öldruckschalter-Abgang M10×1,0 einen Adapter braucht. Meist nur bei getunten Motoren.
 6. **Gang**: Ratio-basiert (Drehzahl/Speed) oder Mikroschalter an der Schaltwelle. Beides funktioniert, ratio-basiert ist einfacher.
 

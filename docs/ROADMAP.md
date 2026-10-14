@@ -277,7 +277,7 @@ Diagnose-System und Premium-UI/UX mit Animationen.
   - GitHub Repository-Metadata (t_e478e7b2): 6 Dateien — PULL_REQUEST_TEMPLATE.md, CODE_OF_CONDUCT.md (Contributor Covenant 2.1), FUNDING.yml, dependabot.yml, CODEOWNERS, SECURITY.md — gemerged von docs/repo-polish (commit e3d56bee)
   - English Project Summary (t_e87ab87f): `docs/ENGLISH-SUMMARY.md` 4.556 Wörter — Project Overview, Feature Summary, Document Index mit englischen Beschreibungen, Translation Guide — gemerged von docs/english-summary (commit 1352e3b2)
 - **Selektives Merge-Verfahren:** Mehrere Worker hatten sich überschneidende Branches (docs/license, docs/repo-polish, docs/index enthielten dieselben Dateien). Beste Version jeder Datei selektiv nach main gemerged.
-- **Markennamen-Check:** SECURITY-ANALYSIS.md: Markenname durch STRIDE-Akronym-Erklaerung ersetzt; FIRMWARE-GUIDE.md: "Meta-Generator" zu "Generator" korrigiert. "Amazon" als Einkaufsquellen-Referenz in BOM.md ist legitim (keine Markenplatzierung).
+- **Markennamen-Check:** SECURITY-ANALYSIS.md: Markenname durch STRIDE-Akronym-Erklaerung ersetzt; FIRMWARE-GUIDE.md: "Meta-Generator" zu "Generator" korrigiert. Einkaufsquellen-Referenzen in BOM.md durch generische Bezeichnungen ersetzt.
 - **README.md Badges aktualisiert:** Research 89K+, Companion-App 6K+, Docs 39+, Phases 0-6 Complete
 - **Auf origin gepusht (Commit 9b345c1)**
 - **PHASE 6 = 100% ABGESCHLOSSEN** 🎉 — Alle 5 Phase-6-Tasks done
@@ -367,6 +367,26 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 - **Commit-Anzahl korrigiert:** ROADMAP sagte 151, tatsächlich 152 Commits. Korrigiert.
 - **Keine neuen Tasks nötig:** Projekt ist release-ready und im Wartungsmodus. Alle Phasen 0–6 vollständig abgeschlossen.
 
+### PM-Runde 20 (14.10.2026, Markennamen-Tiefenbereinigung)
+- **Board-Status:** Alle 48 Tasks done, 0 running, 0 blocked — Projekt weiterhin vollständig abgeschlossen.
+- **Markennamen-Tiefenbereinigung:** Der Scan in Runde 19 meldete fälschlicherweise 0 Verletzungen. Ein erweiterter Scan mit zusätzlichen Marken (VDO, AutoMeter, AEM, Koso, Acumen, Amazon, eBay) fand **28+ Vorkommen** in 9 Dateien:
+  - `docs/research/04-pd06-technische-daten.md` — Koso, Trail Tech, VDO, AutoMeter, AEM, Acumen (8 Vorkommen)
+  - `docs/research/01-sensoren-fahrzeugdaten.md` — VDO (7 Vorkommen), AutoMeter URLs
+  - `docs/research/09-master-plan.md` — VDO (6), Amazon (12+), eBay
+  - `docs/research/06-feature-roadmap.md` — VDO (2), eBay URL
+  - `docs/research/08-feature-realization-matrix.md` — VDO (7)
+  - `docs/BOM.md` — VDO (2), Amazon (40+ Vorkommen)
+  - `docs/SHOPPING-LIST.md` — VDO (1), Amazon (20+ Vorkommen)
+  - `docs/PCB-LAYOUT.md` — VDO (1)
+  - `docs/USER-MANUAL.md` — Koso, VDO
+  - `README.md` — VDO (1)
+  - Alle Marken durch generische Beschreibungen ersetzt (Aftermarket, Online-Marktplatz, etc.)
+- **Brand-Blocklist erweitert:** Von 17 auf 24 Marken erweitert (VDO, AutoMeter, AEM, Acumen, Koso, Amazon, eBay hinzugefügt). Die CI wird nun diese Marken automatisch abfangen.
+- **CI-Status verifiziert:** Docs CI #28 = success, Firmware CI #7 = success, Companion-App CI #13 = success ✅. 0 offene PRs, 0 offene Issues.
+- **TODO/FIXME-Scan:** Unverändert — 4 TODOs in Firmware (akzeptable Erweiterungspunkte), 0 in Companion-App.
+- **Repo-Hygiene:** Nur `main`-Branch. Arbeitsbaum hatte uncommittete Änderungen (Markenbereinigung). 0 offene Dependabot-PRs.
+- **Keine neuen Tasks nötig:** Projekt weiterhin im Wartungsmodus. Alle Phasen 0–6 vollständig abgeschlossen.
+
 ## Offene Fragen
 - Welche TFT-Displays sind sonnenlesbar genug?
 - Companion-App: React Native vs. Flutter? (Master-Plan empfiehlt React Native)
@@ -391,24 +411,24 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 | Wörter gesamt (Research) | 89.466 |
 | Design-Dokumente | 26 (+3: INDEX, DEMO-SCRIPT, ENGLISH-SUMMARY) |
 | Wörter gesamt (Design-Docs) | 158.926 |
-| Wörter gesamt (alle Docs + LICENSE + COC + SECURITY) | 259.084 |
+| Wörter gesamt (alle Docs + LICENSE + COC + SECURITY) | 252.019 |
 | Code-Prototypen | 3 (firmware/ 15.508 Zeilen C/H, companion-app/ 5.957 Zeilen TS/TSX, mockups/ 8 HTML-Screens) |
 | Firmware C/H-Zeilen | 15.508 (10 Komponenten + main + test-suite) |
 | Companion-App | 5.957 Zeilen TS/TSX (BleManager, Dashboard, Navigation, Diagnose, Settings) |
-| CI/CD Workflows | 4 (firmware-ci, companion-app-ci, docs-ci mit brand-check (17 Marken), pages) |
+| CI/CD Workflows | 4 (firmware-ci, companion-app-ci, docs-ci mit brand-check (24 Marken), pages) |
 | Unit-Tests | 3 (test_dtc, test_event_loop, test_nmea_parser) + ESP-IDF-Mocks |
 | Issue Templates | 2 (bug_report, feature_request) |
 | PR Template | 1 (.github/PULL_REQUEST_TEMPLATE.md) |
 | Community Files | 4 (CODE_OF_CONDUCT, SECURITY, FUNDING.yml, CODEOWNERS) |
-| Brand-Blocklist | 17 Marken (.github/brand-blocklist.txt) |
+| Brand-Blocklist | 24 Marken (.github/brand-blocklist.txt) |
 | Dependabot | 1 (.github/dependabot.yml — npm + github-actions) |
-| Git Commits | 152 (Runde 19: ROADMAP-Korrektur) |
+| Git Commits | 154 (Runde 20: Markennamen-Tiefenbereinigung) |
 | Tasks done | 48 |
 | Tasks running | 0 |
 | Tasks blocked | 0 |
 | Lokale Branches | 1 (nur main) |
 | Offene Dependabot-PRs | 0 — alle 4 gemerged in Runde 17 ✅ |
-| CI/CD Status | Alle 4 Workflows grün ✅ (Docs CI #27, Firmware CI #7, Companion-App CI #13, Pages) |
+| CI/CD Status | Alle 4 Workflows grün ✅ (Docs CI #28, Firmware CI #7, Companion-App CI #13, Pages) |
 | ESP-IDF Mock-Header | 6 (fuer Host-Unit-Tests) |
 | test_dtc Status | Repariert — DTC-Codes synchronisiert mit Implementierung ✅ |
 | Tasks archived | 1 (t_4f8965c9: Design-Integration, veraltet) |

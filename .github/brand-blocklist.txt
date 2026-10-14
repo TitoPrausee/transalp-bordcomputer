@@ -22,3 +22,10 @@
 \b[Xx]iaomi\b
 \b[Ff]itbit\b
 \b[Ww]ahoo\b
+\b[Kk]oso\b
+\b[Vv][Dd][Oo]\b
+\b[Aa]uto[Mm]eter\b
+\b[Aa][Ee][Mm]\b
+\b[Aa]cumen\b
+\b[Aa]mazon\b
+\b[Ee][Bb]ay\b

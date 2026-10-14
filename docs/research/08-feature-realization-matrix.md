@@ -52,7 +52,7 @@ Aus den Research-Dokumenten 01 (Sensoren), 02 (Hardware), 04 (PD06-Daten) und
 | Umwelttemperatur | BMP388 (Temp-Kompensation) | I2C | Ja | +-1C (Eigenwaerme-korrigiert) |
 | Kraftstoffstand | Aftermarket-Tankgeber (0-190 Ohm) | OPV-Buffer -> ADC1 | Nachruestung | +-0.5-1L |
 | Oeldruck (digital) | OEM-Oeldruckschalter (M10x1.0) | Optokoppler -> GPIO | Ja (ON/OFF) | Binaer |
-| Oeldruck (analog) | VDO 0-10 bar Sender (Nachruestung) | Spannungsteiler -> ADC1 | Nachruestung | +-1.5% FS |
+| Oeldruck (analog) | Aftermarket 0-10 bar Sender (Nachruestung) | Spannungsteiler -> ADC1 | Nachruestung | +-1.5% FS |
 | Leerlaufschalter | OEM-Neutral-Schalter | GPIO (Pull-Up) | Ja | Binaer |
 | Blinker/Licht/Bremse | OEM-Leitungen (12V) | Optokoppler -> GPIO | Ja | Binaer |
 
@@ -68,7 +68,7 @@ gegenueber der urspruenglichen Roadmap (Dokument 06):
    kalibriert werden (2-Liter-Schritte). Der original Petcock bleibt erhalten.
 
 2. **Oeldruck**: Der OEM-Sensor ist ein reiner Einfach-Schalter (ON/OFF bei
-   ca. 0.2-0.4 bar). Fuer eine analoge Druckanzeige muss ein VDO-Sender
+   ca. 0.2-0.4 bar). Fuer eine analoge Druckanzeige muss ein Aftermarket-Sender
    (0-10 bar, 1/8 NPT) ueber einen M10x1.0 auf 1/8-NPT-Adapter am
    Oelkreislauf nachgeruestet werden. Der Originalschalter bleibt ueber ein
    T-Stueck funktionsfaehig.
@@ -114,7 +114,7 @@ Jedes Feature aus der Roadmap (Dokument 06) wird hier bewertet nach:
 | 2.2 | Neigungsanzeige (Roll/Pitch) | Ja | BMI270 -> Complementary Filter | Mittel | Should | BMI270 IMU | Recherchiert |
 | 2.3 | Hoehenmesser (barometrisch) | Ja | BMP388 -> baro. Formel | Niedrig | Should | BMP388 Sensor | Recherchiert |
 | 2.4 | Umwelttemperatur | Ja | BMP388 (integrierte Temp) | Niedrig | Should | BMP388 Sensor | Recherchiert |
-| 2.5 | Oeldruck (analog) | Ja mit Nachruestung | VDO-Sender -> ADC1 | Hoch | Should | VDO-Sensor, M10-Adapter, T-Stueck | Recherchiert |
+| 2.5 | Oeldruck (analog) | Ja mit Nachruestung | Aftermarket-Sender -> ADC1 | Hoch | Should | Aftermarket-Sensor, M10-Adapter, T-Stueck | Recherchiert |
 | 2.6 | Bordspannung | Ja | Spannungsteiler -> ADC1 | Niedrig | Should | 2 Widerstaende | Recherchiert |
 | 2.7 | Verbrauchs-Logging | Ja | Kraftstoffstand + GPS-Strecke | Mittel | Should | Feature 1.4 + 1.6 | Recherchiert |
 | 2.8 | Fahrtzeit / Pause-Erkennung | Ja | GPS-Speed < 2 km/h fuer >60s | Niedrig | Should | Feature 1.1 | Recherchiert |
@@ -156,7 +156,7 @@ Jedes Feature aus der Roadmap (Dokument 06) wird hier bewertet nach:
 
 | # | Feature | Machbar? | Datenquelle | Aufwand | Prioritaet | Abhaengigkeiten | Status |
 |---|---|---|---|---|---|---|---|
-| 6.1 | Oeldruck-Trend | Ja mit Nachruestung | VDO-Sender -> ADC -> SD-Log | Mittel | Should | Feature 2.5 (analoger Sensor) | Recherchiert |
+| 6.1 | Oeldruck-Trend | Ja mit Nachruestung | Aftermarket-Sender -> ADC -> SD-Log | Mittel | Should | Feature 2.5 (analoger Sensor) | Recherchiert |
 | 6.2 | Kuehlmitteltemp-Trend | Ja | NTC -> SD-Log | Niedrig | Should | Feature 1.3 | Recherchiert |
 | 6.3 | Bordspannung-Trend | Ja | Spannungsteiler -> SD-Log | Niedrig | Should | Feature 2.6 | Recherchiert |
 | 6.4 | Kraftstoffverbrauch-Historie | Ja | Feature 2.7 -> Langzeit-Log | Mittel | Could | Feature 2.7 | Recherchiert |
@@ -633,7 +633,7 @@ Sensor -> Verarbeitung -> Output (Display/Log/BLE)
 |---|---|---|---|---|
 | Aftermarket-Tankgeber | Kraftstoffstand (1.4, 2.7) | 10-20 EUR | Hoch (Tankoeffnung) | Mittel (Ex-Schutz) |
 | NTC 10k B3950 Inline | Kuehlmitteltemp (1.3) | 2-5 EUR | Mittel (Kuehlschlauch) | Niedrig |
-| VDO Oeldrucksender | Analoger Oeldruck (2.5, 6.1) | 20-30 EUR | Hoch (Oelkreislauf, M10-Adapter) | Mittel (Oelverlust) |
+| Aftermarket Oeldrucksender | Analoger Oeldruck (2.5, 6.1) | 20-30 EUR | Hoch (Oelkreislauf, M10-Adapter) | Mittel (Oelverlust) |
 | Optokoppler-Schaltung | RPM (1.2) | 2-5 EUR | Mittel (CDI-Kabel) | Niedrig (galv. Trennung) |
 | Hall-Sensor + Magnet | Radgeschwindigkeit (7.2) | 2-5 EUR | Hoch (Gabel/Bremsscheibe) | Niedrig |
 | BLE-TPMS-Sensoren | Reifendruck (7.1) | 20-30 EUR | Niedrig (Ventilkappen) | Niedrig |
@@ -847,7 +847,7 @@ Ziel: Sicherheitsfeatures, erweiterte Diagnose, optionale Sensoren.
   |  +-------------------------------------------------+  |
   |  |  Sturz-Aufzeichnung (IMU Ring-Buffer 30s -> SD)  |  |
   |  +-------------------------------------------------+  |
-  |  |  Oeldruck (VDO-Sender, analog, T-Stueck)        |  |
+  |  |  Oeldruck (Aftermarket-Sender, analog, T-Stueck)        |  |
   |  |  -> Druck-Trend + Alarme                         |  |
   |  +-------------------------------------------------+  |
   |  |  TPMS (BLE-TPMS-Sensoren, passiv)                |  |
@@ -918,7 +918,7 @@ Initialisierung bereits in Phase 1 enthalten ist.
 | Taster (wasserdicht) | POI/Control | 1 | 3 | GPIO |
 | Piezo-Buzzer | Audio-Warnung | 1 | 4 | GPIO |
 | WS2812B-Strip | LED-Warnung | 2-3 | 4 | GPIO |
-| VDO Oeldrucksender 0-10 bar | Oeldruck | 20-30 | 4 | ADC1 |
+| Aftermarket Oeldrucksender 0-10 bar | Oeldruck | 20-30 | 4 | ADC1 |
 | M10x1.0 -> 1/8 NPT Adapter | Oeldruck | 5-10 | 4 | — |
 | T-Stueck fuer Oeldruck | Oeldruck | 5-10 | 4 | — |
 | BLE-TPMS-Sensoren (Paar) | Reifendruck | 20-30 | 4 | BLE |

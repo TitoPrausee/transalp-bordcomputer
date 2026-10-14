@@ -35,29 +35,29 @@ fallen die Preise typischerweise um 20-40%.
 | # | Bauteil | Spezifikation | Menge | Einzelpreis (EUR) | Gesamtpreis (EUR) | Bezugsquelle | Lieferzeit | Alternativen |
 |---|---|---|---|---|---|---|---|---|
 | 1 | ESP32-S3-WROOM-1 N8R2 | 8MB Flash, 2MB PSRAM, BLE 5.0, 45 GPIO, PCB Trace Antenne, LGA Modul 18x25,5mm | 1 | 5,40 | 5,40 | Mouser / Digi-Key | 3-5 Tage | DevKitC-1 (13,80 EUR), ESP32-S3-WROOM-1U (IPEX) |
-| 2 | USB-C Buchse IP67 | Panel-Mount, wasserdicht, IP67, mit Dichtungsmembran | 1 | 3,50 | 3,50 | Reichelt / Amazon | 2-4 Tage | USB-B wasserdicht, internes USB-C |
+| 2 | USB-C Buchse IP67 | Panel-Mount, wasserdicht, IP67, mit Dichtungsmembran | 1 | 3,50 | 3,50 | Reichelt / Online-Marktplatz | 2-4 Tage | USB-B wasserdicht, internes USB-C |
 | 3 | MicroSD-Karten-Slot | Push-Push, SMD, 8-polig, fuer SPI-Mode | 1 | 1,20 | 1,20 | LCSC / Reichelt | 5-10 Tage | Wirelle SD-Breakout (AliExpress, 0,50 EUR) |
-| 4 | MicroSD-Karte 16GB | Class 10 / U1, Markenprodukt, FAT32 | 1 | 6,00 | 6,00 | Amazon / Reichelt | 2-3 Tage | 8GB Class 10 NoName (3,00 EUR) |
+| 4 | MicroSD-Karte 16GB | Class 10 / U1, Markenprodukt, FAT32 | 1 | 6,00 | 6,00 | Online-Marktplatz / Reichelt | 2-3 Tage | 8GB Class 10 NoName (3,00 EUR) |
 | 5 | FPC-Connector 12-polig | 0,5mm Pitch, fuer Display-Anbindung | 1 | 0,50 | 0,50 | LCSC / Digi-Key | 5-10 Tage | JST-SM Kabel (0,80 EUR) |
 
 ### 1.2 Display
 
 | # | Bauteil | Spezifikation | Menge | Einzelpreis (EUR) | Gesamtpreis (EUR) | Bezugsquelle | Lieferzeit | Alternativen |
 |---|---|---|---|---|---|---|---|---|
-| 6 | TFT-Display 3,5" IPS | 480x320 Pixel, SPI, IPS-Panel, 1000 nits Backlight | 1 | 18,00 | 18,00 | Waveshare / Amazon | 3-7 Tage | ILI9341 2,4" (6,00 EUR), ST7789 2,0" |
-| 7 | E-Paper-Display 2,13" | 250x122 Pixel, monochrom, SSD1680/UC8151D Treiber | 1 | 12,00 | 12,00 | Waveshare / Amazon | 3-7 Tage | E-Paper 2,9" 296x128 (15,00 EUR), 1,54" |
-| 8 | Acrylglas-Abdeckung | 2mm PMMA, konvex, hydrophob beschichtet | 1 | 2,00 | 2,00 | Baumarkt / Amazon | 1-3 Tage | Polycarbonat 2mm |
+| 6 | TFT-Display 3,5" IPS | 480x320 Pixel, SPI, IPS-Panel, 1000 nits Backlight | 1 | 18,00 | 18,00 | Waveshare / Online-Marktplatz | 3-7 Tage | ILI9341 2,4" (6,00 EUR), ST7789 2,0" |
+| 7 | E-Paper-Display 2,13" | 250x122 Pixel, monochrom, SSD1680/UC8151D Treiber | 1 | 12,00 | 12,00 | Waveshare / Online-Marktplatz | 3-7 Tage | E-Paper 2,9" 296x128 (15,00 EUR), 1,54" |
+| 8 | Acrylglas-Abdeckung | 2mm PMMA, konvex, hydrophob beschichtet | 1 | 2,00 | 2,00 | Baumarkt / Online-Marktplatz | 1-3 Tage | Polycarbonat 2mm |
 
 ### 1.3 Sensoren
 
 | # | Bauteil | Spezifikation | Menge | Einzelpreis (EUR) | Gesamtpreis (EUR) | Bezugsquelle | Lieferzeit | Alternativen |
 |---|---|---|---|---|---|---|---|---|---|
 | 9 | GPS-Modul NEO-M9N | 4-Konstellation GNSS (GPS+GLONASS+Galileo+BeiDou), 25Hz, 2,0m CEP, UART, 12,2x16mm SMD | 1 | 24,60 | 24,60 | TME / Spezial.com | 3-7 Tage | ATGM336H (3,00 EUR), NEO-M8N (15,00 EUR) |
-| 10 | GPS-Antenne | Active Patch 25x25mm, Magnetfuss, 3-5V, 28dB Gain, 1,5m Kabel | 1 | 8,00 | 8,00 | Amazon / Reichelt | 2-4 Tage | Passive Patch (2,00 EUR), Chip-Antenne |
+| 10 | GPS-Antenne | Active Patch 25x25mm, Magnetfuss, 3-5V, 28dB Gain, 1,5m Kabel | 1 | 8,00 | 8,00 | Online-Marktplatz / Reichelt | 2-4 Tage | Passive Patch (2,00 EUR), Chip-Antenne |
 | 11 | IMU BMI270 | 6-DoF (Accel+Gyro), 685µA, I2C/SPI, 2KB FIFO, 2,5x3,0mm LGA-14 | 1 | 5,00 | 5,00 | Mouser / Digi-Key / AliExpress | 5-10 Tage | MPU6050 (2,00 EUR), LSM6DS33 (5,00 EUR) |
 | 12 | Barometer BMP390 | 300-1250 hPa, ±0,03 hPa rel., 0,25m Aufloesung, I2C/SPI, 2x2mm LGA-10 | 1 | 3,50 | 3,50 | Mouser / Digi-Key | 5-10 Tage | BMP388 (OBSOLETE), BMP280 (2,00 EUR), DPS310 |
-| 13 | Kuehlmittel-Temp. | DS18B20 wasserdicht, digital, 1-Wire, ±0,5°C, -55 bis +125°C, Edelstahlrohr | 1 | 3,00 | 3,00 | Amazon / Reichelt | 2-4 Tage | NTC 10k Thermistor (1,00 EUR) |
-| 14 | Oeldrucksensor | Analog 0-5 bar, 10-180 Ohm, M10x1 Gewinde, wasserdicht | 1 | 25,00 | 25,00 | Amazon / Spezialversand | 5-10 Tage | Original-Oeldruckschalter (digital, 0 EUR) |
+| 13 | Kuehlmittel-Temp. | DS18B20 wasserdicht, digital, 1-Wire, ±0,5°C, -55 bis +125°C, Edelstahlrohr | 1 | 3,00 | 3,00 | Online-Marktplatz / Reichelt | 2-4 Tage | NTC 10k Thermistor (1,00 EUR) |
+| 14 | Oeldrucksensor | Analog 0-5 bar, 10-180 Ohm, M10x1 Gewinde, wasserdicht | 1 | 25,00 | 25,00 | Online-Marktplatz / Spezialversand | 5-10 Tage | Original-Oeldruckschalter (digital, 0 EUR) |
 | 15 | Hall-Sensor (Rad) | A3144 Unipolar, 4,5-24V, TO-92, + Magnet 5mm | 1 | 2,00 | 2,00 | Reichelt / AliExpress | 3-5 Tage | Reed-Schalter (1,00 EUR), A1101 |
 | 16 | Bordspannungs-Messung | Spannungsteiler 100k/33k, 1%, 0805 SMD | 1 | 0,10 | 0,10 | Reichelt / LCSC | 2-3 Tage | Praezisions-Spannungsteiler (0,50 EUR) |
 | 17 | Kraftstoffstand-Messung | Spannungsteiler 10k/10k + Operationsverstaerker (MCP6001) | 1 | 1,00 | 1,00 | Reichelt / LCSC | 2-3 Tage | Direkter Spannungsteiler (0,10 EUR) |
@@ -66,14 +66,14 @@ fallen die Preise typischerweise um 20-40%.
 
 | # | Bauteil | Spezifikation | Menge | Einzelpreis (EUR) | Gesamtpreis (EUR) | Bezugsquelle | Lieferzeit | Alternativen |
 |---|---|---|---|---|---|---|---|---|---|
-| 18 | Buck-Converter 12V->5V | MP1584EN Modul, 1,5MHz, 3A, 4,5-28V Input, 90-92% Effizienz, 22x15mm | 1 | 1,50 | 1,50 | AliExpress / Amazon | 7-14 Tage | LM2596 Modul (2,00 EUR), TPS5430 (6,00 EUR) |
+| 18 | Buck-Converter 12V->5V | MP1584EN Modul, 1,5MHz, 3A, 4,5-28V Input, 90-92% Effizienz, 22x15mm | 1 | 1,50 | 1,50 | AliExpress / Online-Marktplatz | 7-14 Tage | LM2596 Modul (2,00 EUR), TPS5430 (6,00 EUR) |
 | 19 | LDO 5V->3,3V | HT7333, 250mA, 30µVrms Rauschen, 4µA Quiescent, SOT-89 | 1 | 0,50 | 0,50 | Reichelt / LCSC | 2-5 Tage | AMS1117-3.3 (0,15 EUR), MCP1700-3302E (1,00 EUR) |
-| 20 | Backup-Akku 18650 | Li-Ion, 3400mAh, 3,7V nominal, geschuetzt mit PCB | 1 | 6,00 | 6,00 | Amazon / Reichelt | 2-4 Tage | LiPo 1000mAh (4,00 EUR), LiFePO4 |
-| 21 | Akku-Lademodul | TP4056 Modul mit Schutz (DW01A), 5V Input, 1A Ladestrom, Micro-USB oder Type-C | 1 | 0,50 | 0,50 | AliExpress / Amazon | 7-14 Tage | IP5306 Modul (3,00 EUR) |
-| 22 | Boost-Converter 3,7V->5V | MT3608 Modul, 2A, bis 28V Output, 17x11mm | 1 | 0,80 | 0,80 | AliExpress / Amazon | 7-14 Tage | XL6009 Modul (1,50 EUR) |
+| 20 | Backup-Akku 18650 | Li-Ion, 3400mAh, 3,7V nominal, geschuetzt mit PCB | 1 | 6,00 | 6,00 | Online-Marktplatz / Reichelt | 2-4 Tage | LiPo 1000mAh (4,00 EUR), LiFePO4 |
+| 21 | Akku-Lademodul | TP4056 Modul mit Schutz (DW01A), 5V Input, 1A Ladestrom, Micro-USB oder Type-C | 1 | 0,50 | 0,50 | AliExpress / Online-Marktplatz | 7-14 Tage | IP5306 Modul (3,00 EUR) |
+| 22 | Boost-Converter 3,7V->5V | MT3608 Modul, 2A, bis 28V Output, 17x11mm | 1 | 0,80 | 0,80 | AliExpress / Online-Marktplatz | 7-14 Tage | XL6009 Modul (1,50 EUR) |
 | 23 | Schottky-Diode | 1N5822, 3A, 40V, DO-201AD, fuer Power-Path ORing | 2 | 0,10 | 0,20 | Reichelt / LCSC | 2-3 Tage | 1N5819 (1A, 0,05 EUR), SS34 SMD |
 | 24 | TVS-Diode | SMAJ15A, 15V Standoff, 24,4V Clamp, 400W, SMA | 2 | 0,50 | 1,00 | Reichelt / Mouser | 2-5 Tage | P6KE15A, SMBJ15A |
-| 25 | Sicherung 5A | Flachsicherung ATO/ATC, 5A, mit Inline-Halter | 1 | 1,00 | 1,00 | Reichelt / Amazon | 2-3 Tage | PTC 3A resettable (0,80 EUR) |
+| 25 | Sicherung 5A | Flachsicherung ATO/ATC, 5A, mit Inline-Halter | 1 | 1,00 | 1,00 | Reichelt / Online-Marktplatz | 2-3 Tage | PTC 3A resettable (0,80 EUR) |
 | 26 | Elko 100µF | 100µF, 25V, Low-ESR, SMD Tantal oder THT | 1 | 0,30 | 0,30 | Reichelt / LCSC | 2-3 Tage | 2x 47µF parallel |
 
 ### 1.5 Passive Bauelemente
@@ -96,48 +96,48 @@ fallen die Preise typischerweise um 20-40%.
 | 35 | MOSFET IRLZ44N | N-Channel, 55V, 25A, Rds(on) 22mOhm @ Vgs=5V, TO-220 | 1 | 1,50 | 1,50 | Reichelt / Mouser | 2-5 Tage | IRF520 (1,50 EUR, nicht Logic-Level), AO3400 SMD |
 | 36 | Optokoppler PC817 | 1-Kanal, Transistor-Ausgang, DIP-4, CTR 50-600% | 2 | 0,50 | 1,00 | Reichelt / LCSC | 2-5 Tage | TLP185 SMD, 6N137 (schneller) |
 | 37 | Freilaufdiode 1N5408 | 3A, 1000V, DO-201AD, fuer induktive Lasten | 2 | 0,10 | 0,20 | Reichelt / LCSC | 2-3 Tage | 1N4007 (1A), Schottky 1N5822 |
-| 38 | Relais-Modul 4-Kanal | SRD-12V, 10A, mit Optokoppler, Active-LOW | 1 | 4,00 | 4,00 | Amazon / AliExpress | 3-7 Tage | Einzelrelais SRD-12V (1,00 EUR/Stueck) |
+| 38 | Relais-Modul 4-Kanal | SRD-12V, 10A, mit Optokoppler, Active-LOW | 1 | 4,00 | 4,00 | Online-Marktplatz / AliExpress | 3-7 Tage | Einzelrelais SRD-12V (1,00 EUR/Stueck) |
 
 ### 1.7 Mechanische Teile
 
 | # | Bauteil | Spezifikation | Menge | Einzelpreis (EUR) | Gesamtpreis (EUR) | Bezugsquelle | Lieferzeit | Alternativen |
 |---|---|---|---|---|---|---|---|---|---|
-| 39 | Stiftleisten Header | 2,54mm Raster, gerade, 40-polig, breakable | 2 | 0,50 | 1,00 | Reichelt / Amazon | 2-3 Tage | Buchsenleisten, Raster 2,0mm |
-| 40 | Abstandshalter | M3, 10mm, Sechskant, Messing, innengewindet | 4 | 0,30 | 1,20 | Reichelt / Amazon | 2-3 Tage | Kunststoff-Abstandshalter (0,15 EUR) |
-| 41 | Schrauben M3x8 | Senkkopf, Edelstahl, Inbus | 4 | 0,05 | 0,20 | Baumarkt / Amazon | 1-3 Tage | Stahl verzinkt (0,03 EUR) |
-| 42 | Schrauben M3x12 | Senkkopf, Edelstahl, Inbus, fuer Deckel | 4 | 0,05 | 0,20 | Baumarkt / Amazon | 1-3 Tage | Stahl verzinkt (0,03 EUR) |
-| 43 | Schrauben M2,5x6 | Senkkopf, Edelstahl, Inbus, fuer Display-Rahmen | 4 | 0,05 | 0,20 | Baumarkt / Amazon | 1-3 Tage | M2x6 (0,04 EUR) |
-| 44 | Federscheiben M3 | DIN 127B, Edelstahl, fuer Vibrationssicherung | 8 | 0,02 | 0,16 | Reichelt / Amazon | 2-3 Tage | Zahnscheiben DIN 6798 |
-| 45 | Schrauben M6x20 | Inbus, Edelstahl, fuer Lenkerhalterung (U-Bolt) | 2 | 0,10 | 0,20 | Baumarkt / Amazon | 1-3 Tage | — |
+| 39 | Stiftleisten Header | 2,54mm Raster, gerade, 40-polig, breakable | 2 | 0,50 | 1,00 | Reichelt / Online-Marktplatz | 2-3 Tage | Buchsenleisten, Raster 2,0mm |
+| 40 | Abstandshalter | M3, 10mm, Sechskant, Messing, innengewindet | 4 | 0,30 | 1,20 | Reichelt / Online-Marktplatz | 2-3 Tage | Kunststoff-Abstandshalter (0,15 EUR) |
+| 41 | Schrauben M3x8 | Senkkopf, Edelstahl, Inbus | 4 | 0,05 | 0,20 | Baumarkt / Online-Marktplatz | 1-3 Tage | Stahl verzinkt (0,03 EUR) |
+| 42 | Schrauben M3x12 | Senkkopf, Edelstahl, Inbus, fuer Deckel | 4 | 0,05 | 0,20 | Baumarkt / Online-Marktplatz | 1-3 Tage | Stahl verzinkt (0,03 EUR) |
+| 43 | Schrauben M2,5x6 | Senkkopf, Edelstahl, Inbus, fuer Display-Rahmen | 4 | 0,05 | 0,20 | Baumarkt / Online-Marktplatz | 1-3 Tage | M2x6 (0,04 EUR) |
+| 44 | Federscheiben M3 | DIN 127B, Edelstahl, fuer Vibrationssicherung | 8 | 0,02 | 0,16 | Reichelt / Online-Marktplatz | 2-3 Tage | Zahnscheiben DIN 6798 |
+| 45 | Schrauben M6x20 | Inbus, Edelstahl, fuer Lenkerhalterung (U-Bolt) | 2 | 0,10 | 0,20 | Baumarkt / Online-Marktplatz | 1-3 Tage | — |
 | 46 | 18650-Akkuhalter | PCB-Mount, fuer 1x 18650, mit Kontakt | 1 | 0,50 | 0,50 | Reichelt / LCSC | 2-5 Tage | Akku-Klebeband (0,20 EUR) |
 
 ### 1.8 Gehaeuse
 
 | # | Bauteil | Spezifikation | Menge | Einzelpreis (EUR) | Gesamtpreis (EUR) | Bezugsquelle | Lieferzeit | Alternativen |
 |---|---|---|---|---|---|---|---|---|---|
-| 47 | ASA-Filament | 1,75mm, 1kg Spule, hell (weiss/hellgrau), UV-stabil | 1 | 25,00 | 25,00 | Amazon / Filament-versand | 2-4 Tage | PETG (20,00 EUR, nur Prototyp) |
-| 48 | PETG-Filament | 1,75mm, 500g, fuer Display-Rahmen / Innenteile | 1 | 12,00 | 12,00 | Amazon / Filament-versand | 2-4 Tage | PLA (10,00 EUR, nur Prototyp) |
-| 49 | Silikon-O-Ring | 2mm Cordstaerke, Shore 60A, -40 bis +200°C, UV-stabil, Umfangsdichtung | 1 | 2,00 | 2,00 | Amazon / Spezialversand | 2-4 Tage | NBR O-Ring (1,00 EUR, weniger temperaturbestaendig) |
-| 50 | EPDM-Schaumstoff | Selbstklebend, 5mm, Shore 10-30A, fuer Sekundaerdichtung | 1 | 3,00 | 3,00 | Amazon / Baumarkt | 2-4 Tage | Geschlossenzelliger Schaum (2,00 EUR) |
-| 51 | Kabelverschraubungen PG7 | PA66, IP67, mit NBR-O-Ring, fuer Sensorkabel, 3-6,5mm Kabel-Ø | 4 | 0,80 | 3,20 | Reichelt / Amazon | 2-4 Tage | M12 Kabelverschraubung (0,90 EUR) |
-| 52 | Kabelverschraubungen PG9 | PA66, IP67, mit NBR-O-Ring, fuer Sensorkabel, 4-8mm Kabel-Ø | 2 | 1,00 | 2,00 | Reichelt / Amazon | 2-4 Tage | M16 Kabelverschraubung |
-| 53 | Druckausgleichsmembran | ePTFE, IP68, M6x0,75 Gewinde, -40 bis +125°C | 1 | 8,00 | 8,00 | Amazon / Spezialversand | 3-7 Tage | Loche mit ePTFE-Patch (3,00 EUR) |
-| 54 | Kupferfolie | Selbstklebend, 0,05mm, 50mm breit, 1m Rolle, fuer EMV-Abschirmung | 1 | 8,00 | 8,00 | Amazon / Baumarkt | 2-4 Tage | Alufolie (2,00 EUR, weniger effektiv) |
-| 55 | Conformal Coating | Polyurethan, 50ml Spruehdose, UR-Typ, -65 bis +130°C | 1 | 12,00 | 12,00 | Amazon / Spezialversand | 3-7 Tage | Acryl-Coating (8,00 EUR), Silikon-Coating |
+| 47 | ASA-Filament | 1,75mm, 1kg Spule, hell (weiss/hellgrau), UV-stabil | 1 | 25,00 | 25,00 | Online-Marktplatz / Filament-versand | 2-4 Tage | PETG (20,00 EUR, nur Prototyp) |
+| 48 | PETG-Filament | 1,75mm, 500g, fuer Display-Rahmen / Innenteile | 1 | 12,00 | 12,00 | Online-Marktplatz / Filament-versand | 2-4 Tage | PLA (10,00 EUR, nur Prototyp) |
+| 49 | Silikon-O-Ring | 2mm Cordstaerke, Shore 60A, -40 bis +200°C, UV-stabil, Umfangsdichtung | 1 | 2,00 | 2,00 | Online-Marktplatz / Spezialversand | 2-4 Tage | NBR O-Ring (1,00 EUR, weniger temperaturbestaendig) |
+| 50 | EPDM-Schaumstoff | Selbstklebend, 5mm, Shore 10-30A, fuer Sekundaerdichtung | 1 | 3,00 | 3,00 | Online-Marktplatz / Baumarkt | 2-4 Tage | Geschlossenzelliger Schaum (2,00 EUR) |
+| 51 | Kabelverschraubungen PG7 | PA66, IP67, mit NBR-O-Ring, fuer Sensorkabel, 3-6,5mm Kabel-Ø | 4 | 0,80 | 3,20 | Reichelt / Online-Marktplatz | 2-4 Tage | M12 Kabelverschraubung (0,90 EUR) |
+| 52 | Kabelverschraubungen PG9 | PA66, IP67, mit NBR-O-Ring, fuer Sensorkabel, 4-8mm Kabel-Ø | 2 | 1,00 | 2,00 | Reichelt / Online-Marktplatz | 2-4 Tage | M16 Kabelverschraubung |
+| 53 | Druckausgleichsmembran | ePTFE, IP68, M6x0,75 Gewinde, -40 bis +125°C | 1 | 8,00 | 8,00 | Online-Marktplatz / Spezialversand | 3-7 Tage | Loche mit ePTFE-Patch (3,00 EUR) |
+| 54 | Kupferfolie | Selbstklebend, 0,05mm, 50mm breit, 1m Rolle, fuer EMV-Abschirmung | 1 | 8,00 | 8,00 | Online-Marktplatz / Baumarkt | 2-4 Tage | Alufolie (2,00 EUR, weniger effektiv) |
+| 55 | Conformal Coating | Polyurethan, 50ml Spruehdose, UR-Typ, -65 bis +130°C | 1 | 12,00 | 12,00 | Online-Marktplatz / Spezialversand | 3-7 Tage | Acryl-Coating (8,00 EUR), Silikon-Coating |
 | 56 | Acrylglas-Platte | 2mm, transparent, 100x80mm, fuer Display-Abdeckung | 1 | 2,00 | 2,00 | Baumarkt | 1-3 Tage | Polycarbonat 2mm (3,00 EUR) |
 
 ### 1.9 Kabel und Stecker
 
 | # | Bauteil | Spezifikation | Menge | Einzelpreis (EUR) | Gesamtpreis (EUR) | Bezugsquelle | Lieferzeit | Alternativen |
 |---|---|---|---|---|---|---|---|---|---|
-| 57 | Sensor-Kabel verdrillt | 4-adrig, AWG24, abgeschirmt (S/UTP), pro Meter | 3 | 1,50 | 4,50 | Amazon / Reichelt | 2-4 Tage | Unabgeschirmt 4-adrig (0,80 EUR/m) |
-| 58 | JST-SM Stecker 4-polig | Wasserdicht, IP65, mit Rasterverriegelung, fuer GPS | 1 | 1,50 | 1,50 | Amazon / AliExpress | 3-7 Tage | AMP Superseal 3-polig (2,50 EUR) |
-| 59 | AMP Superseal 2-polig | IP67, 3A, fuer 12V Bordnetz | 1 | 2,50 | 2,50 | Amazon / Spezialversand | 3-7 Tage | Deutch DTM 2-polig (3,50 EUR) |
-| 60 | AMP Superseal 3-polig | IP67, 3A, fuer ADC-Sensoren | 2 | 2,50 | 5,00 | Amazon / Spezialversand | 3-7 Tage | Deutch DTM 3-polig |
-| 61 | AMP Superseal 4-polig | IP67, 3A, fuer Relais-Steuerung | 1 | 2,50 | 2,50 | Amazon / Spezialversand | 3-7 Tage | Deutch DTM 4-polig |
-| 62 | Ferritkern | Klappferrit, Material 43/73, >100 Ohm @ 100MHz, fuer Kabel | 4 | 0,80 | 3,20 | Amazon / Reichelt | 2-4 Tage | Ringkern (0,50 EUR, nicht klappbar) |
-| 63 | Kabelbinder | 100mm, schwarz, UV-beständig, natur (PA66) | 20 | 0,02 | 0,40 | Baumarkt / Amazon | 1-3 Tage | — |
-| 64 | Schrumpfschlauch | 3mm, 1m, schwarz, Polyolefin, 2:1 Schrumpfrate | 1 | 2,00 | 2,00 | Amazon / Baumarkt | 1-3 Tage | — |
+| 57 | Sensor-Kabel verdrillt | 4-adrig, AWG24, abgeschirmt (S/UTP), pro Meter | 3 | 1,50 | 4,50 | Online-Marktplatz / Reichelt | 2-4 Tage | Unabgeschirmt 4-adrig (0,80 EUR/m) |
+| 58 | JST-SM Stecker 4-polig | Wasserdicht, IP65, mit Rasterverriegelung, fuer GPS | 1 | 1,50 | 1,50 | Online-Marktplatz / AliExpress | 3-7 Tage | AMP Superseal 3-polig (2,50 EUR) |
+| 59 | AMP Superseal 2-polig | IP67, 3A, fuer 12V Bordnetz | 1 | 2,50 | 2,50 | Online-Marktplatz / Spezialversand | 3-7 Tage | Deutch DTM 2-polig (3,50 EUR) |
+| 60 | AMP Superseal 3-polig | IP67, 3A, fuer ADC-Sensoren | 2 | 2,50 | 5,00 | Online-Marktplatz / Spezialversand | 3-7 Tage | Deutch DTM 3-polig |
+| 61 | AMP Superseal 4-polig | IP67, 3A, fuer Relais-Steuerung | 1 | 2,50 | 2,50 | Online-Marktplatz / Spezialversand | 3-7 Tage | Deutch DTM 4-polig |
+| 62 | Ferritkern | Klappferrit, Material 43/73, >100 Ohm @ 100MHz, fuer Kabel | 4 | 0,80 | 3,20 | Online-Marktplatz / Reichelt | 2-4 Tage | Ringkern (0,50 EUR, nicht klappbar) |
+| 63 | Kabelbinder | 100mm, schwarz, UV-beständig, natur (PA66) | 20 | 0,02 | 0,40 | Baumarkt / Online-Marktplatz | 1-3 Tage | — |
+| 64 | Schrumpfschlauch | 3mm, 1m, schwarz, Polyolefin, 2:1 Schrumpfrate | 1 | 2,00 | 2,00 | Online-Marktplatz / Baumarkt | 1-3 Tage | — |
 
 ### 1.10 PCB-Fertigung
 
@@ -145,7 +145,7 @@ fallen die Preise typischerweise um 20-40%.
 |---|---|---|---|---|---|---|---|---|---|
 | 65 | PCB 4-Layer | 80x50mm, FR4, 1,6mm, ENIG, 2oz Kupfer L1/L4, 1oz L2/L3 | 5 | 6,80 | 6,80 | JLCPCB / PCBWay | 5-8 Tage | 2-Layer (2,00 EUR/5 Stueck) |
 | 66 | PCB-Bestueckung | SMD-Bestueckung durch JLCPCB, ~50 Bauteile | 1 | 20,00 | 20,00 | JLCPCB | 5-8 Tage | DIY Heissluft (0 EUR), lokaler Dienstleister (35 EUR) |
-| 67 | Loetpaste | Sn42/Bi57/Ag1, bleifrei, 50g Spritze | 1 | 8,00 | 8,00 | Amazon / Reichelt | 2-4 Tage | Sn63/Pb37 bleihaltig (6,00 EUR) |
+| 67 | Loetpaste | Sn42/Bi57/Ag1, bleifrei, 50g Spritze | 1 | 8,00 | 8,00 | Online-Marktplatz / Reichelt | 2-4 Tage | Sn63/Pb37 bleihaltig (6,00 EUR) |
 
 ---
 
@@ -250,7 +250,7 @@ GPS-Modulen).
 Einsatz im Projekt: Module (MP1584, TP4056, MT3608), Hall-Sensor,
 SMD-Bauteile in grossen Mengen, nur fuer Prototyp-Phase.
 
-**Amazon (amazon.de)**
+**Online-Marktplatz (Online-Marktplatz)**
 
 Deutscher Online-Marktplatz. Staerken: schnelle Lieferung (1-3 Tage
 mit Prime), breite Auswahl an Verbrauchsmaterial, Filament, Werkzeug,
@@ -277,7 +277,7 @@ identifizieren.
 | HT7333 LDO | 0,50 EUR | 0,60 EUR | n.v. | 0,50 EUR | 0,20 EUR* | Reichelt (schnell) |
 | TC4427 Gate-Driver | 1,40 EUR | 1,50 EUR | n.v. | 1,50 EUR | 0,80 EUR* | Mouser |
 | IRLZ44N | 1,50 EUR | 1,60 EUR | n.v. | 1,50 EUR | 0,80 EUR* | Reichelt |
-| ASA Filament 1kg | n.v. | n.v. | n.v. | n.v. | n.v. | Amazon (25 EUR) |
+| ASA Filament 1kg | n.v. | n.v. | n.v. | n.v. | n.v. | Online-Marktplatz (25 EUR) |
 | PCB 4-Layer (5 St.) | n.v. | n.v. | n.v. | n.v. | n.v. | JLCPCB (6,80 EUR/Board) |
 
 (*) = Preis aus USD umgerechnet mit Kurs 1 USD = 0,92 EUR
@@ -293,8 +293,8 @@ n.v. = nicht verfuegbar
 - Standard-Halbleiter (HT7333, AMS1117, PC817, 1N5822, IRLZ44N):
   verfuegbar bei allen grossen Distributoren.
 - Mechanische Teile (Schrauben, Abstandshalter, Kabelbinder):
-  verfuegbar bei Reichelt, Amazon, Baumarkt.
-- Module (MP1584EN, TP4056, MT3608): verfuegbar bei AliExpress, Amazon,
+  verfuegbar bei Reichelt, Online-Marktplatz, Baumarkt.
+- Module (MP1584EN, TP4056, MT3608): verfuegbar bei AliExpress, Online-Marktplatz,
   Reichelt. Kein Risiko, aber Qualitaetsschwankungen bei AliExpress.
 
 **Mittleres Risiko (Single-Source bei einigen Lieferanten):**
@@ -306,7 +306,7 @@ n.v. = nicht verfuegbar
   Clones unter 15 EUR sind oft Fakes (u-blox Clone oder ATGM336H
   relabeled). Originalmodul bei TME (24,60 EUR) ist die sicherste
   Quelle.
-- ASA-Filament: verfuegbar bei verschiedenen Anbietern auf Amazon und
+- ASA-Filament: verfuegbar bei verschiedenen Anbietern auf Online-Marktplatz und
   Filament-versand. Keine engpaesse, aber Qualitaetsschwankungen.
 
 **Hohes Risiko (Single-Source, Obsolescence, lange Lieferzeiten):**
@@ -317,7 +317,7 @@ n.v. = nicht verfuegbar
 - BMI270: verfuegbar bei Mouser (60.904 auf Lager) und Digi-Key
   (67.748 auf Lager). Jedoch bei Digi-Key als "Limited Supply"
   markiert. Breakout-Boards (AliExpress) als Alternative.
-- AMP Superseal Stecker: verfuegbar bei Spezialversand und Amazon.
+- AMP Superseal Stecker: verfuegbar bei Spezialversand und Online-Marktplatz.
   Jedoch nicht bei Reichelt/Conrad. Bei Lieferengpaessen
   Alternative: Deutch DTM Serie (teurer, aber besser verfuegbar).
 - Druckausgleichsmembran (ePTFE): Spezialprodukt, verfuegbar bei
@@ -393,7 +393,7 @@ ASA-Gehaeuse mit Conformal Coating.
 | 6 | BMI270 IMU (Bare IC) | 1 | 5,00 |
 | 7 | BMP390 Barometer (Bare IC) | 1 | 3,50 |
 | 8 | DS18B20 wasserdicht (Kuehlmittel) | 1 | 3,00 |
-| 9 | VDO Oeldrucksensor 0-5 bar | 1 | 25,00 |
+| 9 | Aftermarket Oeldrucksensor 0-5 bar | 1 | 25,00 |
 | 10 | MicroSD-Slot + 16GB Karte | 1 | 7,20 |
 | 11 | MP1584EN Buck-Modul + TVS SMAJ15A | 1+2 | 2,50 |
 | 12 | HT7333 LDO | 1 | 0,50 |
@@ -652,7 +652,7 @@ Als Backup: DevKitC-1 (13,80 EUR) fuer Prototyp-Phase.
 | NEO-M9N (bei Nicht-Verfuegbarkeit) | 4-6 Wochen | Import aus Asien | ATGM336H (sofort, 3 EUR), NEO-M8N |
 | AMP Superseal Stecker | 2-3 Wochen | Spezialversand | Deutch DTM (Reichelt, 2-3 Tage) |
 | JLCPCB PCB + Bestueckung | 5-8 Tage | Produktion + Versand aus China | PCBWay (aehnlich schnell), lokaler Dienstleister |
-| AliExpress Module (MP1584, TP4056, MT3608) | 7-21 Tage | Versand aus China | Amazon Prime (2-3 Tage, +50% Preis) |
+| AliExpress Module (MP1584, TP4056, MT3608) | 7-21 Tage | Versand aus China | Online-Marktplatz Prime (2-3 Tage, +50% Preis) |
 
 ### 5.3 Substitute fuer kritische Bauteile
 
@@ -677,13 +677,13 @@ Substitute mit ihrer Kompatibilitaet und den Vor- und Nachteilen.
 | NEO-M9N | 3 (TME, Mouser, Digi-Key) | Mittel | ATGM336H als Backup |
 | BMI270 | 2 (Mouser, Digi-Key) | Mittel | MPU6050 als Backup |
 | BMP390 | 2 (Mouser, Digi-Key) | Mittel | BMP280 als Backup |
-| MP1584EN Modul | 3+ (AliExpress, Amazon, Reichelt) | Gering | Keine Massnahme noetig |
+| MP1584EN Modul | 3+ (AliExpress, Online-Marktplatz, Reichelt) | Gering | Keine Massnahme noetig |
 | HT7333 | 3+ (Reichelt, Mouser, LCSC) | Gering | AMS1117 als Backup |
 | TC4427 | 2 (Mouser, Digi-Key) | Mittel | MIC4427 als Backup |
-| ASA-Filament | 3+ (Amazon, Filament-versand) | Gering | PETG als Prototyp-Backup |
-| AMP Superseal | 1-2 (Spezialversand, Amazon) | Hoch | Deutch DTM als Backup |
+| ASA-Filament | 3+ (Online-Marktplatz, Filament-versand) | Gering | PETG als Prototyp-Backup |
+| AMP Superseal | 1-2 (Spezialversand, Online-Marktplatz) | Hoch | Deutch DTM als Backup |
 | JLCPCB PCB | 2 (JLCPCB, PCBWay) | Gering | Lokaler Dienstleister als Backup |
-| Conformal Coating UR | 2 (Amazon, Spezialversand) | Gering | Acryl-Coating als Backup |
+| Conformal Coating UR | 2 (Online-Marktplatz, Spezialversand) | Gering | Acryl-Coating als Backup |
 
 ---
 
@@ -721,24 +721,24 @@ Diese Bauteile haben Lieferzeiten von 2-5 Tagen.
 8. Standard-Halbleiter (HT7333, IRLZ44N, PC817, 1N5822, 1N5408,
    Zener, TVS) bei Reichelt: 2-5 Tage.
 9. Module (MP1584EN, TP4056, MT3608) bei AliExpress: 7-14 Tage.
-   Alternative: Amazon Prime (+50% Preis, aber 2-3 Tage).
+   Alternative: Online-Marktplatz Prime (+50% Preis, aber 2-3 Tage).
 10. USB-C IP67 Buchse bei Reichelt: 2-4 Tage.
-11. Sensor-Kabel abgeschirmt und JST-SM Stecker bei Amazon: 2-4 Tage.
-12. Ferritkerne bei Amazon: 2-4 Tage.
+11. Sensor-Kabel abgeschirmt und JST-SM Stecker bei Online-Marktplatz: 2-4 Tage.
+12. Ferritkerne bei Online-Marktplatz: 2-4 Tage.
 
 **Phase 3: Kurzlaufende Bestellungen (Woche 3)**
 
 Diese Bauteile sind schnell verfuegbar (1-3 Tage).
 
-13. Displays (TFT 3,5" IPS, E-Paper 2,13") bei Waveshare/Amazon:
+13. Displays (TFT 3,5" IPS, E-Paper 2,13") bei Waveshare/Online-Marktplatz:
     3-7 Tage.
-14. DS18B20, NTC, Hall-Sensor bei Reichelt/Amazon: 2-4 Tage.
-15. VDO Oeldrucksensor bei Amazon/Spezialversand: 5-10 Tage.
-16. 18650 Akku bei Amazon: 2-4 Tage.
-17. SD-Karte 16GB bei Amazon: 2-3 Tage.
-18. ASA- und PETG-Filament bei Amazon: 2-4 Tage.
-19. Kupferfolie, Conformal Coating, Acrylglas bei Amazon: 2-4 Tage.
-20. Kabelbinder, Schrumpfschlauch, Schrauben bei Amazon/Baumarkt:
+14. DS18B20, NTC, Hall-Sensor bei Reichelt/Online-Marktplatz: 2-4 Tage.
+15. Aftermarket Oeldrucksensor bei Online-Marktplatz/Spezialversand: 5-10 Tage.
+16. 18650 Akku bei Online-Marktplatz: 2-4 Tage.
+17. SD-Karte 16GB bei Online-Marktplatz: 2-3 Tage.
+18. ASA- und PETG-Filament bei Online-Marktplatz: 2-4 Tage.
+19. Kupferfolie, Conformal Coating, Acrylglas bei Online-Marktplatz: 2-4 Tage.
+20. Kabelbinder, Schrumpfschlauch, Schrauben bei Online-Marktplatz/Baumarkt:
     1-3 Tage.
 
 ### 6.2 Sammelbestellung vs. Einzelbestellung
@@ -764,14 +764,14 @@ Empfohlene Lieferanten-Gruppierung:
 | TME | NEO-M9N | 8,00 | 3-7 Tage |
 | Reichelt | Passive, Standard-ICs, Kabelverschraubungen, Abstandshalter | 4,95 | 2-3 Tage |
 | AliExpress | MP1584, TP4056, MT3608, Hall-Sensor | 0,00 (gratis) | 7-21 Tage |
-| Amazon | Displays, Akku, Filament, Coating, Kupferfolie, Kabel | 0,00 (Prime) | 1-3 Tage |
+| Online-Marktplatz | Displays, Akku, Filament, Coating, Kupferfolie, Kabel | 0,00 (Prime) | 1-3 Tage |
 | Spezialversand | AMP Superseal, Oeldrucksensor, Druckausgleichsmembran | 6,90 | 3-10 Tage |
 | — | **Gesamt Versand** | **41,75** | |
 
 **Einzelbestellung (empfohlen fuer Ersatzbeschaffung):**
 
 Bei nicht verfuegbaren Bauteilen oder dringenden Ersatzbedarf ist
-die Einzelbestellung bei Amazon Prime (1-2 Tage Lieferung) die
+die Einzelbestellung bei Online-Marktplatz Prime (1-2 Tage Lieferung) die
 schnellste Option, auch wenn die Preise 30-100% ueber dem
 Fachhandel liegen.
 
@@ -806,11 +806,11 @@ Mouser versandt aus den Niederlanden, Digi-Key aus den USA
 werden Preise netto berechnet. Versandkosten: 6,90-8,00 EUR.
 Keine Zollgebuehren innerhalb der EU.
 
-**Reichelt / Conrad / Amazon (Inland):**
+**Reichelt / Conrad / Online-Marktplatz (Inland):**
 
 Versand aus Deutschland, 1-3 Tage Lieferzeit. Versandkosten:
 4,95 EUR (Reichelt), gratis bei Conrad ab 25 EUR, gratis bei
-Amazon Prime.
+Online-Marktplatz Prime.
 
 ### 6.4 Empfohlene Lagerhaltung (Reserve-Bauteile)
 
@@ -845,13 +845,13 @@ Silica-Gel (Feuchtigkeitsschutz, MSL-Klassifizierung beachten).
 | MCU / Spezial-ICs | Mouser | Digi-Key | Original, garantierte Qualitaet |
 | GPS-Modul | TME | Mouser | TME hat guenstigste Preise fuer u-blox in der EU |
 | Passive Bauelemente | Reichelt | LCSC | Reichelt schnell, LCSC guenstig bei Mengen |
-| Module (Buck, Boost, Charger) | AliExpress | Amazon | AliExpress am guenstigsten, Amazon am schnellsten |
+| Module (Buck, Boost, Charger) | AliExpress | Online-Marktplatz | AliExpress am guenstigsten, Online-Marktplatz am schnellsten |
 | Standard-Halbleiter | Reichelt | Mouser | Reichelt schnell und guenstig fuer Standard-Teile |
-| Kabel / Stecker / Verschraubungen | Amazon | Reichelt | Amazon fuer schnelle Beschaffung |
-| Filament / 3D-Druck-Material | Amazon | Filament-versand | Grosse Auswahl, schnelle Lieferung |
+| Kabel / Stecker / Verschraubungen | Online-Marktplatz | Reichelt | Online-Marktplatz fuer schnelle Beschaffung |
+| Filament / 3D-Druck-Material | Online-Marktplatz | Filament-versand | Grosse Auswahl, schnelle Lieferung |
 | PCB-Fertigung | JLCPCB | PCBWay | JLCPCB guenstigster Anbieter mit Bestueckung |
-| Spezial-Mechanik (AMP Superseal, Oeldruck) | Spezialversand | Amazon | Spezialversand hat groessere Auswahl |
-| Werkzeug / Verbrauchsmaterial | Amazon | Baumarkt | Amazon fuer Bequemlichkeit, Baumarkt fuer Sofortbedarf |
+| Spezial-Mechanik (AMP Superseal, Oeldruck) | Spezialversand | Online-Marktplatz | Spezialversand hat groessere Auswahl |
+| Werkzeug / Verbrauchsmaterial | Online-Marktplatz | Baumarkt | Online-Marktplatz fuer Bequemlichkeit, Baumarkt fuer Sofortbedarf |
 
 ---
 
@@ -869,7 +869,7 @@ Silica-Gel (Feuchtigkeitsschutz, MSL-Klassifizierung beachten).
 - MP1584EN Modul: AliExpress (0,48-1,26 EUR), LaskaKit (1,31 EUR).
   Stand Oktober 2026.
 - JLCPCB PCB-Fertigung: 4-Layer ab 8 USD / 5 Stueck. Stand 2026.
-- Waveshare 3.5" IPS Display: 480x320, SPI, Amazon / Waveshare.
+- Waveshare 3.5" IPS Display: 480x320, SPI, Online-Marktplatz / Waveshare.
   Stand Oktober 2026.
 - docs/research/02-hardware-deep-dive.md: Komponenten-Auswahl und
   Spezifikationen

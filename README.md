@@ -478,7 +478,7 @@ in den [Release-Notes v1.0](docs/RELEASE-NOTES.md).
 | Drehzahl | Induktivsensor GT101 | Am Zuendkabel, Pulse-Counter (pcnt) |
 | Kuehlmitteltemp | NTC 10k Ohm | Im Kuehlschlauch, ADC + Spannungsteiler |
 | Kraftstoffstand | Tankgeber 5-90 Ohm | Spannungsteiler -> ADC, kalibriert |
-| Oeldruck | VDO 0-10bar | Analog 0.5-4.5V, 1/8-27 NPT |
+| Oeldruck | Aftermarket 0-10bar | Analog 0.5-4.5V, 1/8-27 NPT |
 | Power | LiPo 18650 + TP4056 + MT3608 + HT7333 | 3400mAh, USB-C Ladung, Buck/Boost |
 | Steuerung | 4-Kanal Relais-Modul | Zusatzlicht, Heizgriffe, USB, Zubehoer |
 
