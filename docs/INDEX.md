@@ -47,6 +47,8 @@ Nicht sicher, wo Sie anfangen sollen? Waehlen Sie Ihr Ziel:
 | PCB-LAYOUT | PCB-Layout-Konzept: Layer-Stackup (4-Layer), Routing-Regeln, EMV-Optimierung, Differential-Pairs und Design-Constraints. | [docs/PCB-LAYOUT.md](PCB-LAYOUT.md) |
 | HARDWARE | Hardware-Schaltplan: Pin-Layout, Verdrahtungsplan, Stromversorgung, Sensor-Anzapfung und Signal-Konditionierung. | [docs/HARDWARE.md](HARDWARE.md) |
 | PINMAP | GPIO-Belegung des ESP32-S3: Alle Pins mit Funktion, Signal, Bus-Zugehoerigkeit und Konflikten. | [docs/PINMAP.md](PINMAP.md) |
+| SENSOR-MOUNTING | Sensor-Anschlusspunkte an der PD06: CDI-Pinout, Öldruckschalter, Kühlmitteltemp, Kraftstoff, Tacho, Kabelverlegung. | [docs/SENSOR-MOUNTING.md](SENSOR-MOUNTING.md) |
+| SHOPPING-LIST | Kompakte Einkaufsliste Standard-Konfiguration: 61 Bauteile mit Preisen, Quellen und Bestellreihenfolge. | [docs/SHOPPING-LIST.md](SHOPPING-LIST.md) |
 | INSTALLATION-GUIDE | Montage-Anleitung fuer die PD06: PCB-Einbau, Verkabelung, Display-Montage, Inbetriebnahme und PD06-spezifische Hinweise. | [docs/INSTALLATION-GUIDE.md](INSTALLATION-GUIDE.md) |
 | CASE-DESIGN | Gehaeuse-Design: 3D-Druck-Konzept, Montage-Strategie, Wasserfestigkeit (IP65), Vibration-daempfung und Temperatur-Management. | [docs/CASE-DESIGN.md](CASE-DESIGN.md) |
 
