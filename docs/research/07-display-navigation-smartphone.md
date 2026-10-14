@@ -60,7 +60,7 @@ Die wichtigsten Kriterien fuer ein Motorrad-Display sind Helligkeit, Schnittstel
 
 Helligkeit ist der entscheidende Faktor fuer Sonnenlesbarkeit. Die Faustregel: 500 nits sind in halbschattigem Bereich lesbar, 1000 nits sind das Minimum fuer direkte Sonneneinstrahlung, und 1500+ nits sind Bose-oder-OEM-Niveau. Ein Standard-ILI9341-Modul liefert typischerweise 250-300 nits. Das reicht fuer den Innenraum, aber nicht fuer Sonne am Lenker.
 
-Es gibt zwei Wege zu mehr Helligkeit: Hochhelligkeits-Module (IPS-TFT mit 1000+ nits gibt es bei Waveshare und 4D Systems) oder transflektive Displays, die Sonnenlicht zurueckstrahlen und auch ohne Hintergrundbeleuchtung lesbar sind. Transflektive Displays sind selten und teuer, aber ideal fuer Motorraeder, da sie auch bei ausgeschalteter Beleuchtung funktionieren und kaum Strom verbrauchen.
+Es gibt zwei Wege zu mehr Helligkeit: Hochhelligkeits-Module (IPS-TFT mit 1000+ nits gibt es bei Display-Modul-Hersteller und 4D Systems) oder transflektive Displays, die Sonnenlicht zurueckstrahlen und auch ohne Hintergrundbeleuchtung lesbar sind. Transflektive Displays sind selten und teuer, aber ideal fuer Motorraeder, da sie auch bei ausgeschalteter Beleuchtung funktionieren und kaum Strom verbrauchen.
 
 Touchscreen ist am Motorrad kontraproduktiv. Handschuhe blocken kapazitive Touchsensoren, und mit bloßen Haenden am Lenker zu tippen ist beim Fahren zu gefaehrlich. Steuerung geht ueber physikalische Taster am Lenker (siehe Feature-Roadmap Abschnitt 6.1).
 
@@ -72,11 +72,11 @@ Touchscreen ist am Motorrad kontraproduktiv. Handschuhe blocken kapazitive Touch
 | ST7789 2.0" | ST7789 | 320x240 | SPI (4-wire) | 8-12 | 500 nits | Kompromiss aus Groesse und Helligkeit |
 | ILI9488 3.5" | ILI9488 | 480x320 | SPI (4-wire) | 8-14 | 250 nits | Viel Platz, aber nicht sonnenlesbar |
 | ST7796 4.0" | ST7796 | 320x480 | SPI (4-wire) | 10-15 | 350 nits | Groesstes SPI-Display, noch dunkel |
-| Waveshare 3.5" IPS | ILI9488 | 480x320 | SPI | 15-20 | 1000 nits | Sonnenlesbar, geeignet |
+| Display-Modul-Hersteller 3.5" IPS | ILI9488 | 480x320 | SPI | 15-20 | 1000 nits | Sonnenlesbar, geeignet |
 | 4D Systems gen4-ESP32-35 | ILI9488 | 320x480 | SPI (intern) | 35-45 | 200 nits (TN) / 250 nits (IPS) | Integrierter ESP32-S3, aber dunkel |
 | Nextion 3.5" Enhanced | proprietar | 480x320 | UART | 20-30 | 250 nits | Eigener Controller, einfacher aber teuer |
 
-Empfehlung: Waveshare 3.5" IPS (1000 nits) oder ein hochhelliges 2.0" ST7789 (500 nits) als Kompromiss, wenn der Platz am Lenker sehr knapp ist. Das 4.0" ST7796 ist die Obergrenze fuer den Lenkerbereich der Transalp.
+Empfehlung: Display-Modul-Hersteller 3.5" IPS (1000 nits) oder ein hochhelliges 2.0" ST7789 (500 nits) als Kompromiss, wenn der Platz am Lenker sehr knapp ist. Das 4.0" ST7796 ist die Obergrenze fuer den Lenkerbereich der Transalp.
 
 Quellen:
 - https://dirtybirdypowersports.com/blogs/news/tft-motorcycle-dash (Helligkeits-Anforderungen)
@@ -109,7 +109,7 @@ LVGL-Buffer-Empfehlung: 1/4 bis 1/8 der Bildschirmgroesse als Draw-Buffer in SRA
 Quellen:
 - https://docs.espressif.com/projects/esp-idf/en/v5.0/esp32s3/api-reference/peripherals/lcd.html (esp_lcd, Framebuffer, Bounce Buffer)
 - https://forum.lvgl.io/t/create-buffers-in-psram-esp32s3/11555 (Buffer-Groessen-Empfehlung)
-- https://files.waveshare.com/wiki/ESP32-S3-Touch-LCD-7/Performance.pdf (LVGL FPS-Benchmarks)
+- ESP32-S3-Touch-LCD Performance-Benchmarks (LVGL FPS)
 
 ### 1.6 Kann der ESP32-S3 zwei Displays gleichzeitig ansteuern?
 

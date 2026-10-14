@@ -1567,4 +1567,4 @@ mit dem LVGL Font Converter beim Build generiert.
 - CSS Timing Functions (Bezier-Kurven Referenz):
   https://developer.mozilla.org/en-US/docs/Web/CSS/easing-function
 - E-Paper Partial-Refresh Limits (Ghosting, Temperatur):
-  https://www.waveshare.com/wiki/2.13inch_e-Paper_HAT
+  (Display-Hersteller e-Paper Wiki)

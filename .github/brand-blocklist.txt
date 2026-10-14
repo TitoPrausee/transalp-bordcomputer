@@ -31,3 +31,15 @@
 \b[Ee][Bb]ay\b
 \b[Aa]li[Ee]xpress\b
 \bRaspberry\s?[Pp]i\b
+\b[Rr]eichelt\b
+\b[Cc]onrad\b
+\b[Mm]ouser\b
+\b[Dd]i-?[Kk]ey\b
+\bLCSC\b
+\b[Ll]csc\b
+\bTME\b
+\b[Tt]me\b
+\b[Aa]dafruit\b
+\b[Ss]park[Ff]un\b
+\b[Ww]aveshare\b
+\b[Ss]pezial\.com\b

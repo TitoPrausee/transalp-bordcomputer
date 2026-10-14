@@ -34,7 +34,7 @@ Es abstrahiert FreeRTOS, Peripherals und WiFi/BLE hinter einfachen Klassen.
 
 Vorteile:
 - Schneller Einstieg, viele Tutorials
-- Riesige Library-Auswahl (GxEPD2, Adafruit GFX, TinyGPS++, etc.)
+- Riesige Library-Auswahl (GxEPD2, GFX-Library (Open-Source), TinyGPS++, etc.)
 - Einfacher Code für Prototyping
 
 Nachteile:
@@ -60,11 +60,11 @@ idf_component_register(SRCS "main.c"
                        REQUIRES arduino)
 ```
 
-Dann sind Arduino-Klassen wie `SPIClass`, `Wire`, `Adafruit_GFX` verfügbar.
+Dann sind Arduino-Klassen wie `SPIClass`, `Wire`, `GFX-Basis-Library` verfügbar.
 Aber: das zieht den ganzen Arduino-Layer rein, negiert viele ESP-IDF-Vorteile.
 
 Besser: gezielt Arduino-Libraries als ESP-IDF Component portieren.
-Beispiel GxEPD2: benötigt Adafruit_GFX + SPI. Das kann man als Component
+Beispiel GxEPD2: benötigt GFX-Basis-Library + SPI. Das kann man als Component
 einbinden und den Rest nativ in ESP-IDF schreiben.
 
 ### 1.4 Empfehlung für dieses Projekt
@@ -79,7 +79,7 @@ Begründung:
 - FreeRTOS-Task-Design braucht direkte Kontrolle über Core-Affinity und
   Prioritäten
 - GxEPD2 für E-Paper als Component einbinden (die Library ist gut getestet
-  und unterstützt alle Waveshare-Panels)
+  und unterstützt alle Display-Hersteller-Panels)
 - minmea als C-Library direkt nutzen (kein Arduino-Wrapper nötig)
 
 Quellen:
@@ -392,13 +392,13 @@ uint8_t enable_gga[] = {
 };
 ```
 
-Alternativ: SparkFun_u-blox_GNSS_Arduino_Library als Component einbinden.
+Alternativ: u-blox_GNSS_Arduino_Library als Component einbinden.
 Diese kann über I2C/SPI/UART konfigurieren und bietet `setNavigationFrequency()`,
 `setAutoPVT()`, etc. Muss nicht zwingend Arduino-Core benötigen, wenn man
 nur die UBX-Konfiguration portiert.
 
 Quellen:
-- https://github.com/sparkfun/SparkFun_u-blox_GNSS_Arduino_Library
+- u-blox_GNSS_Arduino_Library (GitHub, Open-Source)
 - https://github.com/loginov-rocks/UbxGps (Minimal-Ubx-Library für 10Hz)
 
 ### 3.4 PPS-Signal: Input-Capture für Zeitsynchronisation
@@ -518,26 +518,26 @@ Quelle: u-blox NEO-M9N Interface Description, Section "AssistNow"
 
 ## 4. Display-Treiber & UI
 
-### 4.1 Library-Vergleich: GxEPD2 vs. Adafruit EPD vs. Waveshare
+### 4.1 Library-Vergleich: GxEPD2 vs. E-Paper-Library (Open-Source) vs. Display-Modul-Hersteller
 
-| Kriterium | GxEPD2 | Adafruit EPD | Waveshare-Lib |
+| Kriterium | GxEPD2 | E-Paper-Library (Open-Source) | Display-Hersteller-Lib |
 |---|---|---|---|
-| Panels | 100+ (alle Good Display + Waveshare) | ~10 (Adafruit-eigene) | Nur Waveshare-Boards |
+| Panels | 100+ (alle Good Display + Display-Modul-Hersteller) | ~10 (herstellereigene) | Nur Display-Hersteller-Boards |
 | Partial-Refresh | Ja (differentiell) | Begrenzt | Ja (einfach) |
-| Basis | Adafruit_GFX | Adafruit_GFX | Eigen (RAW) |
+| Basis | GFX-Basis-Library | GFX-Basis-Library | Eigen (RAW) |
 | Multi-Display | Ja (verschiedene CS) | Nein | Nein |
 | ESP32-S3 | Getestet | Getestet | Getestet |
 | Pflege | Sehr aktiv (J. Zingg) | Selten Updates | Sporadisch |
-| Quelle | github.com/ZinggJM/GxEPD2 | github.com/adafruit/Adafruit_EPD | Waveshare Wiki |
+| Quelle | github.com/ZinggJM/GxEPD2 | GitHub (Open-Source) | Display-Hersteller-Wiki |
 
 **Empfehlung: GxEPD2.**
 
 Begründung:
-- Unterstützt das Waveshare 2.9" b/w Panel (GDEM029T94 / SSD1680) direkt
+- Unterstützt das Display-Modul-Hersteller 2.9" b/w Panel (GDEM029T94 / SSD1680) direkt
 - Fast Partial Update (differentielle Refresh) für Live-Daten
 - Paged Drawing (Picture Loop) reduziert RAM-Bedarf
 - Aktive Pflege und Bugfixes
-- Kompatibel mit Adafruit_GFX (Fonts, Grafik-Primitive)
+- Kompatibel mit GFX-Basis-Library (Fonts, Grafik-Primitive)
 
 Quelle: https://github.com/ZinggJM/GxEPD2
 
@@ -571,14 +571,14 @@ Limits:
 Code mit GxEPD2:
 ```cpp
 #include <GxEPD2_BW.h>
-#include <Adafruit_GFX.h>
+#include <GFX-Basis-Library.h>
 
 // 2.9" b/w Panel
 GxEPD2_BW<GxEPD2_290_GDEY029T94, GxEPD2_290_GDEY029T94::HEIGHT> display(
     /*CS=*/ 10, /*DC=*/ 14, /*RST=*/ 21, /*BUSY=*/ 47);
 
 void display_init() {
-    display.init(115200, true, 2, false);  // 2ms reset für Waveshare
+    display.init(115200, true, 2, false);  // 2ms reset für Display-Modul-Hersteller
     display.setPartialWindow(0, 0, display.width(), display.height());
     display.setRotation(1);  // Querformat: 296x128
 }
@@ -634,7 +634,7 @@ Partial-Refresh-Strategien.
 | Animationen | Ja (aber bei E-Paper limitiert) | Manuell |
 | Partial-Refresh | Über Adapter (tuanpmt/esp_epaper) | Direkt via GxEPD2 |
 
-**Empfehlung: Custom-UI mit GxEPD2 und Adafruit_GFX-Primitiven.**
+**Empfehlung: Custom-UI mit GxEPD2 und GFX-Basis-Library-Primitiven.**
 
 Begründung:
 - Bordcomputer-UI ist simpel: wenige Werte, große Fonts, klare Hierarchie
@@ -1913,7 +1913,7 @@ Relevante Bibliotheken aus der Open-Source-Community:
 - `stanleyhuang/ELMDuino` — ELM327-Library (für Bench-Testing)
 - `nopnop2002/esp-idf-mcp2515` — ESP-IDF MCP2515-Component
 - `tuanpmt/esp_epaper` — ESP-IDF native E-Paper-Component
-- `sparkfun/SparkFun_u-blox_GNSS_Arduino_Library` — u-blox GPS-Konfiguration
+- `u-blox_GNSS_Arduino_Library` (GitHub) — u-blox GPS-Konfiguration
 - `derdoktor667/ESP32_MPU6050` — MPU6050-Treiber mit DLPF-Konfiguration
 
 ### 10.5 Was adaptieren?
@@ -1921,7 +1921,7 @@ Relevante Bibliotheken aus der Open-Source-Community:
 | Modul | Library | Adaptierung |
 |---|---|---|
 | GPS-Parser | minmea | Direkt als Component einbinden |
-| GPS-Konfiguration | SparkFun_u-blox_GNSS | UBX-Konfiguration portieren |
+| GPS-Konfiguration | u-blox_GNSS_Library | UBX-Konfiguration portieren |
 | E-Paper | GxEPD2 | Als Arduino-Component einbinden |
 | MPU6050 | Eigenbau nach Register-Map | I2C-Treiber direkt in ESP-IDF |
 | BMP280 | Eigenbau nach Datasheet | I2C-Treiber direkt in ESP-IDF |

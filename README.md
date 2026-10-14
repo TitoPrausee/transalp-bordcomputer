@@ -470,7 +470,7 @@ in den [Release-Notes v1.0](docs/RELEASE-NOTES.md).
 |---|---|---|
 | MCU | ESP32-S3-WROOM-1 | Dual-Core 240MHz, 16MB Flash, 8MB PSRAM, BLE 5 |
 | GPS | u-blox NEO-M9N | 10Hz, 72-Kanal, UBX-konfigurierbar |
-| Display 1 | Waveshare 2.9" E-Paper | 296x128, Partial-Refresh, sonnenlesbar |
+| Display 1 | Display-Modul-Hersteller 2.9" E-Paper | 296x128, Partial-Refresh, sonnenlesbar |
 | Display 2 | ILI9341 / ILI9488 TFT | 2.4"-3.5", fuer Navigation |
 | IMU | MPU6050 | Gyro + Accel, I2C, Neigung/Crash-Detection |
 | Barometer | BMP280 | Temperatur + Luftdruck, Hoehenmeter |

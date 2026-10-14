@@ -493,15 +493,15 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 | Issue Templates | 2 (bug_report, feature_request) |
 | PR Template | 1 (.github/PULL_REQUEST_TEMPLATE.md) |
 | Community Files | 4 (CODE_OF_CONDUCT, SECURITY, FUNDING.yml, CODEOWNERS) |
-| Brand-Blocklist | 26 Marken (.github/brand-blocklist.txt) |
+| Brand-Blocklist | 38 Marken (.github/brand-blocklist.txt) |
 | Dependabot | 1 (.github/dependabot.yml — npm + github-actions) |
-| Git Commits | 168 (Runde 29: Distributor-/Vendor-Marken-Scan, Cleanup-Task gestartet) |
-| Tasks done | 48 |
-| Tasks running | 1 (t_daa00534: Markennamen-Bereinigung Teil 3) |
+| Git Commits | 169 (Runde 30: Distributor-/Vendor-Marken-Cleanup gemerged) |
+| Tasks done | 49 |
+| Tasks running | 0 |
 | Tasks blocked | 0 |
 | Lokale Branches | 1 (nur main) |
 | Offene Dependabot-PRs | 0 — alle 4 gemerged in Runde 17 ✅ |
-| CI/CD Status | Alle 4 Workflows grün ✅ (Docs CI #41, Firmware CI #7, Companion-App CI #13, Pages #2) |
+| CI/CD Status | Alle 4 Workflows grün ✅ (Docs CI #42, Firmware CI #7, Companion-App CI #13, Pages #2) |
 | ESP-IDF Mock-Header | 6 (fuer Host-Unit-Tests) |
 | test_dtc Status | Repariert — DTC-Codes synchronisiert mit Implementierung ✅ |
 | Tasks archived | 1 (t_4f8965c9: Design-Integration, veraltet) |

@@ -33,7 +33,7 @@ alle Must- und die wichtigsten Should-Features ab für ca. 125 EUR.
 
 Die folgende Tabelle listet alle Komponenten mit konkreten Preisen in EUR auf.
 Preise sind Richtwerte (Stand 2026) und beziehen sich auf Einzelstückpreise bei
-China-Marktplatz, Online-Marktplatz, Mouser oder DigiKey. Bei Stückzahlen ab 10 fallen die Preise
+China-Marktplatz, Online-Marktplatz, B2B-Distributor US #1 oder B2B-Distributor US #2. Bei Stückzahlen ab 10 fallen die Preise
 typischerweise um 20-40%.
 
 Jede Komponente hat einen Budget- und einen Premium-Vorschlag. Budget-Teile
@@ -48,7 +48,7 @@ bietet — "Premium" bedeutet nicht immer "teuer", sondern "bester Wert".
 | 1 | MCU-Modul | ESP32-S3-DevKitC-1 (5) | ESP32-S3-WROOM-1 N8R2 Custom PCB (18) | Premium (Custom PCB ab Phase 2) | — |
 | 2 | GPS-Modul | ATGM336H (3) | u-blox NEO-M9N (30) | Premium | UART |
 | 3 | GPS-Antenne | Passive Patch (2) | Active Patch 25x25 mit Magnetfuß (8) | Premium | — |
-| 4 | Display (primär) | ILI9341 2.4" 320x240 (6) | Waveshare 3.5" IPS 1000 nits 480x320 (18) | Premium | SPI |
+| 4 | Display (primär) | ILI9341 2.4" 320x240 (6) | Display-Modul-Hersteller 3.5" IPS 1000 nits 480x320 (18) | Premium | SPI |
 | 5 | Display (sekundär) | — | E-Paper 2.13" 250x122 (12) | Standard-Stufe | SPI |
 | 6 | SD-Karten-Modul | MicroSD Breakout (2) | MicroSD Breakout (2) | Budget (kein Unterschied) | SPI |
 | 7 | MicroSD-Karte | 8GB Class 10 NoName (3) | Marken-SD-Karte Ultra 16GB Class 10 (6) | Premium | — |
@@ -135,7 +135,7 @@ saubere Perfboard-Lösung.
 
 | Kategorie | Summe (EUR) |
 |---|---|
-| Kern-System (WROOM-1 N8R2, NEO-M9N, Waveshare 3.5" IPS, SD) | 56 |
+| Kern-System (WROOM-1 N8R2, NEO-M9N, Display-Modul-Hersteller 3.5" IPS, SD) | 56 |
 | Sensoren (BMI270, BMP388, DS18B20 x2, Aftermarket Öldruck, PC817+, OpAmp) | 42 |
 | Power (MP1584+TVS, HT7333, 18650, TP4056, MT3608, Diode) | 11 |
 | Konnektivität (Buzzer, Relais, IRLZ44N+TC4427) | 8 |
@@ -189,7 +189,7 @@ Mehrpreise gegenüber der Budget-Option.
 
 | Investition | Mehrpreis (EUR) | Nutzen | Begründung |
 |---|---|---|---|
-| Waveshare 3.5" IPS 1000 nits | +12 | Sonnenlesbarkeit | 1000 nits ist das Minimum für direktes Sonnenlicht am Lenker. |
+| Display-Modul-Hersteller 3.5" IPS 1000 nits | +12 | Sonnenlesbarkeit | 1000 nits ist das Minimum für direktes Sonnenlicht am Lenker. |
 | E-Paper 2.13" als Zweitdisplay | +12 | Statische Werte immer sichtbar | TFT aus = Kraftstoff/Trip immer noch da. Low Power. |
 | 18650 Backup-Akku | +8 | Power-Loss-Schutz, Diebstahlschutz | 8 EUR für Datensicherheit und Tiefgaragen-Tracking. |
 | Aftermarket Öldrucksensor | +25 | Analoge Öldruckanzeige | Teuerster Einzelposten. Lohnt sich für Motoren über 50.000 km. |
@@ -312,7 +312,7 @@ auf einem Display anzeigen.
   NMEA-Parsing (GGA, RMC, VTG), UBX-NAV-PVT-Parsing für 5-10 Hz Update
 - NVS-Konfiguration: settings.json auf SD-Karte laden, Parameter
   in NVS persistieren
-- Erste Display-Ausgabe: Text auf ILI9341 oder Waveshare 3.5" IPS
+- Erste Display-Ausgabe: Text auf ILI9341 oder Display-Modul-Hersteller 3.5" IPS
   (Geschwindigkeit, GPS-Fix-Status, Sat-Anzahl, Uhrzeit)
 
 **Woche 2: SD-Logging und Basis-Funktionen**
@@ -1250,14 +1250,14 @@ JSON fallen die Werte auf kompilierte Defaults zurück.
 
 | Komponente | Lieferant | Begründung |
 |---|---|---|
-| ESP32-S3-DevKitC-1 | Mouser / DigiKey | Original, nicht Clone |
-| ESP32-S3-WROOM-1 (N8R2) | Mouser / DigiKey | Für Custom PCB |
-| u-blox NEO-M9N | Mouser / DigiKey | Original (Clones sind oft Fakes) |
-| BMI270, BMP388 | Mouser / DigiKey | Original-Sensoren (nicht Clone) |
-| DS18B20 | Mouser / DigiKey | Original (Fakes im Umlauf) |
-| Displays (Waveshare) | Waveshare Store / Online-Marktplatz | Original |
+| ESP32-S3-DevKitC-1 | B2B-Distributor US #1 / B2B-Distributor US #2 | Original, nicht Clone |
+| ESP32-S3-WROOM-1 (N8R2) | B2B-Distributor US #1 / B2B-Distributor US #2 | Für Custom PCB |
+| u-blox NEO-M9N | B2B-Distributor US #1 / B2B-Distributor US #2 | Original (Clones sind oft Fakes) |
+| BMI270, BMP388 | B2B-Distributor US #1 / B2B-Distributor US #2 | Original-Sensoren (nicht Clone) |
+| DS18B20 | B2B-Distributor US #1 / B2B-Distributor US #2 | Original (Fakes im Umlauf) |
+| Displays (Display-Modul-Hersteller) | Display-Modul-Hersteller Store / Online-Marktplatz | Original |
 | Aftermarket Öldrucksensor | KFZ-Teileshop / Online-Marktplatz | Spezifisches Bauteil |
-| Passive Bauteile (R, C) | Mouser / DigiKey | Großpackungen |
+| Passive Bauteile (R, C) | B2B-Distributor US #1 / B2B-Distributor US #2 | Großpackungen |
 | Gehäuse-Filament (ASA) | Prusa / Filament-Shop | Qualität |
 | GORE PolyVent | Gore direkt / Distributor | Spezialprodukt |
 | SD-Karte | Marken-Hersteller direkt / Online-Marktplatz | Markenprodukt |
@@ -1267,13 +1267,13 @@ JSON fallen die Werte auf kompilierte Defaults zurück.
 ### 7.2 Einkaufs-Strategie
 
 1. **Kritische Komponenten (GPS, MCU, Sensoren):** Nur bei
-   autorisierten Distributoren (Mouser, DigiKey). Clones von
+   autorisierten Distributoren (B2B-Distributor US #1, B2B-Distributor US #2). Clones von
    China-Marktplatz sind oft Fakes (besonders NEO-M9N und DS18B20).
 2. **Mechanische Teile (Gehäuse, Halterung):** 3D-Druck selbst,
    Filament von Qualitätshersteller. GORE-Vent als Spezialprodukt
    direkt von Gore.
 3. **Kabel, Widerstände, Kondensatoren:** Großpackungen bei
-   Mouser/DigiKey. Versandkosten amortisieren sich bei
+   B2B-Distributor US #1/B2B-Distributor US #2. Versandkosten amortisieren sich bei
    Mehrfachbestellungen.
 4. **Custom PCB:** JLCPCB für Prototyp (5 Stück, 2-EUR-Basispreis,
    Bestückung ca. 15 EUR). Lieferzeit ca. 2 Wochen.
@@ -1286,7 +1286,7 @@ Besonders folgende Komponenten werden häufig gefälscht:
 
 | Komponente | Fälschungs-Risiko | Erkennung |
 |---|---|---|
-| u-blox NEO-M9N | Sehr hoch (China-Marktplatz unter 15 EUR) | Original nur bei Mouser/DigiKey, Markierung lasergraviert |
+| u-blox NEO-M9N | Sehr hoch (China-Marktplatz unter 15 EUR) | Original nur bei B2B-Distributor US #1/B2B-Distributor US #2, Markierung lasergraviert |
 | DS18B20 | Hoch | Fakes liefern falsche Werte, CRC-Fehler; Test: Eiswasser = 0°C |
 | ESP32-S3 | Mittel | DevKitC-1 original hat MCU-Chiphersteller-Logo und USB-Bridge CH343 |
 | Marken-SD-Karte | Hoch (bei Online-Marktplatz Marketplace) | Originalverpackung, Serial auf Hersteller-Website verifizieren |
@@ -1362,30 +1362,30 @@ Diese Tabelle ist die Einkaufsliste für die empfohlene Standard-Stufe.
 
 | # | Komponente | Spezifikation | Menge | Einzelpreis (EUR) | Gesamtpreis (EUR) | Lieferant |
 |---|---|---|---|---|---|---|
-| 1 | ESP32-S3-WROOM-1 N8R2 | 8MB Flash, 2MB PSRAM | 1 | 8 | 8 | Mouser |
-| 2 | u-blox NEO-M9N | GPS, 4-GNSS, 25Hz | 1 | 30 | 30 | Mouser |
-| 3 | Active Patch Antenne 25x25 | GPS-Antenne mit Verstärker | 1 | 8 | 8 | Mouser |
-| 4 | Waveshare 3.5" IPS | 480x320, 1000 nits, ILI9488 | 1 | 18 | 18 | Waveshare |
-| 5 | E-Paper 2.13" | 250x122, SSD1680 | 1 | 12 | 12 | Waveshare |
+| 1 | ESP32-S3-WROOM-1 N8R2 | 8MB Flash, 2MB PSRAM | 1 | 8 | 8 | B2B-Distributor US #1 |
+| 2 | u-blox NEO-M9N | GPS, 4-GNSS, 25Hz | 1 | 30 | 30 | B2B-Distributor US #1 |
+| 3 | Active Patch Antenne 25x25 | GPS-Antenne mit Verstärker | 1 | 8 | 8 | B2B-Distributor US #1 |
+| 4 | Display-Modul-Hersteller 3.5" IPS | 480x320, 1000 nits, ILI9488 | 1 | 18 | 18 | Display-Modul-Hersteller |
+| 5 | E-Paper 2.13" | 250x122, SSD1680 | 1 | 12 | 12 | Display-Modul-Hersteller |
 | 6 | MicroSD Breakout | SPI, Standard | 1 | 2 | 2 | Online-Marktplatz |
 | 7 | Marken-SD-Karte Ultra 16GB | microSD, Class 10 | 1 | 6 | 6 | Online-Marktplatz |
-| 8 | BMI270 | IMU, 6-Achsen, I2C | 1 | 5 | 5 | Mouser |
-| 9 | BMP388 | Barometer, I2C | 1 | 5 | 5 | Mouser |
-| 10 | DS18B20 | wasserdicht, 1-Wire | 2 | 3 | 6 | Mouser |
+| 8 | BMI270 | IMU, 6-Achsen, I2C | 1 | 5 | 5 | B2B-Distributor US #1 |
+| 9 | BMP388 | Barometer, I2C | 1 | 5 | 5 | B2B-Distributor US #1 |
+| 10 | DS18B20 | wasserdicht, 1-Wire | 2 | 3 | 6 | B2B-Distributor US #1 |
 | 11 | Aftermarket Öldrucksensor | 0-5 bar, 10-180 Ohm | 1 | 25 | 25 | KFZ-Shop |
-| 12 | PC817 Optokoppler | RPM-Pickup | 2 | 0.50 | 1 | Mouser |
-| 13 | Zener-Diode 3.3V | Überspannungsschutz | 2 | 0.20 | 0.40 | Mouser |
+| 12 | PC817 Optokoppler | RPM-Pickup | 2 | 0.50 | 1 | B2B-Distributor US #1 |
+| 13 | Zener-Diode 3.3V | Überspannungsschutz | 2 | 0.20 | 0.40 | B2B-Distributor US #1 |
 | 14 | MP1584EN Modul | Buck 12V->5V | 1 | 2 | 2 | Online-Marktplatz |
-| 15 | TVS-Diode SMAJ15A | Lastabwurf-Schutz | 2 | 0.50 | 1 | Mouser |
-| 16 | HT7333 LDO | 5V->3.3V, low noise | 1 | 0.50 | 0.50 | Mouser |
-| 17 | 18650 NCR18650B | 3400 mAh Li-Ion | 1 | 6 | 6 | Conrad |
+| 15 | TVS-Diode SMAJ15A | Lastabwurf-Schutz | 2 | 0.50 | 1 | B2B-Distributor US #1 |
+| 16 | HT7333 LDO | 5V->3.3V, low noise | 1 | 0.50 | 0.50 | B2B-Distributor US #1 |
+| 17 | 18650 NCR18650B | 3400 mAh Li-Ion | 1 | 6 | 6 | Elektronik-Distributor DE #2 |
 | 18 | TP4056 Modul | Lademodul mit Schutz | 1 | 0.50 | 0.50 | Online-Marktplatz |
 | 19 | MT3608 Modul | Boost 3.7V->5V | 1 | 0.80 | 0.80 | Online-Marktplatz |
-| 20 | 1N5822 Schottky | Power-Path ORing | 2 | 0.10 | 0.20 | Mouser |
+| 20 | 1N5822 Schottky | Power-Path ORing | 2 | 0.10 | 0.20 | B2B-Distributor US #1 |
 | 21 | Piezo-Buzzer | Passiv | 1 | 1 | 1 | Online-Marktplatz |
 | 22 | Relais-Modul 4-Kanal | SRD-12V, Optokoppler | 1 | 4 | 4 | Online-Marktplatz |
-| 23 | IRLZ44N MOSFET | Heizgriffe PWM | 1 | 1.50 | 1.50 | Mouser |
-| 24 | TC4427 Gate-Driver | 3.3V->12V Gate-Drive | 1 | 2 | 2 | Mouser |
+| 23 | IRLZ44N MOSFET | Heizgriffe PWM | 1 | 1.50 | 1.50 | B2B-Distributor US #1 |
+| 24 | TC4427 Gate-Driver | 3.3V->12V Gate-Drive | 1 | 2 | 2 | B2B-Distributor US #1 |
 | 25 | ASA Filament 1kg | UV-beständig, 100°C Tg | 1 | 5 | 5 | Prusa |
 | 26 | Silikon-O-Ring | Dichtung, -40 bis +200°C | 2 | 1 | 2 | Online-Marktplatz |
 | 27 | PG7 Cable-Gland | IP67, für Sensorkabel | 4 | 1 | 4 | Online-Marktplatz |
@@ -1393,7 +1393,7 @@ Diese Tabelle ist die Einkaufsliste für die empfohlene Standard-Stufe.
 | 29 | GORE PolyVent XS | Druckausgleich, IP68 | 1 | 8 | 8 | Gore |
 | 30 | RAM-Mount Kugelgelenk | Lenkerhalterung 22mm | 1 | 8 | 8 | Online-Marktplatz |
 | 31 | ATO Sicherungskasten | 6-fach, wasserdicht | 1 | 5 | 5 | Online-Marktplatz |
-| 32 | Verbrauchsmaterial | Kabel, Widerstände, Kondensatoren | — | 5 | 5 | Mouser |
+| 32 | Verbrauchsmaterial | Kabel, Widerstände, Kondensatoren | — | 5 | 5 | B2B-Distributor US #1 |
 | | | | | **Gesamt** | **~181** | |
 | | | | | Puffer 15% | 27 | |
 | | | | | **Budget** | **~208** | |
@@ -1401,7 +1401,7 @@ Diese Tabelle ist die Einkaufsliste für die empfohlene Standard-Stufe.
 Hinweis: Die tatsächlichen Preise können je nach Quelle und
 Bestellmenge um +/- 20% variieren. Die Puffer von 15% deckt
 Versandkosten und Preisschwankungen ab. Bei Bestellung mehrerer
-Komponenten bei einem Lieferanten (Mouser, DigiKey) fallen
+Komponenten bei einem Lieferanten (B2B-Distributor US #1, B2B-Distributor US #2) fallen
 Versandkosten nur einmal an.
 
 ### 10.2 Pin-Belegungs-Referenz

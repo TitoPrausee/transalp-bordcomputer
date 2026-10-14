@@ -546,14 +546,14 @@ Standard-E-Paper-Displays sind spezifiziert für **0°C bis +50°C** (Betrieb).
 Breittemperatur-Varianten erreichen **-20°C bis +60°C**.
 
 ([Pervasive Displays Wide-Temperature Guide](https://www.pervasivedisplays.com/wide-temperature-e-ink/),
-[Waveshare e-Paper Manual](https://www.waveshare.com/wiki/4.2inch_e-Paper_Module_Manual))
+[Display-Hersteller e-Paper Manual])
 
 **Im Winter bei -10°C:** Standard-E-Paper funktioniert nicht zuverlässig.
 Die Flüssigkeit in den Mikrokapseln wird viskoser, Update-Zeit steigt drastisch
 (von 2 s auf 10+ s), bei tieferen Temperaturen kein Update mehr möglich.
 
 **Lösung: Breittemperatur-E-Paper** verwenden (z.B. Pervasive Displays EPD,
-Waveshare wide-temp Variante). Diese sind spezifiziert für -20°C bis +60°C
+Display-Hersteller wide-temp Variante). Diese sind spezifiziert für -20°C bis +60°C
 und decken den Motorrad-Temperaturbereich ab.
 
 **Im Sommer bei +50°C:** E-Paper ist weniger kritisch bei Hitze. Die obere
@@ -960,7 +960,7 @@ Transalp-Bordcomputer-Projekt:
 - [LiPo Temperature Range](https://ufinebattery.com/blog/what-is-the-minimum-operating-temperature-for-lipo-batteries)
 - [REDARC Battery Temperature Guide](https://us.support.redarcelectronics.com/hc/en-us/articles/13856244101007-Why-you-should-not-charge-a-lithium-battery-below-0-C-or-32-F)
 - [Pervasive Displays Wide-Temp E-Ink](https://www.pervasivedisplays.com/wide-temperature-e-ink/)
-- [Waveshare e-Paper Manual](https://www.waveshare.com/wiki/4.2inch_e-Paper_Module_Manual)
+- [Display-Hersteller e-Paper Manual]
 - [SAE J1211 Motorrad-Vibration](https://www.sae.org/standards/content/j1211/)
 - [Electronicshub CDI Guide](https://www.electronicshub.org/capacitor-discharge-ignition-system/)
 - [Dupont EMV Shielding](https://www.dupont.com/electronic-materials/electromagnetic-shielding.html)

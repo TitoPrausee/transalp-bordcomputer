@@ -34,7 +34,7 @@ assignees: []
 
 - **MCU-Board**: <!-- z.B. ESP32-S3-WROOM-1 N16R8 -->
 - **Sensoren**: <!-- z.B. MPU6050, BMP280, NEO-M9N -->
-- **Display**: <!-- z.B. ILI9488 TFT, Waveshare 2.9" E-Paper -->
+- **Display**: <!-- z.B. ILI9488 TFT, Display-Modul-Hersteller 2.9" E-Paper -->
 - **Fahrzeug**: <!-- PD06 Baujahr -->
 
 ## Software-Umgebung
