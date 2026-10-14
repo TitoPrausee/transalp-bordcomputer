@@ -1,9 +1,9 @@
 # Projekt-Roadmap: Transalp Bordcomputer
 
-> Zuletzt aktualisiert: 14.10.2026 (PM-Runde 16)
+> Zuletzt aktualisiert: 14.10.2026 (PM-Runde 17)
 > Status: Wartung — 5 Worker-Profile + 1 Projektmanager (PM) auf Mac mini
 > **Phasen 0–6 ABGESCHLOSSEN ✅ — Projekt RELEASE-READY**
-> **Runde 16: test_dtc.c repariert — DTC-Codes an OBD-II-Implementierung angepasst**
+> **Runde 17: Alle 4 Dependabot-PRs evaluiert und gemerged — 0 offene PRs**
 
 ## Projektziel
 Vollständiger Open-Source Bordcomputer für die Honda Transalp 600 (PD06).
@@ -338,6 +338,16 @@ Diagnose-System und Premium-UI/UX mit Animationen.
   - Diese erfordern manuelle Evaluierung und Code-Anpassungen, nicht automatisierbar.
 - **Auf origin gepusht:** test_dtc.c + firmware-ci.yml + ROADMAP.md
 
+### PM-Runde 17 (14.10.2026, Dependabot-Aufraeumarbeit)
+- **Board-Status:** Alle 48 Tasks done, 0 running, 0 blocked — Projekt weiterhin vollstaendig abgeschlossen.
+- **Alle 4 offenen Dependabot-PRs evaluiert und gemerged:**
+  - **PR #8 (react-native-safe-area-context 4.14→5.10.1):** Cherry-picked auf main. Die Library wird im App-Code gar nicht direkt referenziert (keine SafeArea-Imports). tsc --noEmit: 0 Fehler. PR geschlossen, Branch geloescht.
+  - **PR #11 (expo-status-bar 2.0→57.0.1):** Manuell gemerged (PR-Branch basierte auf altem Commit und haette safe-area-context zurueckgesetzt). StatusBar-Usage (`style` prop) ist API-kompatibel mit v57.x. Peer-Dependency `expo: *` erfuellt. tsc --noEmit: 0 Fehler. PR geschlossen, Branch geloescht.
+  - **PR #9 + #10 (react-native 0.76→0.87 + react 18→19):** Interdependente Major-Bumps, zusammen gemerged. React-Native 0.87 erfordert `moduleResolution: "bundler"` in tsconfig.json (statt Expo-Default `"node"`), da die Typen ueber `types_generated/` ausgeliefert werden, die mit legacy `"node"` nicht aufloesbar sind. tsconfig.json aktualisiert. tsc --noEmit: 0 Fehler. Beide PRs geschlossen, Branches geloescht.
+- **CI-Status:** Companion-App CI #12 (expo-status-bar + safe-area-context) = success ✅. Companion-App CI #13 (react/react-native bump) laeuft. Docs CI + Firmware CI weiterhin gruen.
+- **Repo-Hygiene:** Nur `main`-Branch lokal und remote. Arbeitsbaum sauber. 0 ahead, 0 behind origin. 0 offene PRs.
+- **Auf origin gepusht:** 3 Commits (e16b4754, 12e3e6f0, 18b6d067)
+
 ## Offene Fragen
 - Welche TFT-Displays sind sonnenlesbar genug?
 - Companion-App: React Native vs. Flutter? (Master-Plan empfiehlt React Native)
@@ -372,13 +382,13 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 | PR Template | 1 (.github/PULL_REQUEST_TEMPLATE.md) |
 | Community Files | 4 (CODE_OF_CONDUCT, SECURITY, FUNDING.yml, CODEOWNERS) |
 | Dependabot | 1 (.github/dependabot.yml — npm + github-actions) |
-| Git Commits | 142 (+test_dtc fix Runde 16) |
+| Git Commits | 146 (+3 Dependabot-Merges Runde 17) |
 | Tasks done | 48 |
 | Tasks running | 0 |
 | Tasks blocked | 0 |
 | Lokale Branches | 1 (nur main) |
-| Offene Dependabot-PRs | 4 (npm major bumps, manuelle Evaluierung erforderlich) |
-| CI/CD Status | 3 Workflows gruen (Docs CI #20 = success) ✅ |
+| Offene Dependabot-PRs | 0 — alle 4 gemerged in Runde 17 ✅ |
+| CI/CD Status | Docs CI + Firmware CI gruen; Companion-App CI #12 success, #13 laeuft ✅ |
 | ESP-IDF Mock-Header | 6 (fuer Host-Unit-Tests) |
 | test_dtc Status | Repariert — DTC-Codes synchronisiert mit Implementierung ✅ |
 | Tasks archived | 1 (t_4f8965c9: Design-Integration, veraltet) |
