@@ -422,13 +422,13 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 | Community Files | 4 (CODE_OF_CONDUCT, SECURITY, FUNDING.yml, CODEOWNERS) |
 | Brand-Blocklist | 24 Marken (.github/brand-blocklist.txt) |
 | Dependabot | 1 (.github/dependabot.yml — npm + github-actions) |
-| Git Commits | 154 (Runde 20: Markennamen-Tiefenbereinigung) |
+| Git Commits | 155 (Runde 20: Markennamen-Tiefenbereinigung + CI-Fix) |
 | Tasks done | 48 |
 | Tasks running | 0 |
 | Tasks blocked | 0 |
 | Lokale Branches | 1 (nur main) |
 | Offene Dependabot-PRs | 0 — alle 4 gemerged in Runde 17 ✅ |
-| CI/CD Status | Alle 4 Workflows grün ✅ (Docs CI #28, Firmware CI #7, Companion-App CI #13, Pages) |
+| CI/CD Status | Alle 4 Workflows grün ✅ (Docs CI #30, Firmware CI #7, Companion-App CI #13, Pages) |
 | ESP-IDF Mock-Header | 6 (fuer Host-Unit-Tests) |
 | test_dtc Status | Repariert — DTC-Codes synchronisiert mit Implementierung ✅ |
 | Tasks archived | 1 (t_4f8965c9: Design-Integration, veraltet) |
