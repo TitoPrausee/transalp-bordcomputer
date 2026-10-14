@@ -26,7 +26,7 @@ Diese Groesse wurde wie folgt begruendet:
 - Der ESP32-S3-WROOM-1 hat Modulabmessungen von 18 x 25,5 mm.
   Die Antenne erfordert einen Freiraum von mindestens 15 mm am
   Modulende (keine Kupferflaechen, keine Bauteile in diesem Bereich).
-- Das 3.5" IPS-Display (Waveshare) hat eine Modulgroesse von ca.
+- Das 3.5" IPS-Display (Display-Modul-Hersteller) hat eine Modulgroesse von ca.
   85 x 50 mm. Das Display wird nicht auf dem Haupt-PCB montiert,
   sondern ueber ein FPC-Kabel angeschlossen. Das Haupt-PCB braucht
   daher nur den Display-Connector (FPC 0.5 mm Pitch, 12-polig).

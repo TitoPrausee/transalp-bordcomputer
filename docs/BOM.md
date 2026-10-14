@@ -7,7 +7,7 @@
 >   docs/research/09-master-plan.md, docs/PCB-LAYOUT.md, docs/CASE-DESIGN.md
 > Alle Preise in EUR, Stand Oktober 2026, Einzelstückpreise sofern nicht
 > anders vermerkt. Preise inklusive deutscher MwSt. (19%) bei Endkunden-Quellen,
-> netto bei B2B-Lieferanten (Reichelt, Conrad, Mouser, Digi-Key, TME).
+> netto bei B2B-Lieferanten (Elektronik-Distributor DE #1, Elektronik-Distributor DE #2, B2B-Distributor US #1, B2B-Distributor US #2, Distributor EU).
 
 ---
 
@@ -34,82 +34,82 @@ fallen die Preise typischerweise um 20-40%.
 
 | # | Bauteil | Spezifikation | Menge | Einzelpreis (EUR) | Gesamtpreis (EUR) | Bezugsquelle | Lieferzeit | Alternativen |
 |---|---|---|---|---|---|---|---|---|
-| 1 | ESP32-S3-WROOM-1 N8R2 | 8MB Flash, 2MB PSRAM, BLE 5.0, 45 GPIO, PCB Trace Antenne, LGA Modul 18x25,5mm | 1 | 5,40 | 5,40 | Mouser / Digi-Key | 3-5 Tage | DevKitC-1 (13,80 EUR), ESP32-S3-WROOM-1U (IPEX) |
-| 2 | USB-C Buchse IP67 | Panel-Mount, wasserdicht, IP67, mit Dichtungsmembran | 1 | 3,50 | 3,50 | Reichelt / Online-Marktplatz | 2-4 Tage | USB-B wasserdicht, internes USB-C |
-| 3 | MicroSD-Karten-Slot | Push-Push, SMD, 8-polig, fuer SPI-Mode | 1 | 1,20 | 1,20 | LCSC / Reichelt | 5-10 Tage | Wirelle SD-Breakout (China-Marktplatz, 0,50 EUR) |
-| 4 | MicroSD-Karte 16GB | Class 10 / U1, Markenprodukt, FAT32 | 1 | 6,00 | 6,00 | Online-Marktplatz / Reichelt | 2-3 Tage | 8GB Class 10 NoName (3,00 EUR) |
-| 5 | FPC-Connector 12-polig | 0,5mm Pitch, fuer Display-Anbindung | 1 | 0,50 | 0,50 | LCSC / Digi-Key | 5-10 Tage | JST-SM Kabel (0,80 EUR) |
+| 1 | ESP32-S3-WROOM-1 N8R2 | 8MB Flash, 2MB PSRAM, BLE 5.0, 45 GPIO, PCB Trace Antenne, LGA Modul 18x25,5mm | 1 | 5,40 | 5,40 | B2B-Distributor US #1 / B2B-Distributor US #2 | 3-5 Tage | DevKitC-1 (13,80 EUR), ESP32-S3-WROOM-1U (IPEX) |
+| 2 | USB-C Buchse IP67 | Panel-Mount, wasserdicht, IP67, mit Dichtungsmembran | 1 | 3,50 | 3,50 | Elektronik-Distributor DE #1 / Online-Marktplatz | 2-4 Tage | USB-B wasserdicht, internes USB-C |
+| 3 | MicroSD-Karten-Slot | Push-Push, SMD, 8-polig, fuer SPI-Mode | 1 | 1,20 | 1,20 | Distributor CN / Elektronik-Distributor DE #1 | 5-10 Tage | Wirelle SD-Breakout (China-Marktplatz, 0,50 EUR) |
+| 4 | MicroSD-Karte 16GB | Class 10 / U1, Markenprodukt, FAT32 | 1 | 6,00 | 6,00 | Online-Marktplatz / Elektronik-Distributor DE #1 | 2-3 Tage | 8GB Class 10 NoName (3,00 EUR) |
+| 5 | FPC-Connector 12-polig | 0,5mm Pitch, fuer Display-Anbindung | 1 | 0,50 | 0,50 | Distributor CN / B2B-Distributor US #2 | 5-10 Tage | JST-SM Kabel (0,80 EUR) |
 
 ### 1.2 Display
 
 | # | Bauteil | Spezifikation | Menge | Einzelpreis (EUR) | Gesamtpreis (EUR) | Bezugsquelle | Lieferzeit | Alternativen |
 |---|---|---|---|---|---|---|---|---|
-| 6 | TFT-Display 3,5" IPS | 480x320 Pixel, SPI, IPS-Panel, 1000 nits Backlight | 1 | 18,00 | 18,00 | Waveshare / Online-Marktplatz | 3-7 Tage | ILI9341 2,4" (6,00 EUR), ST7789 2,0" |
-| 7 | E-Paper-Display 2,13" | 250x122 Pixel, monochrom, SSD1680/UC8151D Treiber | 1 | 12,00 | 12,00 | Waveshare / Online-Marktplatz | 3-7 Tage | E-Paper 2,9" 296x128 (15,00 EUR), 1,54" |
+| 6 | TFT-Display 3,5" IPS | 480x320 Pixel, SPI, IPS-Panel, 1000 nits Backlight | 1 | 18,00 | 18,00 | Display-Modul-Hersteller / Online-Marktplatz | 3-7 Tage | ILI9341 2,4" (6,00 EUR), ST7789 2,0" |
+| 7 | E-Paper-Display 2,13" | 250x122 Pixel, monochrom, SSD1680/UC8151D Treiber | 1 | 12,00 | 12,00 | Display-Modul-Hersteller / Online-Marktplatz | 3-7 Tage | E-Paper 2,9" 296x128 (15,00 EUR), 1,54" |
 | 8 | Acrylglas-Abdeckung | 2mm PMMA, konvex, hydrophob beschichtet | 1 | 2,00 | 2,00 | Baumarkt / Online-Marktplatz | 1-3 Tage | Polycarbonat 2mm |
 
 ### 1.3 Sensoren
 
 | # | Bauteil | Spezifikation | Menge | Einzelpreis (EUR) | Gesamtpreis (EUR) | Bezugsquelle | Lieferzeit | Alternativen |
 |---|---|---|---|---|---|---|---|---|---|
-| 9 | GPS-Modul NEO-M9N | 4-Konstellation GNSS (GPS+GLONASS+Galileo+BeiDou), 25Hz, 2,0m CEP, UART, 12,2x16mm SMD | 1 | 24,60 | 24,60 | TME / Spezial.com | 3-7 Tage | ATGM336H (3,00 EUR), NEO-M8N (15,00 EUR) |
-| 10 | GPS-Antenne | Active Patch 25x25mm, Magnetfuss, 3-5V, 28dB Gain, 1,5m Kabel | 1 | 8,00 | 8,00 | Online-Marktplatz / Reichelt | 2-4 Tage | Passive Patch (2,00 EUR), Chip-Antenne |
-| 11 | IMU BMI270 | 6-DoF (Accel+Gyro), 685µA, I2C/SPI, 2KB FIFO, 2,5x3,0mm LGA-14 | 1 | 5,00 | 5,00 | Mouser / Digi-Key / China-Marktplatz | 5-10 Tage | MPU6050 (2,00 EUR), LSM6DS33 (5,00 EUR) |
-| 12 | Barometer BMP390 | 300-1250 hPa, ±0,03 hPa rel., 0,25m Aufloesung, I2C/SPI, 2x2mm LGA-10 | 1 | 3,50 | 3,50 | Mouser / Digi-Key | 5-10 Tage | BMP388 (OBSOLETE), BMP280 (2,00 EUR), DPS310 |
-| 13 | Kuehlmittel-Temp. | DS18B20 wasserdicht, digital, 1-Wire, ±0,5°C, -55 bis +125°C, Edelstahlrohr | 1 | 3,00 | 3,00 | Online-Marktplatz / Reichelt | 2-4 Tage | NTC 10k Thermistor (1,00 EUR) |
-| 14 | Oeldrucksensor | Analog 0-5 bar, 10-180 Ohm, M10x1 Gewinde, wasserdicht | 1 | 25,00 | 25,00 | Online-Marktplatz / Spezialversand | 5-10 Tage | Original-Oeldruckschalter (digital, 0 EUR) |
-| 15 | Hall-Sensor (Rad) | A3144 Unipolar, 4,5-24V, TO-92, + Magnet 5mm | 1 | 2,00 | 2,00 | Reichelt / China-Marktplatz | 3-5 Tage | Reed-Schalter (1,00 EUR), A1101 |
-| 16 | Bordspannungs-Messung | Spannungsteiler 100k/33k, 1%, 0805 SMD | 1 | 0,10 | 0,10 | Reichelt / LCSC | 2-3 Tage | Praezisions-Spannungsteiler (0,50 EUR) |
-| 17 | Kraftstoffstand-Messung | Spannungsteiler 10k/10k + Operationsverstaerker (MCP6001) | 1 | 1,00 | 1,00 | Reichelt / LCSC | 2-3 Tage | Direkter Spannungsteiler (0,10 EUR) |
+| 9 | GPS-Modul NEO-M9N | 4-Konstellation GNSS (GPS+GLONASS+Galileo+BeiDou), 25Hz, 2,0m CEP, UART, 12,2x16mm SMD | 1 | 24,60 | 24,60 | Distributor EU / Spezial-Distributor | 3-7 Tage | ATGM336H (3,00 EUR), NEO-M8N (15,00 EUR) |
+| 10 | GPS-Antenne | Active Patch 25x25mm, Magnetfuss, 3-5V, 28dB Gain, 1,5m Kabel | 1 | 8,00 | 8,00 | Online-Marktplatz / Elektronik-Distributor DE #1 | 2-4 Tage | Passive Patch (2,00 EUR), Chip-Antenne |
+| 11 | IMU BMI270 | 6-DoF (Accel+Gyro), 685µA, I2C/SPI, 2KB FIFO, 2,5x3,0mm LGA-14 | 1 | 5,00 | 5,00 | B2B-Distributor US #1 / B2B-Distributor US #2 / China-Marktplatz | 5-10 Tage | MPU6050 (2,00 EUR), LSM6DS33 (5,00 EUR) |
+| 12 | Barometer BMP390 | 300-1250 hPa, ±0,03 hPa rel., 0,25m Aufloesung, I2C/SPI, 2x2mm LGA-10 | 1 | 3,50 | 3,50 | B2B-Distributor US #1 / B2B-Distributor US #2 | 5-10 Tage | BMP388 (OBSOLETE), BMP280 (2,00 EUR), DPS310 |
+| 13 | Kuehlmittel-Temp. | DS18B20 wasserdicht, digital, 1-Wire, ±0,5°C, -55 bis +125°C, Edelstahlrohr | 1 | 3,00 | 3,00 | Online-Marktplatz / Elektronik-Distributor DE #1 | 2-4 Tage | NTC 10k Thermistor (1,00 EUR) |
+| 14 | Oeldrucksensor | Analog 0-5 bar, 10-180 Ohm, M10x1 Gewinde, wasserdicht | 1 | 25,00 | 25,00 | Online-Marktplatz / Spezial-Distributor | 5-10 Tage | Original-Oeldruckschalter (digital, 0 EUR) |
+| 15 | Hall-Sensor (Rad) | A3144 Unipolar, 4,5-24V, TO-92, + Magnet 5mm | 1 | 2,00 | 2,00 | Elektronik-Distributor DE #1 / China-Marktplatz | 3-5 Tage | Reed-Schalter (1,00 EUR), A1101 |
+| 16 | Bordspannungs-Messung | Spannungsteiler 100k/33k, 1%, 0805 SMD | 1 | 0,10 | 0,10 | Elektronik-Distributor DE #1 / Distributor CN | 2-3 Tage | Praezisions-Spannungsteiler (0,50 EUR) |
+| 17 | Kraftstoffstand-Messung | Spannungsteiler 10k/10k + Operationsverstaerker (MCP6001) | 1 | 1,00 | 1,00 | Elektronik-Distributor DE #1 / Distributor CN | 2-3 Tage | Direkter Spannungsteiler (0,10 EUR) |
 
 ### 1.4 Power-Management
 
 | # | Bauteil | Spezifikation | Menge | Einzelpreis (EUR) | Gesamtpreis (EUR) | Bezugsquelle | Lieferzeit | Alternativen |
 |---|---|---|---|---|---|---|---|---|---|
 | 18 | Buck-Converter 12V->5V | MP1584EN Modul, 1,5MHz, 3A, 4,5-28V Input, 90-92% Effizienz, 22x15mm | 1 | 1,50 | 1,50 | China-Marktplatz / Online-Marktplatz | 7-14 Tage | LM2596 Modul (2,00 EUR), TPS5430 (6,00 EUR) |
-| 19 | LDO 5V->3,3V | HT7333, 250mA, 30µVrms Rauschen, 4µA Quiescent, SOT-89 | 1 | 0,50 | 0,50 | Reichelt / LCSC | 2-5 Tage | AMS1117-3.3 (0,15 EUR), MCP1700-3302E (1,00 EUR) |
-| 20 | Backup-Akku 18650 | Li-Ion, 3400mAh, 3,7V nominal, geschuetzt mit PCB | 1 | 6,00 | 6,00 | Online-Marktplatz / Reichelt | 2-4 Tage | LiPo 1000mAh (4,00 EUR), LiFePO4 |
+| 19 | LDO 5V->3,3V | HT7333, 250mA, 30µVrms Rauschen, 4µA Quiescent, SOT-89 | 1 | 0,50 | 0,50 | Elektronik-Distributor DE #1 / Distributor CN | 2-5 Tage | AMS1117-3.3 (0,15 EUR), MCP1700-3302E (1,00 EUR) |
+| 20 | Backup-Akku 18650 | Li-Ion, 3400mAh, 3,7V nominal, geschuetzt mit PCB | 1 | 6,00 | 6,00 | Online-Marktplatz / Elektronik-Distributor DE #1 | 2-4 Tage | LiPo 1000mAh (4,00 EUR), LiFePO4 |
 | 21 | Akku-Lademodul | TP4056 Modul mit Schutz (DW01A), 5V Input, 1A Ladestrom, Micro-USB oder Type-C | 1 | 0,50 | 0,50 | China-Marktplatz / Online-Marktplatz | 7-14 Tage | IP5306 Modul (3,00 EUR) |
 | 22 | Boost-Converter 3,7V->5V | MT3608 Modul, 2A, bis 28V Output, 17x11mm | 1 | 0,80 | 0,80 | China-Marktplatz / Online-Marktplatz | 7-14 Tage | XL6009 Modul (1,50 EUR) |
-| 23 | Schottky-Diode | 1N5822, 3A, 40V, DO-201AD, fuer Power-Path ORing | 2 | 0,10 | 0,20 | Reichelt / LCSC | 2-3 Tage | 1N5819 (1A, 0,05 EUR), SS34 SMD |
-| 24 | TVS-Diode | SMAJ15A, 15V Standoff, 24,4V Clamp, 400W, SMA | 2 | 0,50 | 1,00 | Reichelt / Mouser | 2-5 Tage | P6KE15A, SMBJ15A |
-| 25 | Sicherung 5A | Flachsicherung ATO/ATC, 5A, mit Inline-Halter | 1 | 1,00 | 1,00 | Reichelt / Online-Marktplatz | 2-3 Tage | PTC 3A resettable (0,80 EUR) |
-| 26 | Elko 100µF | 100µF, 25V, Low-ESR, SMD Tantal oder THT | 1 | 0,30 | 0,30 | Reichelt / LCSC | 2-3 Tage | 2x 47µF parallel |
+| 23 | Schottky-Diode | 1N5822, 3A, 40V, DO-201AD, fuer Power-Path ORing | 2 | 0,10 | 0,20 | Elektronik-Distributor DE #1 / Distributor CN | 2-3 Tage | 1N5819 (1A, 0,05 EUR), SS34 SMD |
+| 24 | TVS-Diode | SMAJ15A, 15V Standoff, 24,4V Clamp, 400W, SMA | 2 | 0,50 | 1,00 | Elektronik-Distributor DE #1 / B2B-Distributor US #1 | 2-5 Tage | P6KE15A, SMBJ15A |
+| 25 | Sicherung 5A | Flachsicherung ATO/ATC, 5A, mit Inline-Halter | 1 | 1,00 | 1,00 | Elektronik-Distributor DE #1 / Online-Marktplatz | 2-3 Tage | PTC 3A resettable (0,80 EUR) |
+| 26 | Elko 100µF | 100µF, 25V, Low-ESR, SMD Tantal oder THT | 1 | 0,30 | 0,30 | Elektronik-Distributor DE #1 / Distributor CN | 2-3 Tage | 2x 47µF parallel |
 
 ### 1.5 Passive Bauelemente
 
 | # | Bauteil | Spezifikation | Menge | Einzelpreis (EUR) | Gesamtpreis (EUR) | Bezugsquelle | Lieferzeit | Alternativen |
 |---|---|---|---|---|---|---|---|---|---|
-| 27 | Widerstaende 0805 | diverse Werte (10k, 33k, 1k, 22, 33, 4,7k Ohm), 1%, 0,125W | 20 | 0,02 | 0,40 | Reichelt / LCSC | 2-3 Tage | Sortiment 0603 (0,01 EUR/Stueck) |
-| 28 | Kondensatoren 0805 | 100nF X7R, 25V, Decoupling | 15 | 0,05 | 0,75 | Reichelt / LCSC | 2-3 Tage | 0603 100nF (0,03 EUR) |
-| 29 | Bulk-Kondensatoren | 10µF X5R, 0805 und 22µF X5R, 1206 | 4 | 0,15 | 0,60 | Reichelt / LCSC | 2-3 Tage | Tantal 10µF (0,30 EUR) |
-| 30 | Ferrite-Beads | 600 Ohm @ 100MHz, 2A, 0805, BLM18AG601 | 4 | 0,20 | 0,80 | Mouser / Reichelt | 2-5 Tage | 300 Ohm Bead, 1000 Ohm Bead |
-| 31 | LED Status | LED, gruen oder blau, 0805 SMD, 3,2V, 20mA | 1 | 0,10 | 0,10 | Reichelt / LCSC | 2-3 Tage | WS2812B RGB (0,75 EUR) |
-| 32 | Zener-Diode 3,3V | 3,3V, 500mW, SOT-23 oder DO-35 | 2 | 0,20 | 0,40 | Reichelt / LCSC | 2-3 Tage | TVS 3,3V SOT-23 |
+| 27 | Widerstaende 0805 | diverse Werte (10k, 33k, 1k, 22, 33, 4,7k Ohm), 1%, 0,125W | 20 | 0,02 | 0,40 | Elektronik-Distributor DE #1 / Distributor CN | 2-3 Tage | Sortiment 0603 (0,01 EUR/Stueck) |
+| 28 | Kondensatoren 0805 | 100nF X7R, 25V, Decoupling | 15 | 0,05 | 0,75 | Elektronik-Distributor DE #1 / Distributor CN | 2-3 Tage | 0603 100nF (0,03 EUR) |
+| 29 | Bulk-Kondensatoren | 10µF X5R, 0805 und 22µF X5R, 1206 | 4 | 0,15 | 0,60 | Elektronik-Distributor DE #1 / Distributor CN | 2-3 Tage | Tantal 10µF (0,30 EUR) |
+| 30 | Ferrite-Beads | 600 Ohm @ 100MHz, 2A, 0805, BLM18AG601 | 4 | 0,20 | 0,80 | B2B-Distributor US #1 / Elektronik-Distributor DE #1 | 2-5 Tage | 300 Ohm Bead, 1000 Ohm Bead |
+| 31 | LED Status | LED, gruen oder blau, 0805 SMD, 3,2V, 20mA | 1 | 0,10 | 0,10 | Elektronik-Distributor DE #1 / Distributor CN | 2-3 Tage | WS2812B RGB (0,75 EUR) |
+| 32 | Zener-Diode 3,3V | 3,3V, 500mW, SOT-23 oder DO-35 | 2 | 0,20 | 0,40 | Elektronik-Distributor DE #1 / Distributor CN | 2-3 Tage | TVS 3,3V SOT-23 |
 | 33 | I2C-Pull-Ups | 4,7k Ohm, 0805 (bereits in Widerstaende enthalten) | 2 | 0,00 | 0,00 | — | — | — |
 
 ### 1.6 MOSFET und Relais-Steuerung
 
 | # | Bauteil | Spezifikation | Menge | Einzelpreis (EUR) | Gesamtpreis (EUR) | Bezugsquelle | Lieferzeit | Alternativen |
 |---|---|---|---|---|---|---|---|---|---|
-| 34 | Gate-Driver TC4427 | 1,5A, 2-Kanal, 4,5-18V, Non-Inverting, SOIC-8 | 1 | 1,50 | 1,50 | Mouser / Digi-Key | 5-10 Tage | UCC27524, MIC4427 |
-| 35 | MOSFET IRLZ44N | N-Channel, 55V, 25A, Rds(on) 22mOhm @ Vgs=5V, TO-220 | 1 | 1,50 | 1,50 | Reichelt / Mouser | 2-5 Tage | IRF520 (1,50 EUR, nicht Logic-Level), AO3400 SMD |
-| 36 | Optokoppler PC817 | 1-Kanal, Transistor-Ausgang, DIP-4, CTR 50-600% | 2 | 0,50 | 1,00 | Reichelt / LCSC | 2-5 Tage | TLP185 SMD, 6N137 (schneller) |
-| 37 | Freilaufdiode 1N5408 | 3A, 1000V, DO-201AD, fuer induktive Lasten | 2 | 0,10 | 0,20 | Reichelt / LCSC | 2-3 Tage | 1N4007 (1A), Schottky 1N5822 |
+| 34 | Gate-Driver TC4427 | 1,5A, 2-Kanal, 4,5-18V, Non-Inverting, SOIC-8 | 1 | 1,50 | 1,50 | B2B-Distributor US #1 / B2B-Distributor US #2 | 5-10 Tage | UCC27524, MIC4427 |
+| 35 | MOSFET IRLZ44N | N-Channel, 55V, 25A, Rds(on) 22mOhm @ Vgs=5V, TO-220 | 1 | 1,50 | 1,50 | Elektronik-Distributor DE #1 / B2B-Distributor US #1 | 2-5 Tage | IRF520 (1,50 EUR, nicht Logic-Level), AO3400 SMD |
+| 36 | Optokoppler PC817 | 1-Kanal, Transistor-Ausgang, DIP-4, CTR 50-600% | 2 | 0,50 | 1,00 | Elektronik-Distributor DE #1 / Distributor CN | 2-5 Tage | TLP185 SMD, 6N137 (schneller) |
+| 37 | Freilaufdiode 1N5408 | 3A, 1000V, DO-201AD, fuer induktive Lasten | 2 | 0,10 | 0,20 | Elektronik-Distributor DE #1 / Distributor CN | 2-3 Tage | 1N4007 (1A), Schottky 1N5822 |
 | 38 | Relais-Modul 4-Kanal | SRD-12V, 10A, mit Optokoppler, Active-LOW | 1 | 4,00 | 4,00 | Online-Marktplatz / China-Marktplatz | 3-7 Tage | Einzelrelais SRD-12V (1,00 EUR/Stueck) |
 
 ### 1.7 Mechanische Teile
 
 | # | Bauteil | Spezifikation | Menge | Einzelpreis (EUR) | Gesamtpreis (EUR) | Bezugsquelle | Lieferzeit | Alternativen |
 |---|---|---|---|---|---|---|---|---|---|
-| 39 | Stiftleisten Header | 2,54mm Raster, gerade, 40-polig, breakable | 2 | 0,50 | 1,00 | Reichelt / Online-Marktplatz | 2-3 Tage | Buchsenleisten, Raster 2,0mm |
-| 40 | Abstandshalter | M3, 10mm, Sechskant, Messing, innengewindet | 4 | 0,30 | 1,20 | Reichelt / Online-Marktplatz | 2-3 Tage | Kunststoff-Abstandshalter (0,15 EUR) |
+| 39 | Stiftleisten Header | 2,54mm Raster, gerade, 40-polig, breakable | 2 | 0,50 | 1,00 | Elektronik-Distributor DE #1 / Online-Marktplatz | 2-3 Tage | Buchsenleisten, Raster 2,0mm |
+| 40 | Abstandshalter | M3, 10mm, Sechskant, Messing, innengewindet | 4 | 0,30 | 1,20 | Elektronik-Distributor DE #1 / Online-Marktplatz | 2-3 Tage | Kunststoff-Abstandshalter (0,15 EUR) |
 | 41 | Schrauben M3x8 | Senkkopf, Edelstahl, Inbus | 4 | 0,05 | 0,20 | Baumarkt / Online-Marktplatz | 1-3 Tage | Stahl verzinkt (0,03 EUR) |
 | 42 | Schrauben M3x12 | Senkkopf, Edelstahl, Inbus, fuer Deckel | 4 | 0,05 | 0,20 | Baumarkt / Online-Marktplatz | 1-3 Tage | Stahl verzinkt (0,03 EUR) |
 | 43 | Schrauben M2,5x6 | Senkkopf, Edelstahl, Inbus, fuer Display-Rahmen | 4 | 0,05 | 0,20 | Baumarkt / Online-Marktplatz | 1-3 Tage | M2x6 (0,04 EUR) |
-| 44 | Federscheiben M3 | DIN 127B, Edelstahl, fuer Vibrationssicherung | 8 | 0,02 | 0,16 | Reichelt / Online-Marktplatz | 2-3 Tage | Zahnscheiben DIN 6798 |
+| 44 | Federscheiben M3 | DIN 127B, Edelstahl, fuer Vibrationssicherung | 8 | 0,02 | 0,16 | Elektronik-Distributor DE #1 / Online-Marktplatz | 2-3 Tage | Zahnscheiben DIN 6798 |
 | 45 | Schrauben M6x20 | Inbus, Edelstahl, fuer Lenkerhalterung (U-Bolt) | 2 | 0,10 | 0,20 | Baumarkt / Online-Marktplatz | 1-3 Tage | — |
-| 46 | 18650-Akkuhalter | PCB-Mount, fuer 1x 18650, mit Kontakt | 1 | 0,50 | 0,50 | Reichelt / LCSC | 2-5 Tage | Akku-Klebeband (0,20 EUR) |
+| 46 | 18650-Akkuhalter | PCB-Mount, fuer 1x 18650, mit Kontakt | 1 | 0,50 | 0,50 | Elektronik-Distributor DE #1 / Distributor CN | 2-5 Tage | Akku-Klebeband (0,20 EUR) |
 
 ### 1.8 Gehaeuse
 
@@ -117,25 +117,25 @@ fallen die Preise typischerweise um 20-40%.
 |---|---|---|---|---|---|---|---|---|---|
 | 47 | ASA-Filament | 1,75mm, 1kg Spule, hell (weiss/hellgrau), UV-stabil | 1 | 25,00 | 25,00 | Online-Marktplatz / Filament-versand | 2-4 Tage | PETG (20,00 EUR, nur Prototyp) |
 | 48 | PETG-Filament | 1,75mm, 500g, fuer Display-Rahmen / Innenteile | 1 | 12,00 | 12,00 | Online-Marktplatz / Filament-versand | 2-4 Tage | PLA (10,00 EUR, nur Prototyp) |
-| 49 | Silikon-O-Ring | 2mm Cordstaerke, Shore 60A, -40 bis +200°C, UV-stabil, Umfangsdichtung | 1 | 2,00 | 2,00 | Online-Marktplatz / Spezialversand | 2-4 Tage | NBR O-Ring (1,00 EUR, weniger temperaturbestaendig) |
+| 49 | Silikon-O-Ring | 2mm Cordstaerke, Shore 60A, -40 bis +200°C, UV-stabil, Umfangsdichtung | 1 | 2,00 | 2,00 | Online-Marktplatz / Spezial-Distributor | 2-4 Tage | NBR O-Ring (1,00 EUR, weniger temperaturbestaendig) |
 | 50 | EPDM-Schaumstoff | Selbstklebend, 5mm, Shore 10-30A, fuer Sekundaerdichtung | 1 | 3,00 | 3,00 | Online-Marktplatz / Baumarkt | 2-4 Tage | Geschlossenzelliger Schaum (2,00 EUR) |
-| 51 | Kabelverschraubungen PG7 | PA66, IP67, mit NBR-O-Ring, fuer Sensorkabel, 3-6,5mm Kabel-Ø | 4 | 0,80 | 3,20 | Reichelt / Online-Marktplatz | 2-4 Tage | M12 Kabelverschraubung (0,90 EUR) |
-| 52 | Kabelverschraubungen PG9 | PA66, IP67, mit NBR-O-Ring, fuer Sensorkabel, 4-8mm Kabel-Ø | 2 | 1,00 | 2,00 | Reichelt / Online-Marktplatz | 2-4 Tage | M16 Kabelverschraubung |
-| 53 | Druckausgleichsmembran | ePTFE, IP68, M6x0,75 Gewinde, -40 bis +125°C | 1 | 8,00 | 8,00 | Online-Marktplatz / Spezialversand | 3-7 Tage | Loche mit ePTFE-Patch (3,00 EUR) |
+| 51 | Kabelverschraubungen PG7 | PA66, IP67, mit NBR-O-Ring, fuer Sensorkabel, 3-6,5mm Kabel-Ø | 4 | 0,80 | 3,20 | Elektronik-Distributor DE #1 / Online-Marktplatz | 2-4 Tage | M12 Kabelverschraubung (0,90 EUR) |
+| 52 | Kabelverschraubungen PG9 | PA66, IP67, mit NBR-O-Ring, fuer Sensorkabel, 4-8mm Kabel-Ø | 2 | 1,00 | 2,00 | Elektronik-Distributor DE #1 / Online-Marktplatz | 2-4 Tage | M16 Kabelverschraubung |
+| 53 | Druckausgleichsmembran | ePTFE, IP68, M6x0,75 Gewinde, -40 bis +125°C | 1 | 8,00 | 8,00 | Online-Marktplatz / Spezial-Distributor | 3-7 Tage | Loche mit ePTFE-Patch (3,00 EUR) |
 | 54 | Kupferfolie | Selbstklebend, 0,05mm, 50mm breit, 1m Rolle, fuer EMV-Abschirmung | 1 | 8,00 | 8,00 | Online-Marktplatz / Baumarkt | 2-4 Tage | Alufolie (2,00 EUR, weniger effektiv) |
-| 55 | Conformal Coating | Polyurethan, 50ml Spruehdose, UR-Typ, -65 bis +130°C | 1 | 12,00 | 12,00 | Online-Marktplatz / Spezialversand | 3-7 Tage | Acryl-Coating (8,00 EUR), Silikon-Coating |
+| 55 | Conformal Coating | Polyurethan, 50ml Spruehdose, UR-Typ, -65 bis +130°C | 1 | 12,00 | 12,00 | Online-Marktplatz / Spezial-Distributor | 3-7 Tage | Acryl-Coating (8,00 EUR), Silikon-Coating |
 | 56 | Acrylglas-Platte | 2mm, transparent, 100x80mm, fuer Display-Abdeckung | 1 | 2,00 | 2,00 | Baumarkt | 1-3 Tage | Polycarbonat 2mm (3,00 EUR) |
 
 ### 1.9 Kabel und Stecker
 
 | # | Bauteil | Spezifikation | Menge | Einzelpreis (EUR) | Gesamtpreis (EUR) | Bezugsquelle | Lieferzeit | Alternativen |
 |---|---|---|---|---|---|---|---|---|---|
-| 57 | Sensor-Kabel verdrillt | 4-adrig, AWG24, abgeschirmt (S/UTP), pro Meter | 3 | 1,50 | 4,50 | Online-Marktplatz / Reichelt | 2-4 Tage | Unabgeschirmt 4-adrig (0,80 EUR/m) |
+| 57 | Sensor-Kabel verdrillt | 4-adrig, AWG24, abgeschirmt (S/UTP), pro Meter | 3 | 1,50 | 4,50 | Online-Marktplatz / Elektronik-Distributor DE #1 | 2-4 Tage | Unabgeschirmt 4-adrig (0,80 EUR/m) |
 | 58 | JST-SM Stecker 4-polig | Wasserdicht, IP65, mit Rasterverriegelung, fuer GPS | 1 | 1,50 | 1,50 | Online-Marktplatz / China-Marktplatz | 3-7 Tage | AMP Superseal 3-polig (2,50 EUR) |
-| 59 | AMP Superseal 2-polig | IP67, 3A, fuer 12V Bordnetz | 1 | 2,50 | 2,50 | Online-Marktplatz / Spezialversand | 3-7 Tage | Deutch DTM 2-polig (3,50 EUR) |
-| 60 | AMP Superseal 3-polig | IP67, 3A, fuer ADC-Sensoren | 2 | 2,50 | 5,00 | Online-Marktplatz / Spezialversand | 3-7 Tage | Deutch DTM 3-polig |
-| 61 | AMP Superseal 4-polig | IP67, 3A, fuer Relais-Steuerung | 1 | 2,50 | 2,50 | Online-Marktplatz / Spezialversand | 3-7 Tage | Deutch DTM 4-polig |
-| 62 | Ferritkern | Klappferrit, Material 43/73, >100 Ohm @ 100MHz, fuer Kabel | 4 | 0,80 | 3,20 | Online-Marktplatz / Reichelt | 2-4 Tage | Ringkern (0,50 EUR, nicht klappbar) |
+| 59 | AMP Superseal 2-polig | IP67, 3A, fuer 12V Bordnetz | 1 | 2,50 | 2,50 | Online-Marktplatz / Spezial-Distributor | 3-7 Tage | Deutch DTM 2-polig (3,50 EUR) |
+| 60 | AMP Superseal 3-polig | IP67, 3A, fuer ADC-Sensoren | 2 | 2,50 | 5,00 | Online-Marktplatz / Spezial-Distributor | 3-7 Tage | Deutch DTM 3-polig |
+| 61 | AMP Superseal 4-polig | IP67, 3A, fuer Relais-Steuerung | 1 | 2,50 | 2,50 | Online-Marktplatz / Spezial-Distributor | 3-7 Tage | Deutch DTM 4-polig |
+| 62 | Ferritkern | Klappferrit, Material 43/73, >100 Ohm @ 100MHz, fuer Kabel | 4 | 0,80 | 3,20 | Online-Marktplatz / Elektronik-Distributor DE #1 | 2-4 Tage | Ringkern (0,50 EUR, nicht klappbar) |
 | 63 | Kabelbinder | 100mm, schwarz, UV-beständig, natur (PA66) | 20 | 0,02 | 0,40 | Baumarkt / Online-Marktplatz | 1-3 Tage | — |
 | 64 | Schrumpfschlauch | 3mm, 1m, schwarz, Polyolefin, 2:1 Schrumpfrate | 1 | 2,00 | 2,00 | Online-Marktplatz / Baumarkt | 1-3 Tage | — |
 
@@ -145,7 +145,7 @@ fallen die Preise typischerweise um 20-40%.
 |---|---|---|---|---|---|---|---|---|---|
 | 65 | PCB 4-Layer | 80x50mm, FR4, 1,6mm, ENIG, 2oz Kupfer L1/L4, 1oz L2/L3 | 5 | 6,80 | 6,80 | JLCPCB / PCBWay | 5-8 Tage | 2-Layer (2,00 EUR/5 Stueck) |
 | 66 | PCB-Bestueckung | SMD-Bestueckung durch JLCPCB, ~50 Bauteile | 1 | 20,00 | 20,00 | JLCPCB | 5-8 Tage | DIY Heissluft (0 EUR), lokaler Dienstleister (35 EUR) |
-| 67 | Loetpaste | Sn42/Bi57/Ag1, bleifrei, 50g Spritze | 1 | 8,00 | 8,00 | Online-Marktplatz / Reichelt | 2-4 Tage | Sn63/Pb37 bleihaltig (6,00 EUR) |
+| 67 | Loetpaste | Sn42/Bi57/Ag1, bleifrei, 50g Spritze | 1 | 8,00 | 8,00 | Online-Marktplatz / Elektronik-Distributor DE #1 | 2-4 Tage | Sn63/Pb37 bleihaltig (6,00 EUR) |
 
 ---
 
@@ -158,7 +158,7 @@ und Schwaeche beschrieben.
 
 ### 2.1 Lieferanten-Profil
 
-**Reichelt elektronik (reicht.de)**
+**Elektronik-Distributor DE #1**
 
 Deutscher Online-Haendler fuer elektronische Bauelemente und Werkzeug.
 Staerken: grosse Auswahl an passiven Bauelementen (Widerstaende,
@@ -172,18 +172,18 @@ Einsatz im Projekt: passive Bauelemente (Widerstaende, Kondensatoren,
 Ferrite-Beads), Standard-Halbleiter (HT7333, TC4427, IRLZ44N, PC817),
 Kabelverschraubungen, Abstandshalter, Schrauben.
 
-**Conrad Electronic (conrad.de)**
+**Elektronik-Distributor DE #2**
 
 Deutscher Elektronik-Versandhaendler mit breitem Sortiment.
 Staerken: schnelle Lieferung (1-3 Werktage), grosse Auswahl an
 Werkzeug und Verbrauchsmaterial, auch Kleinmengen ab 1 Stueck.
-Schwaeche: Preise oft 30-50% hoeher als Reichelt bei identischen
+Schwaeche: Preise oft 30-50% hoeher als Elektronik-Distributor DE #1 bei identischen
 Bauelementen, beschraenkte Auswahl bei SMD-Bauteilen.
 
-Einsatz im Projekt: nur fuer Bauteile, die bei Reichelt nicht verfuegbar
+Einsatz im Projekt: nur fuer Bauteile, die bei Elektronik-Distributor DE #1 nicht verfuegbar
 sind, oder fuer schnelle Ersatzbeschaffung am Wochenende.
 
-**Mouser Electronics (mouser.de)**
+**B2B-Distributor US #1**
 
 Globaler B2B-Distributor fuer Halbleiter und elektronische Bauelemente.
 Staerken: riesige Auswahl an Halbleitern direkt vom Hersteller, aktuelle
@@ -195,18 +195,18 @@ Niederlande (2-4 Werktage).
 Einsatz im Projekt: ESP32-S3-WROOM-1-N8R2 (3,30 EUR netto), BMI270
 (3,40 EUR netto), BMP390 (3,50 EUR netto), TC4427, Spezial-ICs.
 
-**Digi-Key Electronics (digikey.de)**
+**B2B-Distributor US #2**
 
-US-amerikanischer B2B-Distributor, vergleichbar mit Mouser.
-Staerken: noch groessere Auswahl als Mouser bei Spezialbauteilen,
+US-amerikanischer B2B-Distributor, vergleichbar mit B2B-Distributor US #1.
+Staerken: noch groessere Auswahl als B2B-Distributor US #1 bei Spezialbauteilen,
 exzellente Such- und Filterfunktion, Live-Stock, keine Mindestmenge.
 Schwaeche: Preise oft in USD, Wechselkursrisiko, Versand aus USA
 mit zusaetzlicher Einfuhrabwicklung (3-7 Werktage).
 
-Einsatz im Projekt: Alternative fuer Mouser bei Nicht-Verfuegbarkeit,
+Einsatz im Projekt: Alternative fuer B2B-Distributor US #1 bei Nicht-Verfuegbarkeit,
 FPC-Connector.
 
-**TME (tme.eu)**
+**Distributor EU**
 
 Polnischer B2B-Elektronik-Distributor mit Europa-Logistik.
 Staerken: guenstige Preise fuer u-blox GPS-Module (NEO-M9N 20,32 EUR
@@ -216,7 +216,7 @@ Polnisch/Englisch, deutschsprachiger Support beschraenkt.
 
 Einsatz im Projekt: NEO-M9N GPS-Modul, AMP Superseal Stecker.
 
-**LCSC (lcsc.com)**
+**Distributor CN**
 
 Chinesischer Online-Haendler fuer elektronische Bauelemente.
 Staerken: sehr guenstige Preise fuer SMD-Bauteile und PCB-Bestueckung
@@ -267,16 +267,16 @@ Die folgende Tabelle vergleicht die Preise ausgewaehlter Bauteile
 ueber verschiedene Lieferanten, um die guenstigste Quelle zu
 identifizieren.
 
-| Bauteil | Mouser | Digi-Key | TME | Reichelt | China-Marktplatz | Beste Quelle |
+| Bauteil | B2B-Distributor US #1 | B2B-Distributor US #2 | Distributor EU | Elektronik-Distributor DE #1 | China-Marktplatz | Beste Quelle |
 |---|---|---|---|---|---|---|
-| ESP32-S3-WROOM-1 N8R2 | 3,30 EUR | 5,40 EUR | n.v. | n.v. | 2,50 EUR* | Mouser (original, garantiert) |
-| NEO-M9N-00B | 14,40 EUR* | 15,72 EUR* | 24,60 EUR** | n.v. | 12,00 EUR* | TME (original, EU-Lager) |
-| BMI270 (Bare IC) | 3,40 EUR | 3,90 EUR | n.v. | n.v. | 5,00 EUR** | Mouser (original) |
-| BMP390 (Bare IC) | 3,50 EUR | 3,50 EUR | n.v. | n.v. | n.v. | Mouser / Digi-Key |
+| ESP32-S3-WROOM-1 N8R2 | 3,30 EUR | 5,40 EUR | n.v. | n.v. | 2,50 EUR* | B2B-Distributor US #1 (original, garantiert) |
+| NEO-M9N-00B | 14,40 EUR* | 15,72 EUR* | 24,60 EUR** | n.v. | 12,00 EUR* | Distributor EU (original, EU-Lager) |
+| BMI270 (Bare IC) | 3,40 EUR | 3,90 EUR | n.v. | n.v. | 5,00 EUR** | B2B-Distributor US #1 (original) |
+| BMP390 (Bare IC) | 3,50 EUR | 3,50 EUR | n.v. | n.v. | n.v. | B2B-Distributor US #1 / B2B-Distributor US #2 |
 | MP1584EN Modul | n.v. | n.v. | n.v. | 1,80 EUR | 0,50 EUR | China-Marktplatz (Prototyp) |
-| HT7333 LDO | 0,50 EUR | 0,60 EUR | n.v. | 0,50 EUR | 0,20 EUR* | Reichelt (schnell) |
-| TC4427 Gate-Driver | 1,40 EUR | 1,50 EUR | n.v. | 1,50 EUR | 0,80 EUR* | Mouser |
-| IRLZ44N | 1,50 EUR | 1,60 EUR | n.v. | 1,50 EUR | 0,80 EUR* | Reichelt |
+| HT7333 LDO | 0,50 EUR | 0,60 EUR | n.v. | 0,50 EUR | 0,20 EUR* | Elektronik-Distributor DE #1 (schnell) |
+| TC4427 Gate-Driver | 1,40 EUR | 1,50 EUR | n.v. | 1,50 EUR | 0,80 EUR* | B2B-Distributor US #1 |
+| IRLZ44N | 1,50 EUR | 1,60 EUR | n.v. | 1,50 EUR | 0,80 EUR* | Elektronik-Distributor DE #1 |
 | ASA Filament 1kg | n.v. | n.v. | n.v. | n.v. | n.v. | Online-Marktplatz (25 EUR) |
 | PCB 4-Layer (5 St.) | n.v. | n.v. | n.v. | n.v. | n.v. | JLCPCB (6,80 EUR/Board) |
 
@@ -288,37 +288,37 @@ n.v. = nicht verfuegbar
 
 **Geringes Risiko (Multi-Source, grosse Lagerbestaende):**
 - Passive Bauelemente (Widerstaende, Kondensatoren, Ferrite-Beads):
-  verfuegbar bei Reichelt, Conrad, Mouser, Digi-Key, LCSC, China-Marktplatz.
+  verfuegbar bei Elektronik-Distributor DE #1, Elektronik-Distributor DE #2, B2B-Distributor US #1, B2B-Distributor US #2, Distributor CN, China-Marktplatz.
   Kein Verfuegbarkeitsrisiko.
 - Standard-Halbleiter (HT7333, AMS1117, PC817, 1N5822, IRLZ44N):
   verfuegbar bei allen grossen Distributoren.
 - Mechanische Teile (Schrauben, Abstandshalter, Kabelbinder):
-  verfuegbar bei Reichelt, Online-Marktplatz, Baumarkt.
+  verfuegbar bei Elektronik-Distributor DE #1, Online-Marktplatz, Baumarkt.
 - Module (MP1584EN, TP4056, MT3608): verfuegbar bei China-Marktplatz, Online-Marktplatz,
-  Reichelt. Kein Risiko, aber Qualitaetsschwankungen bei China-Marktplatz.
+  Elektronik-Distributor DE #1. Kein Risiko, aber Qualitaetsschwankungen bei China-Marktplatz.
 
 **Mittleres Risiko (Single-Source bei einigen Lieferanten):**
-- ESP32-S3-WROOM-1-N8R2: verfuegbar bei Mouser und Digi-Key, aber
+- ESP32-S3-WROOM-1-N8R2: verfuegbar bei B2B-Distributor US #1 und B2B-Distributor US #2, aber
   beide beziehen vom MCU-Chiphersteller. Bei Lieferengpaessen
-  (aktuelle Vorlaufzeit bei Digi-Key: 8 Wochen) koennen beide
+  (aktuelle Vorlaufzeit bei B2B-Distributor US #2: 8 Wochen) koennen beide
   betroffen sein. Alternative: DevKitC-1 als Prototyp-Ersatz.
-- NEO-M9N GPS-Modul: verfuegbar bei TME, Mouser, Digi-Key. China-Marktplatz-
+- NEO-M9N GPS-Modul: verfuegbar bei Distributor EU, B2B-Distributor US #1, B2B-Distributor US #2. China-Marktplatz-
   Clones unter 15 EUR sind oft Fakes (u-blox Clone oder ATGM336H
-  relabeled). Originalmodul bei TME (24,60 EUR) ist die sicherste
+  relabeled). Originalmodul bei Distributor EU (24,60 EUR) ist die sicherste
   Quelle.
 - ASA-Filament: verfuegbar bei verschiedenen Anbietern auf Online-Marktplatz und
   Filament-versand. Keine engpaesse, aber Qualitaetsschwankungen.
 
 **Hohes Risiko (Single-Source, Obsolescence, lange Lieferzeiten):**
-- BMP388: bei Digi-Key als OBSOLETE markiert! Direkter Ersatz ist
+- BMP388: bei B2B-Distributor US #2 als OBSOLETE markiert! Direkter Ersatz ist
   der BMP390 (Pin-kompatibel, verbesserte Spezifikation). Der BMP388
   ist bei einigen Distributoren noch auf Lager, aber nicht mehr in
   Produktion. EMPFEHLUNG: BMP390 statt BMP388 verwenden.
-- BMI270: verfuegbar bei Mouser (60.904 auf Lager) und Digi-Key
-  (67.748 auf Lager). Jedoch bei Digi-Key als "Limited Supply"
+- BMI270: verfuegbar bei B2B-Distributor US #1 (60.904 auf Lager) und B2B-Distributor US #2
+  (67.748 auf Lager). Jedoch bei B2B-Distributor US #2 als "Limited Supply"
   markiert. Breakout-Boards (China-Marktplatz) als Alternative.
-- AMP Superseal Stecker: verfuegbar bei Spezialversand und Online-Marktplatz.
-  Jedoch nicht bei Reichelt/Conrad. Bei Lieferengpaessen
+- AMP Superseal Stecker: verfuegbar bei Spezial-Distributor und Online-Marktplatz.
+  Jedoch nicht bei Elektronik-Distributor DE #1/Elektronik-Distributor DE #2. Bei Lieferengpaessen
   Alternative: Deutch DTM Serie (teurer, aber besser verfuegbar).
 - Druckausgleichsmembran (ePTFE): Spezialprodukt, verfuegbar bei
   ausgewaehlten Anbietern. Alternative: ePTFE-Patch mit Loch.
@@ -563,7 +563,7 @@ Die Contingency von +15% deckt folgende Risiken ab:
 | Fertigungsfehler | 1% | PCB-Fehler, Loetfehler, Fehldrucke beim 3D-Druck |
 
 Bei Projekten mit hohem Anteil an China-Importen (China-Marktplatz, JLCPCB,
-LCSC) kann die Contingency auf +20% erhoeht werden, da
+Distributor CN) kann die Contingency auf +20% erhoeht werden, da
 Zollabwicklungen und verlaengerte Lieferzeiten haeufiger zu
 Nachbestellungen fuehren.
 
@@ -598,9 +598,9 @@ EMV-Tauglichkeit.
 
 **BMP388 -- OBSOLETE (Kritisch)**
 
-Der BMP388 wird bei DigiKey als "Obsolete" markiert (Stand Oktober
+Der BMP388 wird bei B2B-Distributor US #2 als "Obsolete" markiert (Stand Oktober
 2026). Das bedeutet, dass das Bauteil nicht mehr produziert wird
-und nur noch Lagerbestaende verfuegbar sind. Die bei Digi-Key
+und nur noch Lagerbestaende verfuegbar sind. Die bei B2B-Distributor US #2
 angegebene Alternative ist der BMP390 (Part No. 828-BMP390CT-ND).
 
 Der BMP390 ist der direkte Nachfolger des BMP388 und ist:
@@ -612,45 +612,45 @@ Der BMP390 ist der direkte Nachfolger des BMP388 und ist:
 - Gleicher Stromverbrauch (3,4 µA bei 1 Hz)
 
 EMPFEHLUNG: BMP390 statt BMP388 in der gesamten BOM verwenden.
-Die Firmware-Bibliothek (Adafruit BMP3xx) unterstuetzt beide Sensoren
+Die Firmware-Bibliothek (BMP3xx-Library (Open-Source)) unterstuetzt beide Sensoren
 mit derselben API. Keine Code-Aenderungen erforderlich.
 
 **BMP388 Lagerbestaende (Stand Oktober 2026):**
-- Digi-Key: 0 auf Lager (Obsolete)
-- Mouser: geringe Restbestaende (pruefen)
-- TME: nicht gelistet
+- B2B-Distributor US #2: 0 auf Lager (Obsolete)
+- B2B-Distributor US #1: geringe Restbestaende (pruefen)
+- Distributor EU: nicht gelistet
 
 **NEO-M9N -- Clone-Risiko (Hoch)**
 
 Auf China-Marktplatz werden GPS-Module unter der Bezeichnung "NEO-M9N" ab
 12 EUR angeboten. Diese sind haeufig Fakes:
-- Echte u-blox NEO-M9N-00B Module kosten ab 20 EUR (TME netto)
+- Echte u-blox NEO-M9N-00B Module kosten ab 20 EUR (Distributor EU netto)
 - Clones verwenden oft den ATGM336H Chip und relabeln das Modul
 - Die Konfigurationssoftware u-center erkennt keine echten
   u-blox-Module bei Fakes
 
 EMPFEHLUNG: NEO-M9N ausschliesslich bei autorisierten Distributoren
-(TME, Mouser, Digi-Key, Spezial.com) kaufen. Bei China-Marktplatz nur von
+(Distributor EU, B2B-Distributor US #1, B2B-Distributor US #2, Spezial-Distributor) kaufen. Bei China-Marktplatz nur von
 Verkaeufern mit >98% positiver Bewertung und Verifizierung.
 
 **ESP32-S3-WROOM-1 N8R2 -- Lieferengpaesse (Mittel)**
 
-Bei Digi-Key betraegt die Vorlaufzeit (Standard Lead Time) 8 Wochen,
+Bei B2B-Distributor US #2 betraegt die Vorlaufzeit (Standard Lead Time) 8 Wochen,
 was auf Produktionsengpaesse beim MCU-Chiphersteller hindeutet.
-Bei Mouser ist das Modul jedoch mit 3,60 USD (ca. 3,30 EUR netto)
+Bei B2B-Distributor US #1 ist das Modul jedoch mit 3,60 USD (ca. 3,30 EUR netto)
 sofort verfuegbar (Stand Oktober 2026). Das DevKitC-1 ist bei
 beiden Distributoren mit >1.000 Stueck auf Lager.
 
-EMPFEHLUNG: Modul bei Mouser bestellen (kuerzeste Lieferzeit).
+EMPFEHLUNG: Modul bei B2B-Distributor US #1 bestellen (kuerzeste Lieferzeit).
 Als Backup: DevKitC-1 (13,80 EUR) fuer Prototyp-Phase.
 
 ### 5.2 Bauteile mit langen Lieferzeiten (> 4 Wochen)
 
 | Bauteil | Lieferzeit | Grund | Alternative |
 |---|---|---|---|
-| ESP32-S3-WROOM-1 N8R2 (Digi-Key) | 8 Wochen | Produktionstrueckstand | Mouser (3-5 Tage), DevKitC-1 |
+| ESP32-S3-WROOM-1 N8R2 (B2B-Distributor US #2) | 8 Wochen | Produktionstrueckstand | B2B-Distributor US #1 (3-5 Tage), DevKitC-1 |
 | NEO-M9N (bei Nicht-Verfuegbarkeit) | 4-6 Wochen | Import aus Asien | ATGM336H (sofort, 3 EUR), NEO-M8N |
-| AMP Superseal Stecker | 2-3 Wochen | Spezialversand | Deutch DTM (Reichelt, 2-3 Tage) |
+| AMP Superseal Stecker | 2-3 Wochen | Spezial-Distributor | Deutch DTM (Elektronik-Distributor DE #1, 2-3 Tage) |
 | JLCPCB PCB + Bestueckung | 5-8 Tage | Produktion + Versand aus China | PCBWay (aehnlich schnell), lokaler Dienstleister |
 | China-Marktplatz Module (MP1584, TP4056, MT3608) | 7-21 Tage | Versand aus China | Online-Marktplatz Prime (2-3 Tage, +50% Preis) |
 
@@ -661,7 +661,7 @@ Substitute mit ihrer Kompatibilitaet und den Vor- und Nachteilen.
 
 | Krit. Bauteil | Substitut 1 | Substitut 2 | Kompatibilitaet |
 |---|---|---|---|
-| BMP390 (Baro) | BMP388 (obsolet!) | BMP280 (2 EUR, weniger genau) | Pin-kompatibel? BMP280 nein, BMP388 ja. SW: Adafruit BMP3xx fuer BMP388/390, BMP280 braucht eigene Lib. |
+| BMP390 (Baro) | BMP388 (obsolet!) | BMP280 (2 EUR, weniger genau) | Pin-kompatibel? BMP280 nein, BMP388 ja. SW: BMP3xx-Library (Open-Source) fuer BMP388/390, BMP280 braucht eigene Lib. |
 | BMI270 (IMU) | MPU6050 (2 EUR, veraltet) | LSM6DS33 (5 EUR) | Pin-kompatibel? Nein. SW: eigene Treiber fuer jeden Sensor. |
 | NEO-M9N (GPS) | NEO-M8N (15 EUR, 2 Konst.) | ATGM336H (3 EUR, 2 Konst.) | Pin-kompatibel? NEO-M8/M9 ja (LCC-Package). ATGM336H nein. SW: NMEA-Parser kompatibel, UBX nur u-blox. |
 | ESP32-S3-WROOM-1 N8R2 | ESP32-S3-DevKitC-1 (13,80 EUR) | ESP32 Classic (nicht empfohlen) | DevKitC-1 ist groesser aber pin-kompatibel. Classic: kein BLE 5.0, weniger GPIO. |
@@ -673,17 +673,17 @@ Substitute mit ihrer Kompatibilitaet und den Vor- und Nachteilen.
 
 | Bauteil | Source-Anzahl | Risiko | Massnahme |
 |---|---|---|---|
-| ESP32-S3-WROOM-1 N8R2 | 2 (Mouser, Digi-Key) | Mittel | DevKitC-1 als Backup |
-| NEO-M9N | 3 (TME, Mouser, Digi-Key) | Mittel | ATGM336H als Backup |
-| BMI270 | 2 (Mouser, Digi-Key) | Mittel | MPU6050 als Backup |
-| BMP390 | 2 (Mouser, Digi-Key) | Mittel | BMP280 als Backup |
-| MP1584EN Modul | 3+ (China-Marktplatz, Online-Marktplatz, Reichelt) | Gering | Keine Massnahme noetig |
-| HT7333 | 3+ (Reichelt, Mouser, LCSC) | Gering | AMS1117 als Backup |
-| TC4427 | 2 (Mouser, Digi-Key) | Mittel | MIC4427 als Backup |
+| ESP32-S3-WROOM-1 N8R2 | 2 (B2B-Distributor US #1, B2B-Distributor US #2) | Mittel | DevKitC-1 als Backup |
+| NEO-M9N | 3 (Distributor EU, B2B-Distributor US #1, B2B-Distributor US #2) | Mittel | ATGM336H als Backup |
+| BMI270 | 2 (B2B-Distributor US #1, B2B-Distributor US #2) | Mittel | MPU6050 als Backup |
+| BMP390 | 2 (B2B-Distributor US #1, B2B-Distributor US #2) | Mittel | BMP280 als Backup |
+| MP1584EN Modul | 3+ (China-Marktplatz, Online-Marktplatz, Elektronik-Distributor DE #1) | Gering | Keine Massnahme noetig |
+| HT7333 | 3+ (Elektronik-Distributor DE #1, B2B-Distributor US #1, Distributor CN) | Gering | AMS1117 als Backup |
+| TC4427 | 2 (B2B-Distributor US #1, B2B-Distributor US #2) | Mittel | MIC4427 als Backup |
 | ASA-Filament | 3+ (Online-Marktplatz, Filament-versand) | Gering | PETG als Prototyp-Backup |
-| AMP Superseal | 1-2 (Spezialversand, Online-Marktplatz) | Hoch | Deutch DTM als Backup |
+| AMP Superseal | 1-2 (Spezial-Distributor, Online-Marktplatz) | Hoch | Deutch DTM als Backup |
 | JLCPCB PCB | 2 (JLCPCB, PCBWay) | Gering | Lokaler Dienstleister als Backup |
-| Conformal Coating UR | 2 (Online-Marktplatz, Spezialversand) | Gering | Acryl-Coating als Backup |
+| Conformal Coating UR | 2 (Online-Marktplatz, Spezial-Distributor) | Gering | Acryl-Coating als Backup |
 
 ---
 
@@ -703,26 +703,26 @@ unverzueglich bestellt werden.
 1. PCB-Fertigung bei JLCPCB: 5-8 Tage fuer 4-Layer mit ENIG und
    Bestueckung. Sofort am Anfang bestellen, da alle anderen Schritte
    vom PCB abhaengen.
-2. NEO-M9N GPS-Modul bei TME: 3-7 Tage. Originalmodul, nicht bei
+2. NEO-M9N GPS-Modul bei Distributor EU: 3-7 Tage. Originalmodul, nicht bei
    China-Marktplatz bestellen (Clone-Risiko).
-3. ESP32-S3-WROOM-1 N8R2 bei Mouser: 3-5 Tage. Sofort verfuegbar,
+3. ESP32-S3-WROOM-1 N8R2 bei B2B-Distributor US #1: 3-5 Tage. Sofort verfuegbar,
    aber bei Bestellung > 10 Stueck laengere Lieferzeit.
-4. BMI270 und BMP390 bei Mouser: 5-10 Tage. Original-ICs, nicht bei
+4. BMI270 und BMP390 bei B2B-Distributor US #1: 5-10 Tage. Original-ICs, nicht bei
    China-Marktplatz (Clones, falsche Specs).
-5. TC4427 Gate-Driver bei Mouser: 5-10 Tage.
-6. AMP Superseal Stecker bei Spezialversand: 2-3 Wochen.
+5. TC4427 Gate-Driver bei B2B-Distributor US #1: 5-10 Tage.
+6. AMP Superseal Stecker bei Spezial-Distributor: 2-3 Wochen.
 
 **Phase 2: Mittellaufende Bestellungen (Woche 2)**
 
 Diese Bauteile haben Lieferzeiten von 2-5 Tagen.
 
 7. Passive Bauelemente (Widerstaende, Kondensatoren, Ferrite-Beads)
-   bei Reichelt: 2-3 Tage.
+   bei Elektronik-Distributor DE #1: 2-3 Tage.
 8. Standard-Halbleiter (HT7333, IRLZ44N, PC817, 1N5822, 1N5408,
-   Zener, TVS) bei Reichelt: 2-5 Tage.
+   Zener, TVS) bei Elektronik-Distributor DE #1: 2-5 Tage.
 9. Module (MP1584EN, TP4056, MT3608) bei China-Marktplatz: 7-14 Tage.
    Alternative: Online-Marktplatz Prime (+50% Preis, aber 2-3 Tage).
-10. USB-C IP67 Buchse bei Reichelt: 2-4 Tage.
+10. USB-C IP67 Buchse bei Elektronik-Distributor DE #1: 2-4 Tage.
 11. Sensor-Kabel abgeschirmt und JST-SM Stecker bei Online-Marktplatz: 2-4 Tage.
 12. Ferritkerne bei Online-Marktplatz: 2-4 Tage.
 
@@ -730,10 +730,10 @@ Diese Bauteile haben Lieferzeiten von 2-5 Tagen.
 
 Diese Bauteile sind schnell verfuegbar (1-3 Tage).
 
-13. Displays (TFT 3,5" IPS, E-Paper 2,13") bei Waveshare/Online-Marktplatz:
+13. Displays (TFT 3,5" IPS, E-Paper 2,13") bei Display-Modul-Hersteller/Online-Marktplatz:
     3-7 Tage.
-14. DS18B20, NTC, Hall-Sensor bei Reichelt/Online-Marktplatz: 2-4 Tage.
-15. Aftermarket Oeldrucksensor bei Online-Marktplatz/Spezialversand: 5-10 Tage.
+14. DS18B20, NTC, Hall-Sensor bei Elektronik-Distributor DE #1/Online-Marktplatz: 2-4 Tage.
+15. Aftermarket Oeldrucksensor bei Online-Marktplatz/Spezial-Distributor: 5-10 Tage.
 16. 18650 Akku bei Online-Marktplatz: 2-4 Tage.
 17. SD-Karte 16GB bei Online-Marktplatz: 2-3 Tage.
 18. ASA- und PETG-Filament bei Online-Marktplatz: 2-4 Tage.
@@ -760,12 +760,12 @@ Empfohlene Lieferanten-Gruppierung:
 | Lieferant | Bauteile | Versand (EUR) | Lieferzeit |
 |---|---|---|---|
 | JLCPCB | PCB + Bestueckung | 15,00 | 5-8 Tage |
-| Mouser | ESP32-S3, BMI270, BMP390, TC4427, Ferrite-Beads | 6,90 | 3-5 Tage |
-| TME | NEO-M9N | 8,00 | 3-7 Tage |
-| Reichelt | Passive, Standard-ICs, Kabelverschraubungen, Abstandshalter | 4,95 | 2-3 Tage |
+| B2B-Distributor US #1 | ESP32-S3, BMI270, BMP390, TC4427, Ferrite-Beads | 6,90 | 3-5 Tage |
+| Distributor EU | NEO-M9N | 8,00 | 3-7 Tage |
+| Elektronik-Distributor DE #1 | Passive, Standard-ICs, Kabelverschraubungen, Abstandshalter | 4,95 | 2-3 Tage |
 | China-Marktplatz | MP1584, TP4056, MT3608, Hall-Sensor | 0,00 (gratis) | 7-21 Tage |
 | Online-Marktplatz | Displays, Akku, Filament, Coating, Kupferfolie, Kabel | 0,00 (Prime) | 1-3 Tage |
-| Spezialversand | AMP Superseal, Oeldrucksensor, Druckausgleichsmembran | 6,90 | 3-10 Tage |
+| Spezial-Distributor | AMP Superseal, Oeldrucksensor, Druckausgleichsmembran | 6,90 | 3-10 Tage |
 | — | **Gesamt Versand** | **41,75** | |
 
 **Einzelbestellung (empfohlen fuer Ersatzbeschaffung):**
@@ -777,7 +777,7 @@ Fachhandel liegen.
 
 ### 6.3 Zoll- und Versandkosten
 
-**JLCPCB / LCSC (China-Import):**
+**JLCPCB / Distributor CN (China-Import):**
 
 Bei Bestellungen unter 150 EUR Warenwert fallen keine Zollgebuehren
 an (Zollfreigrenze der EU). Es fallen jedoch Einfuhrumsatzsteuer
@@ -788,7 +788,7 @@ Regel vom Versanddienstleister (DHL Express) abgewickelt.
 Bei Warenwert ueber 150 EUR faellt Zoll an (Rate je nach
 Warencode, typisch 0-4% fuer elektronische Bauteile).
 
-Empfehlung: Bestellungen bei JLCPCB/LCSC unter 150 EUR halten,
+Empfehlung: Bestellungen bei JLCPCB/Distributor CN unter 150 EUR halten,
 um Zollgebuehren zu vermeiden. Bei hoeherem Warenwert: auf
 mehrere Bestellungen aufteilen (z.B. PCB separat von Bauteilen).
 
@@ -799,17 +799,17 @@ Einfuhrumsatzsteuer wird bereits im Checkout von China-Marktplatz
 erhoben (IOSS-Verfahren), so dass keine Nachzahlung beim
 Zoll anfaellt. Lieferzeit 7-21 Tage.
 
-**Mouser / Digi-Key / TME (EU-Versand):**
+**B2B-Distributor US #1 / B2B-Distributor US #2 / Distributor EU (EU-Versand):**
 
-Mouser versandt aus den Niederlanden, Digi-Key aus den USA
-(mit EU-Lager), TME aus Polen. Bei B2B-Konten (USt-IdNr.)
+B2B-Distributor US #1 versandt aus den Niederlanden, B2B-Distributor US #2 aus den USA
+(mit EU-Lager), Distributor EU aus Polen. Bei B2B-Konten (USt-IdNr.)
 werden Preise netto berechnet. Versandkosten: 6,90-8,00 EUR.
 Keine Zollgebuehren innerhalb der EU.
 
-**Reichelt / Conrad / Online-Marktplatz (Inland):**
+**Elektronik-Distributor DE #1 / Elektronik-Distributor DE #2 / Online-Marktplatz (Inland):**
 
 Versand aus Deutschland, 1-3 Tage Lieferzeit. Versandkosten:
-4,95 EUR (Reichelt), gratis bei Conrad ab 25 EUR, gratis bei
+4,95 EUR (Elektronik-Distributor DE #1), gratis bei Elektronik-Distributor DE #2 ab 25 EUR, gratis bei
 Online-Marktplatz Prime.
 
 ### 6.4 Empfohlene Lagerhaltung (Reserve-Bauteile)
@@ -842,34 +842,34 @@ Silica-Gel (Feuchtigkeitsschutz, MSL-Klassifizierung beachten).
 
 | Kategorie | Primaere Quelle | Sekundaere Quelle | Bemerkung |
 |---|---|---|---|
-| MCU / Spezial-ICs | Mouser | Digi-Key | Original, garantierte Qualitaet |
-| GPS-Modul | TME | Mouser | TME hat guenstigste Preise fuer u-blox in der EU |
-| Passive Bauelemente | Reichelt | LCSC | Reichelt schnell, LCSC guenstig bei Mengen |
+| MCU / Spezial-ICs | B2B-Distributor US #1 | B2B-Distributor US #2 | Original, garantierte Qualitaet |
+| GPS-Modul | Distributor EU | B2B-Distributor US #1 | Distributor EU hat guenstigste Preise fuer u-blox in der EU |
+| Passive Bauelemente | Elektronik-Distributor DE #1 | Distributor CN | Elektronik-Distributor DE #1 schnell, Distributor CN guenstig bei Mengen |
 | Module (Buck, Boost, Charger) | China-Marktplatz | Online-Marktplatz | China-Marktplatz am guenstigsten, Online-Marktplatz am schnellsten |
-| Standard-Halbleiter | Reichelt | Mouser | Reichelt schnell und guenstig fuer Standard-Teile |
-| Kabel / Stecker / Verschraubungen | Online-Marktplatz | Reichelt | Online-Marktplatz fuer schnelle Beschaffung |
+| Standard-Halbleiter | Elektronik-Distributor DE #1 | B2B-Distributor US #1 | Elektronik-Distributor DE #1 schnell und guenstig fuer Standard-Teile |
+| Kabel / Stecker / Verschraubungen | Online-Marktplatz | Elektronik-Distributor DE #1 | Online-Marktplatz fuer schnelle Beschaffung |
 | Filament / 3D-Druck-Material | Online-Marktplatz | Filament-versand | Grosse Auswahl, schnelle Lieferung |
 | PCB-Fertigung | JLCPCB | PCBWay | JLCPCB guenstigster Anbieter mit Bestueckung |
-| Spezial-Mechanik (AMP Superseal, Oeldruck) | Spezialversand | Online-Marktplatz | Spezialversand hat groessere Auswahl |
+| Spezial-Mechanik (AMP Superseal, Oeldruck) | Spezial-Distributor | Online-Marktplatz | Spezial-Distributor hat groessere Auswahl |
 | Werkzeug / Verbrauchsmaterial | Online-Marktplatz | Baumarkt | Online-Marktplatz fuer Bequemlichkeit, Baumarkt fuer Sofortbedarf |
 
 ---
 
 ## 7. Quellen
 
-- ESP32-S3-WROOM-1-N8R2: Mouser (3,60 USD ≈ 3,30 EUR netto),
-  Digi-Key (5,88 USD ≈ 5,40 EUR). Beide Stand Oktober 2026.
-- NEO-M9N-00B: TME (20,32 EUR netto / 24,59 EUR brutto),
-  Spezial.com (21,77 EUR). Stand Oktober 2026.
-- BMI270: Mouser (3,71 USD ≈ 3,40 EUR netto), Digi-Key (4,23 USD).
+- ESP32-S3-WROOM-1-N8R2: B2B-Distributor US #1 (3,60 USD ≈ 3,30 EUR netto),
+  B2B-Distributor US #2 (5,88 USD ≈ 5,40 EUR). Beide Stand Oktober 2026.
+- NEO-M9N-00B: Distributor EU (20,32 EUR netto / 24,59 EUR brutto),
+  Spezial-Distributor (21,77 EUR). Stand Oktober 2026.
+- BMI270: B2B-Distributor US #1 (3,71 USD ≈ 3,40 EUR netto), B2B-Distributor US #2 (4,23 USD).
   Stand Oktober 2026.
-- BMP388: Digi-Key Status "Obsolete". BMP390 als direkter Ersatz,
-  Digi-Key (2,43 GBP ≈ 2,85 EUR netto). Stand Oktober 2026.
-- BMP390: Mouser / Digi-Key, 3,50 EUR netto. Stand Oktober 2026.
+- BMP388: B2B-Distributor US #2 Status "Obsolete". BMP390 als direkter Ersatz,
+  B2B-Distributor US #2 (2,43 GBP ≈ 2,85 EUR netto). Stand Oktober 2026.
+- BMP390: B2B-Distributor US #1 / B2B-Distributor US #2, 3,50 EUR netto. Stand Oktober 2026.
 - MP1584EN Modul: China-Marktplatz (0,48-1,26 EUR), LaskaKit (1,31 EUR).
   Stand Oktober 2026.
 - JLCPCB PCB-Fertigung: 4-Layer ab 8 USD / 5 Stueck. Stand 2026.
-- Waveshare 3.5" IPS Display: 480x320, SPI, Online-Marktplatz / Waveshare.
+- Display-Modul-Hersteller 3.5" IPS Display: 480x320, SPI, Online-Marktplatz / Display-Modul-Hersteller.
   Stand Oktober 2026.
 - docs/research/02-hardware-deep-dive.md: Komponenten-Auswahl und
   Spezifikationen

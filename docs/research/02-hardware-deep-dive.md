@@ -2,7 +2,7 @@
 
 > Stand: Oktober 2026 — Exhaustive Recherche zur kompletten Hardware-Auslegung.
 > Fahrzeug: Honda Transalp 600 (PD06), Baujahr 1986–2000, rein mechanisch, keine ECU.
-> Alle Preise sind Richtwerte (China-Marktplatz / Online-Marktplatz / DigiKey / Mouser, Stand 2026).
+> Alle Preise sind Richtwerte (China-Marktplatz / Online-Marktplatz / B2B-Distributor US #2 / B2B-Distributor US #1, Stand 2026).
 
 ## Inhalt
 
@@ -151,7 +151,7 @@ Der NEO-M9N ist die beste Wahl für einen Motorrad-Bordcomputer:
 - **Power-Save-Mode**: 7 mA bei 1 Hz cyclic → perfekt für Battery-Backup-Logging
 - **23 s Cold Start** → Akzeptabel nach Wochen ohne Strom
 
-**Preis:** ~25–35€ (Achtung: Clones von China-Marktplatz unter 15€ sind oft Fake. Original bei Mouser/DigiKey).
+**Preis:** ~25–35€ (Achtung: Clones von China-Marktplatz unter 15€ sind oft Fake. Original bei B2B-Distributor US #1/B2B-Distributor US #2).
 
 ### 2.3 Dead Reckoning (NEO-M8U) — sinnvoll für Motorrad?
 
@@ -232,14 +232,14 @@ E-Paper verliert bei:
 - **Keine Farbe**: Nur schwarz/weiß (oder schwarz/weiß/rot bei teureren Panels)
 - **Ghosting**: Bei Partial-Refresh bauen sich Reste auf, periodischer Full-Refresh nötig
 
-**Entscheidung: E-Paper Waveshare 2.9" (296×128, SSD1680)**
+**Entscheidung: E-Paper Display-Modul-Hersteller 2.9" (296×128, SSD1680)**
 
 Begründung: Der Bordcomputer braucht keine schnellen Animationen. Geschwindigkeit, Drehzahl, GPS-Track sind statische Zahlen/Layouts die sich alle 0.3s aktualisieren können. Sonnenlesbarkeit ist das wichtigste Kriterium am Motorrad. Low Power ist Bonus für Battery-Backup.
 
 ### 3.2 E-Paper Deep-Dive
 
 **Treiber-ICs:**
-- **SSD1680**: Waveshare 2.9" V2/V3, 296×128, monochrom. Häufigster Treiber.
+- **SSD1680**: Display-Modul-Hersteller 2.9" V2/V3, 296×128, monochrom. Häufigster Treiber.
 - **UC8151D**: Good Display GDEW029T5D, 296×128, monochrom. Pin-kompatibel.
 - Beide werden von GxEPD2 library unterstützt.
 
@@ -291,9 +291,9 @@ GxEPD2_BW<GxEPD2_290_T94_V2, GxEPD2_290_T94_V2::HEIGHT> display(
 ```
 
 Quellen:
-- [Waveshare 2.9" E-Paper (SSD1680)](https://tinkered.ai/components/epaper-2in9)
+- [Display-Modul-Hersteller 2.9" E-Paper (SSD1680)](https://tinkered.ai/components/epaper-2in9)
 - [GxEPD2 Library](https://github.com/ZinggJM/GxEPD2)
-- [Waveshare Produktseite 2.9"](https://waveshare.com/2.9inch-e-paper-d.htm)
+- [Display-Modul-Hersteller Produktseite 2.9"]
 
 ---
 
@@ -390,7 +390,7 @@ Der BMI270 muss im Gehäuse so ausgerichtet werden, dass:
 Ist die Montage anders, muss in Software rotiert werden ( Achsen-Tausch + Vorzeichen).
 
 Quellen:
-- [BMI270 Datasheet (Mouser PDF)](https://www.mouser.com/pdfdocs/Product_flyer_BMI270.pdf)
+- [BMI270 Datasheet (Distributor PDF)]
 - [BMI270 ESP Component](https://components.espressif.com/components/espp/bmi270/versions/1.0.22/readme?language=en)
 - BMI088 (vibrationsrobust, automotive-gradiger IMU-Sensor)
 - [MPU6050 vs BNO055 Discussion](https://forum.arduino.cc/t/mpu6050-vs-bno055/673029)
@@ -482,7 +482,7 @@ I2C Bus (ESP32-S3):
 
 Quellen:
 - [BMP280 vs BME280 vs BMP388](https://zbotic.in/best-pressure-sensors-for-arduino-bmp280-vs-bme280-vs-bmp388)
-- [BMP388 Adafruit](https://learn.adafruit.com/adafruit-bmp388-bmp390-bmp3xx/overview)
+- [BMP388 Breakout-Tutorial]
 - [BMP388 Component Guide](https://componentindex.net/components/bmp388)
 - [Sensor Comparison Hackaday](https://hackaday.io/project/86912-explog-exploration-logger/log/123294-choosing-the-right-sensors)
 

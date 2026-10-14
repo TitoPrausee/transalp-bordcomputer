@@ -1328,7 +1328,7 @@ Moegliche Integrationen:
 
 ### Sensorik
 - BMP280 Weather Station: https://github.com/Milad-Mohseni-Eng/ESP32-BMP280-OLED-Weather-Station
-- Adafruit BMP280 Guide: https://learn.adafruit.com/adafruit-bmp280-barometric-pressure-plus-temperature-sensor-breakout
+- BMP280 Tutorial (Open-Source-HW)
 - ESP32 BMP280 Guide: https://www.espboards.dev/sensors/bmp280/
 - Arduino RPM Gauge FAQ: https://electricalflux.com/mcu-general/arduino-rpm-gauge-sensor-wiring-faq
 - Motorcycle Tachometer (Forum): https://forum.arduino.cc/t/motorcycle-tachometer-help/103871

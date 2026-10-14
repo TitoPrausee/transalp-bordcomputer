@@ -152,7 +152,7 @@ Mit Dirty-Rect-Tracking (nur geaenderte Bereiche) deutlich mehr.
 
 ### 2.3 E-Paper 2.13" (SPI)
 
-Das E-Paper-Display (Waveshare 2.13", 250x122 Pixel, SSD1680/UC8151D)
+Das E-Paper-Display (Display-Modul-Hersteller 2.13", 250x122 Pixel, SSD1680/UC8151D)
 wird ebenfalls am shared SPI2 (FSPI) betrieben. Es ist write-only und
 hat zusaetzlich ein BUSY-Signal, das aber beim 2.13"-Modul ueber
 polling abgefragt werden kann.
@@ -1075,7 +1075,7 @@ RC-Tiefpass (1k + 100nF = 1.6 kHz) am Eingang gegen EMV-Stoerungen.
 |---------------------|--------------------|--------------------|---------|--------|---------------------------|
 | ESP32-S3-WROOM-1    | N16R8              | ESP32-S3-WROOM-1   | SMD     | 1      | 1900-ESP32-S3-WROOM-1-N16R8|
 | ILI9488 TFT 3.5"    | 480x320 RGB565    | Module-PCB         | THT     | 1      | ILI9488-3.5-SPI           |
-| E-Paper 2.13"       | 250x122 SSD1680   | Waveshare-Modul    | THT     | 1      | WS-EPD-213-V2             |
+| E-Paper 2.13"       | 250x122 SSD1680   | Display-Hersteller-Modul    | THT     | 1      | WS-EPD-213-V2             |
 | MicroSD Slot        | Push-Push          | MicroSD-SMD        | SMD     | 1      | DM3AT-SF-PEJM5            |
 | AT6558 GPS          | Modul             | GPS-Modul-PCB      | THT     | 1      | AT6558-Breakout           |
 | MPU6050             | 6-DoF IMU         | QFN-24 (Modul THT)| SMD/THT | 1      | MPU6050-Module            |

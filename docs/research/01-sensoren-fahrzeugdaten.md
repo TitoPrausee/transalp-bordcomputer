@@ -1196,7 +1196,7 @@ Empfohlene Pin-Zuweisung für den ESP32 (ADC1 für alle analogen Signale, da WiF
 ### GPS & Geschwindigkeit
 - [u-blox NEO-M9N DataSheet](https://content.u-blox.com/sites/default/files/NEO-M9N-00B_DataSheet_UBX-19014285.pdf)
 - [u-blox NEO-M9N Product Summary](https://content.u-blox.com/sites/default/files/NEO-M9N_ProductSummary_UBX-19027207.pdf)
-- [SparkFun Community: NEO-M9N Speed Accuracy](https://community.sparkfun.com/t/neo-m9n-speed-accuracy-problems/44868)
+- Maker-Community: NEO-M9N Speed Accuracy
 - [reddit.com/r/motorcycles Aftermarket Speedometer](https://reddit.com/r/motorcycles/comments/1xldes/aftermarket_speedometer_help)
 - [GitHub: MotoNav-CYD ESP32 GPS Speedometer](https://github.com/markseder/MotoNav-CYD)
 
