@@ -373,8 +373,8 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 | Design-Dokumente | 26 (+3: INDEX, DEMO-SCRIPT, ENGLISH-SUMMARY) |
 | Wörter gesamt (Design-Docs) | 158.926 |
 | Wörter gesamt (alle Docs + LICENSE + COC + SECURITY) | 256.711 |
-| Code-Prototypen | 3 (firmware/ 15.297 Zeilen C/H, companion-app/ 5.957 Zeilen TS/TSX, mockups/ 8 HTML-Screens) |
-| Firmware C/H-Zeilen | 15.297 (10 Komponenten + main + test-suite) |
+| Code-Prototypen | 3 (firmware/ 15.508 Zeilen C/H, companion-app/ 5.957 Zeilen TS/TSX, mockups/ 8 HTML-Screens) |
+| Firmware C/H-Zeilen | 15.508 (10 Komponenten + main + test-suite) |
 | Companion-App | 5.957 Zeilen TS/TSX (BleManager, Dashboard, Navigation, Diagnose, Settings) |
 | CI/CD Workflows | 4 (firmware-ci, companion-app-ci, docs-ci mit brand-check, pages) |
 | Unit-Tests | 3 (test_dtc, test_event_loop, test_nmea_parser) + ESP-IDF-Mocks |
