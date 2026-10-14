@@ -369,19 +369,19 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 
 ### PM-Runde 20 (14.10.2026, Markennamen-Tiefenbereinigung)
 - **Board-Status:** Alle 48 Tasks done, 0 running, 0 blocked — Projekt weiterhin vollständig abgeschlossen.
-- **Markennamen-Tiefenbereinigung:** Der Scan in Runde 19 meldete fälschlicherweise 0 Verletzungen. Ein erweiterter Scan mit zusätzlichen Marken (VDO, AutoMeter, AEM, Koso, Acumen, Amazon, eBay) fand **28+ Vorkommen** in 9 Dateien:
-  - `docs/research/04-pd06-technische-daten.md` — Koso, Trail Tech, VDO, AutoMeter, AEM, Acumen (8 Vorkommen)
-  - `docs/research/01-sensoren-fahrzeugdaten.md` — VDO (7 Vorkommen), AutoMeter URLs
-  - `docs/research/09-master-plan.md` — VDO (6), Amazon (12+), eBay
-  - `docs/research/06-feature-roadmap.md` — VDO (2), eBay URL
-  - `docs/research/08-feature-realization-matrix.md` — VDO (7)
-  - `docs/BOM.md` — VDO (2), Amazon (40+ Vorkommen)
-  - `docs/SHOPPING-LIST.md` — VDO (1), Amazon (20+ Vorkommen)
-  - `docs/PCB-LAYOUT.md` — VDO (1)
-  - `docs/USER-MANUAL.md` — Koso, VDO
-  - `README.md` — VDO (1)
+- **Markennamen-Tiefenbereinigung:** Der Scan in Runde 19 meldete fälschlicherweise 0 Verletzungen. Ein erweiterter Scan mit 7 zusätzlichen Marken (Aftermarket-Sensor-Hersteller, Online-Marktplätze, Digitaltacho-Hersteller) fand **28+ Vorkommen** in 9 Dateien:
+  - `docs/research/04-pd06-technische-daten.md` — 8 Vorkommen (Sensor- und Tacho-Hersteller)
+  - `docs/research/01-sensoren-fahrzeugdaten.md` — 7+ Vorkommen (Sensor-Hersteller, URLs)
+  - `docs/research/09-master-plan.md` — 18+ Vorkommen (Sensor-Hersteller, Online-Marktplätze)
+  - `docs/research/06-feature-roadmap.md` — 3 Vorkommen (Sensor-Hersteller, Online-Marktplatz URL)
+  - `docs/research/08-feature-realization-matrix.md` — 7 Vorkommen (Sensor-Hersteller)
+  - `docs/BOM.md` — 42+ Vorkommen (Sensor-Hersteller, Online-Marktplatz)
+  - `docs/SHOPPING-LIST.md` — 21+ Vorkommen (Sensor-Hersteller, Online-Marktplatz)
+  - `docs/PCB-LAYOUT.md` — 1 Vorkommen (Sensor-Hersteller)
+  - `docs/USER-MANUAL.md` — 2 Vorkommen (Tacho- und Sensor-Hersteller)
+  - `README.md` — 1 Vorkommen (Sensor-Hersteller)
   - Alle Marken durch generische Beschreibungen ersetzt (Aftermarket, Online-Marktplatz, etc.)
-- **Brand-Blocklist erweitert:** Von 17 auf 24 Marken erweitert (VDO, AutoMeter, AEM, Acumen, Koso, Amazon, eBay hinzugefügt). Die CI wird nun diese Marken automatisch abfangen.
+- **Brand-Blocklist erweitert:** Von 17 auf 24 Marken erweitert (7 weitere: Sensor-Hersteller, Tacho-Hersteller, Online-Marktplätze). Die CI wird nun diese Marken automatisch abfangen.
 - **CI-Status verifiziert:** Docs CI #28 = success, Firmware CI #7 = success, Companion-App CI #13 = success ✅. 0 offene PRs, 0 offene Issues.
 - **TODO/FIXME-Scan:** Unverändert — 4 TODOs in Firmware (akzeptable Erweiterungspunkte), 0 in Companion-App.
 - **Repo-Hygiene:** Nur `main`-Branch. Arbeitsbaum hatte uncommittete Änderungen (Markenbereinigung). 0 offene Dependabot-PRs.
