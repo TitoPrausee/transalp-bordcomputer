@@ -3,7 +3,7 @@
 > Zuletzt aktualisiert: 14.10.2026 (PM-Runde 18)
 > Status: Wartung — 5 Worker-Profile + 1 Projektmanager (PM) auf Mac mini
 > **Phasen 0–6 ABGESCHLOSSEN ✅ — Projekt RELEASE-READY**
-> **Runde 18: TrailTech-Markenname entfernt, Brand-Blocklist erweitert, CI grün**
+> **Runde 18: Übersehener Markenname entfernt, Brand-Blocklist auf 17 erweitert, CI grün**
 
 ## Projektziel
 Vollständiger Open-Source Bordcomputer für die Honda Transalp 600 (PD06).
@@ -350,12 +350,12 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 
 ### PM-Runde 18 (14.10.2026, Markenbereinigung & Blocklist-Erweiterung)
 - **Board-Status:** Alle 48 Tasks done, 0 running, 0 blocked — Projekt weiterhin vollständig abgeschlossen.
-- **TrailTech-Markenname entfernt:** Bei detailliertem Markennamen-Scan in `docs/research/05-gehaeuse-einbau-emv.md` wurde ein übersehener Markenname (TrailTech Voyager Pro, 3 Vorkommen) entdeckt. Der Produktname wurde durch die generische Beschreibung "Offroad-Motorrad-Display (Referenzprodukt)" ersetzt, und der Link wurde aus der Referenzliste entfernt.
-- **Brand-Blocklist erweitert:** Die CI-Brand-Blocklist (`.github/brand-blocklist.txt`) enthielt nur 7 Marken (Apple, Google, Samsung, Microsoft, Facebook, Twitter, Instagram). Erweitert um 10 weitere: Garmin, TomTom, Bosch, TrailTech, Sony, LG, Huawei, Xiaomi, Fitbit, Wahoo. Dies stellt sicher, dass künftige Commits keine dieser Marken in die Dokumentation einführen können.
-- **ROADMAP-Marken bereinigt:** Zwei Verweise auf "Garmin, TomTom, Bosch" in ROADMAP.md (Teil der Task-Beschreibungen für die Markennamen-Bereinigung) durch "verschiedene Marken" ersetzt, um konsistent mit der erweiterten Blocklist zu sein.
+- **Übersehener Markenname entfernt:** Bei detailliertem Markennamen-Scan in `docs/research/05-gehaeuse-einbau-emv.md` wurde ein übersehener Markenname (Offroad-Motorrad-Display, 3 Vorkommen) entdeckt. Der Produktname wurde durch die generische Beschreibung "Offroad-Motorrad-Display (Referenzprodukt)" ersetzt, und der Link wurde aus der Referenzliste entfernt.
+- **Brand-Blocklist erweitert:** Die CI-Brand-Blocklist (`.github/brand-blocklist.txt`) enthielt nur 7 Marken. Erweitert um 10 weitere Marken aus den Bereichen Navigation, Elektronik und Wearables. Dies stellt sicher, dass künftige Commits keine dieser Marken in die Dokumentation einführen können.
+- **ROADMAP-Marken bereinigt:** Verweise auf Markennamen in ROADMAP.md (Teil der Task-Beschreibungen für die Markennamen-Bereinigung) durch generische Beschreibungen ersetzt, um konsistent mit der erweiterten Blocklist zu sein.
 - **CI-Status verifiziert:** Alle 3 CI-Workflows (Docs CI #23, Firmware CI #7, Companion-App CI #13) = success ✅. Gesamt 51 Workflow-Runs.
 - **Repo-Hygiene:** Nur `main`-Branch lokal und remote. Arbeitsbaum sauber. 0 offene PRs. Dependabot-Remote-Branches nach `git fetch --prune` entfernt.
-- **Auf origin gepusht:** TrailTech-Entfernung + Blocklist-Erweiterung + ROADMAP-Update
+- **Auf origin gepusht:** Markenbereinigung + Blocklist-Erweiterung + ROADMAP-Update
 
 ## Offene Fragen
 - Welche TFT-Displays sind sonnenlesbar genug?

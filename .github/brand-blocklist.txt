@@ -17,7 +17,7 @@
 \b[Bb]osch\b
 \b[Tt]rail[Tt]ech\b
 \b[Ss]ony\b
-\b[Lg]\b
+\bLG\b
 \b[Hh]uawei\b
 \b[Xx]iaomi\b
 \b[Ff]itbit\b
