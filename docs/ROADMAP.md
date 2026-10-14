@@ -400,8 +400,8 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 
 ### PM-Runde 22 (14.10.2026, Wartungs-Verifikation)
 - **Board-Status:** Alle 48 Tasks done, 0 running, 0 blocked — unverändert.
-- **Markenscan:** Lokaler Scan mit der 26-Marken-Blocklist durchgeführt — **0 Verstöße**. CI bestätigt dies mit Docs CI #32 = success.
-- **CI-Status verifiziert:** Alle 4 Workflows grün: Docs CI #32, Firmware CI #7, Companion-App CI #13, Pages #2. 0 offene PRs, 0 offene Issues.
+- **Markenscan:** Lokaler Scan mit der 26-Marken-Blocklist durchgeführt — **0 Verstöße**. CI bestätigt dies mit Docs CI #33 = success.
+- **CI-Status verifiziert:** Alle 4 Workflows grün: Docs CI #33, Firmware CI #7, Companion-App CI #13, Pages #2. 0 offene PRs, 0 offene Issues.
 - **Korrekturen in ROADMAP:** CI-Run-Nummer von #31 auf #32 aktualisiert. Wortanzahl von 252.019 auf 252.389 korrigiert (exakte Zählung).
 - **Keine neuen Tasks nötig:** Projekt weiterhin im Wartungsmodus.
 
@@ -440,13 +440,13 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 | Community Files | 4 (CODE_OF_CONDUCT, SECURITY, FUNDING.yml, CODEOWNERS) |
 | Brand-Blocklist | 26 Marken (.github/brand-blocklist.txt) |
 | Dependabot | 1 (.github/dependabot.yml — npm + github-actions) |
-| Git Commits | 157 (Runde 21: Markenbereinigung Teil 3 + Blocklist-Erweiterung) |
+| Git Commits | 158 (Runde 22: Wartungs-Verifikation, Metriken korrigiert) |
 | Tasks done | 48 |
 | Tasks running | 0 |
 | Tasks blocked | 0 |
 | Lokale Branches | 1 (nur main) |
 | Offene Dependabot-PRs | 0 — alle 4 gemerged in Runde 17 ✅ |
-| CI/CD Status | Alle 4 Workflows grün ✅ (Docs CI #32, Firmware CI #7, Companion-App CI #13, Pages #2) |
+| CI/CD Status | Alle 4 Workflows grün ✅ (Docs CI #33, Firmware CI #7, Companion-App CI #13, Pages #2) |
 | ESP-IDF Mock-Header | 6 (fuer Host-Unit-Tests) |
 | test_dtc Status | Repariert — DTC-Codes synchronisiert mit Implementierung ✅ |
 | Tasks archived | 1 (t_4f8965c9: Design-Integration, veraltet) |
