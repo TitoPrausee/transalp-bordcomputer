@@ -1,9 +1,9 @@
 # Projekt-Roadmap: Transalp Bordcomputer
 
-> Zuletzt aktualisiert: 14.10.2026 (PM-Runde 30)
+> Zuletzt aktualisiert: 14.10.2026 (PM-Runde 31)
 > Status: Wartung — 5 Worker-Profile + 1 Projektmanager (PM) auf Mac mini
 > **Phasen 0–6 ABGESCHLOSSEN ✅ — Projekt RELEASE-READY**
-> **Runde 30: Distributor-/Vendor-Marken-Cleanup abgeschlossen — Blocklist 26→38, 0 Verstöße**
+> **Runde 31: Wartungs-Audit — kaputten Link behoben, Remote-Branch bereinigt, Metriken aktualisiert**
 
 ## Projektziel
 Vollständiger Open-Source Bordcomputer für die Honda Transalp 600 (PD06).
@@ -470,6 +470,17 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 - **Metriken:** Wörter 261.044 → 261.660, Tasks 48→49 done, Brand-Blocklist 26→38.
 - **Nächste Schritte:** CI-Verifikation des Merge-Commits, weitere Wartungs-Audits (Link-Check, Code-Konsistenz).
 
+### PM-Runde 31 (14.10.2026, Wartungs-Audit)
+- **Board-Status:** 49 done, 0 running, 0 blocked. Alle Worker idle.
+- **CI-Status:** Docs CI #46 (2eb7aee) — Success. Alle 4 Workflows grün.
+- **Kaputten Link behoben:** In `docs/research/06-feature-roadmap.md` Zeile 1344 hatte die Markenbergabe eine URL zerstört (`https://www.Online-Marktplatz/itm/...`). Ersetzt durch generische Beschreibung mit Suchhinweis.
+- **Remote-Branch bereinigt:** Veralteten Branch `cleanup/distributor-vendor-names` auf origin gelöscht und lokal entfernt. Nur noch `main` aktiv.
+- **Marken-Scan:** grep mit allen 38 Blocklist-Mustern über alle .md/.c/.h/.ts/.tsx-Dateien → 0 echte Verstöße (nur False Positives durch deutsche Komposita wie "Zeitmessung", "Voltmeter", "VDOP").
+- **URL-Inventur:** 244 eindeutige externe URLs in den Dokumenten identifiziert. Keine weiteren durch Markenbergabe beschädigten URLs gefunden.
+- **TODO-Scan:** 4 TODOs in Firmware-Code (`ble_callbacks.c`: JSON-Config-Import, Binary-Config-Import, OTA-Write; `event_bus.c`: Payload-Events) — alle als bekannte zukünftige Implementierungen dokumentiert.
+- **Metriken aktualisiert:** 49 Markdown-Dateien, 261.805 Wörter gesamt, 65 C/H-Dateien (15.508 Zeilen), 21 TS/TSX-Dateien (5.957 Zeilen).
+- **Nächste Schritte:** Wartungsmodus. Potenziell: externe Link-Verifikation (244 URLs), Dependabot-Monitoring.
+
 ## Offene Fragen
 - Welche TFT-Displays sind sonnenlesbar genug?
 - Companion-App: React Native vs. Flutter? (Master-Plan empfiehlt React Native)
@@ -494,7 +505,7 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 | Wörter gesamt (Research) | 89.466 |
 | Design-Dokumente | 26 (+3: INDEX, DEMO-SCRIPT, ENGLISH-SUMMARY) |
 | Wörter gesamt (Design-Docs) | 158.926 |
-| Wörter gesamt (alle Docs + LICENSE + COC + SECURITY) | 261.660 |
+| Wörter gesamt (alle Docs + LICENSE + COC + SECURITY) | 261.805 |
 | Code-Prototypen | 3 (firmware/ 15.508 Zeilen C/H, companion-app/ 5.965 Zeilen TS/TSX, mockups/ 8 HTML-Screens) |
 | Firmware C/H-Zeilen | 15.508 (65 Dateien: 10 Komponenten + main + test-suite) |
 | Companion-App | 5.965 Zeilen TS/TSX (22 Dateien: BleManager, Dashboard, Navigation, Diagnose, Settings) |
@@ -505,13 +516,13 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 | Community Files | 4 (CODE_OF_CONDUCT, SECURITY, FUNDING.yml, CODEOWNERS) |
 | Brand-Blocklist | 38 Marken (.github/brand-blocklist.txt) |
 | Dependabot | 1 (.github/dependabot.yml — npm + github-actions) |
-| Git Commits | 172 (Runde 30: Distributor-/Vendor-Marken-Cleanup gemerged, CI #44+#45 grün) |
+| Git Commits | 174 (Runde 31: Wartungs-Audit, kaputten Link behoben, Remote-Branch bereinigt) |
 | Tasks done | 49 |
 | Tasks running | 0 |
 | Tasks blocked | 0 |
 | Lokale Branches | 1 (nur main) |
 | Offene Dependabot-PRs | 0 — alle 4 gemerged in Runde 17 ✅ |
-| CI/CD Status | Alle 4 Workflows grün ✅ (Docs CI #45, Firmware CI #7, Companion-App CI #13, Pages #2) |
+| CI/CD Status | Alle 4 Workflows grün ✅ (Docs CI #46, Firmware CI #7, Companion-App CI #13, Pages #2) |
 | ESP-IDF Mock-Header | 6 (fuer Host-Unit-Tests) |
 | test_dtc Status | Repariert — DTC-Codes synchronisiert mit Implementierung ✅ |
 | Tasks archived | 1 (t_4f8965c9: Design-Integration, veraltet) |

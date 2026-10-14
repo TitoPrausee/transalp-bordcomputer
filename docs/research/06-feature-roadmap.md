@@ -1341,7 +1341,7 @@ Moegliche Integrationen:
 - TPMS 433MHz + BLE: https://github.com/andi38/TPMS
 
 ### PD06 Transalp
-- Oeldruckschalter: https://www.Online-Marktplatz/itm/384471229975
+- Oeldruckschalter: Siehe Aftermarket-KFZ-Teileshop (Online-Marktplatz, Suche nach "Oeldruckschalter Honda Transalp XL600V")
 - ADVrider Forum (PD06): https://advrider.com/f/threads/africa-twin-tank-on-transalp-mod-fuel-pumps.1206792
 
 ### BLE / Web Bluetooth
