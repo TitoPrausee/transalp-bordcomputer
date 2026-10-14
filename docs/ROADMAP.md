@@ -1,9 +1,9 @@
 # Projekt-Roadmap: Transalp Bordcomputer
 
-> Zuletzt aktualisiert: 14.10.2026 (PM-Runde 28)
+> Zuletzt aktualisiert: 14.10.2026 (PM-Runde 29)
 > Status: Wartung — 5 Worker-Profile + 1 Projektmanager (PM) auf Mac mini
 > **Phasen 0–6 ABGESCHLOSSEN ✅ — Projekt RELEASE-READY**
-> **Runde 28: Wartungs-Verifikation — CI #41 bestätigt, 0 Markenverstöße, Metriken aktualisiert**
+> **Runde 29: Distributor- und Vendor-Marken gefunden — Cleanup-Task t_daa00534 gestartet**
 
 ## Projektziel
 Vollständiger Open-Source Bordcomputer für die Honda Transalp 600 (PD06).
@@ -451,6 +451,15 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 - **Metriken aktualisiert:** Wortanzahl auf 260.920 korrigiert (exakte Zählung aller 49 Markdown-Dateien). Workflow-Runs von 68 auf 69 aktualisiert.
 - **Keine neuen Tasks nötig:** Projekt weiterhin im Wartungsmodus. Alle Phasen 0–6 vollständig abgeschlossen.
 
+### PM-Runde 29 (14.10.2026, Distributor-/Vendor-Marken-Scan)
+- **Board-Status:** 48 done, 1 running (t_daa00534), 0 blocked.
+- **Markenscan (erweitert):** Scan mit erweiterter Blocklist (zusätzlich: Distributor- und Vendor-Namen für Elektronik-Händler und Open-Source-HW-Vendors) — **Markenverstöße gefunden**. Die bisherige CI-Blocklist (26 Muster) enthielt diese Namen nicht, weshalb die Runden 26–28 fälschlicherweise "0 Verstöße" meldeten.
+- **Betroffene Dateien:** BOM.md (~50+ Treffer), SHOPPING-LIST.md (~25+ Treffer), 09-master-plan.md (1 Treffer), 01-sensoren-fahrzeugdaten.md, 02-hardware-deep-dive.md, 03-software-stack.md, 06-feature-roadmap.md.
+- **Aktion:** Cleanup-Task t_daa00534 erstellt und an worker dispatcht. Task ersetzt alle Distributor- und Vendor-Namen durch generische Begriffe, erweitert die CI-Blocklist, und verifiziert mit grep-Scan dass 0 Treffer verbleiben.
+- **CI-Status:** Docs CI #41 weiterhin grün (Blocklist noch nicht erweitert — wird erst nach Cleanup committet).
+- **Git-Status:** Auf main, 167 Commits, Arbeitsbaum hat nur ROADMAP-Änderung.
+- **Nächste Schritte:** Warten auf Worker-Fertigstellung von t_daa00534. In Runde 30: Review des Worker-Ergebnisses, Merge auf main, CI-Blocklist erweitern, CI-Verifikation.
+
 ## Offene Fragen
 - Welche TFT-Displays sind sonnenlesbar genug?
 - Companion-App: React Native vs. Flutter? (Master-Plan empfiehlt React Native)
@@ -475,7 +484,7 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 | Wörter gesamt (Research) | 89.466 |
 | Design-Dokumente | 26 (+3: INDEX, DEMO-SCRIPT, ENGLISH-SUMMARY) |
 | Wörter gesamt (Design-Docs) | 158.926 |
-| Wörter gesamt (alle Docs + LICENSE + COC + SECURITY) | 260.920 |
+| Wörter gesamt (alle Docs + LICENSE + COC + SECURITY) | 261.044 |
 | Code-Prototypen | 3 (firmware/ 15.508 Zeilen C/H, companion-app/ 5.965 Zeilen TS/TSX, mockups/ 8 HTML-Screens) |
 | Firmware C/H-Zeilen | 15.508 (65 Dateien: 10 Komponenten + main + test-suite) |
 | Companion-App | 5.965 Zeilen TS/TSX (22 Dateien: BleManager, Dashboard, Navigation, Diagnose, Settings) |
@@ -486,9 +495,9 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 | Community Files | 4 (CODE_OF_CONDUCT, SECURITY, FUNDING.yml, CODEOWNERS) |
 | Brand-Blocklist | 26 Marken (.github/brand-blocklist.txt) |
 | Dependabot | 1 (.github/dependabot.yml — npm + github-actions) |
-| Git Commits | 166 (Runde 28: Wartungs-Verifikation, CI #41 bestätigt) |
+| Git Commits | 168 (Runde 29: Distributor-/Vendor-Marken-Scan, Cleanup-Task gestartet) |
 | Tasks done | 48 |
-| Tasks running | 0 |
+| Tasks running | 1 (t_daa00534: Markennamen-Bereinigung Teil 3) |
 | Tasks blocked | 0 |
 | Lokale Branches | 1 (nur main) |
 | Offene Dependabot-PRs | 0 — alle 4 gemerged in Runde 17 ✅ |
