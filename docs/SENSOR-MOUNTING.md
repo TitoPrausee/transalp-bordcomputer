@@ -59,6 +59,12 @@ Das Pickup-Signal (Pulse Generator) ist am CDI-Stecker abgreifbar.
 | 5 | **Blau/Gelb** | **Pulse Generator (Pickup-Signal)** |
 | 6 | Grün | Masse (Chassis) |
 
+![CDI Pin-Out](images/cdi-pinout.jpg)
+*CDI-Stecker Pin-Belegung (Quelle: cdi-shop.de)*
+
+![CDI Wire Jumper](images/cdi-wire-jumper.jpg)
+*Gelbe Draht-Brücke am CDI für PD06-Modelle ohne Seitenständer-Überwachung (Quelle: cdi-shop.de)*
+
 > **Quelle:** cdi-shop.de — technischen Spezifikationen für PD06-CDI
 > (https://cdi-shop.de/en/technical-specifications)
 > Pin-Out-Bild verfügbar auf der Seite.
@@ -476,10 +482,32 @@ Batterie (12V) ────────────┤
 - Transalp Owners Forum:
   - https://www.transalpowners.com/
 
-### Service Manual Volltext
+### Externe Bildquellen (mit direkten Links)
 
-- 4-stroke.net (OCR-Version des Service Manuals):
-  - https://4-stroke.net/documents/workshopmanual_xl600_transalp_en_1987-2002_21062017-1026-ocr_text.txt
+Die folgenden externen Quellen enthalten Originalfotos und Schematics der
+Anschlusspunkte an der PD06. Da diese Bilder urheberrechtlich geschützt
+sind, werden sie hier verlinkt und nicht im Repo gespeichert.
+
+| Was | Quelle | URL |
+|---|---|---|
+| **CDI-Stecker Pin-Out** (Foto der Steckerbelegung) | cdi-shop.de | https://cdi-shop.de/images/pins.jpg |
+| **CDI Wire Jumper** (gelbe Drahtbrücke, Foto) | cdi-shop.de | https://cdi-shop.de/images/gelber-draht.jpg |
+| **CDI-Unit Foto** (Originalteil 30410-MS8-610) | KFM-Motorräder | https://kfm-motorraeder.de/en/item/honda-30410MS8610 |
+| **CDI-Unit Foto** (mit Halterung) | KFM-Motorräder | https://kfm-motorraeder.de/en/item/honda-30410MS8610 |
+| **Öldruckschalter** (Originalteil A4795) | Motorradteile Hannover | https://motorradteilehannover.de/Honda-XL-600-V-Transalp-PD06-Bj-1993-oil-pressure-switch-oil-level-sensor-A4795 |
+| **Öldruckschalter** (eBay, mit Foto am Motor) | eBay | https://www.ebay.com/itm/375443851545 |
+| **Wasserpumpe + Dichtung** (Einbauposition Kühlmittel) | mcjoys.dk | https://mcjoys.dk/index.php/goods/Water-Pump-Gasket-Set-Transalp-600V-XL600V-PD06/1340203 |
+| **Thermostat** (Originalteil 19300-KE8-000) | lavieenfrance.net | https://www.lavieenfrance.net/XL-600V-Transalp-PD06-PD10-1987-2000-Japan-OE-1009355 |
+| **Teilelisten und Schematics** (alle Baugruppen) | CMSNL | https://www.cmsnl.com/honda-xl600v-transalp-1994-r-germany_model6578/partslist |
+| **Kühlmittel-Ablassschraube** (Einbauposition Motorblock) | Honda TechInfo | https://techinfo.honda.com/rjanisis/pubs/OM/OD0101/OD0101O00255A.pdf |
+| **Service Manual** (komplettes Werkstatthandbuch) | moto4.ru | https://www.moto4.ru/downloads/Service_Repare_Manual_Honda_XL600_650V_Transalp_XRV750_AfricaTwin_87_07_st_font_fin.pdf |
+| **Service Manual** (OCR-Volltext, durchsuchbar) | 4-stroke.net | https://4-stroke.net/documents/workshopmanual_xl600_transalp_en_1987-2002_21062017-1026-ocr_text.txt |
+| **Fahrerhandbuch** (XL600V, deutsch/englisch/französisch) | honda.de | https://www.honda.de/content/dam/local/germany/motorcycles/pdf/service/fahrerhandbuecher/XL600V_Transalp_37MAW600.pdf |
+| **CDI Known Problems** (Sitz-Druck auf CDI, Halterung) | transalp.ta-deti.de | http://transalp.ta-deti.de/knownproblems.html |
+| **CDI-Diskussion** (ADV Rider Forum, mit Fotos) | advrider.com | https://advrider.com/f/threads/show-us-your-transalp-modifications.39170/ |
+| **HealTech QSH-CKP** (Pickup-Anzapfung Anleitung) | HealTech | https://healtech-electronics.com/docs/QSH-CKP_InstallGuide_en.pdf |
+| **Ersatzteile PD06** (kompletter Katalog) | Hamart.at | https://www.hamart.at/shopG/?cPath=259_1059 |
+| **Louis Teiledatenbank** (PD06-spezifisch) | Louis | https://www.louis.eu/en/bike-database/honda-xl-600-v-transalp/pd06/0281 |
 
 ---
 
