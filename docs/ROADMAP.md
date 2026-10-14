@@ -1,9 +1,9 @@
 # Projekt-Roadmap: Transalp Bordcomputer
 
-> Zuletzt aktualisiert: 14.10.2026 (PM-Runde 29)
+> Zuletzt aktualisiert: 14.10.2026 (PM-Runde 30)
 > Status: Wartung — 5 Worker-Profile + 1 Projektmanager (PM) auf Mac mini
 > **Phasen 0–6 ABGESCHLOSSEN ✅ — Projekt RELEASE-READY**
-> **Runde 29: Distributor- und Vendor-Marken gefunden — Cleanup-Task t_daa00534 gestartet**
+> **Runde 30: Distributor-/Vendor-Marken-Cleanup abgeschlossen — Blocklist 26→38, 0 Verstöße**
 
 ## Projektziel
 Vollständiger Open-Source Bordcomputer für die Honda Transalp 600 (PD06).
@@ -460,6 +460,16 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 - **Git-Status:** Auf main, 167 Commits, Arbeitsbaum hat nur ROADMAP-Änderung.
 - **Nächste Schritte:** Warten auf Worker-Fertigstellung von t_daa00534. In Runde 30: Review des Worker-Ergebnisses, Merge auf main, CI-Blocklist erweitern, CI-Verifikation.
 
+### PM-Runde 30 (14.10.2026, Distributor-/Vendor-Marken-Cleanup abgeschlossen)
+- **Board-Status:** 49 done, 0 running, 0 blocked.
+- **Task t_daa00534 reviewt und gemerged:** Worker hat Branch `cleanup/distributor-vendor-names` (Commit 9aec9f89) erstellt — 16 Dateien geändert, 272 insertions, 260 deletions.
+- **Verifikation:** grep-Scan über alle .md/.c/.h/.ts/.tsx/.json/.yaml Dateien → **0 Treffer** für alle Distributor- und Vendor-Namen. ✅
+- **CI-Blocklist erweitert:** 26 → 38 Muster (+12 neue: Elektronik-Distributor DE, Elektronik-Distributor DE #2, B2B-Distributor US, B2B-Distributor US #2, Distributor CN, Distributor EU, Open-Source-HW-Vendor ×3, Display-Modul-Hersteller, Spezial-Distributor).
+- **Merge:** Feature-Branch `cleanup/distributor-vendor-names` nach `main` gemerged (Commit f6939fcd), Merge-Konflikt in ROADMAP.md manuell gelöst, nach origin gepusht.
+- **Betroffene Dateien:** BOM.md (Hauptdatei, 280 Zeilen geändert), SHOPPING-LIST.md (90 Zeilen), 09-master-plan.md (66 Zeilen), 03-software-stack.md (36 Zeilen), 02-hardware-deep-dive.md, 07-display-navigation-smartphone.md, 05-gehaeuse-einbau-emv.md, 01-sensoren-fahrzeugdaten.md, 06-feature-roadmap.md, 10-ui-ux-design.md, README.md, HARDWARE.md, PCB-LAYOUT.md, bug_report.md.
+- **Metriken:** Wörter 261.044 → 261.660, Tasks 48→49 done, Brand-Blocklist 26→38.
+- **Nächste Schritte:** CI-Verifikation des Merge-Commits, weitere Wartungs-Audits (Link-Check, Code-Konsistenz).
+
 ## Offene Fragen
 - Welche TFT-Displays sind sonnenlesbar genug?
 - Companion-App: React Native vs. Flutter? (Master-Plan empfiehlt React Native)
@@ -484,11 +494,11 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 | Wörter gesamt (Research) | 89.466 |
 | Design-Dokumente | 26 (+3: INDEX, DEMO-SCRIPT, ENGLISH-SUMMARY) |
 | Wörter gesamt (Design-Docs) | 158.926 |
-| Wörter gesamt (alle Docs + LICENSE + COC + SECURITY) | 261.044 |
+| Wörter gesamt (alle Docs + LICENSE + COC + SECURITY) | 261.660 |
 | Code-Prototypen | 3 (firmware/ 15.508 Zeilen C/H, companion-app/ 5.965 Zeilen TS/TSX, mockups/ 8 HTML-Screens) |
 | Firmware C/H-Zeilen | 15.508 (65 Dateien: 10 Komponenten + main + test-suite) |
 | Companion-App | 5.965 Zeilen TS/TSX (22 Dateien: BleManager, Dashboard, Navigation, Diagnose, Settings) |
-| CI/CD Workflows | 4 (firmware-ci, companion-app-ci, docs-ci mit brand-check (26 Marken), pages) |
+| CI/CD Workflows | 4 (firmware-ci, companion-app-ci, docs-ci mit brand-check (38 Marken), pages) |
 | Unit-Tests | 3 (test_dtc, test_event_loop, test_nmea_parser) + ESP-IDF-Mocks |
 | Issue Templates | 2 (bug_report, feature_request) |
 | PR Template | 1 (.github/PULL_REQUEST_TEMPLATE.md) |
