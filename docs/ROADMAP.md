@@ -392,7 +392,7 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 | Community Files | 4 (CODE_OF_CONDUCT, SECURITY, FUNDING.yml, CODEOWNERS) |
 | Brand-Blocklist | 17 Marken (.github/brand-blocklist.txt) |
 | Dependabot | 1 (.github/dependabot.yml — npm + github-actions) |
-| Git Commits | 150 (Runde 18: Markenbereinigung + Blocklist-Erweiterung) |
+| Git Commits | 151 (Runde 18: Markenbereinigung + Blocklist-Erweiterung) |
 | Tasks done | 48 |
 | Tasks running | 0 |
 | Tasks blocked | 0 |
