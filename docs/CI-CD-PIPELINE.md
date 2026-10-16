@@ -614,7 +614,27 @@ Die Pipeline fuehrt ein automatisches Dependency-Scanning durch:
 - `npm audit` fuer die Companion-App
 - `pip-audit` fuer Python-Abhaengigkeiten (falls vorhanden)
 - GitHub Dependabot ist aktiviert und prueft woechentlich auf
-  bekannte Schwachstellen
+  bekannte Schwachstellen (npm, github-actions, pip)
+
+### 8.4 Security-Scan-Workflows (seit Sprint 0.4.0)
+
+Zusaetzlich zu den Build-Pipelines enthaelt die CI drei dedizierte
+Security-Scan-Workflows:
+
+| Workflow | Datei | Scope | Trigger | Report |
+|---|---|---|---|---|
+| CodeQL | `.github/workflows/codeql.yml` | C/C++ + JS/TS, security-extended | push, PR, weekly | SARIF -> Security Tab |
+| Semgrep | `.github/workflows/semgrep.yml` | C + TypeScript + OWASP | push, PR | SARIF -> Security Tab |
+| Trivy | `.github/workflows/trivy.yml` | Filesystem + Firmware-Binary | push, PR | SARIF -> Security Tab |
+
+Alle drei Workflows laden SARIF-Reports in den GitHub Security Tab hoch
+und machen Sicherheitsfundstellen direkt im Pull Request sichtbar.
+CodeQL wird zusaetzlich woechentlich ausgefuehrt, um auch ohne
+Code-Aenderungen neue Schwachstellen durch aktualisierte Query-Suiten
+zu erkennen.
+
+Siehe auch [SECURITY.md](../SECURITY.md) fuer den Security-Report-Process
+und die Responsible-Disclosure-Zeitleiste.
 
 ---
 

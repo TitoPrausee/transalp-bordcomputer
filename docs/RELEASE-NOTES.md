@@ -67,7 +67,8 @@ Dokumentationskonsolidierung.
   verursacht). Die neuen Security-Workflows sind korrekt implementiert
   und decken bei zukuenftigen Commits Sicherheitsprobleme auf.
 - SENSOR-MOUNTING.md enthaelt 2 pre-existing Brand-Blocklist-Verstoesse
-  (VDO, Online-Marktplatz-Name). Diese waren vor dem Sprint vorhanden.
+  (Oeldrucksensor-Hersteller, Online-Marktplatz-Name). Diese waren vor
+  dem Sprint vorhanden.
 - Firmware Security-Fixes (TOT-2) und Companion-App UI/UX (TOT-4) sind
   in diesem Sprint nicht abgeschlossen worden — sie bleiben fuer den
   naechsten Sprint offen.

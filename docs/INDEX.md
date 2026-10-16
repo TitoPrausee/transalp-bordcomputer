@@ -690,14 +690,14 @@ Dann nach Inbetriebnahme:
 | Firmware (C/H) | 15.297 Zeilen ueber 10 Komponenten + main + test-suite |
 | Companion-App (TS/TSX) | 5.965 Zeilen in 21 Dateien |
 | UI-Mockups | 35 Dateien (8 Screens + 24 SVG-Icons) |
-| CI/CD Workflows | 4 (firmware-ci, companion-app-ci, docs-ci, pages) |
+| CI/CD Workflows | 7 (firmware-ci, companion-app-ci, docs-ci, pages, codeql, semgrep, trivy) |
 | Unit-Tests | 3 (test_dtc, test_event_loop, test_nmea_parser) + ESP-IDF-Mocks |
 | Issue Templates | 2 (bug_report, feature_request) |
 | BLE GATT-Services | 8 (33 Characteristics) |
 | DTC-Codes | 16 in 4 Kategorien |
 | FreeRTOS Tasks | 7 (gps, sensor, vehicle, display, logger, ble, power) |
 | Projektphasen | 7 (0-6), alle abgeschlossen |
-| Tasks gesamt | 49 done |
+| Tasks gesamt | 52 done (49 PM-Runden + 3 Sprint 0.4.0) |
 
 ### Dokument-Status
 

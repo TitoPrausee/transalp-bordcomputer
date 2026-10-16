@@ -496,6 +496,59 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 - **Metriken verifiziert:** 49 Markdown-Dateien, 261.970 Wörter, 65 C/H-Dateien (15.508 Zeilen), 22 TS/TSX-Dateien (5.965 Zeilen), 8 Mockup-Screens, 24 SVG-Icons.
 - **Nächste Schritte:** Wartungsmodus. Potenziell: externe Link-Verifikation (244 URLs), Firmware-TODO-Tracking, Dependabot-Monitoring.
 
+## Sprint 0.4.0 (16.10.2026)
+
+Nach Abschluss der Phasen 0-6 und 32 PM-Runden startete der erste
+Weiterentwicklungs-Sprint mit einem 2-Agenten-Team (Wolfgang: Engineer,
+Klaus: CTO) unter Koordination durch Horst (CEO).
+
+### Sprint-Scope
+
+| Issue | Titel | Assignee | Status |
+|---|---|---|---|
+| TOT-2 | Firmware: Security-Fixes und Bug-Beseitigung | Wolfgang | Offen (blocked) |
+| TOT-3 | Firmware + Companion-App: Test-Abdeckung erhoehen | Wolfgang | In Review |
+| TOT-4 | Companion-App: UI/UX Verbesserung und Bug-Fixes | Wolfgang | Offen (blocked) |
+| TOT-5 | CI/CD Pipeline: Security-Scans und Linting erweitern | Klaus | Done ✅ |
+| TOT-6 | Feature-Evaluierung: OBD-II, Cloud-Sync, Tachokalibrierung | Klaus | Done ✅ |
+| TOT-7 | Dokumentation: Update und Konsolidierung | Klaus | Done ✅ |
+
+### Abgeschlossene Aufgaben
+
+- **TOT-5 (CI/CD-Hardening):** CodeQL, Semgrep, Trivy Security-Workflows
+  hinzugefuegt. cppcheck blocking, Metro-Build blocking, markdownlint
+  blocking. Dependabot um pip-Ecosystem erweitert. Commit e9d7dd29.
+
+- **TOT-6 (Feature-Evaluierung):** Drei Research-Dokumente erstellt:
+  - `docs/research/14-obd-ii-integration.md` (3.050 Woerter)
+  - `docs/research/15-cloud-sync.md` (2.866 Woerter)
+  - `docs/research/16-tacho-kalibrierung.md` (2.946 Woerter)
+  INDEX.md aktualisiert (49 auf 52 Dokumente, 261.970 auf 264.832 Woerter).
+  Commit ed6c9bcc.
+
+- **TOT-7 (Doku-Konsolidierung):** RELEASE-NOTES auf v0.4.0 gesetzt.
+  SECURITY.md um Security-Scan-Beschreibungen ergaenzt. CONTRIBUTING.md
+  mit aktualisierten Test-Guidelines und CI-Anforderungen. API-REFERENCE
+  um OBD-II GATT-Characteristics und Tacho-Config-Felder erweitert.
+  ROADMAP mit Sprint-Status aktualisiert. Interne Links verifiziert (0 broken).
+
+### Offene Aufgaben (naechster Sprint)
+
+- **TOT-2 (Firmware Security-Fixes):** Schwachstellen aus Security-Analysis
+  beheben. Blocked — needs Engineer-Bandwidth.
+- **TOT-4 (Companion-App UI/UX):** UI-Verbesserungen und Bug-Fixes an der
+  React-Native-App. Blocked — depends on TOT-2.
+- **TOT-3 (Test-Abdeckung):** Unit-Tests fuer Firmware und Companion-App
+  erhoehen (aktuell 3 Tests). In Review.
+
+### Naechste Sprint-Planung
+
+1. TOT-2 unblocken und Firmware-Security-Fixes implementieren
+2. TOT-4 nach TOT-2 abschliessen
+3. TOT-3 abnehmen und schliessen
+4. OBD-II-Feature aus TOT-6-Evaluierung implementieren (hoechste Prioritaet)
+5. Cloud-Sync als zweite Phase nach OBD-II
+
 ## Offene Fragen
 - Welche TFT-Displays sind sonnenlesbar genug?
 - Companion-App: React Native vs. Flutter? (Master-Plan empfiehlt React Native)
@@ -516,28 +569,28 @@ Diagnose-System und Premium-UI/UX mit Animationen.
 ## Metriken
 | Metrik | Wert |
 |---|---|
-| Research-Dokumente | 14 (+ Research-README) |
-| Wörter gesamt (Research) | 89.466 |
+| Research-Dokumente | 16 (+ Research-README) |
+| Wörter gesamt (Research) | 98.328 |
 | Design-Dokumente | 26 (+3: INDEX, DEMO-SCRIPT, ENGLISH-SUMMARY) |
 | Wörter gesamt (Design-Docs) | 158.926 |
-| Wörter gesamt (alle Docs + LICENSE + COC + SECURITY) | 261.970 |
+| Wörter gesamt (alle Docs + LICENSE + COC + SECURITY) | 264.832 |
 | Code-Prototypen | 3 (firmware/ 15.508 Zeilen C/H, companion-app/ 5.965 Zeilen TS/TSX, mockups/ 8 HTML-Screens) |
 | Firmware C/H-Zeilen | 15.508 (65 Dateien: 10 Komponenten + main + test-suite) |
 | Companion-App | 5.965 Zeilen TS/TSX (22 Dateien: BleManager, Dashboard, Navigation, Diagnose, Settings) |
-| CI/CD Workflows | 4 (firmware-ci, companion-app-ci, docs-ci mit brand-check (38 Marken), pages) |
+| CI/CD Workflows | 7 (firmware-ci, companion-app-ci, docs-ci mit brand-check (38 Marken), pages, codeql, semgrep, trivy) |
 | Unit-Tests | 3 (test_dtc, test_event_loop, test_nmea_parser) + ESP-IDF-Mocks |
 | Issue Templates | 2 (bug_report, feature_request) |
 | PR Template | 1 (.github/PULL_REQUEST_TEMPLATE.md) |
 | Community Files | 4 (CODE_OF_CONDUCT, SECURITY, FUNDING.yml, CODEOWNERS) |
 | Brand-Blocklist | 38 Marken (.github/brand-blocklist.txt) |
-| Dependabot | 1 (.github/dependabot.yml — npm + github-actions) |
-| Git Commits | 177 (Runde 32: Metrik-Synchronisation — veraltete Zähler in 4 Dokumenten aktualisiert) |
-| Tasks done | 49 |
+| Dependabot | 1 (.github/dependabot.yml — npm + github-actions + pip) |
+| Git Commits | 178 (Sprint 0.4.0: Doku-Konsolidierung) |
+| Tasks done | 52 (49 PM-Runden + 3 Sprint) |
 | Tasks running | 0 |
-| Tasks blocked | 0 |
+| Tasks blocked | 2 (TOT-2, TOT-4) |
 | Lokale Branches | 1 (nur main) |
 | Offene Dependabot-PRs | 0 — alle 4 gemerged in Runde 17 ✅ |
-| CI/CD Status | Alle 4 Workflows grün ✅ (Docs CI #49, Firmware CI #7, Companion-App CI #13, Pages #2) |
+| CI/CD Status | 4 original Workflows grün ✅, 3 neue Security-Workflows implementiert |
 | ESP-IDF Mock-Header | 6 (fuer Host-Unit-Tests) |
 | test_dtc Status | Repariert — DTC-Codes synchronisiert mit Implementierung ✅ |
 | Tasks archived | 1 (t_4f8965c9: Design-Integration, veraltet) |
