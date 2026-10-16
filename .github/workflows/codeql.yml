@@ -37,14 +37,35 @@ jobs:
         if: matrix.language == 'javascript-typescript'
         uses: github/codeql-action/autobuild@v3
 
-      - name: Manual build (C/C++)
+      - name: Build C/C++ for CodeQL analysis
         if: matrix.language == 'c-cpp'
+        working-directory: firmware
         run: |
-          echo "CodeQL C/C++ autobuild may not have ESP-IDF available."
-          echo "Using the compiled objects from source for analysis."
-          # CodeQL can extract from source even without full build
-          # if the autobuild fallback is used.
-          true
+          # Compile firmware C sources so CodeQL can trace the code.
+          # ESP-IDF is not available in CI, so we use GCC with mock headers.
+          sudo apt-get install -y -qq build-essential gcc
+
+          # Compile each .c file with -c (object output) so CodeQL sees real compilation.
+          # The mock headers in test/mocks/ provide the ESP-IDF API surface.
+          mkdir -p /tmp/codeql-objects
+          find components -name '*.c' -print0 | while IFS= read -r -d '' f; do
+            gcc -c \
+              -Icomponents/*/include \
+              -Imain \
+              -Itest/mocks \
+              -o /tmp/codeql-objects/$(basename "$f" .c).o \
+              "$f" 2>&1 || echo "  (skipped: $f — ESP-IDF headers not fully available)"
+          done
+
+          # Also compile the test files — they exercise real firmware code paths
+          find test -name 'test_*.c' -print0 | while IFS= read -r -d '' f; do
+            gcc -c \
+              -Icomponents/*/include \
+              -Imain \
+              -Itest/mocks \
+              -o /tmp/codeql-objects/$(basename "$f" .c).o \
+              "$f" 2>&1 || echo "  (skipped: $f)"
+          done
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3

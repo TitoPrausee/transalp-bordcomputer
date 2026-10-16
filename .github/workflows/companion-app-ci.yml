@@ -31,27 +31,21 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20.x
+          node-version: 22.x
           cache: npm
           cache-dependency-path: companion-app/package-lock.json
 
       - name: Install dependencies
         run: npm ci
 
+      - name: Install ESLint
+        run: npm install --save-dev eslint@^9.0.0
+
       - name: TypeScript type check
         run: npx tsc --noEmit
 
-      - name: ESLint (if configured)
-        run: |
-          if npx eslint --version > /dev/null 2>&1; then
-            if [ -f eslint.config.* ] || [ -f .eslintrc.* ]; then
-              npx eslint . --max-warnings 0
-            else
-              echo "No ESLint config found — skipping (project uses tsc for type checking)"
-            fi
-          else
-            echo "ESLint not installed — skipping"
-          fi
+      - name: ESLint
+        run: npx eslint . --max-warnings 0
 
   build:
     name: Build (Metro + APK)
@@ -65,7 +59,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20.x
+          node-version: 22.x
           cache: npm
           cache-dependency-path: companion-app/package-lock.json
 
@@ -74,16 +68,10 @@ jobs:
 
       - name: Metro Bundler build (blocking)
         run: |
-          # Metro/Expo build is now blocking.
-          # If the build fails, the CI pipeline fails and the PR cannot merge.
-          npx expo export --platform android 2>&1 && \
-            echo "Metro build succeeded" || \
-          npx react-native bundle \
-            --platform android \
-            --dev false \
-            --entry-file App.tsx \
-            --bundle-output /tmp/app-bundle.js \
-            --assets-dest /tmp/assets 2>&1
+          # Metro 0.87 requires Node 22+.
+          # expo export validates the full Metro bundle pipeline.
+          npx expo export --platform android 2>&1
+          echo "Metro build succeeded"
 
       - name: APK build (release)
         run: |
@@ -98,7 +86,6 @@ jobs:
       - name: Collect build artifacts
         run: |
           mkdir -p artifacts
-          cp /tmp/app-bundle.js artifacts/ 2>/dev/null || true
           find . -name '*.apk' -exec cp {} artifacts/ \; 2>/dev/null || true
 
       - name: Upload app build
@@ -120,7 +107,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20.x
+          node-version: 22.x
           cache: npm
           cache-dependency-path: companion-app/package-lock.json
 
@@ -129,8 +116,6 @@ jobs:
 
       - name: Install test dependencies (jest, ts-jest, types)
         run: |
-          # Ensure jest infrastructure is present even if package-lock
-          # was generated before test deps were added
           npm install --save-dev jest@^29.7.0 ts-jest@^29.2.0 @types/jest@^29.5.0 || true
 
       - name: Run Jest unit tests with coverage
