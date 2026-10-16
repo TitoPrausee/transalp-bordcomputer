@@ -42,6 +42,11 @@ if(NOT IDF_PATH)
         test_nmea_parser.c
         test_event_loop.c
         test_dtc.c
+        test_filters.c
+        test_config.c
+        test_dtc_extended.c
+        test_ble_callbacks.c
+        test_power_manager.c
     )
 
     # Compiler flags
@@ -82,6 +87,11 @@ idf_component_register(
         "test_nmea_parser.c"
         "test_event_loop.c"
         "test_dtc.c"
+        "test_filters.c"
+        "test_config.c"
+        "test_dtc_extended.c"
+        "test_ble_callbacks.c"
+        "test_power_manager.c"
     INCLUDE_DIRS
         "."
         "mocks"

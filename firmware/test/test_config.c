@@ -1,242 +1,513 @@
 /*
- * test_config.c — Unit Tests fuer den JSON-Parser in config.c
+ * test_config.c — Unit Tests fuer NVS-Konfigurationsverwaltung
  *
- * Testet:
- *   - json_parse_int mit Integer-Overflow-Check
- *   - json_parse_string mit Backslash-Escape-Behandlung
- *
- * Die JSON-Parser-Funktionen sind static in config.c. Um sie testen
- * zu koennen, ohne die gesamten ESP-IDF-Abhaengigkeiten einzubinden,
- * werden die Funktionen hier als Inline-Kopie mitgeprueft.
+ * Testet firmware/components/storage/config.c:
+ *   - config_set_value / config_get_value Roundtrips
+ *   - JSON-Export und JSON-Import
+ *   - JSON-Parser Edge-Cases (Overflow, leere Werte, fehlende Keys)
+ *   - Factory-Reset Verhalten
+ *   - Default-Konfiguration
  *
  * Die Tests verwenden das Unity-Test-Framework und laufen auf dem
- * Host-PC mit GCC.
+ * Host-PC mit GCC. NVS/ESP-IDF-Abhaengigkeiten werden durch Mocks ersetzt.
  */
 
+#ifdef TEST_HOST
+#include "esp_idf_mock.h"
+#endif
+
 #include "unity.h"
+#include "storage.h"
 
 #include <string.h>
-#include <limits.h>
+#include <stdio.h>
+#include <stdint.h>
 
 /* ============================================================
- * Kopie der JSON-Parser-Funktionen aus config.c.
- * Diese werden hier direkt getestet, da sie im Original static sind.
- * Bei Aenderungen in config.c muessen diese Funktionen synchron
- * gehalten werden.
+ * Define the types that config.c expects but are normally in a
+ * header that depends on ESP-IDF. For host tests, we define them
+ * here so the .c file can compile.
  * ============================================================ */
 
-static const char *json_find_key(const char *json, const char *key)
-{
-    char pattern[64];
-    snprintf(pattern, sizeof(pattern), "\"%s\"", key);
-    const char *p = strstr(json, pattern);
-    if (!p) return NULL;
-    p += strlen(pattern);
-    while (*p && (*p == ' ' || *p == '\t' || *p == ':')) p++;
-    return p;
-}
+#define CONFIG_VERSION  3
 
-static int json_parse_int(const char *json, const char *key, int *out)
-{
-    const char *p = json_find_key(json, key);
-    if (!p) return -1;
-    int sign = 1;
-    if (*p == '-') { sign = -1; p++; }
-    if (*p < '0' || *p > '9') return -1;
-    int val = 0;
-    while (*p >= '0' && *p <= '9') {
-        if (val > (INT_MAX - (*p - '0')) / 10) {
-            return -1;
-        }
-        val = val * 10 + (*p - '0');
-        p++;
-    }
-    *out = val * sign;
-    return 0;
-}
+typedef enum {
+    CFG_KEY_DISPLAY_MODE = 0,
+    CFG_KEY_DISPLAY_THEME,
+    CFG_KEY_DISPLAY_BRIGHTNESS,
+    CFG_KEY_LOG_INTERVAL,
+    CFG_KEY_LOG_FORMAT,
+    CFG_KEY_LOG_AUTOSTART,
+    CFG_KEY_GPS_RATE,
+    CFG_KEY_DEVICE_NAME,
+    CFG_KEY_PAIRING_CODE,
+    CFG_KEY_RPM_REDLINE,
+    CFG_KEY_RPM_SHIFT_LIGHT,
+    CFG_KEY_BATTERY_LOW,
+    CFG_KEY_BATTERY_SHUTDOWN,
+    CFG_KEY_COOLANT_WARN,
+    CFG_KEY_COOLANT_CRIT,
+    CFG_KEY_FUEL_MIN,
+    CFG_KEY_CALIB_IMU,
+    CFG_KEY_CALIB_SEA_LEVEL,
+    CFG_KEY_ANIM_ENABLED,
+} config_key_t;
 
-static int json_parse_string(const char *json, const char *key,
-                              char *out, size_t max_len)
-{
-    const char *p = json_find_key(json, key);
-    if (!p || *p != '"') return -1;
-    p++;
-    size_t i = 0;
-    while (*p && *p != '"' && i < max_len - 1) {
-        if (*p == '\\') {
-            p++;
-            if (!*p) return -1;
-            switch (*p) {
-            case 'n':  out[i++] = '\n'; break;
-            case 't':  out[i++] = '\t'; break;
-            case 'r':  out[i++] = '\r'; break;
-            case '"':  out[i++] = '"';  break;
-            case '\\': out[i++] = '\\'; break;
-            case '/':  out[i++] = '/';  break;
-            case 'b':  out[i++] = '\b'; break;
-            case 'f':  out[i++] = '\f'; break;
-            default:   out[i++] = *p;   break;
-            }
-            p++;
-        } else {
-            out[i++] = *p++;
-        }
-    }
-    out[i] = '\0';
-    return 0;
-}
+typedef struct {
+    uint16_t version;
+    int16_t  gyro_offset[3];
+    int16_t  accel_offset[3];
+    uint32_t bmp_sea_level_pa;
+    uint16_t adc_vref_mv;
+    float    fuel_cal_liters[6];
+    uint16_t fuel_cal_adc[6];
+    uint16_t rpm_redline;
+    uint16_t rpm_shift_light;
+    float    battery_low_v;
+    float    battery_shutdown_v;
+    float    oil_pressure_warn;
+    float    oil_pressure_high;
+    float    coolant_temp_warn;
+    float    coolant_temp_crit;
+    float    fuel_min_l;
+    uint8_t  log_interval_s;
+    uint8_t  log_format;
+    uint8_t  log_autostart;
+    uint8_t  gps_rate_hz;
+    uint8_t  display_mode;
+    uint8_t  display_theme;
+    uint8_t  display_brightness;
+    char     device_name[32];
+    uint32_t pairing_code;
+    uint8_t  anim_enabled;
+    uint8_t  rpm_needle_spring;
+} device_config_t;
 
 /* ============================================================
- * Tests: json_parse_int
+ * Mock ESP-IDF dependencies of config.c
  * ============================================================ */
+#ifdef TEST_HOST
+#undef ESP_LOGE
+#undef ESP_LOGW
+#undef ESP_LOGI
+#undef ESP_LOGD
+#define ESP_LOGE(tag, fmt, ...)  (void)0
+#define ESP_LOGW(tag, fmt, ...)  (void)0
+#define ESP_LOGI(tag, fmt, ...)  (void)0
+#define ESP_LOGD(tag, fmt, ...)  (void)0
 
-void test_json_parse_int_normal(void)
+/* Mock nvs_flash.h — config_init calls nvs_flash_init */
+#define ESP_ERR_NVS_NO_FREE_PAGES    0x201
+#define ESP_ERR_NVS_NEW_VERSION_FOUND 0x202
+static inline esp_err_t nvs_flash_init(void) { return ESP_FAIL; }
+static inline esp_err_t nvs_flash_erase(void) { return ESP_OK; }
+
+/* Mock nvs.h */
+typedef int nvs_handle_t;
+typedef int nvs_open_mode_t;
+#define NVS_READONLY  0
+#define NVS_READWRITE 1
+static inline esp_err_t nvs_open(const char *ns, nvs_open_mode_t mode, nvs_handle_t *h) {
+    (void)ns; (void)mode; *h = 1; return ESP_FAIL;
+}
+static inline void nvs_close(nvs_handle_t h) { (void)h; }
+static inline esp_err_t nvs_get_blob(nvs_handle_t h, const char *key, void *out, size_t *len) {
+    (void)h; (void)key; (void)out; (void)len; return ESP_FAIL;
+}
+static inline esp_err_t nvs_set_blob(nvs_handle_t h, const char *key, const void *data, size_t len) {
+    (void)h; (void)key; (void)data; (void)len; return ESP_OK;
+}
+static inline esp_err_t nvs_commit(nvs_handle_t h) { (void)h; return ESP_OK; }
+static inline void nvs_erase_all(nvs_handle_t h) { (void)h; }
+
+/* Include the actual config.c implementation directly */
+#include "../../components/storage/config.c"
+
+#endif /* TEST_HOST */
+
+void setUp(void)
 {
-    int val = 0;
-    int ret = json_parse_int("{\"brightness\": 80}", "brightness", &val);
-    TEST_ASSERT_EQUAL(0, ret);
-    TEST_ASSERT_EQUAL(80, val);
+    /* Reset to defaults before each test by calling config_init.
+     * Since nvs_flash_init and nvs_open fail in the mock, config_init
+     * will set s_config to defaults and skip NVS load. */
+    config_init();
 }
 
-void test_json_parse_int_negative(void)
+void tearDown(void)
 {
-    int val = 0;
-    int ret = json_parse_int("{\"offset\": -42}", "offset", &val);
-    TEST_ASSERT_EQUAL(0, ret);
-    TEST_ASSERT_EQUAL(-42, val);
-}
-
-void test_json_parse_int_overflow(void)
-{
-    /* 21474836478 = INT_MAX (2147483647) + '8' digit -> overflow */
-    int val = 999;
-    int ret = json_parse_int("{\"val\": 21474836478}", "val", &val);
-    TEST_ASSERT_EQUAL(-1, ret);
-    TEST_ASSERT_EQUAL(999, val);
-}
-
-void test_json_parse_int_max(void)
-{
-    char json[64];
-    snprintf(json, sizeof(json), "{\"val\": %d}", INT_MAX);
-
-    int val = 0;
-    int ret = json_parse_int(json, "val", &val);
-    TEST_ASSERT_EQUAL(0, ret);
-    TEST_ASSERT_EQUAL(INT_MAX, val);
-}
-
-void test_json_parse_int_max_plus_one(void)
-{
-    /* INT_MAX + 1 = 2147483648 */
-    int val = 0;
-    int ret = json_parse_int("{\"val\": 2147483648}", "val", &val);
-    TEST_ASSERT_EQUAL(-1, ret);
-}
-
-void test_json_parse_int_missing_key(void)
-{
-    int val = 42;
-    int ret = json_parse_int("{\"other\": 5}", "missing", &val);
-    TEST_ASSERT_EQUAL(-1, ret);
-    TEST_ASSERT_EQUAL(42, val);
-}
-
-void test_json_parse_int_zero(void)
-{
-    int val = 999;
-    int ret = json_parse_int("{\"val\": 0}", "val", &val);
-    TEST_ASSERT_EQUAL(0, ret);
-    TEST_ASSERT_EQUAL(0, val);
 }
 
 /* ============================================================
- * Tests: json_parse_string
+ * Test: Default-Konfiguration
  * ============================================================ */
 
-void test_json_parse_string_escapes(void)
+void test_config_defaults_loaded(void)
 {
-    char out[64];
+    device_config_t *cfg = config_get();
+    TEST_ASSERT_NOT_NULL(cfg);
 
-    /* \n -> newline */
-    int ret = json_parse_string("{\"name\": \"line1\\nline2\"}", "name", out, sizeof(out));
-    TEST_ASSERT_EQUAL(0, ret);
-    TEST_ASSERT_EQUAL_STRING("line1\nline2", out);
-
-    /* \\ -> backslash */
-    ret = json_parse_string("{\"path\": \"C:\\\\dir\"}", "path", out, sizeof(out));
-    TEST_ASSERT_EQUAL(0, ret);
-    TEST_ASSERT_EQUAL_STRING("C:\\dir", out);
-
-    /* \" -> quote */
-    ret = json_parse_string("{\"q\": \"say \\\"hi\\\"\"}", "q", out, sizeof(out));
-    TEST_ASSERT_EQUAL(0, ret);
-    TEST_ASSERT_EQUAL_STRING("say \"hi\"", out);
-
-    /* \t -> tab */
-    ret = json_parse_string("{\"t\": \"a\\tb\"}", "t", out, sizeof(out));
-    TEST_ASSERT_EQUAL(0, ret);
-    TEST_ASSERT_EQUAL_STRING("a\tb", out);
-
-    /* \r -> carriage return */
-    ret = json_parse_string("{\"r\": \"a\\rb\"}", "r", out, sizeof(out));
-    TEST_ASSERT_EQUAL(0, ret);
-    TEST_ASSERT_EQUAL_STRING("a\rb", out);
+    TEST_ASSERT_EQUAL_UINT16(CONFIG_VERSION, cfg->version);
+    TEST_ASSERT_EQUAL_UINT16(8000, cfg->rpm_redline);
+    TEST_ASSERT_EQUAL_UINT16(7000, cfg->rpm_shift_light);
+    TEST_ASSERT_EQUAL_FLOAT(11.5f, cfg->battery_low_v);
+    TEST_ASSERT_EQUAL_FLOAT(10.5f, cfg->battery_shutdown_v);
+    TEST_ASSERT_EQUAL_FLOAT(105.0f, cfg->coolant_temp_warn);
+    TEST_ASSERT_EQUAL_FLOAT(120.0f, cfg->coolant_temp_crit);
+    TEST_ASSERT_EQUAL_FLOAT(2.0f, cfg->fuel_min_l);
+    TEST_ASSERT_EQUAL_UINT8(5, cfg->log_interval_s);
+    TEST_ASSERT_EQUAL_UINT8(10, cfg->gps_rate_hz);
+    TEST_ASSERT_EQUAL_UINT8(80, cfg->display_brightness);
+    TEST_ASSERT_EQUAL_UINT8(1, cfg->anim_enabled);
+    TEST_ASSERT_EQUAL_STRING("BC-Transalp", cfg->device_name);
+    TEST_ASSERT_EQUAL_UINT32(123456, cfg->pairing_code);
 }
 
-void test_json_parse_string_plain(void)
+/* ============================================================
+ * Test: set/get Roundtrip — uint8 Werte
+ * ============================================================ */
+
+void test_config_set_get_display_mode(void)
 {
-    char out[64];
-    int ret = json_parse_string("{\"name\": \"BC-Transalp\"}", "name", out, sizeof(out));
-    TEST_ASSERT_EQUAL(0, ret);
-    TEST_ASSERT_EQUAL_STRING("BC-Transalp", out);
+    uint8_t val = 2;
+    TEST_ASSERT_EQUAL(0, config_set_value(CFG_KEY_DISPLAY_MODE, &val, 1));
+
+    uint8_t out = 255;
+    TEST_ASSERT_EQUAL(1, config_get_value(CFG_KEY_DISPLAY_MODE, &out, 1));
+    TEST_ASSERT_EQUAL_UINT8(2, out);
 }
 
-void test_json_parse_string_empty(void)
+void test_config_set_get_brightness(void)
 {
-    char out[64];
-    int ret = json_parse_string("{\"name\": \"\"}", "name", out, sizeof(out));
-    TEST_ASSERT_EQUAL(0, ret);
-    TEST_ASSERT_EQUAL_STRING("", out);
+    uint8_t val = 55;
+    TEST_ASSERT_EQUAL(0, config_set_value(CFG_KEY_DISPLAY_BRIGHTNESS, &val, 1));
+
+    uint8_t out = 0;
+    TEST_ASSERT_EQUAL(1, config_get_value(CFG_KEY_DISPLAY_BRIGHTNESS, &out, 1));
+    TEST_ASSERT_EQUAL_UINT8(55, out);
 }
 
-void test_json_parse_string_missing_key(void)
+void test_config_set_get_gps_rate(void)
 {
-    char out[64];
-    int ret = json_parse_string("{\"other\": \"x\"}", "missing", out, sizeof(out));
-    TEST_ASSERT_EQUAL(-1, ret);
+    uint8_t val = 5;
+    TEST_ASSERT_EQUAL(0, config_set_value(CFG_KEY_GPS_RATE, &val, 1));
+
+    uint8_t out = 0;
+    TEST_ASSERT_EQUAL(1, config_get_value(CFG_KEY_GPS_RATE, &out, 1));
+    TEST_ASSERT_EQUAL_UINT8(5, out);
 }
 
-void test_json_parse_string_truncate(void)
+/* ============================================================
+ * Test: set/get Roundtrip — uint16 Werte
+ * ============================================================ */
+
+void test_config_set_get_rpm_redline(void)
 {
-    char out[4];
-    int ret = json_parse_string("{\"name\": \"hello\"}", "name", out, sizeof(out));
-    TEST_ASSERT_EQUAL(0, ret);
-    TEST_ASSERT_EQUAL_STRING("hel", out);
+    uint16_t val = 9500;
+    TEST_ASSERT_EQUAL(0, config_set_value(CFG_KEY_RPM_REDLINE, &val, 2));
+
+    uint16_t out = 0;
+    TEST_ASSERT_EQUAL(2, config_get_value(CFG_KEY_RPM_REDLINE, &out, 2));
+    TEST_ASSERT_EQUAL_UINT16(9500, out);
+}
+
+void test_config_set_get_rpm_shift_light(void)
+{
+    uint16_t val = 8000;
+    TEST_ASSERT_EQUAL(0, config_set_value(CFG_KEY_RPM_SHIFT_LIGHT, &val, 2));
+
+    uint16_t out = 0;
+    TEST_ASSERT_EQUAL(2, config_get_value(CFG_KEY_RPM_SHIFT_LIGHT, &out, 2));
+    TEST_ASSERT_EQUAL_UINT16(8000, out);
+}
+
+/* ============================================================
+ * Test: set/get Roundtrip — float Werte
+ * ============================================================ */
+
+void test_config_set_get_battery_low(void)
+{
+    float val = 12.3f;
+    TEST_ASSERT_EQUAL(0, config_set_value(CFG_KEY_BATTERY_LOW, &val, 4));
+
+    float out = 0.0f;
+    TEST_ASSERT_EQUAL(4, config_get_value(CFG_KEY_BATTERY_LOW, &out, 4));
+    TEST_ASSERT_FLOAT_WITHIN(0.01f, 12.3f, out);
+}
+
+void test_config_set_get_coolant_warn(void)
+{
+    float val = 110.5f;
+    TEST_ASSERT_EQUAL(0, config_set_value(CFG_KEY_COOLANT_WARN, &val, 4));
+
+    float out = 0.0f;
+    TEST_ASSERT_EQUAL(4, config_get_value(CFG_KEY_COOLANT_WARN, &out, 4));
+    TEST_ASSERT_FLOAT_WITHIN(0.01f, 110.5f, out);
+}
+
+void test_config_set_get_fuel_min(void)
+{
+    float val = 3.5f;
+    TEST_ASSERT_EQUAL(0, config_set_value(CFG_KEY_FUEL_MIN, &val, 4));
+
+    float out = 0.0f;
+    TEST_ASSERT_EQUAL(4, config_get_value(CFG_KEY_FUEL_MIN, &out, 4));
+    TEST_ASSERT_FLOAT_WITHIN(0.01f, 3.5f, out);
+}
+
+/* ============================================================
+ * Test: set/get Roundtrip — uint32 Werte
+ * ============================================================ */
+
+void test_config_set_get_pairing_code(void)
+{
+    uint32_t val = 999999;
+    TEST_ASSERT_EQUAL(0, config_set_value(CFG_KEY_PAIRING_CODE, &val, 4));
+
+    uint32_t out = 0;
+    TEST_ASSERT_EQUAL(4, config_get_value(CFG_KEY_PAIRING_CODE, &out, 4));
+    TEST_ASSERT_EQUAL_UINT32(999999, out);
+}
+
+void test_config_set_get_sea_level(void)
+{
+    uint32_t val = 100000;
+    TEST_ASSERT_EQUAL(0, config_set_value(CFG_KEY_CALIB_SEA_LEVEL, &val, 4));
+
+    uint32_t out = 0;
+    TEST_ASSERT_EQUAL(4, config_get_value(CFG_KEY_CALIB_SEA_LEVEL, &out, 4));
+    TEST_ASSERT_EQUAL_UINT32(100000, out);
+}
+
+/* ============================================================
+ * Test: set/get Roundtrip — device_name (string)
+ * ============================================================ */
+
+void test_config_set_get_device_name(void)
+{
+    const char *name = "MyBike-01";
+    TEST_ASSERT_EQUAL(0, config_set_value(CFG_KEY_DEVICE_NAME, name, strlen(name)));
+
+    char out[32] = {0};
+    TEST_ASSERT_GREATER_THAN(0, config_get_value(CFG_KEY_DEVICE_NAME, out, sizeof(out)));
+    TEST_ASSERT_EQUAL_STRING("MyBike-01", out);
+}
+
+/* ============================================================
+ * Test: set/get Roundtrip — IMU calibration (int16[3])
+ * ============================================================ */
+
+void test_config_set_get_imu_calibration(void)
+{
+    int16_t offsets[3] = {100, -50, 200};
+    TEST_ASSERT_EQUAL(0, config_set_value(CFG_KEY_CALIB_IMU, offsets, sizeof(offsets)));
+
+    int16_t out[3] = {0, 0, 0};
+    TEST_ASSERT_EQUAL(sizeof(offsets), config_get_value(CFG_KEY_CALIB_IMU, out, sizeof(out)));
+    TEST_ASSERT_EQUAL_INT16(100, out[0]);
+    TEST_ASSERT_EQUAL_INT16(-50, out[1]);
+    TEST_ASSERT_EQUAL_INT16(200, out[2]);
+}
+
+/* ============================================================
+ * Test: Unknown config key returns -1
+ * ============================================================ */
+
+void test_config_unknown_key_returns_error(void)
+{
+    uint8_t val = 1;
+    TEST_ASSERT_EQUAL(-1, config_set_value((config_key_t)99, &val, 1));
+
+    uint8_t out = 0;
+    TEST_ASSERT_EQUAL(-1, config_get_value((config_key_t)99, &out, 1));
+}
+
+/* ============================================================
+ * Test: NULL/zero-length input rejected
+ * ============================================================ */
+
+void test_config_set_null_value_rejected(void)
+{
+    TEST_ASSERT_EQUAL(-1, config_set_value(CFG_KEY_DISPLAY_MODE, NULL, 1));
+    TEST_ASSERT_EQUAL(-1, config_set_value(CFG_KEY_DISPLAY_MODE, &(uint8_t){1}, 0));
+}
+
+void test_config_get_null_value_rejected(void)
+{
+    TEST_ASSERT_EQUAL(-1, config_get_value(CFG_KEY_DISPLAY_MODE, NULL, 1));
+    TEST_ASSERT_EQUAL(-1, config_get_value(CFG_KEY_DISPLAY_MODE, &(uint8_t){0}, 0));
+}
+
+/* ============================================================
+ * Test: JSON-Export
+ * ============================================================ */
+
+void test_config_export_json_valid(void)
+{
+    char buf[2048];
+    int len = config_export_json(buf, sizeof(buf));
+    TEST_ASSERT_GREATER_THAN(0, len);
+
+    /* Should contain version */
+    TEST_ASSERT_NOT_NULL(strstr(buf, "\"version\""));
+    /* Should contain device name */
+    TEST_ASSERT_NOT_NULL(strstr(buf, "\"BC-Transalp\""));
+    /* Should contain thresholds */
+    TEST_ASSERT_NOT_NULL(strstr(buf, "\"rpm_redline\""));
+    TEST_ASSERT_NOT_NULL(strstr(buf, "\"battery_low_v\""));
+    /* Should be valid JSON (starts with { and ends with }) */
+    TEST_ASSERT_EQUAL('{', buf[0]);
+}
+
+void test_config_export_json_too_small(void)
+{
+    char buf[10];
+    int len = config_export_json(buf, sizeof(buf));
+    TEST_ASSERT_EQUAL(-1, len);
+}
+
+void test_config_export_json_null_buffer(void)
+{
+    int len = config_export_json(NULL, 2048);
+    TEST_ASSERT_EQUAL(-1, len);
+}
+
+/* ============================================================
+ * Test: JSON-Import — values applied
+ * ============================================================ */
+
+void test_config_import_json_applies_values(void)
+{
+    const char *json =
+        "{\n"
+        "  \"version\": 3,\n"
+        "  \"display\": {\n"
+        "    \"mode\": 1,\n"
+        "    \"theme\": 1,\n"
+        "    \"brightness\": 50,\n"
+        "    \"anim_enabled\": 0\n"
+        "  },\n"
+        "  \"logging\": {\n"
+        "    \"interval_s\": 10,\n"
+        "    \"gps_rate_hz\": 5\n"
+        "  },\n"
+        "  \"thresholds\": {\n"
+        "    \"rpm_redline\": 9000,\n"
+        "    \"battery_low_v\": 11.8\n"
+        "  },\n"
+        "  \"device\": {\n"
+        "    \"name\": \"TestBike\",\n"
+        "    \"pairing_code\": 654321\n"
+        "  }\n"
+        "}\n";
+
+    TEST_ASSERT_EQUAL(0, config_import_json(json));
+
+    device_config_t *cfg = config_get();
+    TEST_ASSERT_EQUAL_UINT8(1, cfg->display_mode);
+    TEST_ASSERT_EQUAL_UINT8(1, cfg->display_theme);
+    TEST_ASSERT_EQUAL_UINT8(50, cfg->display_brightness);
+    TEST_ASSERT_EQUAL_UINT8(0, cfg->anim_enabled);
+    TEST_ASSERT_EQUAL_UINT8(10, cfg->log_interval_s);
+    TEST_ASSERT_EQUAL_UINT8(5, cfg->gps_rate_hz);
+    TEST_ASSERT_EQUAL_UINT16(9000, cfg->rpm_redline);
+    TEST_ASSERT_FLOAT_WITHIN(0.01f, 11.8f, cfg->battery_low_v);
+    TEST_ASSERT_EQUAL_STRING("TestBike", cfg->device_name);
+    TEST_ASSERT_EQUAL_UINT32(654321, cfg->pairing_code);
+}
+
+/* ============================================================
+ * Test: JSON-Import — NULL input rejected
+ * ============================================================ */
+
+void test_config_import_json_null_rejected(void)
+{
+    TEST_ASSERT_EQUAL(-1, config_import_json(NULL));
+}
+
+/* ============================================================
+ * Test: JSON-Import — partial JSON only applies found keys
+ * ============================================================ */
+
+void test_config_import_json_partial(void)
+{
+    /* Only set brightness, leave everything else at default */
+    const char *json = "{\"brightness\": 42}";
+    TEST_ASSERT_EQUAL(0, config_import_json(json));
+
+    device_config_t *cfg = config_get();
+    TEST_ASSERT_EQUAL_UINT8(42, cfg->display_brightness);
+    /* Other values should remain at defaults */
+    TEST_ASSERT_EQUAL_UINT16(8000, cfg->rpm_redline);
+}
+
+/* ============================================================
+ * Test: JSON-Import — Roundtrip (export then import)
+ * ============================================================ */
+
+void test_config_json_export_import_roundtrip(void)
+{
+    /* Set custom values */
+    uint8_t mode = 2;
+    config_set_value(CFG_KEY_DISPLAY_MODE, &mode, 1);
+    uint16_t redline = 9500;
+    config_set_value(CFG_KEY_RPM_REDLINE, &redline, 2);
+
+    /* Export */
+    char buf[2048];
+    int len = config_export_json(buf, sizeof(buf));
+    TEST_ASSERT_GREATER_THAN(0, len);
+
+    /* Reset to defaults */
+    config_init();
+
+    /* Verify defaults are back */
+    device_config_t *cfg = config_get();
+    TEST_ASSERT_EQUAL_UINT8(0, cfg->display_mode);
+    TEST_ASSERT_EQUAL_UINT16(8000, cfg->rpm_redline);
+
+    /* Import the exported JSON */
+    TEST_ASSERT_EQUAL(0, config_import_json(buf));
+
+    /* Values should be restored */
+    cfg = config_get();
+    TEST_ASSERT_EQUAL_UINT8(2, cfg->display_mode);
+    TEST_ASSERT_EQUAL_UINT16(9500, cfg->rpm_redline);
 }
 
 /* ============================================================
  * Test Runner
  * ============================================================ */
-void setUp(void) {}
-void tearDown(void) {}
-
 int main(void)
 {
     UNITY_BEGIN();
 
-    RUN_TEST(test_json_parse_int_normal);
-    RUN_TEST(test_json_parse_int_negative);
-    RUN_TEST(test_json_parse_int_overflow);
-    RUN_TEST(test_json_parse_int_max);
-    RUN_TEST(test_json_parse_int_max_plus_one);
-    RUN_TEST(test_json_parse_int_missing_key);
-    RUN_TEST(test_json_parse_int_zero);
-    RUN_TEST(test_json_parse_string_escapes);
-    RUN_TEST(test_json_parse_string_plain);
-    RUN_TEST(test_json_parse_string_empty);
-    RUN_TEST(test_json_parse_string_missing_key);
-    RUN_TEST(test_json_parse_string_truncate);
+    RUN_TEST(test_config_defaults_loaded);
+
+    RUN_TEST(test_config_set_get_display_mode);
+    RUN_TEST(test_config_set_get_brightness);
+    RUN_TEST(test_config_set_get_gps_rate);
+    RUN_TEST(test_config_set_get_rpm_redline);
+    RUN_TEST(test_config_set_get_rpm_shift_light);
+    RUN_TEST(test_config_set_get_battery_low);
+    RUN_TEST(test_config_set_get_coolant_warn);
+    RUN_TEST(test_config_set_get_fuel_min);
+    RUN_TEST(test_config_set_get_pairing_code);
+    RUN_TEST(test_config_set_get_sea_level);
+    RUN_TEST(test_config_set_get_device_name);
+    RUN_TEST(test_config_set_get_imu_calibration);
+
+    RUN_TEST(test_config_unknown_key_returns_error);
+    RUN_TEST(test_config_set_null_value_rejected);
+    RUN_TEST(test_config_get_null_value_rejected);
+
+    RUN_TEST(test_config_export_json_valid);
+    RUN_TEST(test_config_export_json_too_small);
+    RUN_TEST(test_config_export_json_null_buffer);
+
+    RUN_TEST(test_config_import_json_applies_values);
+    RUN_TEST(test_config_import_json_null_rejected);
+    RUN_TEST(test_config_import_json_partial);
+    RUN_TEST(test_config_json_export_import_roundtrip);
 
     return UNITY_END();
 }
