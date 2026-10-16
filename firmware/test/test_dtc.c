@@ -110,7 +110,7 @@ void test_dtc_report_new(void)
     TEST_ASSERT_EQUAL(1, count);
     TEST_ASSERT_EQUAL(DTC_S0501, entries[0].code);
     TEST_ASSERT_EQUAL(1, entries[0].count);
-    TEST_ASSERT_TRUE(entries[0].active);
+    TEST_ASSERT_EQUAL(DTC_STATUS_ACTIVE, entries[0].status);
 }
 
 /* ============================================================
@@ -127,7 +127,7 @@ void test_dtc_report_reoccurrence(void)
 
     TEST_ASSERT_EQUAL(1, count);
     TEST_ASSERT_EQUAL(3, entries[0].count);
-    TEST_ASSERT_TRUE(entries[0].active);
+    TEST_ASSERT_EQUAL(DTC_STATUS_ACTIVE, entries[0].status);
 }
 
 /* ============================================================
@@ -212,14 +212,14 @@ void test_dtc_entry_struct(void)
     memset(&entry, 0, sizeof(entry));
 
     entry.code = DTC_C0401;  /* SPI-Bus-Fehler */
-    entry.timestamp_ms = 12345;
+    entry.first_occurrence_ms = 12345;
     entry.count = 5;
-    entry.active = true;
+    entry.status = DTC_STATUS_ACTIVE;
 
     TEST_ASSERT_EQUAL(DTC_C0401, entry.code);
-    TEST_ASSERT_EQUAL(12345, entry.timestamp_ms);
+    TEST_ASSERT_EQUAL(12345, entry.first_occurrence_ms);
     TEST_ASSERT_EQUAL(5, entry.count);
-    TEST_ASSERT_TRUE(entry.active);
+    TEST_ASSERT_EQUAL(DTC_STATUS_ACTIVE, entry.status);
 }
 
 /* ============================================================
@@ -232,13 +232,13 @@ void test_dtc_timestamp_updated(void)
     dtc_entry_t entries[DTC_MAX_ENTRIES];
     uint8_t count = dtc_get_active(entries, DTC_MAX_ENTRIES);
     TEST_ASSERT_EQUAL(1, count);
-    uint32_t first_ts = entries[0].timestamp_ms;
+    uint32_t first_ts = entries[0].first_occurrence_ms;
 
     /* Report again — timestamp should be updated (later) */
     dtc_report(DTC_C0402);
     count = dtc_get_active(entries, DTC_MAX_ENTRIES);
     TEST_ASSERT_EQUAL(1, count);
-    TEST_ASSERT_GREATER_OR_EQUAL(first_ts, entries[0].timestamp_ms);
+    TEST_ASSERT_GREATER_OR_EQUAL(first_ts, entries[0].last_occurrence_ms);
     TEST_ASSERT_EQUAL(2, entries[0].count);
 }
 
