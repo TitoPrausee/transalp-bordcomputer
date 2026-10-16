@@ -159,9 +159,19 @@ jobs:
             -o test_results/test_config \
             -lm -lpthread 2>&1 || echo "  test_config build skipped"
 
+          echo "=== Building test_filters ==="
+          gcc $INCLUDES \
+            -DUNITY_INCLUDE_DOUBLE \
+            -DTEST_HOST \
+            test/test_filters.c \
+            components/utils/filters.c \
+            $UNITY_DIR/unity.c \
+            -o test_results/test_filters \
+            -lm -lpthread 2>&1 || echo "  test_filters build skipped"
+
           echo "=== Running tests ==="
           FAIL=0
-          for t in test_results/test_nmea_parser test_results/test_event_loop test_results/test_dtc test_results/test_config; do
+          for t in test_results/test_nmea_parser test_results/test_event_loop test_results/test_dtc test_results/test_config test_results/test_filters; do
             if [ -x "$t" ]; then
               echo "--- Running $(basename $t) ---"
               "$t" || FAIL=1
