@@ -154,3 +154,22 @@
 18. ASA/PETG-Filament bei Online-Marktplatz (2-4 Tage)
 19. Kupferfolie, Conformal Coating, Acrylglas bei Online-Marktplatz (2-4 Tage)
 20. Kabelbinder, Schrumpfschlauch, Schrauben (1-3 Tage)
+
+### Phase 4: CarPlay und Controller (Woche 3-4)
+
+| # | Bauteil | Spezifikation | Menge | Preis (EUR) | Quelle |
+|---|---|---|---|---|---|
+| C1 | EKIY 5" Wireless CarPlay Display | 5" IPS, 854x480, IPX7, BT5.0, Wireless CarPlay + Android Auto | 1 | 90,00 | AliExpress (aliexpress.us/item/3256806507243787) |
+| C2 | Jiuyin 5" CarPlay Display (Budget) | 5" IPS, IPX7, BT, GPS, Wireless CarPlay | 1 | 65,00 | AliExpress (aliexpress.com/item/1005007959877330) |
+| C3 | KEMIMOTO 5" CarPlay Screen (Premium) | 5", 700 nits, IP67, Auto-Brightness, Handschuh-Touch | 1 | 120,00 | Amazon (amazon.de) |
+| C4 | Chigee AIO-5 EVO (Premium+Dashcam) | 5", IP68, Dual 1080p, Blind-Spot, Wireless CarPlay | 1 | 370,00 | Chigee (chigee.com) |
+| L1 | SilverFox C2 Lenker-Controller | CNC-Alu, IP67, Joystick+Switch, M12, BLE+Kabel, 22mm | 1 | 235,00 | SilverFox (silverfoxcontrollers.com) |
+| L2 | Chigee CGRC Multi Controller | BLE 5.0, CR2032, 6 Tasten+Joystick, 30-35mm Montage | 1 | 90,00 | SportsBikeShop (sportsbikeshop.co.uk) |
+| L3 | Custom Controller PCB | ATmega328P/RP2040, I2C, 6 Tasten+Joystick, 22mm | 1 | 25,00 | JLCPCB + AliExpress |
+| H1 | Lenker-Halterung 22mm | Aluminium, fuer 5" Display, schwingungsgedaempft | 1 | 15,00 | AliExpress |
+| H2 | M12-Kabel 4-polig | Wasserdicht, 1,5m, fuer SilverFox C2 | 1 | 12,00 | Elektronik-Distributor DE #1 |
+
+**Empfohlene Kombination:**
+- Standard: EKIY 5" (C1) + Chigee CGRC (L2) = 180 EUR
+- Premium: KEMIMOTO 5" (C3) + SilverFox C2 (L1) = 355 EUR
+- Budget: Jiuyin 5" (C2) + Custom PCB (L3) = 90 EUR

@@ -2,7 +2,7 @@
 
 > Bordcomputer Transalp 600 (PD06)
 > MCU: ESP32-S3-WROOM-1 (N16R8: 16MB Flash, 8MB Octal PSRAM)
-> Stand: Oktober 2026
+> Stand: 16. Oktober 2026
 > Quelle: docs/HARDWARE.md, docs/PINMAP.md, docs/CASE-DESIGN.md,
 >   docs/PCB-LAYOUT.md, docs/BOM.md, docs/ARCHITECTURE.md,
 >   docs/research/04-pd06-technische-daten.md, docs/research/02-hardware-deep-dive.md
@@ -21,6 +21,9 @@ Löt- und Mechanikkenntnisse voraus.
 2. PCB-Zusammenbau
 3. Verkabelung am Motorrad
 4. Display-Montage
+   - 4.5 CarPlay-Display: Montage am Lenker
+   - 4.6 Lenker-Controller: Montage und Anschluss
+   - 4.7 CarPlay und Controller: Pairing und Konfiguration
 5. Inbetriebnahme
 6. Fehlersuche
 
@@ -41,9 +44,11 @@ Schritte benötigt wird, ist als "optional" markiert.
 | Inbus-Schlüssel 2,5 mm | Displayschrauben M2,5 | Senkkopf |
 | Inbus-Schlüssel 4 mm | U-Bolt Muttern M6 | Lenkerhalterung |
 | Inbus-Schlüssel 5 mm | PCB-Schrauben M3 | Senkkopf |
+| Inbus-Schlüssel 3 mm | Controller-Halterung M5 | SilverFox C2 / Chigee CGRC |
 | Maulschlüssel 8 mm | Kabelbaum-Steckverbinder | PD06 |
 | Maulschlüssel 10 mm | Batteriepole | YB12A-B |
-| Maulschlüssel 14 mm | PG7 Kabelverschraubungen | Handfest |
+| Maulschlüssel 14 mm | PG7/PG9 Kabelverschraubungen | Handfest |
+| Maulschlüssel 17 mm | M12-Kabelverschraubung (SilverFox C2) | Nur bei kabelgebundenem Controller |
 | Kreuzschlitzschraubendreher | Verkleidungsteile | PD06 |
 | Seitenschneider | Kabel | — |
 | Abisolierzange | Kabelverarbeitung | AWG24 |
@@ -54,6 +59,7 @@ Schritte benötigt wird, ist als "optional" markiert.
 | Drehmomentschlüssel | Ölablassschraube, Sensoren | 10-50 Nm Bereich |
 | Schrumpfschlauch-Pistole | Schrumpfschlauch | Heissluft |
 | Pinzette | SMD-Bauteile | Antistatisch |
+| Smartphone (iPhone/Android) | CarPlay-Pairing, Controller-Pairing | Fuer Inbetriebnahme 4.7 |
 
 **Verbrauchsmaterial:**
 
@@ -178,14 +184,18 @@ die Kabeldurchführungen.
 | 4.1 | Display-Halterung am Lenker | 1 h |
 | 4.2 | Display-Kabel verlegen | 0,5 h |
 | 4.3 | Wasserschutz und Windschutz | 0,5 h |
+| 4.5 | CarPlay-Display am Lenker montieren | 1 h |
+| 4.6 | Lenker-Controller montieren und anschliessen | 1 h |
+| 4.7 | CarPlay und Controller Pairing + Konfiguration | 1 h |
 | 5.1 | Erstes Einschalten und Smoke-Test | 0,5 h |
 | 5.2 | Self-Test über Serial Console | 1 h |
 | 5.3 | Kalibrierung (RPM, Tank, Temperatur) | 1 h |
 | 5.4 | GPS-Fix abwarten | 0,5 h |
 | 5.5 | BLE-Pairing mit Smartphone | 0,5 h |
-| 5.6 | Testfahrt und Plausibilitätsprüfung | 1 h |
-| — | **Gesamtschätzung (Prototyp)** | **24-30 h** |
-| — | **Gesamtschätzung (Custom-PCB)** | **20-26 h** |
+| 5.6 | Testfahrt und Plausibilitaetspruefung | 1 h |
+| — | **Gesamtschaetzung (Prototyp)** | **27-33 h** |
+| — | **Gesamtschaetzung (Custom-PCB)** | **23-29 h** |
+| — | **Gesamtschaetzung (Complete mit CarPlay/Controller)** | **+3 h** |
 
 Die Schätzung geht von einem einzelnen Bastler mit grundlegenden
 Fertigkeiten aus. Erfahrene Bastler können die Zeiten um 30-50%
@@ -1166,6 +1176,363 @@ Regentropfen-Ansammlung.
 
 ---
 
+## 4.5 CarPlay-Display: Montage am Lenker
+
+Das CarPlay-Display (5" IPS, Wireless CarPlay) ist ein externes
+Zusatz-Display, das neb dem Bordcomputer-Display montiert wird.
+Es koppelt sich direkt ueber Bluetooth + WiFi ans iPhone oder
+Android-Smartphone und benoetigt keine Kabelverbindung zum Bordcomputer.
+Die Kommunikation Bordcomputer zu CarPlay-Display laeuft ueber BLE GATT
+(Telemetrie-Spiegel: RPM, Geschwindigkeit, Kuehlmitteltemp etc.).
+
+### 4.5.1 Montage-Position
+
+Das CarPlay-Display wird auf der linken Lenkerseite montiert
+(neben dem Bordcomputer-Gehaeuse), so dass beide Displays im Sichtfeld
+des Fahrers liegen. Alternative: ueber dem Bordcomputer-Gehaeuse
+gestapelt, wenn der Lenkerplatz begrenzt ist.
+
+**Montage-Optionen:**
+
+**Option A: Lenkerhalterung 22mm (empfohlen)**
+- Aluminium-Halterung mit U-Bolt am 22mm-Lenker
+- Schwingungsgeedaempft (Gummi-Puffer zwischen Halterung und Display)
+- Neigung einstellbar (Kugelgelenk)
+- Lieferung im CarPlay-Upgrade-Kit enthalten
+
+**Option B: Crossbar-Montage**
+- Befestigung an einer Querstange (Crossbar) zwischen den Lenkerhaltern
+- Gleiche Montage wie Bordcomputer-Gehaeuse (Abschnitt 4.1)
+- Vorteil: stabilere Plattform, laesst sich zusammen mit dem Bordcomputer
+  an der Crossbar positionieren
+
+**Option C: Lenkerhalter-Klemmbruecke**
+- Direkt an den Lenkerhalter-Klemmen (M6 oder M8)
+- Sehr stabil, aber modellspezifisch
+
+### 4.5.2 Montage-Schritte (Option A: Lenkerhalterung 22mm)
+
+1. U-Bolt der Lenker-Halterung um den 22mm-Lenker legen (linke Seite,
+   neben dem Bordcomputer-Gehaeuse). Position so waehlen, dass das
+   Display den Lenker-Einschlag nicht blockiert.
+2. Halterung mit M6-Muttern und Federscheiben festziehen
+   (Anzugsdrehmoment 5-8 Nm).
+3. Gummidmpfer zwischen Halterung und Display-Rueckseite einsetzen.
+4. Kugelgelenk mit M6-Schraube an der Halterung befestigen.
+5. CarPlay-Display auf das Kugelgelenk setzen und mit Klemmhebel
+   arretieren.
+6. Neigung einstellen (10-15° nach hinten vom Fahrer weg) und
+   Klemmhebel festziehen.
+7. Kabelfuehrung: USB-C Kabel (wasserdicht, IP67) vom Display
+   entlang dem Lenker zum Bordcomputer verlegen. Kabel alle 10 cm
+   mit Kabelbindern fixieren.
+
+**ASCII-Diagramm: CarPlay-Display am Lenker (Draufsicht)**
+
+```
+                    Fahrer ===>
+
+         +------+           +------+
+         |      |           |      |
+         | TFT  |  Bordcomp.|CarPlay|   CarPlay-Display (5")
+         |3,5"  |  Gehaeuse | 5"   |
+         |      |           |      |
+         +------+           +------+
+              |              |
+         +----+----+   +----+----+
+         | Lenker |   | Lenker |
+         | 22mm   |   | 22mm   |
+         +--------+   +--------+
+              |              |
+              +------+-------+
+                     |
+              [Lenkerhalterung]
+```
+
+### 4.5.3 Stromversorgung CarPlay-Display
+
+Das CarPlay-Display wird ueber USB-C mit 5V versorgt. Die
+Stromversorgung erfolgt ueber den 12V-auf-5V Buck-Converter, der
+bereits im Bordcomputer-Gehaeuse sitzt.
+
+**Anschluss:**
+1. USB-C Kabel (wasserdicht, IP67) vom CarPlay-Display durch eine
+   PG7-Kabelverschraubung ins Bordcomputer-Gehaeuse fuehren.
+2. USB-C Kabel an den 5V-Ausgang des Buck-Converters (MP1584)
+   anschliessen (parallel zum Bordcomputer, gleiche 5V-Schiene).
+3. Sicherung pruefen: Der Buck-Converter ist mit 5A abgesichert.
+   Das CarPlay-Display zieht typisch 500-800 mA (2,5-4W). Die 5A-
+   Sicherung reicht fuer Bordcomputer + CarPlay-Display.
+4. Ferritkern (Klappferrit) am USB-C Kabel nah am Gehaeuse.
+
+**Stromaufnahme:**
+- CarPlay-Display (ohne Bluetooth-Pairing): 300-400 mA
+- CarPlay-Display (mit CarPlay aktiv, GPS, Musik): 600-800 mA
+- Maximal (Display auf voller Helligkeit, ladendes Smartphone): 1.200 mA
+
+### 4.5.4 Wasserfestigkeit CarPlay-Display
+
+Das CarPlay-Display hat IPX7 (EKIY, Jiuyin) bzw. IP67 (KEMIMOTO).
+Trotzdem sollten folgende Punkte beachtet werden:
+
+- USB-C-Anschluss am Display ist mit einer Gummi-Klappe abgedeckt.
+  Nach dem Anschließen des Kabels die Klappe ueber das Kabel
+  schliessen und mit Kabelbinder sichern.
+- Das Display-Gehaeuse ist nicht fuer Dauereintauchen ausgelegt.
+  Bei starkem Regen die Halterung so ausrichten, dass Wasser von
+  oben ablaufen kann (leichte Neigung nach vorne).
+- Nach jeder Fahrt im Regen: Display und Kabelanschluesse
+  kontrollieren, bei Korrosion Kontaktspray verwenden.
+
+---
+
+## 4.6 Lenker-Controller: Montage und Anschluss
+
+Der Lenker-Controller ermoeglicht die Bedienung von Bordcomputer-Display
+und CarPlay ohne den Handschuh auszuziehen. Es gibt drei Varianten:
+SilverFox C2 (Premium, kabelgebunden + BLE), Chigee CGRC (wireless BLE)
+und Custom PCB (I2C).
+
+### 4.6.1 Montage-Position
+
+Der Controller wird am rechten Lenker montiert, in Reichweite des
+Daumens der rechten Hand. Die Position muss so gewaehlt werden, dass:
+
+- Der Daumen alle Tasten/den Joystick bequem erreicht.
+- Der Gasgriff nicht blockiert wird.
+- Der Controller nicht mit der Hand brake oder dem Kill-Switch kollidiert.
+
+**Montage:**
+
+1. Controller-Halterung um den 22mm-Lenker legen (rechte Seite).
+   Bei SilverFox C2 ist die Halterung im Lieferumfang enthalten.
+   Bei Chigee CGRC ist eine 30-35mm-Halterung enthalten -- hier
+   kann ein Adapter (22mm auf 30mm) noetig sein.
+2. Halterung mit Inbus-Schrauben (M5 oder M6) und Federscheiben
+   festziehen. Anzugsdrehmoment 3-5 Nm.
+3. Controller in die Halterung einsetzen und arretieren
+   (Riegel oder Schraube).
+4. Kabelfuehrung: Controller-Kabel entlang dem Lenker nach links
+   zum Bordcomputer-Gehaeuse verlegen. Kabel nicht unter Spannung,
+   mit Kabelbindern am Lenker fixieren (alle 10 cm).
+
+**ASCII-Diagramm: Controller am Lenker (Draufsicht)**
+
+```
+                    Fahrer ===>
+
+  +------+        +------+        +------+
+  | Ctrl |        | TFT  |        |CarPlay|
+  | 22mm |  Lenker|3,5"  |  Lenker| 5"   |
+  +------+        +------+        +------+
+       |               |               |
+  +----+----+    +----+----+    +----+----+
+  | Lenker  |    | Lenker |    | Lenker |
+  | 22mm    |    | 22mm   |    | 22mm   |
+  +---------+    +--------+    +--------+
+       |               |               |
+       +-------+-------+-------+-------+
+               |               |
+        [Lenkerhalter]  [Lenkerhalter]
+```
+
+### 4.6.2 Anschluss: SilverFox C2 (kabelgebunden + BLE)
+
+Der SilverFox C2 unterstuetzt gleichzeitig Kabelverbindung ueber M12-
+Stecker und BLE. Fuer die kabelgebundene Variante:
+
+**M12-Anschluss:**
+1. M12-Kabel (4-polig, IP67, 1,5m) am Controller einstecken und
+   arretieren (Bajonett-Verschluss, 1/4 Drehung).
+2. Anderes Ende des M12-Kabels durch eine PG9-Kabelverschraubung ins
+   Bordcomputer-Gehaeuse fuehren.
+3. M12-Pin-Belegung:
+   - Pin 1: +5V (vom Buck-Converter)
+   - Pin 2: GND
+   -  Pin 3: GPIO (Controller-Data, mit Pull-Up 10k)
+   -  Pin 4: GPIO (Controller-Clock, mit Pull-Up 10k)
+4. Pin 1 und 2 an die 5V-Schiene bzw. GND anschliessen.
+5. Pin 3 und 4 an die Controller-GPIO-Pins des ESP32-S3 anschliessen
+   (GPIO17 DATA, GPIO18 CLOCK -- siehe Pinmap).
+
+**BLE-Alternative:**
+- SilverFox C2 kann auch rein ueber BLE gekoppelt werden
+  (ohne M12-Kabel). In diesem Fall nur die 5V-Versorgung anschliessen.
+- Pairing ueber die Companion-App oder Serial Console.
+- Vorteil: nur ein Stromkabel noetig, kein Datenkabel.
+- Nachteil: Batterie-Abhaengigkeit des Controllers (CR2032, ca. 6 Monate).
+
+### 4.6.3 Anschluss: Chigee CGRC Multi (wireless BLE)
+
+Der Chigee CGRC ist ein rein wireless Controller (BLE 5.0, CR2032).
+
+**Montage:**
+1. Controller-Halterung am 22mm-Lenker montieren (rechte Seite).
+   Achtung: CGRC-Halterung ist fuer 30-35mm ausgelegt. Fuer 22mm
+   Lenker wird ein Adapter-Ring (22mm auf 30mm) benoetigt, im
+   CarPlay-Upgrade-Kit enthalten.
+2. Controller in die Halterung clippen.
+
+**Stromversorgung:**
+- CR2032-Batterie (im Lieferumfang). Lebensdauer ca. 6 Monate bei
+  taeglicher Nutzung.
+- Keine Kabelverbindung zum Bordcomputer noetig.
+
+**BLE-Pairing:**
+- Pairing ueber die Companion-App: "Controller koppeln" -> CGRC
+  aus der Liste auswaehlen -> bestaetigen.
+- Alternative: Serial Console -> `controller pair` -> CGRC auswaehlen.
+- Nach dem Pairing verbindet sich der Controller automatisch beim
+  Bordcomputer-Start.
+
+### 4.6.4 Anschluss: Custom Controller PCB (I2C)
+
+Der Custom Controller (ATmega328P oder RP2040) wird ueber I2C
+angeschlossen. Das PCB wird am Lenker montiert und ueber ein 4-adriges
+Kabel (SDA, SCL, VCC, GND) mit dem Bordcomputer verbunden.
+
+**Anschluss:**
+1. 4-adriges Kabel (AWG24, abgeschirmt) vom Controller-PCB zum
+   Bordcomputer-Gehaeuse verlegen (durch PG7).
+2. Pin-Belegung:
+   - VCC: 3,3V (vom ESP32-S3, ueber Ferrite-Bead)
+   - GND: Masse
+   - SDA: GPIO8 (I2C Data, mit Pull-Up 4,7k)
+   - SCL: GPIO9 (I2C Clock, mit Pull-Up 4,7k)
+3. Schirm an einem Ende auf Masse (Gehaeuseseite).
+4. Controller-PCB am 22mm-Lenker mit zwei Kabelbindern oder einer
+   3D-gedruckten Halterung fixieren.
+
+**Firmware:**
+- Der Custom Controller laeuft mit eigener Firmware (ATmega328P: Arduino,
+  RP2040: MicroPython oder C). Die Firmware liest die Tasten und den
+  Joystick ein und sendet Events ueber I2C an den ESP32-S3.
+- Die Firmware-Komponente `firmware/components/hid_controller/` im
+  Bordcomputer verarbeitet die I2C-Events (siehe TOT-18).
+
+---
+
+## 4.7 CarPlay und Controller: Pairing und Konfiguration
+
+Nach der Montage von CarPlay-Display und Lenker-Controller muessen
+beide mit dem Bordcomputer und dem Smartphone gekoppelt werden.
+
+### 4.7.1 CarPlay-Display mit Smartphone koppeln
+
+1. Bordcomputer einschalten (Zündung an). CarPlay-Display geht an
+   (5V vom Buck-Converter).
+2. iPhone: Einstellungen -> Bluetooth -> Suchen. CarPlay-Display
+   (z.B. "EKIY-CP-XXXX") aus der Liste auswaehlen und koppeln.
+3. iPhone fragt: "CarPlay verwenden?" -> Zulassen.
+4. CarPlay-Oberflaeche erscheint auf dem 5"-Display. Navigation,
+   Musik, Telefon sind jetzt verfuegbar.
+5. Bei Android: Android Auto oeffnen -> Pairing -> Display auswaehlen.
+
+**Bei Verbindungsproblemen:**
+- Bluetooth am Smartphone aus- und einschalten.
+- CarPlay-Display neu starten (Zündung aus, 10 Sekunden, an).
+- iPhone: Einstellungen -> Allgemein -> CarPlay -> Neues Fahrzeug.
+- Abstand < 1 Meter beim ersten Pairing.
+
+### 4.7.2 CarPlay-Display mit Bordcomputer koppeln (Telemetrie-Spiegel)
+
+Das CarPlay-Display kann Telemetrie-Daten vom Bordcomputer empfangen
+(RPM, Geschwindigkeit, Kuehlmitteltemp etc.). Dies erfordert eine BLE-
+Verbindung zwischen Bordcomputer und CarPlay-Display.
+
+1. Serial Console oeffnen (USB-C, 115200 Baud).
+2. Befehl: `carplay pair`
+3. Bordcomputer sucht nach CarPlay-Displays in der Naehe.
+4. CarPlay-Display aus der Liste auswaehlen und bestaetigen.
+5. Bordcomputer sendet nun Telemetrie-Daten ueber BLE GATT an das
+   CarPlay-Display. Die Daten werden in der CarPlay-App des
+   Bordcomputers angezeigt (falls installiert) oder als Widget
+   auf dem CarPlay-Home-Screen.
+
+**Gesendete Daten (BLE GATT TX):**
+- RPM (U/min)
+- Geschwindigkeit (km/h)
+- Kuehlmitteltemperatur (°C)
+- Kraftstoffstand (%)
+- Gang (N, 1-5)
+- Oeldruck (bar, falls installiert)
+
+### 4.7.3 Lenker-Controller mit Bordcomputer koppeln
+
+Je nach Controller-Variante:
+
+**SilverFox C2 (BLE):**
+1. Serial Console oder Companion-App: `controller pair`
+2. SilverFox C2 in den Pairing-Modus versetzen (Taste auf der Rueckseite
+   des Controllers 3 Sekunden gedrueckt halten, bis LED blinkt).
+3. Controller aus der Liste auswaehlen und bestaetigen.
+4. LED leuchtet durchgehend blau = verbunden.
+
+**Chigee CGRC (BLE):**
+1. Companion-App: "Controller koppeln" -> CGRC auswaehlen.
+2. CR2032-Batterie einlegen (falls noch nicht geschehen). Controller
+   geht automatisch in den Advertising-Modus.
+3. Pairing bestaetigen.
+
+**Custom PCB (I2C):**
+1. Kein Pairing noetig. Controller wird beim Booten automatisch
+   erkannt (I2C-Scan in der Self-Test-Phase).
+2. Falls der Controller nicht erkannt wird: I2C-Adresse pruefen
+   (Standard: 0x08). Serial Console: `i2c scan` -> 0x08 muss
+   in der Liste erscheinen.
+
+### 4.7.4 Controller-Mapping konfigurieren
+
+Die Standard-Belegung des Controllers:
+
+| Taste/Joystick | Aktion Bordcomputer-Display | Aktion CarPlay |
+|---------------|----------------------------|----------------|
+| Joystick Up/Down | Menue hoch/runter | Liste hoch/runter |
+| Joystick Left/Right | Menue links/rechts | Vor/Zurueck |
+| Joystick Select (Druck) | Menue bestaetigen | Play/Pause |
+| Taste Back | Zurueck | Home |
+| Taste Home | Hauptmenue | Siri / Google Assistant |
+| Vol + / Vol - | Bordcomputer Lauter/Leiser | Musik Lauter/Leiser |
+| Media Next / Prev | --- | Naechster/Voriger Track |
+
+Die Belegung kann ueber die Companion-App oder Serial Console
+angepasst werden:
+
+```
+> controller mapping
+Current mapping:
+  NAV_UP    -> MENU_UP
+  NAV_DOWN  -> MENU_DOWN
+  NAV_LEFT  -> MENU_LEFT
+  NAV_RIGHT -> MENU_RIGHT
+  BTN_SELECT -> MENU_SELECT
+  BTN_BACK   -> MENU_BACK
+  BTN_HOME   -> MENU_HOME
+  VOL_UP     -> VOLUME_UP
+  VOL_DOWN   -> VOLUME_DOWN
+  MEDIA_NEXT -> MEDIA_NEXT
+  MEDIA_PREV -> MEDIA_PREV
+
+> controller mapping set NAV_UP MENU_SCROLL_UP
+Mapping updated: NAV_UP -> MENU_SCROLL_UP
+```
+
+### 4.7.5 Test: Controller und CarPlay
+
+Nach Pairing und Konfiguration testen:
+
+1. Bordcomputer-Display: Mit dem Controller durch die Menues
+   navigieren. Alle Tasten reagieren?
+2. CarPlay-Display: Musik abspielen, mit dem Controller Skip/Play/
+   Pause steuern. Navigation oeffnen, mit dem Controller zoomen.
+3. Telemetrie-Spiegel: CarPlay-Display zeigt RPM, Geschwindigkeit
+   etc. vom Bordcomputer? (Falls BLE-Pairing mit Bordcomputer
+   durchgefuehrt, siehe 4.7.2).
+4. Bei Verbindungsabbruch: Serial Console -> `controller status`
+   und `carplay status` pruefen.
+
+---
+
 ## 5. Inbetriebnahme
 
 ### 5.1 Erster Power-On: Spannungen messen, Smoke-Test
@@ -1561,6 +1928,10 @@ TBC-XYYY, wobei X die Kategorie und YYY die Fehlernummer ist.
 | TBC-0602 | Tacho | Kein Tacho-Signal | Reed-Kontakt/Hall-Sensor pruefen |
 | TBC-0701 | Display | TFT nicht initialisierbar | FPC-Kabel pruefen |
 | TBC-0702 | Display | E-Paper nicht initialisierbar | FPC-Kabel pruefen |
+| TBC-0801 | Controller | Kein Controller gefunden (I2C/BLE) | I2C-Adresse/Verkabelung pruefen, BLE-Pairing wiederholen |
+| TBC-0802 | Controller | Controller nicht verbunden | Batterie (CR2032) pruefen, Pairing wiederholen |
+| TBC-0901 | CarPlay | CarPlay-Display nicht erreichbar | 5V-Versorgung, USB-C Kabel pruefen |
+| TBC-0902 | CarPlay | Telemetrie-Spiegel nicht verbunden | BLE-Pairing Bordcomputer-Display wiederholen |
 
 ### 6.3 Serial-Console-Befehle fuer Diagnose
 
@@ -1593,6 +1964,12 @@ werden:
 | `config reset` | Werkseinstellungen wiederherstellen |
 | `reboot` | Bordcomputer neu starten |
 | `factory` | Werksreset (alle Daten loeschen) |
+| `controller status` | Controller-Status (verbunden, Variante, Batterie) |
+| `controller pair` | BLE-Controller-Pairing starten |
+| `controller mapping` | Aktuelle Button-Mapping-Tabelle anzeigen |
+| `controller mapping set <btn> <action>` | Button-Mapping aendern |
+| `carplay status` | CarPlay-Display-Status (verbunden, Telemetrie) |
+| `carplay pair` | CarPlay-Display-Pairing (Telemetrie-Spiegel) starten |
 
 **Diagnose-Beispiel: DTC TBC-0601 (Kein RPM-Signal)**
 
@@ -1649,8 +2026,10 @@ Dieses Dokument basiert auf den folgenden Projektdokumenten:
 - `docs/PINMAP.md` -- ESP32-S3 GPIO Pin-Belegung
 - `docs/CASE-DESIGN.md` -- Gehaeuse-Design (3D-Druck, Montage)
 - `docs/PCB-LAYOUT.md` -- PCB-Design-Konzept
-- `docs/BOM.md` -- Bill of Materials
+- `docs/BOM.md` -- Bill of Materials (inkl. CarPlay-Display und Lenker-Controller, Abschnitt 1.11)
 - `docs/ARCHITECTURE.md` -- System-Architektur
+- `docs/PRODUCT-CATALOG.md` -- Produktkatalog mit 5 Produktvarianten
+- `docs/SHOPPING-LIST.md` -- Einkaufsliste mit AliExpress-Links fuer CarPlay-Displays
 - `docs/USER-MANUAL.md` -- Benutzerhandbuch und Installationsanleitung
 - `docs/research/04-pd06-technische-daten.md` -- PD06 technische Daten
 - `docs/research/02-hardware-deep-dive.md` -- Hardware-Details
