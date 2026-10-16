@@ -17,6 +17,7 @@
 #include "nvs.h"
 #include <string.h>
 #include <stdio.h>
+#include <limits.h>
 
 static const char *TAG = "config";
 
@@ -526,6 +527,12 @@ static int json_parse_int(const char *json, const char *key, int *out)
     if (*p < '0' || *p > '9') return -1;
     int val = 0;
     while (*p >= '0' && *p <= '9') {
+        /* Overflow-Check: val * 10 + digit darf INT_MAX nicht ueberschreiten.
+         * INT_MAX / 10 ist der Maximalwert vor der Multiplikation,
+         * INT_MAX % 10 ist der max zulaessige Rest bei val == INT_MAX / 10. */
+        if (val > (INT_MAX - (*p - '0')) / 10) {
+            return -1;  /* Overflow erkannt, Wert ablehnen */
+        }
         val = val * 10 + (*p - '0');
         p++;
     }
@@ -568,7 +575,24 @@ static int json_parse_string(const char *json, const char *key,
     p++;
     size_t i = 0;
     while (*p && *p != '"' && i < max_len - 1) {
-        out[i++] = *p++;
+        if (*p == '\\') {
+            p++;
+            if (!*p) return -1;  /* ungültiges Escape am String-Ende */
+            switch (*p) {
+            case 'n':  out[i++] = '\n'; break;
+            case 't':  out[i++] = '\t'; break;
+            case 'r':  out[i++] = '\r'; break;
+            case '"':  out[i++] = '"';  break;
+            case '\\': out[i++] = '\\'; break;
+            case '/':  out[i++] = '/';  break;
+            case 'b':  out[i++] = '\b'; break;
+            case 'f':  out[i++] = '\f'; break;
+            default:   out[i++] = *p;   break;  /* unbekannt: literal */
+            }
+            p++;
+        } else {
+            out[i++] = *p++;
+        }
     }
     out[i] = '\0';
     return 0;

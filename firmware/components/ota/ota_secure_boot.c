@@ -49,7 +49,16 @@ static const char *TAG = "ota_secure";
  * vor dem Reboot verwendet.
  * ============================================================ */
 
-/* Platzhalter: RSA-3072 Public Key (wird zur Build-Zeit eingefuegt) */
+/* Platzhalter: RSA-3072 Public Key (wird zur Build-Zeit eingefuegt).
+ *
+ * WARNUNG: Dieser Key ist ein Null-Platzhalter fuer Development.
+ * RSA-Verifikation ist mit diesem Key NICHT funktional.
+ * In Produktion muss ein echter RSA-3072 Public Key (DER-encodiert)
+ * hier eingefuegt werden, z.B. per build-time code generation. */
+#if defined(CONFIG_SECURE_BOOT_V2_ENABLED) || defined(CONFIG_SECURE_SIGNED_APPS_NO_SECURE_BOOT)
+#warning "Secure Boot ist aktiviert, aber ota_public_key_der enthaelt noch den Platzhalter (Nullen). RSA-Verifikation schlaegt fehl. Echten RSA-3072 Public Key einfuegen!"
+#endif
+
 __attribute__((aligned(4)))
 static const uint8_t ota_public_key_der[OTA_RSA_KEY_LEN * 2] = {
     /* In Produktion: echter RSA-3072 Public Key (DER-encodiert).
@@ -57,6 +66,21 @@ static const uint8_t ota_public_key_der[OTA_RSA_KEY_LEN * 2] = {
     0x30, 0x82, 0x03, 0x0d, 0x02, 0x01, 0x00, 0x00,
     /* ... Rest mit Nullen aufgefuellt bis RSA Key Laenge ... */
 };
+
+/* Runtime-Check: detektiere Null-Platzhalter.
+ * Gibt true zurueck wenn der Key noch der Platzhalter ist. */
+static bool ota_public_key_is_placeholder(void)
+{
+    /* Die ersten 8 Bytes des Platzhalters sind der DER-Header,
+     * danach folgen Nullen. Wenn Byte 8+ alle Null sind, ist es
+     * der Platzhalter. */
+    for (size_t i = 8; i < sizeof(ota_public_key_der); i++) {
+        if (ota_public_key_der[i] != 0x00) {
+            return false;
+        }
+    }
+    return true;
+}
 
 /* eFuse-Block fuer Anti-Rollback-Counter (Secure Boot V2 Block) */
 #define OTA_EFUSE_VERSION_BLOCK  0
@@ -163,6 +187,13 @@ esp_err_t ota_secure_verify_signature(const esp_partition_t *partition,
     }
 
     /* 2. RSA-Signatur verifizieren mit mbedTLS */
+    if (ota_public_key_is_placeholder()) {
+        ESP_LOGW(TAG, "OTA Public Key ist noch der Null-Platzhalter. "
+                     "RSA-Verifikation wird uebersprungen (Development-Modus). "
+                     "In Produktion echten RSA-3072 Key einfuegen!");
+        return ESP_ERR_NOT_SUPPORTED;
+    }
+
     mbedtls_pk_context pk_ctx;
     mbedtls_pk_init(&pk_ctx);
 

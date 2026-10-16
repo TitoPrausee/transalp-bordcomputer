@@ -22,7 +22,7 @@ jobs:
   esp-idf-build:
     name: ESP-IDF Build (${{ matrix.idf-version }})
     runs-on: ubuntu-latest
-    continue-on-error: true
+    continue-on-error: false
     strategy:
       fail-fast: false
       matrix:
@@ -64,7 +64,7 @@ jobs:
               -I"$IDF_PATH/components/log/include" \
               -I"$IDF_PATH/components/soc/include" \
               -I"$IDF_PATH/components/esp_system/include" \
-              "$f" 2>/dev/null || echo "  (skipped: $f — ESP-IDF headers not fully available for host syntax check)"
+              "$f" 2>&1 || echo "  (skipped: $f — ESP-IDF headers not fully available for host syntax check)"
           done
           echo "Syntax check complete."
 
@@ -150,9 +150,18 @@ jobs:
             -o test_results/test_dtc \
             -lm -lpthread 2>&1 || echo "  test_dtc build skipped"
 
+          echo "=== Building test_config ==="
+          gcc $INCLUDES \
+            -DUNITY_INCLUDE_DOUBLE \
+            -DTEST_HOST \
+            test/test_config.c \
+            $UNITY_DIR/unity.c \
+            -o test_results/test_config \
+            -lm -lpthread 2>&1 || echo "  test_config build skipped"
+
           echo "=== Running tests ==="
           FAIL=0
-          for t in test_results/test_nmea_parser test_results/test_event_loop test_results/test_dtc; do
+          for t in test_results/test_nmea_parser test_results/test_event_loop test_results/test_dtc test_results/test_config; do
             if [ -x "$t" ]; then
               echo "--- Running $(basename $t) ---"
               "$t" || FAIL=1
@@ -196,17 +205,18 @@ jobs:
             -I components/*/include \
             -I main \
             components/ main/ \
-            2> analysis/cppcheck.xml || true
+            2> analysis/cppcheck.xml
 
           echo "=== cppcheck summary ==="
           cppcheck \
             --enable=all \
             --suppress=missingIncludeSystem \
             --suppress=unusedFunction \
+            --error-exitcode=1 \
             -I components/*/include \
             -I main \
             components/ main/ \
-            2>&1 || true
+            2>&1
 
       - name: clang-format check
         working-directory: firmware
@@ -220,8 +230,7 @@ jobs:
             fi
           done
           echo "clang-format check complete (exit $EXIT_CODE)"
-          # Non-blocking: report only, do not fail the job
-          # exit $EXIT_CODE
+          exit $EXIT_CODE
 
       - name: Header include-guards verification
         working-directory: firmware

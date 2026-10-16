@@ -76,15 +76,16 @@ static bool nmea_validate_checksum(const char *sentence)
  * Feld aus einem NMEA-Satz extrahieren.
  * NMEA-Saetze sind komma-separiert: $TYP,f1,f2,f3,...
  *
- * Gibt einen Pointer auf das Feld zurueck (null-terminiert in einem
- * internen Buffer) oder NULL wenn das Feld leer oder nicht vorhanden ist.
- * Achtung: interner statischer Buffer — nicht reentrant!
- * Da der Parser nur im GPS-Task aufgerufen wird, ist das akzeptabel.
- * Der Aufrufer muss das Ergebnis kopieren, bevor er nmea_field erneut ruft.
+ * buf:      Aufrufer-seitiger Buffer (mindestens field_buf_size Bytes).
+ * buf_size: Groesse von buf in Bytes.
+ * Gibt einen Pointer auf buf zurueck (null-terminiert) wenn das Feld
+ * existiert und nicht leer ist, sonst NULL.
+ * Reentrant: der Buffer gehoert dem Aufrufer.
  */
-static char *nmea_field(const char *sentence, int field_index)
+static char *nmea_field(const char *sentence, int field_index,
+                        char *buf, size_t buf_size)
 {
-    static char field_buf[32];
+    if (!sentence || !buf || buf_size == 0) return NULL;
     const char *p = sentence;
     int current = 0;
     int out_idx = 0;
@@ -101,13 +102,13 @@ static char *nmea_field(const char *sentence, int field_index)
     if (current < field_index) return NULL;
 
     /* Feld bis naechstes Komma oder '*' kopieren */
-    while (*p && *p != ',' && *p != '*' && out_idx < (int)sizeof(field_buf) - 1) {
-        field_buf[out_idx++] = *p++;
+    while (*p && *p != ',' && *p != '*' && out_idx < (int)buf_size - 1) {
+        buf[out_idx++] = *p++;
     }
-    field_buf[out_idx] = '\0';
+    buf[out_idx] = '\0';
 
     if (out_idx == 0) return NULL;
-    return field_buf;
+    return buf;
 }
 
 /*
@@ -116,7 +117,8 @@ static char *nmea_field(const char *sentence, int field_index)
  */
 static bool field_to_float(const char *sentence, int idx, float *out)
 {
-    char *f = nmea_field(sentence, idx);
+    char buf[32];
+    char *f = nmea_field(sentence, idx, buf, sizeof(buf));
     if (!f || !*f) return false;
     *out = strtof(f, NULL);
     return true;
@@ -127,7 +129,8 @@ static bool field_to_float(const char *sentence, int idx, float *out)
  */
 static bool field_to_int(const char *sentence, int idx, int *out)
 {
-    char *f = nmea_field(sentence, idx);
+    char buf[32];
+    char *f = nmea_field(sentence, idx, buf, sizeof(buf));
     if (!f || !*f) return false;
     *out = (int)strtol(f, NULL, 10);
     return true;
@@ -260,29 +263,30 @@ static void parse_gga(const char *sentence, gps_data_t *out)
     float fval;
     int ival;
     char coord_raw[32];
+    char field_buf[32];
 
     /* Zeit */
-    f = nmea_field(sentence, 0);
+    f = nmea_field(sentence, 0, field_buf, sizeof(field_buf));
     if (f) parse_time(f, &out->hour, &out->minute, &out->second);
 
     /* Breite */
-    f = nmea_field(sentence, 1);
+    f = nmea_field(sentence, 1, field_buf, sizeof(field_buf));
     if (f) {
         strncpy(coord_raw, f, sizeof(coord_raw) - 1);
         coord_raw[sizeof(coord_raw) - 1] = '\0';
     }
-    char *ns = nmea_field(sentence, 2);
+    char *ns = nmea_field(sentence, 2, field_buf, sizeof(field_buf));
     if (f && ns) {
         parse_coord(coord_raw, ns[0], &out->lat);
     }
 
     /* Laenge */
-    f = nmea_field(sentence, 3);
+    f = nmea_field(sentence, 3, field_buf, sizeof(field_buf));
     if (f) {
         strncpy(coord_raw, f, sizeof(coord_raw) - 1);
         coord_raw[sizeof(coord_raw) - 1] = '\0';
     }
-    char *ew = nmea_field(sentence, 4);
+    char *ew = nmea_field(sentence, 4, field_buf, sizeof(field_buf));
     if (f && ew) {
         parse_coord(coord_raw, ew[0], &out->lon);
     }
@@ -341,33 +345,34 @@ static void parse_rmc(const char *sentence, gps_data_t *out)
     char *f;
     float fval;
     char coord_raw[32];
+    char field_buf[32];
 
     /* Zeit */
-    f = nmea_field(sentence, 0);
+    f = nmea_field(sentence, 0, field_buf, sizeof(field_buf));
     if (f) parse_time(f, &out->hour, &out->minute, &out->second);
 
     /* Status */
-    char *status = nmea_field(sentence, 1);
+    char *status = nmea_field(sentence, 1, field_buf, sizeof(field_buf));
     bool rmc_active = (status && status[0] == 'A');
 
     /* Breite */
-    f = nmea_field(sentence, 2);
+    f = nmea_field(sentence, 2, field_buf, sizeof(field_buf));
     if (f) {
         strncpy(coord_raw, f, sizeof(coord_raw) - 1);
         coord_raw[sizeof(coord_raw) - 1] = '\0';
     }
-    char *ns = nmea_field(sentence, 3);
+    char *ns = nmea_field(sentence, 3, field_buf, sizeof(field_buf));
     if (f && ns) {
         parse_coord(coord_raw, ns[0], &out->lat);
     }
 
     /* Laenge */
-    f = nmea_field(sentence, 4);
+    f = nmea_field(sentence, 4, field_buf, sizeof(field_buf));
     if (f) {
         strncpy(coord_raw, f, sizeof(coord_raw) - 1);
         coord_raw[sizeof(coord_raw) - 1] = '\0';
     }
-    char *ew = nmea_field(sentence, 5);
+    char *ew = nmea_field(sentence, 5, field_buf, sizeof(field_buf));
     if (f && ew) {
         parse_coord(coord_raw, ew[0], &out->lon);
     }
@@ -383,7 +388,7 @@ static void parse_rmc(const char *sentence, gps_data_t *out)
     }
 
     /* Datum */
-    f = nmea_field(sentence, 8);
+    f = nmea_field(sentence, 8, field_buf, sizeof(field_buf));
     if (f) parse_date(f, &out->day, &out->month, &out->year);
 
     /* Fix-Status aus RMC */
