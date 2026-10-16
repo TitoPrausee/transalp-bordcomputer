@@ -182,10 +182,11 @@ jobs:
           sudo apt-get update -qq
           sudo apt-get install -y -qq cppcheck clang-format
 
-      - name: Run cppcheck
+      - name: Run cppcheck (blocking)
         working-directory: firmware
         run: |
           mkdir -p analysis
+          echo "=== cppcheck analysis (blocking with --error-exitcode=1) ==="
           cppcheck \
             --enable=all \
             --suppress=missingIncludeSystem \
@@ -196,9 +197,9 @@ jobs:
             -I components/*/include \
             -I main \
             components/ main/ \
-            2> analysis/cppcheck.xml || true
+            2> analysis/cppcheck.xml
 
-          echo "=== cppcheck summary ==="
+          echo "=== cppcheck text summary ==="
           cppcheck \
             --enable=all \
             --suppress=missingIncludeSystem \
@@ -206,7 +207,7 @@ jobs:
             -I components/*/include \
             -I main \
             components/ main/ \
-            2>&1 || true
+            2>&1
 
       - name: clang-format check
         working-directory: firmware
