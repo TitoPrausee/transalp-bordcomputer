@@ -1,7 +1,7 @@
 # Dokumentations-Index / Projekt-Wiki
 
 > Zentraler Einstiegspunkt fuer die gesamte Dokumentation des Transalp Bordcomputer-Projekts.
-> Stand: Oktober 2026 — Phasen 0-6 abgeschlossen (RELEASE-READY), 49 Dokumente, 261.970 Woerter gesamt.
+> Stand: Oktober 2026 — Phasen 0-6 abgeschlossen (RELEASE-READY), 52 Dokumente, 264.832 Woerter gesamt.
 > Plattform: ESP32-S3-WROOM-1, ESP-IDF v5.4, FreeRTOS SMP
 > Fahrzeug: Honda XL600V Transalp 600 (PD06), Baujahr 1986-1999
 
@@ -79,9 +79,9 @@ Nicht sicher, wo Sie anfangen sollen? Waehlen Sie Ihr Ziel:
 
 ## 2. Vollstaendiger Dokumentations-Baum
 
-Alle 49 Dokumente gruppiert nach Projektphase und Thema. Woerterzahlen aus `wc -w` (Oktober 2026).
+Alle 52 Dokumente gruppiert nach Projektphase und Thema. Woerterzahlen aus `wc -w` (Oktober 2026).
 
-### Phase 0: Recherche (14 Dokumente, ~89.466 Woerter)
+### Phase 0: Recherche (17 Dokumente, ~98.328 Woerter)
 
 Recherche-Phase: Fundament fuer alle Entscheidungen. Fahrzeugdaten, Hardware-Optionen, Software-Stack, Gehaeuse-Design und Feature-Roadmap wurden systematisch recherchiert.
 
@@ -100,7 +100,10 @@ Recherche-Phase: Fundament fuer alle Entscheidungen. Fahrzeugdaten, Hardware-Opt
 | 11 | [11-firmware-architecture.md](research/11-firmware-architecture.md) | Firmware-Architektur: Rendering-Engine, Animations-Framework, BLE-Stack, Diagnose, OTA, Konfiguration, Task-Modell, Daten-Pipeline | 9.411 | Fertig |
 | 12 | [12-diagnose-support.md](research/12-diagnose-support.md) | Diagnose, Support & Wartbarkeit: DTC-System, Self-Test, Remote-Diagnose, Reparaturfreundliche Architektur | 7.593 | Fertig |
 | 13 | [13-connectivity-app.md](research/13-connectivity-app.md) | Connectivity & Companion-App: GATT-Services, App-Architektur, BLE-Protokoll-Design, Datenformate, Communication-Pattern | 7.948 | Fertig |
-| -- | [research/README.md](research/README.md) | Research-Index mit Zusammenfassung der Erkenntnisse aus allen 13 Research-Dokumenten. Schnellreferenz fuer Fahrzeug, Hardware, Software und Smartphone-Integration. | 437 | Fertig |
+| 14 | [14-obd-ii-integration.md](research/14-obd-ii-integration.md) | OBD-II Integration: ELM327-Adapter, PID-Emulation, Diagnose-Support. Emulator (Sensordaten als OBD-PIDs) und Reader (externer Adapter). SAE J1979 PIDs, BLE-GATT-Characteristics, Companion-App OBD-Screen | 3.050 | Fertig |
+| 15 | [15-cloud-sync.md](research/15-cloud-sync.md) | Cloud-Sync: Touren-Backup und Statistiken. Gist API als Free-Tier, Self-hosted Backend (Node.js + SQLite). Offline-First, DSGVO, PolyForm Noncommercial. JSON-Tour-Format, SyncManager | 2.866 | Fertig |
+| 16 | [16-tacho-kalibrierung.md](research/16-tacho-kalibrierung.md) | Tachokalibrierung: VSS-basierte Geschwindigkeitsmessung (Hall-Sensor), GPS-Auto-Kalibrierung, Radumfang/Uebersetzung konfigurierbar, Kalibrierungs-Wizard in Companion-App | 2.946 | Fertig |
+| -- | [research/README.md](research/README.md) | Research-Index mit Zusammenfassung der Erkenntnisse aus allen 16 Research-Dokumenten. Schnellreferenz fuer Fahrzeug, Hardware, Software und Smartphone-Integration. | 437 | Fertig |
 
 ### Phase 1.5: Qualitaetsbereinigung
 
@@ -188,13 +191,13 @@ Polish-Phase: Widget-Katalog, Developer-Quickstart und Begleitdokumente fuer die
 | Phase 5: Polish & Release | 4 | 13.904 | Fertig |
 | Phase 6: Projekt-Wiki | 1 | ~3.200 | Fertig |
 | Root / Begleitend | 2 | 3.679 | Fertig |
-| **Gesamt** | **49** | **~261.970** | **Fertig** |
+| **Gesamt** | **52** | **~264.832** | **Fertig** |
 
 ---
 
 ## 3. Dokument-Kategorien
 
-### 3.1 Research (14 Dokumente, ~89.466 Woerter)
+### 3.1 Research (17 Dokumente, ~98.328 Woerter)
 
 Die Research-Dokumente bilden das Fundament des Projekts. Sie wurden in Phase 0 erstellt und enthalten systematische Recherchen zu Fahrzeug, Hardware, Software und Features.
 
@@ -213,6 +216,9 @@ Die Research-Dokumente bilden das Fundament des Projekts. Sie wurden in Phase 0 
 | [11-firmware-architecture.md](research/11-firmware-architecture.md) | Firmware-Architektur: Rendering-Engine, BLE-Stack, Task-Modell | 9.411 |
 | [12-diagnose-support.md](research/12-diagnose-support.md) | Diagnose & Support: DTC-System, Self-Test, Remote-Diagnose | 7.593 |
 | [13-connectivity-app.md](research/13-connectivity-app.md) | Connectivity & Companion-App: GATT-Services, App-Architektur | 7.948 |
+| [14-obd-ii-integration.md](research/14-obd-ii-integration.md) | OBD-II: ELM327, PID-Emulation, Diagnose-Support | 3.050 |
+| [15-cloud-sync.md](research/15-cloud-sync.md) | Cloud-Sync: Gist API, Self-hosted, DSGVO, Offline-First | 2.866 |
+| [16-tacho-kalibrierung.md](research/16-tacho-kalibrierung.md) | Tachokalibrierung: VSS, GPS-Auto-Kalib, Radumfang konfigurierbar | 2.946 |
 | [research/README.md](research/README.md) | Research-Index mit Erkenntnis-Zusammenfassung | 437 |
 
 **Wichtigste Erkenntnisse aus der Research-Phase:**
@@ -621,17 +627,17 @@ Dann nach Inbetriebnahme:
 
 | Metrik | Wert |
 |---|---|
-| Dokumente gesamt | 49 (14 Research + 27 Design-Docs + 8 Root/Community) |
-| Woerter gesamt | ~261.970 |
-| Research-Dokumente | 14 (inkl. Research-README) |
+| Dokumente gesamt | 52 (17 Research + 27 Design-Docs + 8 Root/Community) |
+| Woerter gesamt | ~264.832 |
+| Research-Dokumente | 17 (inkl. Research-README) |
 | Design-Dokumente | 23 |
 | Root-Dokumente | 2 (README + CONTRIBUTING) |
-| Woerter Research | 89.466 |
+| Woerter Research | 98.328 |
 | Woerter Design-Docs | 146.089 |
 | Woerter Root + Begleitend | 5.984 |
 | Groesstes Dokument | TEST-STRATEGY.md (12.965 Woerter) |
 | Kleinstes Dokument | research/README.md (437 Woerter) |
-| Durchschnitt Woerter/Dokument | ~6.193 |
+| Durchschnitt Woerter/Dokument | ~6.100 |
 
 ### Woerterzahl pro Dokument (absteigend)
 
@@ -695,7 +701,7 @@ Dann nach Inbetriebnahme:
 
 ### Dokument-Status
 
-Alle 49 Dokumente haben den Status **Fertig**. Das Projekt hat die Phasen 0-6 vollstaendig abgeschlossen und ist RELEASE-READY.
+Alle 52 Dokumente haben den Status **Fertig**. Das Projekt hat die Phasen 0-6 vollstaendig abgeschlossen und ist RELEASE-READY.
 
 | Phase | Status | Dokumente |
 |---|---|---|
