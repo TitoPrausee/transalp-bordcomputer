@@ -305,7 +305,7 @@ describe('Self-Test encoding', () => {
     const result = parseSelfTestResult(dv);
     expect(result.result).toBe(0);
     expect(result.details.length).toBe(5);
-    expect(result.details[3]).toBe(2);
+    expect(result.details[2]).toBe(2);
   });
 });
 

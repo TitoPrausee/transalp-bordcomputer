@@ -528,5 +528,6 @@ export class MockBleProvider implements BleProvider {
     this.stopStreams();
     this.clearTimers();
     this.callbacks = [];
+    this.setState(ConnectionState.Disconnected);
   }
 }

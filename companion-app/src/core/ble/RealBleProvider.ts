@@ -185,7 +185,7 @@ export class RealBleProvider implements BleProvider {
           h.onValue(base64ToDataView(characteristic.value));
         }
       );
-      this.subscriptions.push(sub);
+      this.subscriptions.push(() => { try { sub.remove(); } catch { /* ignore */ } });
     }
   }
 
