@@ -160,7 +160,7 @@ Originalschalter durch analogen Öldrucksensor ersetzen:
 
 ### Quellen
 
-- Marktplatz: https://www.ebay.com/itm/375443851545
+- Marktplatz: siehe BOM
 - Motorradteile Hannover: https://motorradteilehannover.de/
 - Service Manual: Seite 9-1 (Electrical System)
 
@@ -453,7 +453,7 @@ Batterie (12V) ────────────┤
 
 ### Öldruckschalter
 
-- Marktplatz: https://www.ebay.com/itm/375443851545
+- Marktplatz: siehe BOM
 - Motorradteile Hannover: https://motorradteilehannover.de/
 
 ### Kühlmitteltemperatur
@@ -495,7 +495,7 @@ sind, werden sie hier verlinkt und nicht im Repo gespeichert.
 | **CDI-Unit Foto** (Originalteil 30410-MS8-610) | KFM-Motorräder | https://kfm-motorraeder.de/en/item/honda-30410MS8610 |
 | **CDI-Unit Foto** (mit Halterung) | KFM-Motorräder | https://kfm-motorraeder.de/en/item/honda-30410MS8610 |
 | **Öldruckschalter** (Originalteil A4795) | Motorradteile Hannover | https://motorradteilehannover.de/Honda-XL-600-V-Transalp-PD06-Bj-1993-oil-pressure-switch-oil-level-sensor-A4795 |
-| **Öldruckschalter** (Marktplatz, mit Foto am Motor) | Marktplatz | https://www.ebay.com/itm/375443851545 |
+| **Öldruckschalter** (Marktplatz, mit Foto am Motor) | Marktplatz | siehe BOM |
 | **Wasserpumpe + Dichtung** (Einbauposition Kühlmittel) | mcjoys.dk | https://mcjoys.dk/index.php/goods/Water-Pump-Gasket-Set-Transalp-600V-XL600V-PD06/1340203 |
 | **Thermostat** (Originalteil 19300-KE8-000) | lavieenfrance.net | https://www.lavieenfrance.net/XL-600V-Transalp-PD06-PD10-1987-2000-Japan-OE-1009355 |
 | **Teilelisten und Schematics** (alle Baugruppen) | CMSNL | https://www.cmsnl.com/honda-xl600v-transalp-1994-r-germany_model6578/partslist |
