@@ -5,13 +5,15 @@
  * Event-Callbacks mit dem Zustand-Store und stellt die Verbindungsfunktionen
  * fuer die UI zur Verfuegung.
  *
- * Im Prototyp wird immer der MockBleProvider verwendet. Bei echtem Geraet
- * wuerde hier der RealBleProvider (react-native-ble-plx) instanziiert.
+ * In Development wird der MockBleProvider verwendet. In Produktion
+ * (auf einem echten Geraet) wird der RealBleProvider (react-native-ble-plx)
+ * instanziiert. Die Auswahl erfolgt ueber __DEV__.
  */
 
 import { useEffect, useRef, useCallback } from 'react';
-import { BleProvider } from '../core/ble/BleProvider';
+import type { BleProvider } from '../core/ble/BleProvider';
 import { MockBleProvider } from '../core/ble/MockBleProvider';
+import { RealBleProvider } from '../core/ble/RealBleProvider';
 import { ConnectionState } from '../core/ble/connection-state';
 import { SelfTestMode } from '../core/ble/gatt-uuids';
 import { useAppStore } from '../core/state/store';
@@ -37,9 +39,9 @@ export function useBleManager() {
   const setTaskInfo = useAppStore((s) => s.setTaskInfo);
   const setOtaStatus = useAppStore((s) => s.setOtaStatus);
 
-  // Provider initialisieren
+  // Provider initialisieren — Mock in Development, Real in Produktion
   useEffect(() => {
-    const provider = new MockBleProvider();
+    const provider = __DEV__ ? new MockBleProvider() : new RealBleProvider();
     providerRef.current = provider;
 
     provider.init().then(() => {

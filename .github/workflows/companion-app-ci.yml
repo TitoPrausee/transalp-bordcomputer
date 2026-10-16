@@ -74,19 +74,9 @@ jobs:
 
       - name: Metro Bundler build
         run: |
-          # The Metro/Expo build may fail due to a react-native-screens codegen
-          # compatibility issue (known with react-native 0.76.x). The TypeScript
-          # type check in the lint job already validates code correctness.
-          # The build step is informational for this prototype-stage app.
-          npx expo export --platform android 2>&1 && \
-            echo "Metro build succeeded" || \
-          npx react-native bundle \
-            --platform android \
-            --dev false \
-            --entry-file App.tsx \
-            --bundle-output /tmp/app-bundle.js \
-            --assets-dest /tmp/assets 2>&1 || \
-            echo "WARNING: Metro build failed (known react-native-screens codegen issue) — non-blocking"
+          # Metro/Expo build must pass — blocking check.
+          npx expo export --platform android 2>&1
+          echo "Metro build succeeded"
 
       - name: APK build (release)
         run: |
