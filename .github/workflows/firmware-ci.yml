@@ -123,41 +123,31 @@ jobs:
           INCLUDES="$INCLUDES -Itest/mocks"
           INCLUDES="$INCLUDES -I$UNITY_DIR"
 
-          echo "=== Building test_nmea_parser ==="
-          gcc $INCLUDES \
-            -DUNITY_INCLUDE_DOUBLE \
-            -DTEST_HOST \
-            test/test_nmea_parser.c \
-            $UNITY_DIR/unity.c \
-            -o test_results/test_nmea_parser \
-            -lm -lpthread 2>&1 || echo "  build warnings/skips noted"
+          # All test files — build each, then run all
+          TESTS="test_nmea_parser test_event_loop test_dtc test_filters test_config test_dtc_extended test_ble_callbacks test_power_manager"
+          FAIL=0
 
-          echo "=== Building test_event_loop ==="
-          gcc $INCLUDES \
-            -DUNITY_INCLUDE_DOUBLE \
-            -DTEST_HOST \
-            test/test_event_loop.c \
-            $UNITY_DIR/unity.c \
-            -o test_results/test_event_loop \
-            -lm -lpthread 2>&1 || echo "  build warnings/skips noted"
-
-          echo "=== Building test_dtc ==="
-          gcc $INCLUDES \
-            -DUNITY_INCLUDE_DOUBLE \
-            -DTEST_HOST \
-            test/test_dtc.c \
-            $UNITY_DIR/unity.c \
-            -o test_results/test_dtc \
-            -lm -lpthread 2>&1 || echo "  test_dtc build skipped"
+          for t in $TESTS; do
+            echo "=== Building $t ==="
+            gcc $INCLUDES \
+              -DUNITY_INCLUDE_DOUBLE \
+              -DTEST_HOST \
+              -std=c11 \
+              -Wall -Wextra \
+              -Wno-unused-parameter \
+              test/${t}.c \
+              $UNITY_DIR/unity.c \
+              -o test_results/${t} \
+              -lm -lpthread 2>&1 || echo "  $t build skipped"
+          done
 
           echo "=== Running tests ==="
-          FAIL=0
-          for t in test_results/test_nmea_parser test_results/test_event_loop test_results/test_dtc; do
-            if [ -x "$t" ]; then
-              echo "--- Running $(basename $t) ---"
-              "$t" || FAIL=1
+          for t in $TESTS; do
+            if [ -x "test_results/$t" ]; then
+              echo "--- Running $t ---"
+              "test_results/$t" || FAIL=1
             else
-              echo "--- Skipping $(basename $t) (not built) ---"
+              echo "--- Skipping $t (not built) ---"
             fi
           done
 

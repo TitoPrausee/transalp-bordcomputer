@@ -112,7 +112,7 @@ jobs:
           retention-days: 30
 
   test:
-    name: Test (Jest)
+    name: Test (Jest + Coverage)
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -130,25 +130,23 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run Jest unit tests
+      - name: Install test dependencies (jest, ts-jest, types)
         run: |
-          if npx jest --version > /dev/null 2>&1; then
-            npx jest --passWithNoTests --ci --reporters=default
-          else
-            echo "Jest not installed — installing jest for test run"
-            npm install --save-dev jest @types/jest ts-jest
-            npx jest --passWithNoTests --ci --reporters=default
-          fi
+          # Ensure jest infrastructure is present even if package-lock
+          # was generated before test deps were added
+          npm install --save-dev jest@^29.7.0 ts-jest@^29.2.0 @types/jest@^29.5.0 || true
 
-      - name: BLE-Mock tests
+      - name: Run Jest unit tests with coverage
         run: |
-          echo "=== BLE-Mock test suite ==="
-          if find src -name '*.test.*' -print -quit | grep -q .; then
-            npx jest --passWithNoTests --ci --testPathPattern='(ble|BLE|mock|Mock)' \
-              --reporters=default 2>/dev/null || echo "BLE-Mock tests: no matching files (ok)"
-          else
-            echo "No test files found — BLE-Mock tests skipped"
-          fi
+          npx jest --ci --coverage --reporters=default 2>&1
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: app-coverage-report
+          path: companion-app/coverage/
+          retention-days: 30
 
       - name: Upload test results
         if: always()
