@@ -69,8 +69,15 @@ jobs:
       - name: Metro Bundler build (blocking)
         run: |
           # Metro 0.87 requires Node 22+.
-          # expo export validates the full Metro bundle pipeline.
-          npx expo export --platform android 2>&1
+          # Use react-native bundle directly — @expo/cli's expo export
+          # imports metro/src/lib/TerminalReporter which isn't exported
+          # by metro 0.87 (Expo SDK 52 / @expo/cli version mismatch).
+          npx react-native bundle \
+            --platform android \
+            --dev false \
+            --entry-file App.tsx \
+            --bundle-output /tmp/app-bundle.js \
+            --assets-dest /tmp/assets 2>&1
           echo "Metro build succeeded"
 
       - name: APK build (release)
