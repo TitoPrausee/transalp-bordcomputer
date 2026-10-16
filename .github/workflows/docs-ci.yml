@@ -20,12 +20,12 @@ permissions:
 
 jobs:
   markdown-lint:
-    name: Markdown Lint
+    name: Markdown Lint (blocking)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
 
-      - name: Run markdownlint
+      - name: Run markdownlint (blocking)
         uses: DavidAnson/markdownlint-cli2-action@v24
         with:
           globs: |

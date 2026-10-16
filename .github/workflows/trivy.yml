@@ -1,0 +1,92 @@
+name: Trivy Security Scan
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    - cron: '0 6 * * 1'
+
+concurrency:
+  group: trivy-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  filesystem-scan:
+    name: Trivy Filesystem Scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Trivy filesystem scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: fs
+          scan-ref: .
+          severity: HIGH,CRITICAL
+          format: sarif
+          output: trivy-fs.sarif
+          ignore-unfixed: true
+          exit-code: '0'
+
+      - name: Upload filesystem SARIF to GitHub Security tab
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: trivy-fs.sarif
+
+      - name: Upload Trivy report artifact
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: trivy-fs-report
+          path: trivy-fs.sarif
+          retention-days: 30
+
+  firmware-binary-scan:
+    name: Trivy Firmware Binary Scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Download firmware binary artifact
+        uses: actions/download-artifact@v7
+        with:
+          name: firmware-binary-v5.4
+          path: firmware-artifacts
+        continue-on-error: true
+
+      - name: Check firmware binary availability
+        id: check_binary
+        run: |
+          if [ -d firmware-artifacts ] && find firmware-artifacts -name '*.bin' | grep -q .; then
+            echo "binary_available=true" >> "$GITHUB_OUTPUT"
+            find firmware-artifacts -name '*.bin' -exec echo "Found: {}" \;
+          else
+            echo "binary_available=false" >> "$GITHUB_OUTPUT"
+            echo "No firmware binary found (firmware-ci may not have run on this commit)"
+          fi
+
+      - name: Trivy binary scan
+        if: steps.check_binary.outputs.binary_available == 'true'
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: fs
+          scan-ref: firmware-artifacts
+          severity: HIGH,CRITICAL
+          format: sarif
+          output: trivy-firmware.sarif
+          ignore-unfixed: true
+          exit-code: '0'
+
+      - name: Upload firmware SARIF to GitHub Security tab
+        if: always() && steps.check_binary.outputs.binary_available == 'true'
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: trivy-firmware.sarif
