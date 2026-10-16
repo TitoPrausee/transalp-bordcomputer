@@ -100,4 +100,51 @@ Diese Analyse deckt folgende Bereiche ab:
 
 ---
 
+## Automatisierte Security-Scans
+
+Die CI/CD-Pipeline enthaelt drei automatisierte Security-Scan-Workflows,
+die bei jedem Push auf `main` und bei jedem Pull Request ausgefuehrt
+werden. Die Ergebnisse werden als SARIF-Report in den GitHub Security
+Tab hochgeladen.
+
+### CodeQL Analysis
+
+Datei: `.github/workflows/codeql.yml`
+
+- Sprachen: C/C++ (Firmware) und JavaScript/TypeScript (Companion-App)
+- Query-Suite: `security-extended` (ueber die Standard-Queries hinaus)
+- Trigger: Push auf main, Pull Requests, woechentlicher Schedule-Scan
+- Ergebnisse: SARIF-Upload zum GitHub Security Tab
+
+### Semgrep CI
+
+Datei: `.github/workflows/semgrep.yml`
+
+- Rulesets: C, TypeScript, OWASP Top 10
+- Trigger: Push auf main, Pull Requests
+- Ergebnisse: SARIF-Upload zum GitHub Security Tab
+
+### Trivy Filesystem Scan
+
+Datei: `.github/workflows/trivy.yml`
+
+- Scan-Ziele: Repository-Filesystem und Firmware-Binary (falls gebaut)
+- Trigger: Push auf main, Pull Requests
+- Ergebnisse: SARIF-Upload zum GitHub Security Tab
+
+### Zusammenfassung der Security-Workflows
+
+| Workflow | Scope | Trigger | Report |
+|---|---|---|---|
+| CodeQL | C/C++ + JS/TS | push, PR, weekly | SARIF -> Security Tab |
+| Semgrep | C + TypeScript + OWASP | push, PR | SARIF -> Security Tab |
+| Trivy | Filesystem + Binary | push, PR | SARIF -> Security Tab |
+
+Zusaetzlich fuehrt die `firmware-ci`-Pipeline `cppcheck` mit
+`--error-exitcode=1` als blockingen Check aus. Die `docs-ci`-Pipeline
+prueft alle Dokumentationsdateien gegen die Brand-Blocklist, um
+Markennamen-Verstoesse fruehzeitig zu erkennen.
+
+---
+
 *Transalp Bordcomputer — Open-Source Bordcomputer fuer die Honda Transalp 600 (PD06)*

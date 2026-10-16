@@ -630,7 +630,9 @@ Beispiel-JSON:
   "coolant_temp_crit": 115,
   "display_brightness": 80,
   "auto_dim": true,
-  "log_level": 2
+  "log_level": 2,
+  "final_drive_ratio": 2.933,
+  "primary_drive_ratio": 2.733
 }
 ```
 
@@ -1022,7 +1024,40 @@ Range-Checks fuer kritische Werte:
 - `coolant_temp_crit`: 100..150
 - `wheel_circumference_mm`: 1000..3000
 
-### 5.2 Diagnose-Befehle
+### 5.2 OBD-II Characteristics (geplant, ab v0.4.0 evaluiert)
+
+Die folgenden Characteristics sind Teil der OBD-II-Integrations-Evaluierung
+(siehe `docs/research/14-obd-ii-integration.md`). Sie erweitern den
+bestehenden Telemetry-Service (0x5000) um OBD-spezifische Datenpunkte.
+
+| Characteristic | UUID (16-bit) | Properties | Beschreibung |
+|---|---|---|---|
+| OBD_LIVE | 0x5005 | notify | 20-byte packed OBD live data (RPM, Speed, Coolant, Oil Temp, MAF) |
+| OBD_PID_REQUEST | 0x5006 | write | PID-Anfrage vom Client (SAE J1979 PID-Code) |
+| OBD_PID_RESPONSE | 0x5007 | read, notify | PID-Antwort mit variablem Payload |
+| OBD_STATUS | 0x5008 | read, notify | Adapter-Status (connected, protocol, voltage) |
+
+Die OBD-Characteristics unterstuetzen zwei Modi:
+- Emulator: Bordcomputer emuliert OBD-PIDs aus eigenen Sensordaten
+  (Mapping: RPM=0x0C, Speed=0x0D, Coolant=0x05, Oil Temp=0x5C, MAF=0x10)
+- Reader: Bordcomputer verbindet sich per BLE-Central zu einem
+  ELM327-kompatiblen OBD-Adapter und leitet die Daten weiter
+
+### 5.3 Tachokalibrierung Config-Felder (geplant, ab v0.4.0 evaluiert)
+
+Die Tachokalibrierung fuegt drei neue Config-Felder hinzu
+(siehe `docs/research/16-tacho-kalibrierung.md`):
+
+| Feld | Typ | Default | Bereich | Beschreibung |
+|---|---|---|---|---|
+| `wheel_circumference_mm` | uint16 | 2009 | 1000..3000 | Radumfang (130/80-17 Reifen) |
+| `final_drive_ratio` | float | 2.933 | 1.0..10.0 | Uebersetzungsverhaeltnis Sekundaer (15/44 Zaehne) |
+| `primary_drive_ratio` | float | 2.733 | 1.0..10.0 | Uebersetzungsverhaeltnis Primaer |
+
+CONFIG_VERSION wird von 3 auf 4 erhoeht. Die Migration erfolgt automatisch
+beim ersten Lesen mit Default-Werten fuer die neuen Felder.
+
+### 5.4 Diagnose-Befehle
 
 #### DTC loeschen
 
@@ -1047,6 +1082,8 @@ Sensor-Kalibrierung erfolgt ueber den Config-Service:
 - `temp_offset_c`: Temperatur-Offset
 - `fuel_cal`: Kraftstoffsensor-Kalibrierungsfaktor
 - `gyro_offset`: Gyroskop-Offset (IMU)
+- `final_drive_ratio`: Sekundaer-Uebersetzung (ab v0.4.0, Default 2.933)
+- `primary_drive_ratio`: Primaer-Uebersetzung (ab v0.4.0, Default 2.733)
 
 Diese Werte werden als Teil der JSON-Konfiguration geschrieben und
 erfordern Admin-PIN-Authentifizierung.

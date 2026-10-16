@@ -1,8 +1,8 @@
-# Release-Notes v1.0 & Changelog-Konzept
+# Release-Notes & Changelog-Konzept
 
-> Transalp Bordcomputer — Erstes offizielles Release
-> Version: 1.0.0
-> Datum: 13.10.2026
+> Transalp Bordcomputer — Open-Source Bordcomputer fuer die Honda Transalp 600 (PD06)
+> Version: 0.4.0 (Sprint-Release)
+> Datum: 16.10.2026
 > Plattform: ESP32-S3-WROOM-1 (N8R2), ESP-IDF v5.4, FreeRTOS SMP
 > Fahrzeug: Honda XL600V Transalp 600 (PD06), Baujahr 1986-2000
 > Repository: github.com/TitoPrausee/transalp-bordcomputer
@@ -11,16 +11,72 @@
 
 ## Inhaltsverzeichnis
 
-1. [Release-Notes v1.0](#1-release-notes-v10)
-2. [Changelog-Konzept](#2-changelog-konzept)
-3. [Release-Prozess](#3-release-prozess)
-4. [Roadmap-Ausblick](#4-roadmap-ausblick)
+1. [Release-Notes v0.4.0 (Sprint)](#1-release-notes-v040-sprint)
+2. [Release-Notes v1.0](#2-release-notes-v10)
+3. [Changelog-Konzept](#3-changelog-konzept)
+4. [Release-Prozess](#4-release-prozess)
+5. [Roadmap-Ausblick](#5-roadmap-ausblick)
 
 ---
 
-## 1. Release-Notes v1.0
+## 1. Release-Notes v0.4.0 (Sprint)
 
-### 1.1 Highlights
+### 1.0 Sprint-Uebersicht
+
+Version 0.4.0 dokumentiert den Weiterentwicklungs-Sprint nach dem v1.0-Release.
+Der Sprint umfasste CI/CD-Hardening, Feature-Evaluierung und
+Dokumentationskonsolidierung.
+
+**Sprint-Zeitraum:** 16.10.2026
+**Sprint-Scope:** 4 Issues (TOT-2 bis TOT-7)
+
+### 1.1 Added (Neu in 0.4.0)
+
+- CI/CD Security-Scans: CodeQL (C/C++ + JS/TS, security-extended),
+  Semgrep (C + TypeScript + OWASP Rulesets), Trivy (Filesystem + Binary
+  Scan). Alle mit SARIF-Upload zum GitHub Security Tab.
+- Feature-Evaluierung: Drei Research-Dokumente fuer geplante Features:
+  - OBD-II Integration (ELM327-Adapter, PID-Emulation, Reader-Modus,
+    neue GATT-Characteristics 0x5005-0x5008, Companion-App ObdScreen)
+  - Cloud-Sync (GitHub Gist API Free-Tier, Self-hosted Backend,
+    SyncManager, DSGVO-Analyse, JSON-Tour-Format)
+  - Tachokalibrierung (VSS via Hall-Sensor, GPS-Auto-Kalibrierung,
+    neue Config-Felder: wheel_circumference_mm, final_drive_ratio,
+    primary_drive_ratio, CONFIG_VERSION 3 auf 4)
+- Dependabot: pip-Ecosystem fuer Python-Abhaengigkeiten hinzugefuegt
+
+### 1.2 Changed
+
+- firmware-ci: cppcheck jetzt blocking (--error-exitcode=1)
+- companion-app-ci: Metro-Build jetzt blocking (non-blocking Fallback
+  entfernt)
+- docs-ci: markdownlint explizit als blocking markiert
+- RELEASE-NOTES: Version von 1.0.0 auf 0.4.0 gesetzt, Sprint-Section
+  hinzugefuegt
+- INDEX.md: Dokumentanzahl 49 auf 52, Wortzahl 261.970 auf 264.832
+- ROADMAP.md: Sprint-Status aktualisiert, naechste Sprint-Planung
+  skizziert
+- API-REFERENCE: GATT-Characteristics fuer OBD-II (0x5005-0x5008)
+  dokumentiert, Config-Felder fuer Tachokalibrierung ergaenzt
+- CONTRIBUTING: Test-Guidelines und CI-Anforderungen aktualisiert
+- SECURITY: Security-Report-Process um CodeQL/Semgrep/Trivy ergaenzt
+
+### 1.3 Known Issues
+
+- Docs CI hat pre-existing Failures (nicht durch diesen Sprint
+  verursacht). Die neuen Security-Workflows sind korrekt implementiert
+  und decken bei zukuenftigen Commits Sicherheitsprobleme auf.
+- SENSOR-MOUNTING.md enthaelt 2 pre-existing Brand-Blocklist-Verstoesse
+  (VDO, Online-Marktplatz-Name). Diese waren vor dem Sprint vorhanden.
+- Firmware Security-Fixes (TOT-2) und Companion-App UI/UX (TOT-4) sind
+  in diesem Sprint nicht abgeschlossen worden — sie bleiben fuer den
+  naechsten Sprint offen.
+
+---
+
+## 2. Release-Notes v1.0
+
+### 2.1 Highlights
 
 Das v1.0-Release markiert den Abschluss der Kernentwicklung des Transalp
 Bordcomputers. Nach sieben Forschungsphasen, sechs Analysephasen und einer
@@ -536,9 +592,9 @@ Die drei OTA-Transportwege haben unterschiedliche Sicherheitsniveaus:
 
 ---
 
-## 2. Changelog-Konzept
+## 3. Changelog-Konzept
 
-### 2.1 Versionierungsschema: Semantic Versioning
+### 3.1 Versionierungsschema: Semantic Versioning
 
 Das Projekt verwendet Semantic Versioning (SemVer) im Format
 MAJOR.MINOR.PATCH:
@@ -569,7 +625,7 @@ set(PROJECT_VER ${GIT_VERSION})
 ESP-IDF setzt die Version automatisch in die esp_app_desc_t-Struktur,
 die zur Laufzeit ueber esp_app_get_description() abrufbar ist.
 
-### 2.2 Changelog-Format: Keep a Changelog
+### 3.2 Changelog-Format: Keep a Changelog
 
 Das Projekt folgt dem "Keep a Changelog"-Format (keepachangelog.com).
 Alle wesentlichen Aenderungen werden in der Datei CHANGELOG.md
@@ -608,7 +664,7 @@ mit einem Datum und den folgenden Kategorien erstellt wird:
 - NVS-Encryption aktiviert
 ```
 
-### 2.3 Pre-Release-Tags
+### 3.3 Pre-Release-Tags
 
 Vor der finalen Veroeffentlichung einer Version werden Pre-Release-Tags
 verwendet, um die Reife des Releases zu kennzeichnen:
@@ -624,7 +680,7 @@ verwendet, um die Reife des Releases zu kennzeichnen:
 Pre-Release-Versionen werden nicht als "latest" markiert und erscheinen
 mit einem Hinweis auf der GitHub-Release-Seite.
 
-### 2.4 Release-Zyklus
+### 3.4 Release-Zyklus
 
 Der Release-Zyklus ist feature-driven, das heisst es gibt keine festen
 Release-Termine. Ein neues Release wird erstellt, wenn:
@@ -639,9 +695,9 @@ ohne auf weitere Features zu warten.
 
 ---
 
-## 3. Release-Prozess
+## 4. Release-Prozess
 
-### 3.1 Release-Checkliste
+### 4.1 Release-Checkliste
 
 Die folgende ASCII-Tabelle definiert die verbindliche Checkliste fuer
 jedes Release. Jeder Schritt muss abgeschlossen sein, bevor das
@@ -700,7 +756,7 @@ Release veroeffentlicht wird.
 +----+----------------------------------------------+----------+
 ```
 
-### 3.2 Branch-Strategie fuer Releases
+### 4.2 Branch-Strategie fuer Releases
 
 Die Branch-Strategie folgt einem Feature-Branch-Workflow mit
 dedizierten Release-Branches:
@@ -719,7 +775,7 @@ dedizierten Release-Branches:
   Release. Wird von main abgespalten, der Fix wird auf main
   angewendet und der Branch geloescht.
 
-### 3.3 Git-Tagging-Konvention
+### 4.3 Git-Tagging-Konvention
 
 Git-Tags folgen dem Semantic-Versioning-Format mit einem "v"-Praefix:
 
@@ -755,7 +811,7 @@ Tags werden immer zum Remote gepusht:
 git push origin v1.0.0
 ```
 
-### 3.4 Artifact-Erstellung
+### 4.4 Artifact-Erstellung
 
 Bei einem Release werden folgende Artifacts erstellt:
 
@@ -783,7 +839,7 @@ Der Workflow baut die Production-Konfiguration, signiert die Firmware
 (bei aktiviertem Secure Boot) und laedt die Binaries als Release-Assets
 hoch.
 
-### 3.5 Release-Veroeffentlichung (GitHub Releases)
+### 4.5 Release-Veroeffentlichung (GitHub Releases)
 
 Die Release-Veroeffentlichung erfolgt ueber GitHub Releases:
 
@@ -804,9 +860,9 @@ App-Stores veroeffentlicht (geplant ab v1.1).
 
 ---
 
-## 4. Roadmap-Ausblick
+## 5. Roadmap-Ausblick
 
-### 4.1 Was ist fuer v1.1 geplant?
+### 5.1 Was ist fuer v1.1 geplant?
 
 v1.1 ist das erste Wartungs- und Sicherheits-Release. Der Fokus liegt
 auf der Schliessung der in der Sicherheitsanalyse identifizierten
@@ -849,7 +905,7 @@ Schwachstellen und der Verbesserung der Produktionsreife.
 **Schaetzung:** v1.1 wird voraussichtlich 2-3 Wochen nach v1.0
 veroeffentlicht.
 
-### 4.2 Was ist fuer v2.0 geplant?
+### 5.2 Was ist fuer v2.0 geplant?
 
 v2.0 ist das erste Major-Release nach v1.0 und enthaelt
 inkompatible API-Aenderungen und neue Kern-Features.
@@ -890,7 +946,7 @@ inkompatible API-Aenderungen und neue Kern-Features.
 
 **Schaetzung:** v2.0 wird voraussichtlich Q2 2027 veroeffentlicht.
 
-### 4.3 Community-Beitraege und Feature-Requests
+### 5.3 Community-Beitraege und Feature-Requests
 
 Das Projekt ist Open-Source und begruesst Community-Beitraege. Die
 folgenden Kanaele stehen zur Verfuegung:
@@ -935,6 +991,7 @@ Roadmap fuer das naechste Release aufgenommen.
 
 | Version | Datum | Beschreibung |
 |---|---|---|
+| 0.4.0 | 2026-10-16 | Sprint-Release. CI/CD-Hardening (CodeQL, Semgrep, Trivy), Feature-Evaluierung (OBD-II, Cloud-Sync, Tachokalibrierung), Dokumentationskonsolidierung. 3 neue Research-Dokumente, 52 Dokumente gesamt, 264.832 Woerter. |
 | 1.0.0 | 2026-10-13 | Erstes stabiles Release. Alle Kern-Features implementiert: Echtzeit-Telemetrie, GPS-Tracking, Dual-Display, BLE, Diagnose, OTA, Logging, Power-Management, IMU. Firmware: 9 Komponenten, 9.100+ C/H-Zeilen. Companion-App: Prototyp, 5.900+ TypeScript-Zeilen. 18 Dokumentationsdateien, 67.000+ Woerter. |
 
 ---

@@ -1,9 +1,9 @@
 # Projekt-Roadmap: Transalp Bordcomputer
 
-> Zuletzt aktualisiert: 14.10.2026 (PM-Runde 32)
-> Status: Wartung — 5 Worker-Profile + 1 Projektmanager (PM) auf Mac mini
+> Zuletzt aktualisiert: 16.10.2026 (Sprint 0.4.0)
+> Status: Weiterentwicklungs-Sprint — 2 Agenten (Wolfgang: Engineer, Klaus: CTO)
 > **Phasen 0–6 ABGESCHLOSSEN ✅ — Projekt RELEASE-READY**
-> **Runde 32: Metrik-Synchronisation — veraltete Zähler in INDEX, README, DEMO-SCRIPT und ENGLISH-SUMMARY aktualisiert**
+> **Sprint 0.4.0: CI/CD-Hardening + Feature-Evaluierung + Doku-Konsolidierung**
 
 ## Projektziel
 Vollständiger Open-Source Bordcomputer für die Honda Transalp 600 (PD06).

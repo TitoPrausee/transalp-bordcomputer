@@ -348,8 +348,10 @@ sicherstellt, dass jede `.h`-Datei einen Include-Guard enthaelt.
 #### Test-Abdeckung
 
 Neue Komponenten oder signifikante Aenderungen an bestehenden
-Komponenten muessen mit Unit-Tests abgedeckt sein. Die
-Coverage-Ziele (aus [`docs/CI-CD-PIPELINE.md`](docs/CI-CD-PIPELINE.md)
+Komponenten muessen mit Unit-Tests abgedeckt sein. Mindestens
+1 Test pro neuem Component ist Pflicht.
+
+Die Coverage-Ziele (aus [`docs/CI-CD-PIPELINE.md`](docs/CI-CD-PIPELINE.md)
 Abschnitt 6.4):
 
 | Bereich | Coverage-Ziel |
@@ -358,6 +360,12 @@ Abschnitt 6.4):
 | Filter-Algorithmen (Kalman, Complementary, Moving-Avg) | > 90% |
 | DTC-System (Set/Clear/Persistenz) | > 85% |
 | Konfigurations-Parser (JSON) | > 80% |
+| Neue Komponenten (ab Sprint 0.4.0) | Mindestens 1 Test |
+
+Neue Tests werden im Verzeichnis `firmware/test/` abgelegt und folgen
+dem Namensschema `test_<modul>.c`. Sie muessen mit GCC auf dem Host-PC
+kompilierbar sein und die ESP-IDF-Mock-Schicht aus `firmware/test/mocks/`
+verwenden.
 
 Die Tests werden mit GCC auf dem Host-PC kompiliert. Eine
 Mock-Schicht (`firmware/test/mocks/`) bildet FreeRTOS-Primitives
@@ -465,8 +473,8 @@ Die wichtigsten Referenzdokumente:
 ## 5. CI/CD Pipeline
 
 Alle Pull Requests muessen die CI-Tests bestehen, bevor sie gemerged
-werden koennen. Die Pipeline besteht aus drei unabhaengigen
-Workflows, die durch Dateipfad-Filter getriggert werden.
+werden koennen. Die Pipeline besteht aus unabhaengigen Workflows, die
+durch Dateipfad-Filter getriggert werden.
 
 ### 5.1 firmware-ci
 
@@ -478,13 +486,13 @@ Trigger: Push/PR auf `firmware/**` oder die Workflow-Datei selbst.
 |---|---|
 | `esp-idf-build` | Kompiliert alle Komponenten mit ESP-IDF v5.2, v5.3, v5.4 (Matrix) |
 | `unit-tests` | Kompiliert und fuehrt Unit-Tests auf Host-PC mit GCC + Unity aus |
-| `static-analysis` | cppcheck, clang-format Dry-Run, Header-Include-Guard-Check |
+| `static-analysis` | cppcheck (blocking: `--error-exitcode=1`), clang-format Dry-Run, Header-Include-Guard-Check |
 
 Quality-Gates:
 - Flash-Verbrauch muss unter 4 MB liegen (16 MB Flash / 4 Partitionen)
 - RAM-Verbrauch muss unter 320 KB liegen
 - Alle Unit-Tests muessen bestehen (100% Pass-Rate)
-- cppcheck darf keine Errors melden
+- cppcheck darf keine Errors melden (blocking seit Sprint 0.4.0)
 
 ### 5.2 companion-app-ci
 
@@ -495,7 +503,7 @@ Trigger: Push/PR auf `companion-app/**`.
 | Job | Beschreibung |
 |---|---|
 | `lint` | `tsc --noEmit` (TypeScript strict mode Type-Check) |
-| `build` | Metro Bundler Build, APK-Build (falls Android SDK verfuegbar) |
+| `build` | Metro Bundler Build (blocking seit Sprint 0.4.0), APK-Build (falls Android SDK verfuegbar) |
 | `test` | Jest-Unit-Tests (falls konfiguriert) |
 
 ### 5.3 docs-ci
@@ -506,10 +514,10 @@ Trigger: Push/PR auf `docs/**`.
 
 | Job | Beschreibung |
 |---|---|
-| `markdown-lint` | Prueft Markdown-Formatierung (Tabs, Leerzeilen, Ueberschriften) |
+| `markdown-lint` | Prueft Markdown-Formatierung (blocking seit Sprint 0.4.0) |
 | `brand-check` | Durchsucht alle `.md`/`.yml`-Dateien nach Markennamen (Blocklist) |
 | `link-check` | Validiert interne und externe Links mit `lychee` |
-| `word-count` | Prueft Mindestwoerterzahl fuer Konzept- und Research-Dokumente |
+| `word-count` | Prueft Mindestwoerterzahl fuer Konzept- (500) und Research-Dokumente (1000) |
 
 Die Brand-Blocklist wird bei jedem PR automatisch geprueft. Der
 `brand-check`-Job liest die Patterns aus
@@ -517,7 +525,37 @@ Die Brand-Blocklist wird bei jedem PR automatisch geprueft. Der
 durchsucht das gesamte Repository. Ein einziger Treffer blockiert den
 Merge.
 
-### 5.4 Release-Pipeline
+### 5.4 Security-Scans (seit Sprint 0.4.0)
+
+Zusaetzlich zu den Build- und Docs-Pipelines enthaelt die CI drei
+Security-Scan-Workflows:
+
+| Workflow | Datei | Scope |
+|---|---|---|
+| CodeQL | `.github/workflows/codeql.yml` | C/C++ + JS/TS, security-extended |
+| Semgrep | `.github/workflows/semgrep.yml` | C + TypeScript + OWASP |
+| Trivy | `.github/workflows/trivy.yml` | Filesystem + Firmware-Binary |
+
+Alle Security-Workflows laden SARIF-Reports in den GitHub Security Tab
+hoch. Sie laufen bei jedem Push auf `main` und bei jedem Pull Request.
+CodeQL wird zusaetzlich woechentlich ausgefuehrt.
+
+Siehe auch [SECURITY.md](SECURITY.md) fuer Details zum Security-Report-Process.
+
+### 5.5 Dependabot
+
+Datei: [`.github/dependabot.yml`](.github/dependabot.yml)
+
+Dependabot prueft woechentlich auf veraltete Abhaengigkeiten in drei
+Ecosystems:
+
+| Ecosystem | Verzeichnis | Schedule |
+|---|---|---|
+| npm | `/companion-app` | woechentlich (Montag) |
+| github-actions | `/` | woechentlich (Montag) |
+| pip | `/` (seit Sprint 0.4.0) | woechentlich (Montag) |
+
+### 5.6 Release-Pipeline
 
 Releases werden durch Git-Tags im Format `vMAJOR.MINOR.PATCH`
 ausgeloest (Semantic Versioning). Der Release-Workflow baut Firmware
