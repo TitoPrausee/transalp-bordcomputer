@@ -119,12 +119,16 @@ jobs:
           INCLUDES="$INCLUDES -Icomponents/ble/include"
           INCLUDES="$INCLUDES -Icomponents/display/include"
           INCLUDES="$INCLUDES -Icomponents/ota/include"
+          INCLUDES="$INCLUDES -Icomponents/hid_controller/include"
           INCLUDES="$INCLUDES -Itest"
           INCLUDES="$INCLUDES -Itest/mocks"
           INCLUDES="$INCLUDES -I$UNITY_DIR"
 
-          # All test files — build each, then run all
-          TESTS="test_nmea_parser test_event_loop test_dtc test_filters test_config test_dtc_extended test_ble_callbacks test_power_manager"
+          # All test files — build each, then run all.
+          # test_controller is excluded from the generic loop because it
+          # links component source files (controller_input.c,
+          # controller_mapping.c) and needs the -include mock header flag.
+          TESTS="test_nmea_parser test_event_loop test_dtc test_filters test_config test_dtc_extended test_ble_callbacks test_power_manager test_controller"
           FAIL=0
 
           for t in $TESTS; do
@@ -140,6 +144,21 @@ jobs:
               -o test_results/${t} \
               -lm -lpthread 2>&1 || echo "  $t build skipped"
           done
+
+          echo "=== Building test_controller (with component sources) ==="
+          gcc $INCLUDES \
+            -DUNITY_INCLUDE_DOUBLE \
+            -DTEST_HOST \
+            -std=c11 \
+            -Wall -Wextra \
+            -Wno-unused-parameter \
+            -include test/mocks/esp_idf_mock.h \
+            test/test_controller.c \
+            components/hid_controller/controller_input.c \
+            components/hid_controller/controller_mapping.c \
+            $UNITY_DIR/unity.c \
+            -o test_results/test_controller \
+            -lm -lpthread 2>&1 || echo "  test_controller build skipped"
 
           echo "=== Building test_config ==="
           gcc $INCLUDES \

@@ -28,6 +28,7 @@ export const SERVICE = {
   config: uuid(0x6000),
   diagnose: uuid(0x7000),
   ota: uuid(0x8000),
+  carplay: uuid(0x9000),
 } as const;
 
 // --- Characteristic-IDs ---
@@ -83,6 +84,10 @@ export const CHAR = {
   otaData: uuid(0x8002),
   otaVerify: uuid(0x8003),
   otaStatus: uuid(0x8004),
+
+  // CarPlay Service (0x9000)
+  carplayStatus: uuid(0x9001),
+  carplayControl: uuid(0x9002),
 } as const;
 
 // --- Standard-Services (Bluetooth SIG) ---
@@ -249,3 +254,100 @@ export enum OtaCommand {
   Cancel = 1,
   Verify = 2,
 }
+
+// ============================================================
+// CarPlay-Status (0x9001)
+// ============================================================
+// Byte  Offset  Field
+// 0    0       connected (uint8: 0=disconnected, 1=connected)
+// 1    1       activeApp (uint8: 0=none, 1=navigation, 2=music, 3=phone, 4=podcasts)
+// 2    3       artistLen (uint8) -> artist (UTF-8, max 64 Bytes)
+// 3+64  3       artist (64 Bytes, null-terminiert)
+// 67+64 67      title (64 Bytes, null-terminiert)
+// 131+64 131    album (64 Bytes, null-terminiert)
+// ============================================================
+
+/** Aktive CarPlay-App-Kategorie. */
+export enum CarPlayApp {
+  None = 0,
+  Navigation = 1,
+  Music = 2,
+  Phone = 3,
+  Podcasts = 4,
+}
+
+export interface CarPlayStatus {
+  connected: boolean;
+  activeApp: CarPlayApp;
+  artist: string;
+  title: string;
+  album: string;
+}
+
+// ============================================================
+// CarPlay-Control (0x9002, Write 1 Byte)
+// ============================================================
+// 0=pair, 1=unpair, 2=next_track, 3=prev_track, 4=play_pause
+// ============================================================
+
+export enum CarPlayControl {
+  Pair = 0,
+  Unpair = 1,
+  NextTrack = 2,
+  PrevTrack = 3,
+  PlayPause = 4,
+}
+
+// ============================================================
+// Controller-Support
+// ============================================================
+
+/** Verfuegbare Controller-Typen fuer die Lenker-Fernbedienung. */
+export enum ControllerType {
+  None = 0,
+  HondaOem = 1,
+  GenericBle = 2,
+  Keyboard = 3,
+}
+
+/** Mapping einer Controller-Taste zu einer App-Aktion. */
+export enum ControllerAction {
+  None = 0,
+  NextTrack = 1,
+  PrevTrack = 2,
+  VolumeUp = 3,
+  VolumeDown = 4,
+  PlayPause = 5,
+  Navigate = 6,
+  AnswerCall = 7,
+  EndCall = 8,
+  VoiceControl = 9,
+  Dashboard = 10,
+  CarPlay = 11,
+}
+
+/** Eine Taste am Lenker-Controller. */
+export enum ControllerButton {
+  Up = 0,
+  Down = 1,
+  Left = 2,
+  Right = 3,
+  Select = 4,
+  Back = 5,
+  Mode = 6,
+  VolumeUp = 7,
+  VolumeDown = 8,
+}
+
+/** Tastatur-Keys, die im Mock-Modus auf Controller-Buttons gemappt werden. */
+export const CONTROLLER_KEY_MAP: Record<string, ControllerButton> = {
+  ArrowUp: ControllerButton.Up,
+  ArrowDown: ControllerButton.Down,
+  ArrowLeft: ControllerButton.Left,
+  ArrowRight: ControllerButton.Right,
+  Enter: ControllerButton.Select,
+  Escape: ControllerButton.Back,
+  'm': ControllerButton.Mode,
+  '+': ControllerButton.VolumeUp,
+  '-': ControllerButton.VolumeDown,
+};

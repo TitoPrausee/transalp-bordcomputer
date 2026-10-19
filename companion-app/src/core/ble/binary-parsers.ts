@@ -20,8 +20,9 @@ import type {
   NavManeuver,
   NavRoute,
   NavRoad,
+  CarPlayStatus,
 } from './gatt-uuids';
-import { ManeuverType, SelfTestMode, OtaCommand } from './gatt-uuids';
+import { ManeuverType, SelfTestMode, OtaCommand, CarPlayApp } from './gatt-uuids';
 
 // ============================================================
 // Hilfsfunktionen: DataView Little-Endian Reader
@@ -521,4 +522,65 @@ export function encodeConfigJson(json: string): Uint8Array {
 
 export function decodeConfigJson(data: Uint8Array): string {
   return new TextDecoder().decode(data);
+}
+
+// ============================================================
+// CarPlay-Status (0x9001, variabel, min 2 + 3x64 = 194 Bytes)
+// ============================================================
+// 0:     connected (uint8: 0=disconnected, 1=connected)
+// 1:     activeApp (uint8: 0=none, 1=navigation, 2=music, 3=phone, 4=podcasts)
+// 2-65:  artist (64 Bytes UTF-8, null-terminiert)
+// 66-129: title (64 Bytes UTF-8, null-terminiert)
+// 130-193: album (64 Bytes UTF-8, null-terminiert)
+// ============================================================
+
+const CARPLAY_FIELD_SIZE = 64;
+const CARPLAY_MIN_SIZE = 2 + CARPLAY_FIELD_SIZE * 3;
+
+export function parseCarPlayStatus(dv: DataView): CarPlayStatus {
+  const connected = readUint8(dv, 0) === 1;
+  const activeApp = readUint8(dv, 1) as CarPlayApp;
+
+  // Wenn nicht genug Bytes, leere Strings zurueckgeben
+  if (dv.byteLength < CARPLAY_MIN_SIZE) {
+    return { connected, activeApp, artist: '', title: '', album: '' };
+  }
+
+  const artist = readUtf8(dv, 2, CARPLAY_FIELD_SIZE);
+  const title = readUtf8(dv, 2 + CARPLAY_FIELD_SIZE, CARPLAY_FIELD_SIZE);
+  const album = readUtf8(dv, 2 + CARPLAY_FIELD_SIZE * 2, CARPLAY_FIELD_SIZE);
+
+  return { connected, activeApp, artist, title, album };
+}
+
+export function encodeCarPlayStatus(data: CarPlayStatus): Uint8Array {
+  const buf = new ArrayBuffer(CARPLAY_MIN_SIZE);
+  const dv = new DataView(buf);
+
+  writeUint8(dv, 0, data.connected ? 1 : 0);
+  writeUint8(dv, 1, data.activeApp);
+
+  const writeField = (offset: number, text: string) => {
+    const nameBytes = new TextEncoder().encode(text);
+    for (let i = 0; i < CARPLAY_FIELD_SIZE; i++) {
+      writeUint8(dv, offset + i, i < nameBytes.length ? nameBytes[i] : 0);
+    }
+  };
+
+  writeField(2, data.artist);
+  writeField(2 + CARPLAY_FIELD_SIZE, data.title);
+  writeField(2 + CARPLAY_FIELD_SIZE * 2, data.album);
+
+  return new Uint8Array(buf);
+}
+
+// ============================================================
+// CarPlay-Control Command (0x9002, Write 1 Byte)
+// ============================================================
+
+export function encodeCarPlayControlCommand(cmd: number): Uint8Array {
+  const buf = new ArrayBuffer(1);
+  const dv = new DataView(buf);
+  writeUint8(dv, 0, cmd);
+  return new Uint8Array(buf);
 }

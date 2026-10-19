@@ -45,6 +45,20 @@ typedef enum {
     APP_EVENT_OTA_START,            /* OTA update initiated            */
     APP_EVENT_OTA_DONE,             /* OTA update completed            */
     APP_EVENT_SHUTDOWN,             /* System shutdown requested       */
+
+    /* ---- Lenker-Controller events ---- */
+    APP_EVENT_CONTROLLER_BASE,       /* Base offset for controller events */
+    APP_EVENT_CTRL_NAV_UP      = APP_EVENT_CONTROLLER_BASE + 0,
+    APP_EVENT_CTRL_NAV_DOWN    = APP_EVENT_CONTROLLER_BASE + 1,
+    APP_EVENT_CTRL_NAV_LEFT    = APP_EVENT_CONTROLLER_BASE + 2,
+    APP_EVENT_CTRL_NAV_RIGHT   = APP_EVENT_CONTROLLER_BASE + 3,
+    APP_EVENT_CTRL_SELECT      = APP_EVENT_CONTROLLER_BASE + 4,
+    APP_EVENT_CTRL_BACK        = APP_EVENT_CONTROLLER_BASE + 5,
+    APP_EVENT_CTRL_HOME        = APP_EVENT_CONTROLLER_BASE + 6,
+    APP_EVENT_CTRL_VOL_UP      = APP_EVENT_CONTROLLER_BASE + 7,
+    APP_EVENT_CTRL_VOL_DOWN   = APP_EVENT_CONTROLLER_BASE + 8,
+    APP_EVENT_CTRL_MEDIA_NEXT = APP_EVENT_CONTROLLER_BASE + 9,
+    APP_EVENT_CTRL_MEDIA_PREV = APP_EVENT_CONTROLLER_BASE + 10,
     APP_EVENT_MAX,
 } app_event_type_t;
 

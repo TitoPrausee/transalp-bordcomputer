@@ -33,6 +33,8 @@ if(NOT IDF_PATH)
         ${CMAKE_CURRENT_SOURCE_DIR}/../components/ble/include
         ${CMAKE_CURRENT_SOURCE_DIR}/../components/display/include
         ${CMAKE_CURRENT_SOURCE_DIR}/../components/ota/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/../components/hid_controller/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/../main
         ${CMAKE_CURRENT_SOURCE_DIR}/mocks
         ${UNITY_DIR}/src
     )
@@ -47,6 +49,7 @@ if(NOT IDF_PATH)
         test_dtc_extended.c
         test_ble_callbacks.c
         test_power_manager.c
+        test_controller.c
     )
 
     # Compiler flags
@@ -92,6 +95,7 @@ idf_component_register(
         "test_dtc_extended.c"
         "test_ble_callbacks.c"
         "test_power_manager.c"
+        "test_controller.c"
     INCLUDE_DIRS
         "."
         "mocks"

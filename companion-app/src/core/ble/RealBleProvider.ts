@@ -30,8 +30,9 @@ import type {
   SystemStatus,
   TaskInfo,
   OtaStatus,
+  CarPlayStatus,
 } from './gatt-uuids';
-import { SelfTestMode, OtaCommand } from './gatt-uuids';
+import { SelfTestMode, OtaCommand, CarPlayControl } from './gatt-uuids';
 import {
   base64ToDataView,
   dataViewToBase64,
@@ -46,10 +47,12 @@ import {
   parseTaskInfo,
   parseOtaStatus,
   parseSelfTestResult,
+  parseCarPlayStatus,
   encodeSelfTestCommand,
   encodeDtcClearCommand,
   encodeOtaCommand,
   encodeOtaDataChunk,
+  encodeCarPlayControlCommand,
 } from './binary-parsers';
 
 /** Map von Characteristic-UUIDs auf Handler-Funktionen. */
@@ -331,6 +334,30 @@ export class RealBleProvider implements BleProvider {
 
   async importConfig(configJson: string): Promise<void> {
     return this.writeConfig(configJson);
+  }
+
+  // --- CarPlay ---
+
+  async readCarPlayStatus(): Promise<CarPlayStatus | null> {
+    if (!this.connectedDevice) return null;
+    try {
+      const char = await this.plx.readCharacteristicForDevice(
+        this.connectedDevice.id, SERVICE.carplay, CHAR.carplayStatus
+      );
+      if (!char?.value) return null;
+      return parseCarPlayStatus(base64ToDataView(char.value));
+    } catch {
+      return null;
+    }
+  }
+
+  async sendCarPlayControl(cmd: CarPlayControl): Promise<void> {
+    if (!this.connectedDevice) return;
+    const data = encodeCarPlayControlCommand(cmd);
+    await this.plx.writeCharacteristicWithResponseForDevice(
+      this.connectedDevice.id, SERVICE.carplay, CHAR.carplayControl,
+      dataViewToBase64(new DataView(data.buffer))
+    );
   }
 
   subscribe(callbacks: BleEventCallbacks): Subscription {

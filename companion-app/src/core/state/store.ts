@@ -24,7 +24,9 @@ import type {
   SystemStatus,
   TaskInfo,
   OtaStatus,
+  CarPlayStatus,
 } from '../ble/gatt-uuids';
+import { ControllerType, ControllerButton, ControllerAction } from '../ble/gatt-uuids';
 import type { BordcomputerConfig } from './config';
 import { DEFAULT_CONFIG } from './config';
 
@@ -129,6 +131,30 @@ export const MOCK_WEATHER: WeatherCurrent = {
   rainProbability: 20,
 };
 
+// --- Mock-CarPlay-Status ---
+
+export const MOCK_CARPLAY: CarPlayStatus = {
+  connected: false,
+  activeApp: 0, // CarPlayApp.None
+  artist: '',
+  title: '',
+  album: '',
+};
+
+// --- Default Controller-Button-Mapping ---
+
+export const DEFAULT_CONTROLLER_MAP: Record<ControllerButton, ControllerAction> = {
+  [ControllerButton.Up]: ControllerAction.VolumeUp,
+  [ControllerButton.Down]: ControllerAction.VolumeDown,
+  [ControllerButton.Left]: ControllerAction.PrevTrack,
+  [ControllerButton.Right]: ControllerAction.NextTrack,
+  [ControllerButton.Select]: ControllerAction.PlayPause,
+  [ControllerButton.Back]: ControllerAction.Dashboard,
+  [ControllerButton.Mode]: ControllerAction.CarPlay,
+  [ControllerButton.VolumeUp]: ControllerAction.VolumeUp,
+  [ControllerButton.VolumeDown]: ControllerAction.VolumeDown,
+};
+
 // --- Store ---
 
 interface AppState {
@@ -181,6 +207,14 @@ interface AppState {
   // OTA-Status
   otaStatus: OtaStatus | null;
   setOtaStatus: (status: OtaStatus) => void;
+
+  // CarPlay-Status
+  carplay: CarPlayStatus;
+  setCarPlayStatus: (status: CarPlayStatus) => void;
+
+  // Controller-Mapping
+  controllerMap: Record<ControllerButton, ControllerAction>;
+  setControllerButton: (button: ControllerButton, action: ControllerAction) => void;
 
   // Tours (Mock)
   tours: TourSummary[];
@@ -256,6 +290,17 @@ export const useAppStore = create<AppState>((set) => ({
   // OTA-Status
   otaStatus: null,
   setOtaStatus: (status) => set({ otaStatus: status }),
+
+  // CarPlay
+  carplay: { ...MOCK_CARPLAY },
+  setCarPlayStatus: (status) => set({ carplay: status }),
+
+  // Controller-Mapping
+  controllerMap: { ...DEFAULT_CONTROLLER_MAP },
+  setControllerButton: (button, action) =>
+    set((s) => ({
+      controllerMap: { ...s.controllerMap, [button]: action },
+    })),
 
   // Tours
   tours: MOCK_TOURS,

@@ -3,6 +3,8 @@
  * Wird via Config-Read (0x6001) gelesen und Config-Write (0x6002) geschrieben.
  */
 
+import { ControllerType } from '../ble/gatt-uuids';
+
 export interface BordcomputerConfig {
   // Display
   brightness: number; // 0-100 %
@@ -22,6 +24,14 @@ export interface BordcomputerConfig {
   // Logging
   logFormat: 'csv' | 'binary' | 'csv_binary';
   logInterval: number; // Sekunden
+
+  // CarPlay
+  carplayEnabled: boolean;
+  carplayDisplayName: string;
+  carplayPaired: boolean;
+
+  // Controller
+  controllerType: ControllerType;
 }
 
 export const DEFAULT_CONFIG: BordcomputerConfig = {
@@ -36,6 +46,10 @@ export const DEFAULT_CONFIG: BordcomputerConfig = {
   pairedDevices: 2,
   logFormat: 'csv_binary',
   logInterval: 5,
+  carplayEnabled: true,
+  carplayDisplayName: 'Transalp-BC',
+  carplayPaired: false,
+  controllerType: ControllerType.None,
 };
 
 export function parseConfig(json: string): BordcomputerConfig {

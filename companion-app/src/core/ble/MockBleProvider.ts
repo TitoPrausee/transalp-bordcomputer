@@ -23,8 +23,9 @@ import type {
   SystemStatus,
   TaskInfo,
   OtaStatus,
+  CarPlayStatus,
 } from './gatt-uuids';
-import { ManeuverType, NavStatus, SelfTestMode } from './gatt-uuids';
+import { ManeuverType, NavStatus, SelfTestMode, CarPlayApp, CarPlayControl } from './gatt-uuids';
 import {
   ConnectionState,
   canTransition,
@@ -112,6 +113,23 @@ export class MockBleProvider implements BleProvider {
     rainProbability: 20,
   };
 
+  private carplay: CarPlayStatus = {
+    connected: true,
+    activeApp: CarPlayApp.Music,
+    artist: 'Iron Maiden',
+    title: 'The Trooper',
+    album: 'Piece of Mind',
+  };
+
+  private carplayTrackIndex = 0;
+  private readonly carplayPlaylist: Array<{ artist: string; title: string; album: string }> = [
+    { artist: 'Iron Maiden', title: 'The Trooper', album: 'Piece of Mind' },
+    { artist: 'Motley Crue', title: 'Kickstart My Heart', album: 'Dr. Feelgood' },
+    { artist: 'Metallica', title: 'For Whom the Bell Tolls', album: 'Ride the Lightning' },
+    { artist: 'Black Sabbath', title: 'Paranoid', album: 'Paranoid' },
+    { artist: 'Judas Priest', title: 'Breaking the Law', album: 'British Steel' },
+  ];
+
   // --- Lifecycle ---
 
   async init(): Promise<void> {
@@ -168,6 +186,7 @@ export class MockBleProvider implements BleProvider {
                 this.startRssiMonitoring();
                 this.startHeartbeat();
                 this.startNavUpdates();
+                this.startCarPlayStream();
 
                 // Initial snapshot senden
                 this.emitTelemetry();
@@ -325,6 +344,53 @@ export class MockBleProvider implements BleProvider {
     await this.delay(50);
   }
 
+  // --- CarPlay ---
+
+  async readCarPlayStatus(): Promise<CarPlayStatus | null> {
+    return { ...this.carplay };
+  }
+
+  async sendCarPlayControl(cmd: CarPlayControl): Promise<void> {
+    switch (cmd) {
+      case CarPlayControl.NextTrack:
+        this.carplayTrackIndex = (this.carplayTrackIndex + 1) % this.carplayPlaylist.length;
+        break;
+      case CarPlayControl.PrevTrack:
+        this.carplayTrackIndex =
+          (this.carplayTrackIndex - 1 + this.carplayPlaylist.length) % this.carplayPlaylist.length;
+        break;
+      case CarPlayControl.Pair:
+        this.carplay = { ...this.carplay, connected: true };
+        break;
+      case CarPlayControl.Unpair:
+        this.carplay = {
+          connected: false,
+          activeApp: CarPlayApp.None,
+          artist: '',
+          title: '',
+          album: '',
+        };
+        break;
+      case CarPlayControl.PlayPause:
+        // Im Mock keine Aenderung der Metadaten
+        break;
+    }
+
+    if (this.carplay.connected) {
+      const track = this.carplayPlaylist[this.carplayTrackIndex];
+      this.carplay = {
+        ...this.carplay,
+        artist: track.artist,
+        title: track.title,
+        album: track.album,
+        activeApp: CarPlayApp.Music,
+      };
+    }
+
+    this.emit('onCarPlayStatus', { ...this.carplay });
+    await this.delay(50);
+  }
+
   // --- Event-Subscription ---
 
   subscribe(callbacks: BleEventCallbacks): Subscription {
@@ -343,6 +409,34 @@ export class MockBleProvider implements BleProvider {
   }
 
   // --- Simulierte Datenstroeme ---
+
+  private startCarPlayStream(): void {
+    // Sofort initialen Status senden
+    this.emit('onCarPlayStatus', { ...this.carplay });
+
+    // Simuliert Musik-Metadaten-Updates alle 8 Sekunden (naechster Track)
+    this.intervals.push(
+      setInterval(() => {
+        if (this.state !== ConnectionState.Connected && this.state !== ConnectionState.Degrading) {
+          return;
+        }
+        if (!this.carplay.connected) return;
+
+        // 20% Chance fuer naechsten Track
+        if (Math.random() < 0.2) {
+          this.carplayTrackIndex = (this.carplayTrackIndex + 1) % this.carplayPlaylist.length;
+          const track = this.carplayPlaylist[this.carplayTrackIndex];
+          this.carplay = {
+            ...this.carplay,
+            artist: track.artist,
+            title: track.title,
+            album: track.album,
+          };
+          this.emit('onCarPlayStatus', { ...this.carplay });
+        }
+      }, 8000),
+    );
+  }
 
   private startTelemetryStream(): void {
     this.intervals.push(

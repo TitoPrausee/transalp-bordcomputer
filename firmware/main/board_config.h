@@ -262,4 +262,57 @@
 #define TASK_STACK_DIAG      4096
 #define TASK_PRIO_DIAG       2
 
+/* ============================================================
+ * Lenker-Controller (HID Controller)
+ * ============================================================
+ *
+ * The ESP32-S3 has no free GPIOs left (see PINMAP.md). Three options:
+ *
+ * Option A — PCF8574 I2C Port Expander (recommended for GPIO mode):
+ *   Uses the existing I2C bus (SDA=8, SCL=9). Adds 8 additional
+ *   digital inputs without occupying new GPIO pins.
+ *
+ * Option B — Repurpose existing button pins (DevKit/prototype):
+ *   BTN_MENU(6), BTN_SELECT(7), BTN_BACK(3), BOOT_BTN(0) are
+ *   re-used for NAV_UP, SELECT, BACK, HOME. Remaining buttons
+ *   (NAV_DOWN/LEFT/RIGHT, VOL, MEDIA) go through the I2C expander.
+ *
+ * Option C — I2C Custom PCB (ATmega328P/RP2040 as slave):
+ *   All 11 buttons handled by the external MCU. ESP32-S3 polls
+ *   via I2C at 100ms. No additional GPIO pins needed.
+ */
+
+/* I2C address for the custom PCB controller (ATmega328P/RP2040) */
+#define CTRL_I2C_ADDR            0x42
+
+/* PCF8574 I2C address for the port-expander option */
+#define CTRL_PCF8574_ADDR        0x20
+
+/* I2C poll interval for custom PCB controller (milliseconds) */
+#define CTRL_I2C_POLL_MS         100
+
+/* GPIO pins for direct-wired controller buttons (prototype mode).
+ * These reuse existing button pins — see PINMAP.md. */
+#define CTRL_BTN_NAV_UP_PIN      0    /* GPIO0  (BOOT_BTN, strapping) */
+#define CTRL_BTN_SELECT_PIN      7    /* GPIO7  (BTN_SELECT) */
+#define CTRL_BTN_BACK_PIN        3    /* GPIO3  (BTN_BACK, strapping) */
+#define CTRL_BTN_HOME_PIN        6    /* GPIO6  (BTN_MENU) */
+
+/* Buttons via I2C port expander (PCF8574 bit positions) */
+#define CTRL_PCF_NAV_DOWN        (1 << 0)
+#define CTRL_PCF_NAV_LEFT        (1 << 1)
+#define CTRL_PCF_NAV_RIGHT       (1 << 2)
+#define CTRL_PCF_VOL_UP          (1 << 3)
+#define CTRL_PCF_VOL_DOWN        (1 << 4)
+#define CTRL_PCF_MEDIA_NEXT      (1 << 5)
+#define CTRL_PCF_MEDIA_PREV      (1 << 6)
+
+/* BLE controller service/characteristic UUIDs (Chigee CGRC Multi) */
+#define CTRL_BLE_SVC_UUID        0xFFE0
+#define CTRL_BLE_CHAR_UUID       0xFFE1
+
+/* Controller task configuration */
+#define TASK_STACK_CONTROLLER    4096
+#define TASK_PRIO_CONTROLLER     3
+
 #endif /* _BOARD_CONFIG_H_ */

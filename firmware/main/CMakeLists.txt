@@ -11,4 +11,5 @@ idf_component_register(
         diagnostics
         ota
         utils
+        hid_controller
 )

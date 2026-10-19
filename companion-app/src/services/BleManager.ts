@@ -31,8 +31,9 @@ import type {
   SystemStatus,
   TaskInfo,
   OtaStatus,
+  CarPlayStatus,
 } from '../core/ble/gatt-uuids';
-import { SelfTestMode, OtaCommand } from '../core/ble/gatt-uuids';
+import { SelfTestMode, OtaCommand, CarPlayControl } from '../core/ble/gatt-uuids';
 import { ConnectionState, isConnected } from '../core/ble/connection-state';
 import {
   parseTelemetryLive,
@@ -46,11 +47,13 @@ import {
   parseNavManeuver,
   parseNavRoute,
   parseNavRoad,
+  parseCarPlayStatus,
   base64ToDataView,
   encodeSelfTestCommand,
   encodeDtcClearCommand,
   encodeOtaCommand,
   encodeOtaDataChunk,
+  encodeCarPlayControlCommand,
   uint8ArrayToBase64,
 } from '../core/ble/binary-parsers';
 import { SERVICE, CHAR, DEVICE_NAME } from '../core/ble/gatt-uuids';
@@ -108,6 +111,7 @@ export class BleManager {
       onSystemStatus: (data) => this.dispatch('onSystemStatus', data),
       onTaskInfo: (tasks) => this.dispatch('onTaskInfo', tasks),
       onOtaStatus: (status) => this.dispatch('onOtaStatus', status),
+      onCarPlayStatus: (status) => this.dispatch('onCarPlayStatus', status),
       onRssi: (rssi) => this.dispatch('onRssi', rssi),
       onMtu: (mtu) => this.dispatch('onMtu', mtu),
       onError: (error) => this.dispatch('onError', error),
@@ -303,6 +307,29 @@ export class BleManager {
     }
   }
 
+  // --- CarPlay ---
+
+  async readCarPlayStatus(): Promise<CarPlayStatus | null> {
+    try {
+      return await this.provider.readCarPlayStatus();
+    } catch (e) {
+      this.emitError(BleErrorCode.ReadFailed, `CarPlay-Status-Lesen fehlgeschlagen: ${this.errMsg(e)}`, true);
+      return null;
+    }
+  }
+
+  async sendCarPlayControl(cmd: CarPlayControl): Promise<void> {
+    try {
+      await this.provider.sendCarPlayControl(cmd);
+    } catch (e) {
+      this.emitError(BleErrorCode.WriteFailed, `CarPlay-Control fehlgeschlagen: ${this.errMsg(e)}`, true);
+    }
+  }
+
+  encodeCarPlayCmd(cmd: CarPlayControl): string {
+    return uint8ArrayToBase64(encodeCarPlayControlCommand(cmd));
+  }
+
   // --- Status ---
 
   getConnectionState(): ConnectionState {
@@ -369,6 +396,9 @@ export class BleManager {
           break;
         case CHAR.navRoad:
           this.dispatch('onNavRoad', parseNavRoad(data));
+          break;
+        case CHAR.carplayStatus:
+          this.dispatch('onCarPlayStatus', parseCarPlayStatus(data));
           break;
         default:
           // Unbekannte Characteristic ignorieren

@@ -15,7 +15,7 @@ import type { BleProvider } from '../core/ble/BleProvider';
 import { MockBleProvider } from '../core/ble/MockBleProvider';
 import { RealBleProvider } from '../core/ble/RealBleProvider';
 import { ConnectionState } from '../core/ble/connection-state';
-import { SelfTestMode } from '../core/ble/gatt-uuids';
+import { SelfTestMode, CarPlayControl } from '../core/ble/gatt-uuids';
 import { useAppStore } from '../core/state/store';
 
 export function useBleManager() {

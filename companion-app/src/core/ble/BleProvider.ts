@@ -17,9 +17,10 @@ import type {
   SystemStatus,
   TaskInfo,
   OtaStatus,
+  CarPlayStatus,
 } from './gatt-uuids';
 import { ConnectionState } from './connection-state';
-import { SelfTestMode } from './gatt-uuids';
+import { SelfTestMode, CarPlayControl } from './gatt-uuids';
 
 export type Subscription = () => void;
 
@@ -59,6 +60,7 @@ export interface BleEventCallbacks {
   onSystemStatus?: (data: SystemStatus) => void;
   onTaskInfo?: (tasks: TaskInfo[]) => void;
   onOtaStatus?: (status: OtaStatus) => void;
+  onCarPlayStatus?: (status: CarPlayStatus) => void;
   onRssi?: (rssi: number) => void;
   onMtu?: (mtu: number) => void;
   onError?: (error: BleError) => void;
@@ -110,6 +112,12 @@ export interface BleProvider {
   verifyOta(): Promise<void>;
   exportConfig(): Promise<string>;
   importConfig(configJson: string): Promise<void>;
+
+  /** Liest die CarPlay-Status-Characteristic (0x9001). */
+  readCarPlayStatus(): Promise<CarPlayStatus | null>;
+
+  /** Sendet ein CarPlay-Control-Kommando (0x9002). */
+  sendCarPlayControl(cmd: CarPlayControl): Promise<void>;
 
   /** Registriert Event-Callbacks. Gibt eine unsubscribe-Funktion zurueck. */
   subscribe(callbacks: BleEventCallbacks): Subscription;
