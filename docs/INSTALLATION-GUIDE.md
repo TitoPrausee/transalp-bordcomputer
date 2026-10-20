@@ -1349,8 +1349,8 @@ Stecker und BLE. Fuer die kabelgebundene Variante:
 3. M12-Pin-Belegung:
    - Pin 1: +5V (vom Buck-Converter)
    - Pin 2: GND
-   -  Pin 3: GPIO (Controller-Data, mit Pull-Up 10k)
-   -  Pin 4: GPIO (Controller-Clock, mit Pull-Up 10k)
+    - Pin 3: GPIO (Controller-Data, mit Pull-Up 10k)
+    - Pin 4: GPIO (Controller-Clock, mit Pull-Up 10k)
 4. Pin 1 und 2 an die 5V-Schiene bzw. GND anschliessen.
 5. Pin 3 und 4 an die Controller-GPIO-Pins des ESP32-S3 anschliessen
    (GPIO17 DATA, GPIO18 CLOCK -- siehe Pinmap).
