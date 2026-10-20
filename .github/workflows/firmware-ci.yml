@@ -40,11 +40,13 @@ jobs:
       - name: Configure project
         working-directory: firmware
         run: |
+          . $IDF_PATH/export.sh
           idf.py set-target esp32s3
 
       - name: Build firmware
         working-directory: firmware
         run: |
+          . $IDF_PATH/export.sh
           idf.py build
 
       - name: Syntax check (gcc -fsyntax-only)
