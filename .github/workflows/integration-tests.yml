@@ -60,7 +60,7 @@ jobs:
           INCLUDES="$INCLUDES -I../mocks"
           INCLUDES="$INCLUDES -I$UNITY_DIR"
 
-          CFLAGS="-DUNITY_INCLUDE_DOUBLE -DTEST_HOST -std=c11 -Wall -Wextra -Wno-unused-parameter"
+          CFLAGS="-DUNITY_INCLUDE_DOUBLE -DTEST_HOST -D_POSIX_C_SOURCE=199309L -std=c11 -Wall -Wextra -Wno-unused-parameter"
           UNITY_SRC="$UNITY_DIR/unity.c"
 
           FAIL=0
