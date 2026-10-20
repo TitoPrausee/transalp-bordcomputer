@@ -155,7 +155,7 @@ int logger_write_csv_row(FILE *f, const log_entry_t *entry)
         (unsigned long)entry->timestamp_ms,
         entry->lat, entry->lon,
         entry->speed_kmh, entry->course_deg, entry->altitude_m,
-        entry->rpm, entry->temp_c,
+        (unsigned)entry->rpm, entry->temp_c,
         entry->roll_deg, entry->pitch_deg, entry->fuel_l);
 
     if (len <= 0 || len >= (int)sizeof(line)) return -1;
@@ -218,7 +218,7 @@ static int flush_batch_to_csv(log_entry_t *batch, uint16_t count)
     s_stats.flush_count++;
     xSemaphoreGive(s_tour_mutex);
 
-    ESP_LOGD(TAG, "Flushed %u entries to %s", count, path);
+    ESP_LOGD(TAG, "Flushed %u entries to %s", (unsigned)count, path);
     return count;
 }
 
@@ -378,7 +378,7 @@ int logger_stop_tour(void)
     s_stats.tours_stopped++;
 
     ESP_LOGI(TAG, "Tour stopped: %u points, %u segments",
-             s_tour.point_count, s_tour.segment_count);
+             (unsigned)s_tour.point_count, (unsigned)s_tour.segment_count);
     return 0;
 }
 
@@ -407,7 +407,7 @@ int logger_resume_tour(void)
         s_tour.state = TOUR_ACTIVE;
         s_tour.segment_count++;
         s_tour.has_last_point = false;
-        ESP_LOGI(TAG, "Tour resumed (segment %u)", s_tour.segment_count);
+        ESP_LOGI(TAG, "Tour resumed (segment %u)", (unsigned)s_tour.segment_count);
     }
 
     xSemaphoreGive(s_tour_mutex);
@@ -462,7 +462,7 @@ void logger_set_rate(uint8_t rate_hz)
     s_log_interval_ms = 1000 / rate_hz;
 
     ESP_LOGI(TAG, "Log rate set to %u Hz (interval=%lums)",
-             rate_hz, (unsigned long)s_log_interval_ms);
+             (unsigned)rate_hz, (unsigned long)s_log_interval_ms);
 }
 
 int logger_flush(void)
@@ -496,7 +496,7 @@ void logger_init(void)
     s_tour.state = TOUR_IDLE;
 
     ESP_LOGI(TAG, "Logger initialized (ringbuf=%d, batch=%d, rate=%uHz)",
-             LOGGER_RINGBUF_SIZE, LOG_BATCH_SIZE, s_log_rate_hz);
+             LOGGER_RINGBUF_SIZE, LOG_BATCH_SIZE, (unsigned)s_log_rate_hz);
 }
 
 /* ---- Logger-Task ---- */

@@ -162,11 +162,11 @@ static void update_cycle_count(float voltage)
     if (is_charging && !s_was_charging) {
         /* Uebergang: Entladen -> Laden */
         s_charge_cycles++;
-        ESP_LOGI(TAG, "Charge cycle detected (total: %u)", s_charge_cycles);
+        ESP_LOGI(TAG, "Charge cycle detected (total: %u)", (unsigned)s_charge_cycles);
     } else if (!is_charging && s_was_charging) {
         /* Uebergang: Laden -> Entladen */
         s_discharge_cycles++;
-        ESP_LOGI(TAG, "Discharge cycle detected (total: %u)", s_discharge_cycles);
+        ESP_LOGI(TAG, "Discharge cycle detected (total: %u)", (unsigned)s_discharge_cycles);
     }
     s_was_charging = is_charging;
     s_last_voltage_for_cycle = voltage;
@@ -389,7 +389,7 @@ battery_status_t power_measure_and_update(float vwarn_low, float vwarn_crit,
         };
         ESP_LOGI(TAG, "Battery status: %s -> %s (%.2fV, %u%%)",
                  status_str[old_status], status_str[new_status],
-                 voltage, s_battery_pct);
+                 voltage, (unsigned)s_battery_pct);
     }
 
     if (gen_running != s_generator_running) {

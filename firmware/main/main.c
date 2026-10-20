@@ -108,11 +108,11 @@ static void ota_progress_cb(uint8_t percent,
     }
 
     if (state == OTA_STATE_REBOOTING) {
-        ESP_LOGI(TAG, "OTA complete, rebooting (%u%%)", percent);
+        ESP_LOGI(TAG, "OTA complete, rebooting (%u%%)", (unsigned)percent);
         app_event_dispatch_simple(APP_EVENT_OTA_DONE);
     } else if (percent % 10 == 0) {
         ESP_LOGI(TAG, "OTA progress: %u%% (state=%d)",
-                 percent, (int)state);
+                 (unsigned)percent, (int)state);
     }
 }
 
@@ -131,7 +131,7 @@ static bool init_step_power(void)
         ESP_LOGW(TAG, "  Power not in ACTIVE state after init");
     }
     ESP_LOGI(TAG, "  Battery: %.2f V (%u%%)",
-             power_get_voltage(), power_get_battery_pct());
+             power_get_voltage(), (unsigned)power_get_battery_pct());
     return true;
 }
 

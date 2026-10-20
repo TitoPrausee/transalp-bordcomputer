@@ -61,7 +61,7 @@ bool carplay_pairing_store(const uint8_t *addr, uint8_t addr_type)
         return false;
     }
 
-    ESP_LOGI(TAG, "CarPlay display paired (type=%u)", addr_type);
+    ESP_LOGI(TAG, "CarPlay display paired (type=%u)", (unsigned)addr_type);
     return true;
 }
 

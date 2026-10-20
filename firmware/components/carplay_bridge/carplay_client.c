@@ -107,7 +107,7 @@ static void cp_subscribe(uint16_t conn, uint16_t chr_val_handle)
                                   cccd_notify_le, sizeof(cccd_notify_le),
                                   NULL, NULL);
     if (rc != 0) {
-        ESP_LOGW(TAG, "CCCD write (handle=%u) rc=%d", cccd_handle, rc);
+        ESP_LOGW(TAG, "CCCD write (handle=%u) rc=%d", (unsigned)cccd_handle, (unsigned)rc);
     }
 }
 
@@ -148,7 +148,7 @@ static int cp_chr_disc_cb(uint16_t conn_handle,
         cp_set_state(CP_CLIENT_CONNECTED);
         carplay_client_on_connected();
         ESP_LOGI(TAG, "Discovery done (nav=%u media=%u ctrl=%u)",
-                 s_h_nav_status, s_h_media_now, s_h_media_ctrl);
+                 (unsigned)s_h_nav_status, (unsigned)s_h_media_now, (unsigned)s_h_media_ctrl);
         return 0;
     }
 
@@ -397,7 +397,7 @@ void carplay_client_media_ctrl(uint8_t cmd)
                                   &cmd, sizeof(cmd), NULL, NULL);
     if (rc != 0 && rc != BLE_HS_ENOTCONN) {
         ESP_LOGW(TAG, "media_ctrl write (handle=%u cmd=0x%02X) rc=%d",
-                 s_h_media_ctrl, cmd, rc);
+                 (unsigned)s_h_media_ctrl, cmd, rc);
     } else {
         ESP_LOGI(TAG, "media_ctrl -> display (cmd=0x%02X)", cmd);
     }

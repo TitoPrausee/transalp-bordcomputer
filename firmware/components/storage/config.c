@@ -188,7 +188,7 @@ int config_save(const void *cfg, uint16_t len)
         return -1;
     }
 
-    ESP_LOGD(TAG, "Config saved (%u bytes)", len);
+    ESP_LOGD(TAG, "Config saved (%u bytes)", (unsigned)len);
     return 0;
 }
 
@@ -466,17 +466,17 @@ int config_export_json(char *buf, size_t max_len)
         "  }\n"
         "}\n",
         s_config.version,
-        s_config.display_mode,
-        s_config.display_theme,
-        s_config.display_brightness,
-        s_config.anim_enabled,
-        s_config.rpm_needle_spring,
-        s_config.log_interval_s,
-        s_config.log_format,
-        s_config.log_autostart,
-        s_config.gps_rate_hz,
-        s_config.rpm_redline,
-        s_config.rpm_shift_light,
+        (unsigned)s_config.display_mode,
+        (unsigned)s_config.display_theme,
+        (unsigned)s_config.display_brightness,
+        (unsigned)s_config.anim_enabled,
+        (unsigned)s_config.rpm_needle_spring,
+        (unsigned)s_config.log_interval_s,
+        (unsigned)s_config.log_format,
+        (unsigned)s_config.log_autostart,
+        (unsigned)s_config.gps_rate_hz,
+        (unsigned)s_config.rpm_redline,
+        (unsigned)s_config.rpm_shift_light,
         s_config.battery_low_v,
         s_config.battery_shutdown_v,
         s_config.coolant_temp_warn,
@@ -487,7 +487,7 @@ int config_export_json(char *buf, size_t max_len)
         s_config.gyro_offset[0], s_config.gyro_offset[1], s_config.gyro_offset[2],
         s_config.accel_offset[0], s_config.accel_offset[1], s_config.accel_offset[2],
         (unsigned long)s_config.bmp_sea_level_pa,
-        s_config.adc_vref_mv,
+        (unsigned)s_config.adc_vref_mv,
         s_config.device_name,
         (unsigned long)s_config.pairing_code
     );

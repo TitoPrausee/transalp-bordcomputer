@@ -128,7 +128,7 @@ static void gps_process_line(const char *line, gps_data_t *data)
             s_had_fix = true;
             event_bus_set(EVT_GPS_FIX);
             ESP_LOGI(TAG, "GPS fix acquired: lat=%.6f lon=%.6f sats=%u hdop=%.1f",
-                     data->lat, data->lon, data->satellites, data->hdop);
+                     data->lat, data->lon, (unsigned)data->satellites, data->hdop);
         }
 
         /* Daten thread-safe aktualisieren */

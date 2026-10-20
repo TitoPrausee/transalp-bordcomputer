@@ -739,7 +739,7 @@ static void process_ota_control(const uint8_t *data, uint16_t len)
     switch (cmd) {
     case 0x00: {  /* Start */
         if (len < 1 + sizeof(uint32_t)) {
-            ESP_LOGE(TAG, "OTA Start: missing total_size (len=%u)", len);
+            ESP_LOGE(TAG, "OTA Start: missing total_size (len=%u)", (unsigned)len);
             notify_ota_status();
             return;
         }
@@ -790,12 +790,12 @@ static void process_ota_control(const uint8_t *data, uint16_t len)
 
 static void process_ota_data(const uint8_t *data, uint16_t len)
 {
-    ESP_LOGD(TAG, "OTA data: %u bytes", len);
+    ESP_LOGD(TAG, "OTA data: %u bytes", (unsigned)len);
 
     /* Wire payload is a packed ota_chunk_t: offset(4) + length(2) + crc16(2) + data[length].
      * Only 8 + length bytes are valid; ota_ble_write_chunk reads length bytes of data. */
     if (len < 8) {
-        ESP_LOGE(TAG, "OTA chunk too short: %u bytes", len);
+        ESP_LOGE(TAG, "OTA chunk too short: %u bytes", (unsigned)len);
         notify_ota_status();
         return;
     }
@@ -805,7 +805,7 @@ static void process_ota_data(const uint8_t *data, uint16_t len)
     if (chunk->length > (OTA_BLE_MTU_PAYLOAD - 8) ||
         (uint16_t)(chunk->length + 8) != len) {
         ESP_LOGE(TAG, "OTA chunk length mismatch: length=%u, len=%u",
-                 chunk->length, len);
+                 (unsigned)chunk->length, (unsigned)len);
         notify_ota_status();
         return;
     }

@@ -241,7 +241,7 @@ static void dtc_load_from_nvs(void)
 
     uint16_t entries = hdr->entry_count;
     if (entries > DTC_MAX_ENTRIES) {
-        ESP_LOGW(TAG, "DTC blob has %u entries, clamping to %d", entries, DTC_MAX_ENTRIES);
+        ESP_LOGW(TAG, "DTC blob has %u entries, clamping to %d", (unsigned)entries, DTC_MAX_ENTRIES);
         entries = DTC_MAX_ENTRIES;
     }
 
@@ -256,7 +256,7 @@ static void dtc_load_from_nvs(void)
     s_dtc_count = (uint8_t)entries;
 
     free(blob);
-    ESP_LOGI(TAG, "Loaded %u DTCs from NVS", s_dtc_count);
+    ESP_LOGI(TAG, "Loaded %u DTCs from NVS", (unsigned)s_dtc_count);
 }
 
 void dtc_init(void)
@@ -274,7 +274,7 @@ void dtc_init(void)
         dtc_load_from_nvs();
     }
 
-    ESP_LOGI(TAG, "DTC system initialized (%u persisted entries)", s_dtc_count);
+    ESP_LOGI(TAG, "DTC system initialized (%u persisted entries)", (unsigned)s_dtc_count);
 }
 
 void dtc_register(dtc_code_t code, dtc_severity_t sev)

@@ -152,11 +152,11 @@ static selftest_status_t test_gps(dtc_code_t *out_code)
     if (xQueuePeek(gps_data_queue, &gd, pdMS_TO_TICKS(500)) == pdTRUE) {
         if (gd.fix_quality != GPS_FIX_NONE) {
             ESP_LOGI(TAG, "GPS: OK (sats=%u, fix=%d)",
-                     gd.satellites, gd.fix_quality);
+                     (unsigned)gd.satellites, gd.fix_quality);
             *out_code = DTC_NONE;
             return ST_PASS;
         }
-        ESP_LOGW(TAG, "GPS: data received but no fix (sats=%u)", gd.satellites);
+        ESP_LOGW(TAG, "GPS: data received but no fix (sats=%u)", (unsigned)gd.satellites);
         dtc_register(DTC_S0502, DTC_SEV_WARN);
         *out_code = DTC_S0502;
         return ST_FAIL;
@@ -235,7 +235,7 @@ static selftest_status_t test_sensors(dtc_code_t *out_code)
     sensor_data_t sd;
     if (xQueuePeek(sensor_data_queue, &sd, pdMS_TO_TICKS(500)) == pdTRUE) {
         ESP_LOGI(TAG, "Sensors: OK (temp=%.1fC, rpm=%u)",
-                 sd.temp_c, sd.rpm);
+                 sd.temp_c, (unsigned)sd.rpm);
         *out_code = DTC_NONE;
         return ST_PASS;
     }
