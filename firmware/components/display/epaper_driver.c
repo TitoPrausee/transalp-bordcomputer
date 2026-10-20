@@ -88,7 +88,7 @@ static esp_err_t epd_write_cmd(uint8_t cmd)
     spi_transaction_t t = {0};
     t.length    = 8;
     t.tx_buffer = &cmd;
-    t.flags     = SPI_TRANS_USE_TXSINGLE;
+    t.flags     = SPI_TRANS_USE_TXDATA;
     epd_dc_command();
     return spi_device_polling_transmit(s_spi, &t);
 }
