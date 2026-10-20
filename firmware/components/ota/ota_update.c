@@ -900,7 +900,7 @@ esp_err_t ota_get_version_info(ota_version_info_t *info)
     }
 
     /* Neue Version aus NVS (wird beim Update gesetzt) */
-    nvs_handle_t h;
+    nvs_handle_t h = 0;
     if (nvs_open(OTA_NVS_NAMESPACE, NVS_READONLY, &h) == ESP_OK) {
         char new_ver[32];
         size_t len = sizeof(new_ver);

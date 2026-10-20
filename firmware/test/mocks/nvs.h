@@ -14,7 +14,8 @@
 #define NVS_READWRITE 1
 
 static inline int nvs_open(const char *name, int mode, nvs_handle_t *h) {
-    (void)name; (void)mode; if (h) *h = (void *)1; return 0;
+    static int nvs_mock_handle_sentinel;
+    (void)name; (void)mode; if (h) *h = &nvs_mock_handle_sentinel; return 0;
 }
 static inline void nvs_close(nvs_handle_t h) { (void)h; }
 static inline int nvs_get_i32(nvs_handle_t h, const char *k, int32_t *v) {
