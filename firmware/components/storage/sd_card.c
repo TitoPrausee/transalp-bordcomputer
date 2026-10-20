@@ -418,9 +418,8 @@ int sd_card_list_dir(const char *path, sd_dir_entry_t *entries,
         entries[count].name[sizeof(entries[count].name) - 1] = '\0';
         entries[count].is_dir = (de->d_type == DT_DIR);
 
-        char fpath[SD_MAX_PATH_LEN];
+        char fpath[SD_MAX_PATH_LEN + NAME_MAX + 2];
         snprintf(fpath, sizeof(fpath), "%s/%s", full, de->d_name);
-        fpath[sizeof(fpath) - 1] = '\0';
         struct stat st;
         if (stat(fpath, &st) == 0) {
             entries[count].size = (uint32_t)st.st_size;
