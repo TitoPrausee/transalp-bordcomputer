@@ -420,6 +420,7 @@ int sd_card_list_dir(const char *path, sd_dir_entry_t *entries,
 
         char fpath[SD_MAX_PATH_LEN];
         snprintf(fpath, sizeof(fpath), "%s/%s", full, de->d_name);
+        fpath[sizeof(fpath) - 1] = '\0';
         struct stat st;
         if (stat(fpath, &st) == 0) {
             entries[count].size = (uint32_t)st.st_size;
