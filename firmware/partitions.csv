@@ -1,9 +1,10 @@
 # ESP32-S3 OTA Partition Table
 # Anti-rollback requires OTA-only app slots (no factory/test partition)
+# Partition table offset at 0x10000 (Secure Boot V2 bootloader needs room)
 # Name,   Type, SubType,  Offset,   Size,    Flags
-nvs,      data, nvs,     0x9000,   0x6000,
-phy_init, data, phy,     0xf000,   0x1000,
-ota_0,    app,  ota_0,   0x10000,  0x300000,
-ota_1,    app,  ota_1,   0x310000, 0x300000,
-otadata,  data, ota,     0x610000, 0x2000,
-storage,  data, fat,     0x612000, 0x9EE000,
+nvs,      data, nvs,     0x11000,  0x6000,
+phy_init, data, phy,     0x17000,  0x1000,
+ota_0,    app,  ota_0,   0x20000,  0x300000,
+ota_1,    app,  ota_1,   0x320000, 0x300000,
+otadata,  data, ota,     0x620000, 0x2000,
+storage,  data, fat,     0x622000, 0x9DE000,
