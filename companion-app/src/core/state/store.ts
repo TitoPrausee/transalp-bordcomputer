@@ -27,6 +27,7 @@ import type {
   CarPlayStatus,
 } from '../ble/gatt-uuids';
 import { ControllerType, ControllerButton, ControllerAction } from '../ble/gatt-uuids';
+import type { BleError } from '../ble/BleProvider';
 import type { BordcomputerConfig } from './config';
 import { DEFAULT_CONFIG } from './config';
 
@@ -222,6 +223,15 @@ interface AppState {
   // Verbindungs-Symbol-Status
   isMockMode: boolean;
   setMockMode: (on: boolean) => void;
+
+  // Error / Reconnection State
+  lastError: BleError | null;
+  setLastError: (error: BleError | null) => void;
+  clearError: () => void;
+  reconnectAttempts: number;
+  setReconnectAttempts: (count: number) => void;
+  isRetrying: boolean;
+  setRetrying: (on: boolean) => void;
 }
 
 export const useAppStore = create<AppState>((set) => ({
@@ -308,4 +318,13 @@ export const useAppStore = create<AppState>((set) => ({
   // Mock-Mode
   isMockMode: true,
   setMockMode: (on) => set({ isMockMode: on }),
+
+  // Error / Reconnection State
+  lastError: null,
+  setLastError: (error) => set({ lastError: error }),
+  clearError: () => set({ lastError: null }),
+  reconnectAttempts: 0,
+  setReconnectAttempts: (count) => set({ reconnectAttempts: count }),
+  isRetrying: false,
+  setRetrying: (on) => set({ isRetrying: on }),
 }));

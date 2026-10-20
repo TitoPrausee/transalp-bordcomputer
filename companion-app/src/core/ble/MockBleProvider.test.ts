@@ -13,7 +13,7 @@
  */
 
 import { MockBleProvider } from './MockBleProvider';
-import { ConnectionState, canTransition } from './connection-state';
+import { ConnectionState, canTransition, reconnectDelay, RECONNECT_MAX_ATTEMPTS } from './connection-state';
 import { SelfTestMode, ManeuverType } from './gatt-uuids';
 import type { BleEventCallbacks, Subscription } from './BleProvider';
 
@@ -382,5 +382,29 @@ describe('connection-state utility functions', () => {
   it('canTransition should reject invalid transitions', () => {
     expect(canTransition(ConnectionState.Disconnected, ConnectionState.Connected)).toBe(false);
     expect(canTransition(ConnectionState.Connected, ConnectionState.Scanning)).toBe(false);
+  });
+});
+
+// ============================================================
+// Reconnection Backoff
+// ============================================================
+
+describe('Reconnection backoff', () => {
+  it('should use exponential delays for first 5 attempts', () => {
+    expect(reconnectDelay(0)).toBe(1000);
+    expect(reconnectDelay(1)).toBe(2000);
+    expect(reconnectDelay(2)).toBe(4000);
+    expect(reconnectDelay(3)).toBe(8000);
+    expect(reconnectDelay(4)).toBe(16000);
+  });
+
+  it('should cap at max delay after 5 attempts', () => {
+    expect(reconnectDelay(5)).toBe(30000);
+    expect(reconnectDelay(10)).toBe(30000);
+    expect(reconnectDelay(100)).toBe(30000);
+  });
+
+  it('should have max attempts defined', () => {
+    expect(RECONNECT_MAX_ATTEMPTS).toBe(5);
   });
 });

@@ -239,6 +239,44 @@ esp_err_t ota_ble_write_chunk(const ota_chunk_t *chunk);
  */
 esp_err_t ota_ble_commit(const uint8_t *expected_hash);
 
+/* ============================================================
+ * OTA Verify Result (fuer CHR_OTA_VERIFY 0x8003 notify)
+ * Siehe docs/BLE-INTERFACE-SPEC.md §9.3.
+ * ============================================================ */
+
+/* Verify-Result Status-Byte (0x8003 notify Offset 0). */
+enum ota_verify_status {
+    OTA_VERIFY_UNKNOWN       = 0,  /* Kein Verify durchgefuehrt */
+    OTA_VERIFY_VERIFYING     = 1,  /* Verify laeuft */
+    OTA_VERIFY_OK            = 2,  /* Hash verifiziert, Image akzeptiert */
+    OTA_VERIFY_HASH_MISMATCH = 3,  /* Erwarteter Hash stimmt nicht ueberein */
+    OTA_VERIFY_ERROR         = 4,  /* Sonstiger Verify-Fehler */
+};
+
+/* Verify-Result, das in ota_finish_and_verify() berechnet wird.
+ * Die BLE-Schicht liest es nach ota_ble_commit() (Fehler-Pfad), um
+ * den 0x8003-Notify aufzubauen. Payload-Groesse: OTA_VERIFY_NOTIFY_SIZE. */
+typedef struct {
+    uint8_t  status;                 /* ota_verify_status enum */
+    uint8_t  sha256[OTA_SHA256_LEN]; /* Berechneter Image-Hash */
+    uint32_t size;                   /* Geschriebene Bytes */
+    uint32_t version;                /* Firmware-Version (best-effort, 0 = unbekannt) */
+} ota_verify_result_t;
+
+/**
+ * Liefert das letzte OTA-Verify-Result.
+ *
+ * Wird nach ota_ble_commit() (Fehler-Pfad) aufgerufen, um den
+ * CHR_OTA_VERIFY (0x8003) Notify mit dem berechneten Hash und
+ * Fehlergrund aufzubauen. Auf dem Erfolgspfad rebootet das Geraet
+ * innerhalb von ota_ble_commit(), bevor der Notify zugestellt
+ * werden kann (geplanter Verify/Commit-Split: TOT-33).
+ *
+ * @param out  Ausgabe-Struktur (vom Aufrufer allokiert)
+ * @return ESP_OK bei Erfolg
+ */
+esp_err_t ota_ble_get_verify_result(ota_verify_result_t *out);
+
 /**
  * Bricht ein laufendes OTA-Update ab.
  *

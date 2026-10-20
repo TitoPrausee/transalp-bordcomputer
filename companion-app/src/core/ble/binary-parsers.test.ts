@@ -25,6 +25,9 @@ import {
   base64ToDataView,
   dataViewToBase64,
   uint8ArrayToBase64,
+  parseCarPlayStatus,
+  encodeCarPlayStatus,
+  encodeCarPlayControlCommand,
 } from './binary-parsers';
 import { SelfTestMode } from './gatt-uuids';
 
@@ -341,5 +344,98 @@ describe('base64 conversion helpers', () => {
     const empty = new Uint8Array(0);
     const b64 = uint8ArrayToBase64(empty);
     expect(b64).toBe('');
+  });
+});
+
+// ============================================================
+// CarPlay Status (194 bytes: 2 + 3x64)
+// ============================================================
+
+describe('parseCarPlayStatus / encodeCarPlayStatus', () => {
+  it('should parse a connected CarPlay status with music metadata', () => {
+    const buf = new ArrayBuffer(194);
+    const dv = new DataView(buf);
+    dv.setUint8(0, 1); // connected = true
+    dv.setUint8(1, 2); // activeApp = Music
+
+    // artist at offset 2 (64 bytes)
+    const artist = 'Iron Maiden';
+    const artistBytes = new TextEncoder().encode(artist);
+    for (let i = 0; i < artistBytes.length; i++) {
+      dv.setUint8(2 + i, artistBytes[i]);
+    }
+
+    // title at offset 66 (64 bytes)
+    const title = 'The Trooper';
+    const titleBytes = new TextEncoder().encode(title);
+    for (let i = 0; i < titleBytes.length; i++) {
+      dv.setUint8(66 + i, titleBytes[i]);
+    }
+
+    // album at offset 130 (64 bytes)
+    const album = 'Piece of Mind';
+    const albumBytes = new TextEncoder().encode(album);
+    for (let i = 0; i < albumBytes.length; i++) {
+      dv.setUint8(130 + i, albumBytes[i]);
+    }
+
+    const result = parseCarPlayStatus(dv);
+    expect(result.connected).toBe(true);
+    expect(result.activeApp).toBe(2); // Music
+    expect(result.artist).toBe('Iron Maiden');
+    expect(result.title).toBe('The Trooper');
+    expect(result.album).toBe('Piece of Mind');
+  });
+
+  it('should parse disconnected CarPlay status', () => {
+    const buf = new ArrayBuffer(194);
+    const dv = new DataView(buf);
+    dv.setUint8(0, 0); // disconnected
+    dv.setUint8(1, 0); // None
+
+    const result = parseCarPlayStatus(dv);
+    expect(result.connected).toBe(false);
+    expect(result.activeApp).toBe(0);
+    expect(result.artist).toBe('');
+  });
+
+  it('should handle short payload (< 194 bytes)', () => {
+    const buf = new ArrayBuffer(2);
+    const dv = new DataView(buf);
+    dv.setUint8(0, 1); // connected
+    dv.setUint8(1, 1); // Navigation
+
+    const result = parseCarPlayStatus(dv);
+    expect(result.connected).toBe(true);
+    expect(result.activeApp).toBe(1);
+    expect(result.artist).toBe('');
+    expect(result.title).toBe('');
+  });
+
+  it('should encode and roundtrip CarPlay status', () => {
+    const data = {
+      connected: true,
+      activeApp: 2, // Music
+      artist: 'Metallica',
+      title: 'For Whom the Bell Tolls',
+      album: 'Ride the Lightning',
+    };
+
+    const encoded = encodeCarPlayStatus(data);
+    expect(encoded.length).toBe(194);
+
+    const dv = new DataView(encoded.buffer);
+    const parsed = parseCarPlayStatus(dv);
+    expect(parsed.connected).toBe(true);
+    expect(parsed.activeApp).toBe(2);
+    expect(parsed.artist).toBe('Metallica');
+    expect(parsed.title).toBe('For Whom the Bell Tolls');
+    expect(parsed.album).toBe('Ride the Lightning');
+  });
+
+  it('should encode CarPlay control command', () => {
+    const cmd = encodeCarPlayControlCommand(2); // NextTrack
+    expect(cmd.length).toBe(1);
+    expect(cmd[0]).toBe(2);
   });
 });

@@ -61,6 +61,7 @@ typedef struct {
     SemaphoreHandle_t   mutex;
     uint8_t             expected_hash[OTA_SHA256_LEN];
     bool                has_expected_hash;
+    ota_verify_result_t verify_result;
 } ota_ctx_t;
 
 static ota_ctx_t s_ota;
@@ -178,6 +179,7 @@ static esp_err_t ota_begin_partition(uint32_t total_size)
     s_ota.ota_begun      = true;
     s_ota.progress       = 0;
     s_ota.has_expected_hash = false;
+    memset(&s_ota.verify_result, 0, sizeof(s_ota.verify_result));
     ota_set_state(OTA_STATE_DOWNLOADING);
     return ESP_OK;
 }
@@ -196,6 +198,9 @@ static esp_err_t ota_finish_and_verify(void)
     esp_err_t err = esp_ota_end(s_ota.ota_handle);
     if (err != ESP_OK) {
         ESP_LOGE(TAG, "esp_ota_end failed: %s", esp_err_to_name(err));
+        memset(&s_ota.verify_result, 0, sizeof(s_ota.verify_result));
+        s_ota.verify_result.status = OTA_VERIFY_ERROR;
+        s_ota.verify_result.size = s_ota.bytes_written;
         ota_set_error(OTA_ERR_WRITE_FAILED);
         return err;
     }
@@ -207,21 +212,31 @@ static esp_err_t ota_finish_and_verify(void)
     err = esp_partition_get_sha256(s_ota.update_partition, hash);
     if (err != ESP_OK) {
         ESP_LOGE(TAG, "SHA256 computation failed: %s", esp_err_to_name(err));
+        s_ota.verify_result.status = OTA_VERIFY_ERROR;
         ota_set_error(OTA_ERR_VERIFY_HASH);
         return err;
     }
 
     ESP_LOG_BUFFER_HEX(TAG, hash, OTA_SHA256_LEN);
 
+    /* Verify-Result fuer 0x8003 (CHR_OTA_VERIFY) Notify befuellen
+     * (siehe docs/BLE-INTERFACE-SPEC.md §9.3). */
+    memset(&s_ota.verify_result, 0, sizeof(s_ota.verify_result));
+    memcpy(s_ota.verify_result.sha256, hash, OTA_SHA256_LEN);
+    s_ota.verify_result.size = s_ota.bytes_written;
+    s_ota.verify_result.status = OTA_VERIFY_VERIFYING;
+
     /* Wenn ein erwarteter Hash gesetzt ist, vergleichen */
     if (s_ota.has_expected_hash) {
         if (memcmp(hash, s_ota.expected_hash, OTA_SHA256_LEN) != 0) {
             ESP_LOGE(TAG, "OTA image SHA256 mismatch!");
+            s_ota.verify_result.status = OTA_VERIFY_HASH_MISMATCH;
             ota_set_error(OTA_ERR_VERIFY_HASH);
             return ESP_ERR_INVALID_VERSION;
         }
         ESP_LOGI(TAG, "SHA256 verified OK");
     }
+    s_ota.verify_result.status = OTA_VERIFY_OK;
 
     /* Secure-Boot-Signaturpruefung (wenn aktiviert) */
     if (ota_secure_is_enabled()) {
@@ -821,6 +836,18 @@ esp_err_t ota_ble_commit(const uint8_t *expected_hash)
 
     /* Verifikation und Reboot */
     return ota_finish_and_verify();
+}
+
+esp_err_t ota_ble_get_verify_result(ota_verify_result_t *out)
+{
+    if (out == NULL) {
+        return ESP_ERR_INVALID_ARG;
+    }
+
+    ota_lock();
+    *out = s_ota.verify_result;
+    ota_unlock();
+    return ESP_OK;
 }
 
 esp_err_t ota_abort(void)

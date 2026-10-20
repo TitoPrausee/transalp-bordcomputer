@@ -124,6 +124,19 @@
 #define CHR_OTA_DATA        0x8002  /* write_nr: firmware image chunks */
 #define CHR_OTA_VERIFY      0x8003  /* notify: sha256, size, status */
 
+/* CHR_OTA_VERIFY (0x8003) notify payload — see docs/BLE-INTERFACE-SPEC.md §9.3
+ * Layout (little-endian, packed, 41 bytes):
+ *   offset 0  : u8     status   (ota_verify_status enum, see ota_update.h)
+ *   offset 1  : u8[32] sha256   (computed image hash)
+ *   offset 33 : u32    size     (bytes written)
+ *   offset 37 : u32    version  (firmware version, best-effort, 0 = unknown)
+ */
+#define OTA_VERIFY_NOTIFY_SIZE   41u
+#define OTA_VERIFY_OFF_STATUS    0u
+#define OTA_VERIFY_OFF_SHA256    1u
+#define OTA_VERIFY_OFF_SIZE      33u
+#define OTA_VERIFY_OFF_VERSION   37u
+
 /* ============================================================
  * Maneuver types (CHR_NAV_MANEUVER byte 0)
  * ============================================================ */

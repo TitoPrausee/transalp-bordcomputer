@@ -26,7 +26,7 @@ import {
   Animated,
   Easing,
 } from 'react-native';
-import { ScreenContainer, ScreenHeader, ConnectionBadge, StatTile, Card } from '../components/UI';
+import { ScreenContainer, ScreenHeader, ConnectionBadge, StatTile, Card, ConnectionBanner } from '../components/UI';
 import { SpeedDisplay } from '../components/SpeedDisplay';
 import { RpmBar } from '../components/RpmBar';
 import { useAppStore } from '../core/state/store';
@@ -175,7 +175,9 @@ export function DashboardScreen() {
   const ble = useAppStore((s) => s.ble);
   const config = useAppStore((s) => s.config);
   const systemStatus = useAppStore((s) => s.systemStatus);
-  const { readSystemStatus } = useBleManager();
+  const isRetrying = useAppStore((s) => s.isRetrying);
+  const lastError = useAppStore((s) => s.lastError);
+  const { readSystemStatus, reconnect } = useBleManager();
   const { width, height } = useWindowDimensions();
   const isLandscape = width > height;
   const connected = isConnected(ble.state);
@@ -284,6 +286,13 @@ export function DashboardScreen() {
             <View style={styles.row}><Text style={styles.label}>MTU</Text><Text style={styles.value}>{ble.mtu || 247} Bytes</Text></View>
             <View style={styles.row}><Text style={styles.label}>VERSCHLUESSELUNG</Text><Text style={[styles.value, { color: ble.isEncrypted ? accent.green : accent.red }]}>{ble.isEncrypted ? 'Aktiv' : 'Inaktiv'}</Text></View>
           </Card>
+        )}
+        {!connected && (
+          <ConnectionBanner
+            isRetrying={isRetrying}
+            lastErrorMessage={lastError?.message}
+            onRetry={() => reconnect()}
+          />
         )}
         {!connected && (
           <Card>

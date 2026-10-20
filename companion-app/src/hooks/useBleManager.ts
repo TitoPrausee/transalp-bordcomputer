@@ -40,6 +40,12 @@ export function useBleManager() {
   const setOtaStatus = useAppStore((s) => s.setOtaStatus);
   const setCarPlayStatus = useAppStore((s) => s.setCarPlayStatus);
 
+  // Error / Reconnection State
+  const setLastError = useAppStore((s) => s.setLastError);
+  const clearError = useAppStore((s) => s.clearError);
+  const setReconnectAttempts = useAppStore((s) => s.setReconnectAttempts);
+  const setRetrying = useAppStore((s) => s.setRetrying);
+
   // Provider initialisieren — Mock in Development, Real in Produktion
   useEffect(() => {
     const provider = __DEV__ ? new MockBleProvider() : new RealBleProvider();
@@ -52,6 +58,12 @@ export function useBleManager() {
           if (state === ConnectionState.Connected) {
             const dev = provider.getConnectedDevice();
             if (dev) setBleDevice(dev.name, dev.id);
+            // Clear errors and retry state on successful connection
+            clearError();
+            setReconnectAttempts(0);
+            setRetrying(false);
+          } else if (state === ConnectionState.Reconnecting) {
+            setRetrying(true);
           }
         },
         onTelemetry: (data) => setTelemetry(data),
@@ -69,6 +81,7 @@ export function useBleManager() {
         onCarPlayStatus: (status) => setCarPlayStatus(status),
         onRssi: (rssi) => setBleRssi(rssi),
         onMtu: (mtu) => setBleMtu(mtu),
+        onError: (error) => setLastError(error),
       });
 
       // Auto-Connect im Mock-Modus
@@ -97,13 +110,19 @@ export function useBleManager() {
     setTaskInfo,
     setOtaStatus,
     setCarPlayStatus,
+    setLastError,
+    clearError,
+    setReconnectAttempts,
+    setRetrying,
   ]);
 
   const reconnect = useCallback(async () => {
     if (providerRef.current) {
+      clearError();
+      setRetrying(true);
       await providerRef.current.startScan();
     }
-  }, []);
+  }, [clearError, setRetrying]);
 
   const disconnect = useCallback(async () => {
     if (providerRef.current) {

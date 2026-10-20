@@ -19,7 +19,7 @@ import {
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
-import { ScreenContainer, ScreenHeader, Card, EmptyState } from '../components/UI';
+import { ScreenContainer, ScreenHeader, Card, EmptyState, ConnectionBanner } from '../components/UI';
 import { useAppStore } from '../core/state/store';
 import { useBleManager } from '../hooks/useBleManager';
 import { bg, fg, accent, fontSize } from '../core/theme/colors';
@@ -197,7 +197,9 @@ export function CarPlayStatusScreen() {
   const carplay = useAppStore((s) => s.carplay);
   const config = useAppStore((s) => s.config);
   const ble = useAppStore((s) => s.ble);
-  const { readCarPlayStatus, sendCarPlayControl } = useBleManager();
+  const isRetrying = useAppStore((s) => s.isRetrying);
+  const lastError = useAppStore((s) => s.lastError);
+  const { readCarPlayStatus, sendCarPlayControl, reconnect } = useBleManager();
 
   useEffect(() => {
     readCarPlayStatus();
@@ -339,6 +341,13 @@ export function CarPlayStatusScreen() {
         </Card>
 
         {/* Hinweis wenn Bordcomputer nicht verbunden */}
+        {!bleConnected && (
+          <ConnectionBanner
+            isRetrying={isRetrying}
+            lastErrorMessage={lastError?.message}
+            onRetry={() => reconnect()}
+          />
+        )}
         {!bleConnected && (
           <Card>
             <EmptyState message="Keine Verbindung zum Bordcomputer. CarPlay-Status nicht verfuegbar." />

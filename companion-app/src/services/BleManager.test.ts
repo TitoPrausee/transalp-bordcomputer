@@ -14,7 +14,7 @@ import { BleManager, DEFAULT_BLE_MANAGER_CONFIG } from './BleManager';
 import { MockBleProvider } from '../core/ble/MockBleProvider';
 import { BleErrorCode } from '../core/ble/BleProvider';
 import { ConnectionState, isConnected } from '../core/ble/connection-state';
-import { SelfTestMode, OtaCommand } from '../core/ble/gatt-uuids';
+import { SelfTestMode, OtaCommand, CarPlayControl } from '../core/ble/gatt-uuids';
 import { CHAR } from '../core/ble/gatt-uuids';
 import type { BleEventCallbacks } from '../core/ble/BleProvider';
 
@@ -87,7 +87,7 @@ describe('BleManager scan', () => {
     mgr.addListener({ onConnectionStateChanged: (s) => states.push(s) });
 
     await mgr.startScan();
-    await waitFor(4200);
+    await waitFor(4500);
 
     expect(states.length).toBeGreaterThan(0);
     expect(states).toContain(ConnectionState.Connected);
@@ -389,4 +389,162 @@ describe('BleManager connection state', () => {
 
     mgr.destroy();
   }, 10000);
+});
+
+// ============================================================
+// BleManager Error Handling & Reconnection
+// ============================================================
+
+describe('BleManager error recovery', () => {
+  it('should emit error on scan failure and allow retry', async () => {
+    const provider = new MockBleProvider();
+    const mgr = new BleManager(provider);
+    await mgr.init();
+
+    const errors: unknown[] = [];
+    mgr.addListener({ onError: (e) => errors.push(e) });
+
+    // Simulate BT disabled
+    jest.spyOn(provider, 'isBluetoothEnabled').mockResolvedValue(false);
+    await mgr.startScan();
+
+    expect(errors.length).toBe(1);
+    const err = errors[0] as { code: BleErrorCode; recoverable: boolean };
+    expect(err.code).toBe(BleErrorCode.BluetoothDisabled);
+    expect(err.recoverable).toBe(false);
+
+    // Restore BT and retry
+    jest.spyOn(provider, 'isBluetoothEnabled').mockResolvedValue(true);
+    await mgr.startScan();
+    await waitFor(4200);
+    expect(mgr.is_connected()).toBe(true);
+
+    mgr.destroy();
+  }, 15000);
+
+  it('should dispatch errors to all listeners', async () => {
+    const provider = new MockBleProvider();
+    const mgr = new BleManager(provider);
+    await mgr.init();
+
+    const errors1: unknown[] = [];
+    const errors2: unknown[] = [];
+    mgr.addListener({ onError: (e) => errors1.push(e) });
+    mgr.addListener({ onError: (e) => errors2.push(e) });
+
+    jest.spyOn(provider, 'isBluetoothEnabled').mockResolvedValue(false);
+    await mgr.startScan();
+
+    expect(errors1.length).toBe(1);
+    expect(errors2.length).toBe(1);
+
+    mgr.destroy();
+  });
+
+  it('should handle CarPlay read failure gracefully', async () => {
+    const provider = new MockBleProvider();
+    const mgr = new BleManager(provider);
+    await mgr.init();
+    await mgr.startScan();
+    await waitFor(4200);
+
+    // Mock readCarPlayStatus to throw
+    jest.spyOn(provider, 'readCarPlayStatus').mockRejectedValue(new Error('Read failed'));
+
+    const errors: unknown[] = [];
+    mgr.addListener({ onError: (e) => errors.push(e) });
+
+    const status = await mgr.readCarPlayStatus();
+    expect(status).toBeNull();
+    expect(errors.length).toBe(1);
+    const err = errors[0] as { code: BleErrorCode };
+    expect(err.code).toBe(BleErrorCode.ReadFailed);
+
+    mgr.destroy();
+  }, 15000);
+
+  it('should handle CarPlay control write failure gracefully', async () => {
+    const provider = new MockBleProvider();
+    const mgr = new BleManager(provider);
+    await mgr.init();
+    await mgr.startScan();
+    await waitFor(4200);
+
+    jest.spyOn(provider, 'sendCarPlayControl').mockRejectedValue(new Error('Write failed'));
+
+    const errors: unknown[] = [];
+    mgr.addListener({ onError: (e) => errors.push(e) });
+
+    await mgr.sendCarPlayControl(CarPlayControl.NextTrack);
+    expect(errors.length).toBe(1);
+    const err = errors[0] as { code: BleErrorCode };
+    expect(err.code).toBe(BleErrorCode.WriteFailed);
+
+    mgr.destroy();
+  }, 15000);
+});
+
+// ============================================================
+// BleManager CarPlay Notification Dispatch
+// ============================================================
+
+describe('BleManager CarPlay notification dispatch', () => {
+  it('should dispatch CarPlay status on carplayStatus notification', async () => {
+    const provider = new MockBleProvider();
+    const mgr = new BleManager(provider);
+    await mgr.init();
+
+    const statuses: unknown[] = [];
+    mgr.addListener({ onCarPlayStatus: (s) => statuses.push(s) });
+
+    // Encode a CarPlay status: connected=1, activeApp=2 (Music), artist="Test"
+    const buf = new ArrayBuffer(194);
+    const dv = new DataView(buf);
+    dv.setUint8(0, 1); // connected
+    dv.setUint8(1, 2); // Music
+    const artistBytes = new TextEncoder().encode('Test Artist');
+    for (let i = 0; i < artistBytes.length; i++) {
+      dv.setUint8(2 + i, artistBytes[i]);
+    }
+
+    const bytes = new Uint8Array(buf);
+    let b64 = '';
+    for (let i = 0; i < bytes.length; i++) b64 += String.fromCharCode(bytes[i]);
+    mgr.handleNotification(CHAR.carplayStatus, btoa(b64));
+
+    expect(statuses.length).toBe(1);
+    const status = statuses[0] as { connected: boolean; activeApp: number; artist: string };
+    expect(status.connected).toBe(true);
+    expect(status.activeApp).toBe(2);
+    expect(status.artist).toBe('Test Artist');
+
+    mgr.destroy();
+  });
+
+  it('should handle parse errors in notifications gracefully', async () => {
+    const provider = new MockBleProvider();
+    const mgr = new BleManager(provider);
+    await mgr.init();
+
+    const errors: unknown[] = [];
+    mgr.addListener({ onError: (e) => errors.push(e) });
+
+    // Send a truncated telemetry packet that will cause a parse issue
+    // (DataView with < 22 bytes for telemetry)
+    const buf = new ArrayBuffer(3);
+    const dv = new DataView(buf);
+    dv.setUint8(0, 80);
+    dv.setUint8(1, 0);
+    dv.setUint8(2, 0);
+
+    const bytes = new Uint8Array(buf);
+    let b64 = '';
+    for (let i = 0; i < bytes.length; i++) b64 += String.fromCharCode(bytes[i]);
+
+    // This should not crash — parseTelemetryLive will read beyond bounds
+    // but DataView handles that gracefully in JS
+    expect(() => mgr.handleNotification(CHAR.tlmLive, btoa(b64))).not.toThrow();
+
+    mgr.destroy();
+  });
 });

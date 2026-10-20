@@ -6,6 +6,13 @@ Characteristics aus der Firmware:
   firmware/components/ble/include/ble.h
   firmware/components/ble/gatt_uuids.h
 
+Wire formats are regenerated from docs/BLE-INTERFACE-SPEC.md and match
+the firmware structs in firmware/components/ble/ble_callbacks.c:
+  - telemetry_live_t (22 bytes, CHR_TLM_LIVE 0x5001)
+  - dtc_binary_t     (7 bytes/entry, CHR_DTC_LIST 0x7001)
+  - sensor_status_t  (5 bytes, CHR_SENSOR_STATUS 0x7002)
+  - self-test result  (u8 result + detail bytes, CHR_SELF_TEST 0x7003)
+
 Erlaubt das Lesen und Schreiben von GATT-Characteristics ueber
 ein Kommandozeilen-Interface. Notifications werden simuliert.
 
@@ -122,6 +129,51 @@ DTC_SEV_INFO = 0
 DTC_SEV_WARNING = 1
 DTC_SEV_CRITICAL = 2
 
+# ---- Packed payload sizes (match firmware _Static_assert in ble_callbacks.c) ----
+# telemetry_live_t: speed(u8) rpm(u16) gear(i8) coolant(i8) ambient(i8)
+#   fuel(u8) voltage(u8) lat(i32) lon(i32) alt(i16) heading(u16) sats(u8) hdop(u8)
+TLM_LIVE_SIZE = 22
+TLM_LIVE_FMT = "<BHbbbBBiihHBB"
+
+# dtc_binary_t: code(u16) severity(u8) timestamp(u32)
+# NOTE: the spec §8.1 header says "6 bytes/entry" and the firmware
+# _Static_assert says == 6, but uint16_t+uint8_t+uint32_t packed = 7 bytes.
+# The field-layout table in the spec (offset 0:u16, 2:u8, 3:u32) confirms 7.
+# The _Static_assert(sizeof(dtc_binary_t)==6) is a firmware bug (never compiled).
+DTC_ENTRY_SIZE = 7
+DTC_ENTRY_FMT = "<HBI"
+
+# sensor_status_t: 5 distinct bytes (gps, rpm, temp, fuel, sd_card)
+SENSOR_STATUS_SIZE = 5
+
+# Self-test result: u8 result (0=pass, 1=warn, 2=fail) + detail bytes
+SELF_TEST_RESULT_PASS = 0
+SELF_TEST_RESULT_WARN = 1
+SELF_TEST_RESULT_FAIL = 2
+
+
+# ---- Sensor status values (from spec §8.2, sensor_status_t in ble_callbacks.c) ----
+
+SENSOR_GPS_OK = 0
+SENSOR_GPS_NO_FIX = 1
+SENSOR_GPS_ERROR = 2
+
+SENSOR_RPM_OK = 0
+SENSOR_RPM_NO_SIGNAL = 1
+SENSOR_RPM_ERROR = 2
+
+SENSOR_TEMP_OK = 0
+SENSOR_TEMP_DISCONNECTED = 1
+SENSOR_TEMP_ERROR = 2
+
+SENSOR_FUEL_OK = 0
+SENSOR_FUEL_ERROR = 1
+
+SENSOR_SD_OK = 0
+SENSOR_SD_NOT_PRESENT = 1
+SENSOR_SD_FULL = 2
+SENSOR_SD_ERROR = 3
+
 
 @dataclass
 class GattCharacteristic:
@@ -149,15 +201,19 @@ class GattCharacteristic:
 
 @dataclass
 class DtcEntry:
-    """Ein Diagnostic Trouble Code (6 Bytes)."""
+    """Ein Diagnostic Trouble Code (7 bytes, matches firmware dtc_binary_t).
+
+    Wire format (little-endian, packed):
+      offset 0: u16 code
+      offset 2: u8  severity (0=info, 1=warning, 2=critical)
+      offset 3: u32 timestamp (Unix seconds)
+    """
     code: int
     severity: int = DTC_SEV_WARNING
-    active: bool = True
-    occurrences: int = 1
+    timestamp: int = 0
 
     def pack(self) -> bytes:
-        return struct.pack("<HBHB", self.code, self.severity,
-                           1 if self.active else 0, min(self.occurrences, 255))
+        return struct.pack(DTC_ENTRY_FMT, self.code, self.severity, self.timestamp)
 
 
 class MockBle:
@@ -178,7 +234,9 @@ class MockBle:
         self._connected = False
         self._chars: Dict[int, GattCharacteristic] = {}
         self._dtcs: List[DtcEntry] = []
-        self._sensor_status = bytes([0x1F, 0x00, 0x00, 0x00, 0x00])
+        self._sensor_status = bytes([0, 0, 0, 0, 0])  # all-ok sensor_status_t
+        self._gps_data: Any = None  # set via set_gps_data for telemetry packing
+        self._battery_voltage: float = 12.6  # for voltage_tenth field
         self._telemetry_callback: Optional[Callable] = None
         self._init_characteristics()
 
@@ -277,7 +335,10 @@ class MockBle:
         if char_id == CHR_BOND_MGMT and data == b"\x00":
             pass  # Delete all bonds
         if char_id == CHR_SELF_TEST:
-            ch.value = struct.pack("<I", 0)  # self-test result: pass
+            # Spec §8.3: write 0x00=Quick / 0x01=Full to trigger; result
+            # notified as u8 result (0=pass,1=warn,2=fail) + one detail byte
+            # per sensor. We simulate a pass with no detail issues.
+            ch.value = struct.pack("<BB", SELF_TEST_RESULT_PASS, 0)
 
     def subscribe(self, char_id: int) -> None:
         """Notifications fuer eine Characteristic abonnieren."""
@@ -301,47 +362,85 @@ class MockBle:
         ch.value = data
         return True
 
-    def set_telemetry_data(self, sensor_data: Any) -> None:
-        """Live-Telemetry (22 Bytes packed) aus SensorData setzen."""
+    def set_telemetry_data(self, sensor_data: Any,
+                           gps_data: Any = None) -> None:
+        """Live-Telemetry (22 Bytes packed) aus SensorData [+ GpsData] setzen.
+
+        Matches firmware telemetry_live_t (ble_callbacks.c:57):
+          speed_kmh(u8) rpm(u16) gear(i8) coolant_temp_c(i8)
+          ambient_temp_c(i8) fuel_percent(u8) voltage_tenth(u8)
+          latitude_e7(i32) longitude_e7(i32) altitude_m(i16)
+          heading_tenth(u16) satellites(u8) hdop_tenth(u8)
+
+        gps_data overrides the internal GPS cache (set via set_gps_data).
+        If neither is available, GPS fields are zeroed (matching firmware
+        behavior when g->valid is false).
+        """
         try:
+            speed = int(sensor_data.speed_kmh + 0.5)
             rpm = sensor_data.rpm
-            speed = int(sensor_data.speed_kmh)
-            temp = int(sensor_data.coolant_temp_c)
-            fuel = int(sensor_data.fuel_level_l * 10)
-            gear = sensor_data.gear
-            roll = int(sensor_data.roll_deg * 10)
-            pitch = int(sensor_data.pitch_deg * 10)
-            flags = 0
-            if sensor_data.crash_detected:
-                flags |= 1
+            gear = -1 if sensor_data.gear == 0 else sensor_data.gear
+            coolant = int(sensor_data.coolant_temp_c)
+            ambient = int(sensor_data.temp_c)
+            fuel = int(sensor_data.fuel_level_l + 0.5)
+            voltage = int(self._battery_voltage * 10.0 + 0.5)
+
+            g = gps_data if gps_data is not None else self._gps_data
+            if g is not None and getattr(g, "valid", False):
+                lat_e7 = int(g.lat * 1e7)
+                lon_e7 = int(g.lon * 1e7)
+                altitude = int(g.altitude_m)
+                heading = int(g.course_deg * 10.0)
+                sats = g.satellites
+                hdop = int(g.hdop * 10.0 + 0.5)
+            else:
+                lat_e7 = 0
+                lon_e7 = 0
+                altitude = 0
+                heading = 0
+                sats = 0
+                hdop = 0
+
             packed = struct.pack(
-                "<HHBBBhhBxxxxx",
-                rpm, speed, temp, fuel, gear, roll, pitch, flags,
+                TLM_LIVE_FMT,
+                speed, rpm, gear, coolant, ambient,
+                fuel, voltage,
+                lat_e7, lon_e7, altitude, heading,
+                sats, hdop,
             )
-            self._chars[CHR_TLM_LIVE].value = packed[:22]
+            self._chars[CHR_TLM_LIVE].value = packed
         except (AttributeError, struct.error):
             pass
 
-    def set_sensor_status(self, rpm_ok: bool = True, temp_ok: bool = True,
-                          fuel_ok: bool = True, gps_ok: bool = True,
-                          imu_ok: bool = True) -> None:
-        """5-Byte Sensor-Health-Status setzen."""
-        status = 0
-        if rpm_ok:
-            status |= 1 << 0
-        if temp_ok:
-            status |= 1 << 1
-        if fuel_ok:
-            status |= 1 << 2
-        if gps_ok:
-            status |= 1 << 3
-        if imu_ok:
-            status |= 1 << 4
-        self._sensor_status = struct.pack("<BBBBB", status, 0, 0, 0, 0)
+    def set_gps_data(self, gps_data: Any) -> None:
+        """GPS-Daten fuer Telemetry-Packing setzen (entspricht ble_on_gps_update)."""
+        self._gps_data = gps_data
 
-    def add_dtc(self, code: int, severity: int = DTC_SEV_WARNING) -> None:
-        """DTC hinzufuegen."""
-        self._dtcs.append(DtcEntry(code=code, severity=severity))
+    def set_battery_voltage(self, voltage: float) -> None:
+        """Batteriespannung fuer voltage_tenth-Feld setzen."""
+        self._battery_voltage = voltage
+
+    def set_sensor_status(self, gps: int = SENSOR_GPS_OK,
+                          rpm: int = SENSOR_RPM_OK,
+                          temp: int = SENSOR_TEMP_OK,
+                          fuel: int = SENSOR_FUEL_OK,
+                          sd_card: int = SENSOR_SD_OK) -> None:
+        """5-Byte Sensor-Health-Status setzen (sensor_status_t, spec §8.2).
+
+        Each byte is a distinct status value, NOT a bitfield:
+          byte 0: gps      (0=ok, 1=no_fix, 2=error)
+          byte 1: rpm      (0=ok, 1=no_signal, 2=error)
+          byte 2: temp      (0=ok, 1=disconnected, 2=error)
+          byte 3: fuel      (0=ok, 1=error)
+          byte 4: sd_card   (0=ok, 1=not_present, 2=full, 3=error)
+        """
+        self._sensor_status = struct.pack("<BBBBB", gps, rpm, temp, fuel, sd_card)
+
+    def add_dtc(self, code: int, severity: int = DTC_SEV_WARNING,
+                timestamp: int = 0) -> None:
+        """DTC hinzufuegen (code, severity, timestamp)."""
+        self._dtcs.append(DtcEntry(code=code, severity=severity,
+                                   timestamp=timestamp))
         self.notify(CHR_DTC_LIST, b"".join(d.pack() for d in self._dtcs))
 
     def clear_dtcs(self) -> None:

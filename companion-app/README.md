@@ -152,10 +152,38 @@ Zustand (minimal, ohne Boilerplate):
 
 ## Naechste Schritte (Prototyp -> Produktion)
 
-- [ ] RealBleProvider mit react-native-ble-plx implementieren
-- [ ] Binary-Transfer-Protokoll (fuer Track/Log/OTA)
+- [x] RealBleProvider mit react-native-ble-plx implementieren
+- [x] Auto-Reconnect mit exponentiellem Backoff (1s, 2s, 4s, 8s, max 30s)
+- [x] Connection-Loss-Detection (device.onDisconnected)
+- [x] Operation-Timeouts (Scan, Connect, Read, Write)
+- [x] Graceful Degradation bei schlechtem RSSI (< -90 dBm)
+- [x] CarPlay-Status-Notifications in RealBleProvider
+- [x] Error Handling: Loading States, Error States, ConnectionBanner
+- [x] App Store Metadata in `store/` (Beschreibung, Privacy Policy, Screenshots)
+- [ ] Binary-Transfer-Protokoll (fuer Track/Log/OTA) — teilweise implementiert
 - [ ] Native Karten-Integration
 - [ ] Media- und Phone-Service-Screens
 - [ ] OTA-Firmware-Update-Screen
 - [ ] SQLite-Persistenz (Telemetrie-Cache, Tour-Store)
 - [ ] Wetter-API-Integration
+
+## Production Hardening (TOT-31)
+
+### Error Handling & Reconnection
+
+- **RealBleProvider**: Auto-Reconnect mit `device.onDisconnected`-Listener,
+  exponentiellem Backoff (reuses `reconnectDelay` aus `connection-state.ts`)
+- **Timeouts**: Alle BLE-Operationen (Scan, Connect, Read, Write) haben
+  Timeouts mit `withTimeout()`-Wrapper
+- **Graceful Degradation**: RSSI-Monitoring alle 5s, Uebergang
+  Connected -> Degrading bei RSSI < -90 dBm
+- **Store**: `lastError`, `reconnectAttempts`, `isRetrying` State
+- **UI**: `ConnectionBanner` zeigt Reconnect-Status und Fehler mit
+  Retry-Button, `LoadingState` und `ErrorState` Komponenten
+
+### App Store Metadata
+
+`store/` enthaelt:
+- `metadata.json` — App-Beschreibung (DE/EN), Keywords, Kategorien
+- `privacy-policy.md` — Datenschutzerklaerung
+- `screenshots/README.md` — Screenshot-Spezifikation (iOS + Android)

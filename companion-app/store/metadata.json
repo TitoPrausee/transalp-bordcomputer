@@ -1,0 +1,52 @@
+{
+  "app_name": "Transalp Bordcomputer",
+  "bundle_id": "com.toti.transalp-bordcomputer",
+  "version": "1.0.0",
+  "category": "utilities",
+  "content_rating": "Everyone",
+  "languages": ["de", "en"],
+  "min_ios_version": "15.0",
+  "min_android_version": "8.0",
+  "description": {
+    "de": "Die Transalp Bordcomputer Companion-App verbindet Ihr Honda Transalp 600 (PD06) mit dem Bordcomputer-System per Bluetooth Low Energy (BLE).\n\nFunktionen:\n- Live-Telemetrie: Geschwindigkeit, Drehzahl, Temperatur, Tankanzeige, Bordspannung\n- Navigation: Naechstes Maneuver, Routeninfo, Geschwindigkeitslimit\n- CarPlay-Status: Verbindungsstatus, aktive App, Musik-Metadaten, Steuerung\n- Lenker-Controller: Konfiguration der Tastenbelegung fuer Honda OEM und Generic BLE Controller\n- Diagnose: DTC-Fehlerspeicher, Sensor-Status, Self-Test, System-Info\n- Touren-Historie: Statistiken zu vergangenen Fahrten\n- Einstellungen: Bordcomputer-Konfiguration (Helligkeit, GPS-Rate, RPM-Redline, Shift-Light)\n- OTA-Firmware-Update: Update des Bordcomputers ueber die App\n\nDie App verbindet sich automatisch mit dem Bordcomputer und zeigt alle Daten in Echtzeit an. Bei Verbindungsabbruch wird automatisch ein Reconnect mit exponentiellem Backoff durchgefuehrt.",
+    "en": "The Transalp Bordcomputer companion app connects your Honda Transalp 600 (PD06) to the Bordcomputer system via Bluetooth Low Energy (BLE).\n\nFeatures:\n- Live telemetry: Speed, RPM, temperature, fuel gauge, vehicle voltage\n- Navigation: Next maneuver, route info, speed limit\n- CarPlay status: Connection status, active app, music metadata, playback control\n- Handlebar controller: Button mapping configuration for Honda OEM and Generic BLE controllers\n- Diagnostics: DTC fault memory, sensor status, self-test, system info\n- Tour history: Statistics from past rides\n- Settings: Bordcomputer configuration (brightness, GPS rate, RPM redline, shift light)\n- OTA firmware update: Update the Bordcomputer via the app\n\nThe app automatically connects to the Bordcomputer and displays all data in real time. On connection loss, automatic reconnection with exponential backoff is performed."
+  },
+  "short_description": {
+    "de": "Companion-App fuer den Transalp Bordcomputer (Honda Transalp 600 PD06)",
+    "en": "Companion app for the Transalp Bordcomputer (Honda Transalp 600 PD06)"
+  },
+  "keywords": [
+    "transalp",
+    "bordcomputer",
+    "motorcycle",
+    "honda",
+    "pd06",
+    "telemetry",
+    "carplay",
+    "ble",
+    "bluetooth",
+    "diagnostics",
+    "ota"
+  ],
+  "promo_text": {
+    "de": "Verbinden Sie Ihr Motorrad mit dem Bordcomputer",
+    "en": "Connect your motorcycle to the Bordcomputer"
+  },
+  "support_url": "https://toti.dev/support/transalp-bordcomputer",
+  "marketing_url": "https://toti.dev/transalp-bordcomputer",
+  "privacy_policy_url": "https://toti.dev/privacy/transalp-bordcomputer",
+  "copyright": "TOTI",
+  "primary_category": "UTILITIES",
+  "secondary_category": "SPORTS",
+  "screenshots_required": {
+    "ios": {
+      "iphone_67": "1290x2796",
+      "iphone_65": "1242x2688",
+      "ipad_129": "2048x2732"
+    },
+    "android": {
+      "phone": "1080x1920",
+      "tablet": "1536x2048"
+    }
+  }
+}

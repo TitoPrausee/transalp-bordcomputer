@@ -3,7 +3,7 @@
  */
 
 import React from 'react';
-import { View, Text, StyleSheet, ViewStyle, TextStyle } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity, ViewStyle, TextStyle } from 'react-native';
 import { bg, fg, accent, fontSize } from '../core/theme/colors';
 
 // --- Card ---
@@ -231,6 +231,167 @@ const headerBarStyles = StyleSheet.create({
     fontSize: fontSize.heading,
     fontWeight: 'bold',
     color: fg.primary,
+  },
+});
+
+// --- LoadingState ---
+
+interface LoadingStateProps {
+  message?: string;
+  style?: ViewStyle;
+}
+
+export function LoadingState({ message = 'Wird geladen...', style }: LoadingStateProps) {
+  return (
+    <View style={[loadingStyles.container, style]}>
+      <ActivityIndicator size="large" color={accent.blue} />
+      <Text style={loadingStyles.text}>{message}</Text>
+    </View>
+  );
+}
+
+const loadingStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 32,
+  },
+  text: {
+    fontSize: fontSize.body,
+    color: fg.secondary,
+    marginTop: 12,
+  },
+});
+
+// --- ErrorState ---
+
+interface ErrorStateProps {
+  message: string;
+  onRetry?: () => void;
+  retryLabel?: string;
+  style?: ViewStyle;
+}
+
+export function ErrorState({ message, onRetry, retryLabel = 'Erneut versuchen', style }: ErrorStateProps) {
+  return (
+    <View style={[errorStyles.container, style]}>
+      <Text style={errorStyles.icon}>{'!'}</Text>
+      <Text style={errorStyles.message}>{message}</Text>
+      {onRetry && (
+        <TouchableOpacity style={errorStyles.retryBtn} onPress={onRetry}>
+          <Text style={errorStyles.retryText}>{retryLabel}</Text>
+        </TouchableOpacity>
+      )}
+    </View>
+  );
+}
+
+const errorStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 32,
+  },
+  icon: {
+    fontSize: 48,
+    fontWeight: 'bold',
+    color: accent.red,
+    width: 64,
+    height: 64,
+    lineHeight: 64,
+    textAlign: 'center',
+    borderRadius: 32,
+    backgroundColor: bg.raised,
+    overflow: 'hidden',
+  },
+  message: {
+    fontSize: fontSize.body,
+    color: fg.secondary,
+    textAlign: 'center',
+    marginTop: 16,
+    marginBottom: 16,
+  },
+  retryBtn: {
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 10,
+    backgroundColor: accent.blue,
+  },
+  retryText: {
+    fontSize: fontSize.label,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+  },
+});
+
+// --- ConnectionBanner ---
+
+interface ConnectionBannerProps {
+  isRetrying?: boolean;
+  lastErrorMessage?: string | null;
+  onRetry?: () => void;
+}
+
+/**
+ * Zeigt einen Banner an, wenn die Verbindung verloren wurde und
+ * ein Reconnect-Versuch laeuft oder ein Fehler aufgetreten ist.
+ */
+export function ConnectionBanner({ isRetrying, lastErrorMessage, onRetry }: ConnectionBannerProps) {
+  if (!isRetrying && !lastErrorMessage) return null;
+
+  return (
+    <View style={banner2Styles.container}>
+      {isRetrying ? (
+        <>
+          <ActivityIndicator size="small" color={accent.yellow} />
+          <Text style={[banner2Styles.text, { color: accent.yellow }]}>
+            Verbindung wird wiederhergestellt...
+          </Text>
+        </>
+      ) : (
+        <>
+          <Text style={[banner2Styles.text, { color: accent.red }]} numberOfLines={2}>
+            {lastErrorMessage || 'Verbindungsfehler'}
+          </Text>
+          {onRetry && (
+            <TouchableOpacity onPress={onRetry} style={banner2Styles.retryBtn}>
+              <Text style={banner2Styles.retryText}>Neu verbinden</Text>
+            </TouchableOpacity>
+          )}
+        </>
+      )}
+    </View>
+  );
+}
+
+const banner2Styles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    backgroundColor: bg.deep,
+    borderRadius: 8,
+    marginVertical: 4,
+    gap: 8,
+  },
+  text: {
+    fontSize: fontSize.label,
+    flex: 1,
+  },
+  retryBtn: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 6,
+    backgroundColor: accent.blue,
+  },
+  retryText: {
+    fontSize: fontSize.tiny,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
   },
 });
 

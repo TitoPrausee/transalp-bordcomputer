@@ -35,8 +35,18 @@ CONFIG_APP_ROLLBACK_ENABLE=y
 CONFIG_ESP_HTTP_CLIENT_ENABLE_HTTPS=y
 # mbedTLS (for SHA256 + RSA verification)
 CONFIG_MBEDTLS_RSA_LARGE_KEY=y
-# Secure Boot (disabled by default — enable for production)
-# CONFIG_SECURE_BOOT_V2_ENABLED=y
-# CONFIG_SECURE_SIGNED_APPS_NO_SECURE_BOOT=y
-# Flash Encryption (disabled by default — enable for production)
-# CONFIG_SECURE_FLASH_ENC_ENABLED=y
+CONFIG_MBEDTLS_RSA_C=y
+# --- Secure Boot V2 (production) ---
+# Signs firmware images at build time with RSA-3072.
+# The bootloader verifies signatures using the eFuse-embedded key digest.
+CONFIG_SECURE_BOOT_V2_ENABLED=y
+CONFIG_SECURE_BOOT_BUILD_SIGNED_BINARIES=y
+CONFIG_SECURE_BOOT_SIGNING_KEY="secure_boot/ota_signing_key.pem"
+# --- Flash Encryption (production) ---
+# Encrypts flash contents; bootloader decrypts at runtime.
+CONFIG_SECURE_FLASH_ENC_ENABLED=y
+# --- Anti-Rollback (eFuse SECURE_VERSION) ---
+# Bootloader rejects firmware with a version below the eFuse counter.
+CONFIG_BOOTLOADER_APP_ANTI_ROLLBACK=y
+CONFIG_BOOTLOADER_APP_SEC_VER_SIZE_EFUSE_FIELD=32
+CONFIG_BOOTLOADER_APP_SEC_VER=1

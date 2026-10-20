@@ -4,6 +4,14 @@
  * Verwendet die react-native-ble-plx Bibliothek fuer echte BLE-Kommunikation
  * mit dem Transalp Bordcomputer.
  *
+ * Production-Features:
+ *  - Auto-Reconnect mit exponentiellem Backoff (1s, 2s, 4s, 8s, max 30s)
+ *  - Connection-Loss-Detection (device.onDisconnected)
+ *  - Operation-Timeouts (Scan, Connect, Read, Write)
+ *  - Graceful Degradation bei schlechtem RSSI (< -90 dBm)
+ *  - CarPlay-Status-Notifications
+ *  - RSSI-Monitoring
+ *
  * Diese Klasse wird in der Produktion verwendet. Fuer Tests und Development
  * wird MockBleProvider verwendet.
  */
@@ -16,7 +24,7 @@ import type {
   Subscription,
 } from './BleProvider';
 import { BleErrorCode } from './BleProvider';
-import { ConnectionState } from './connection-state';
+import { ConnectionState, reconnectDelay, RECONNECT_MAX_ATTEMPTS } from './connection-state';
 import { SERVICE, CHAR, DEVICE_NAME } from './gatt-uuids';
 import type {
   TelemetryLive,
@@ -55,6 +63,16 @@ import {
   encodeCarPlayControlCommand,
 } from './binary-parsers';
 
+// --- Timing-Konstanten ---
+
+const SCAN_TIMEOUT_MS = 10_000;
+const CONNECT_TIMEOUT_MS = 15_000;
+const READ_TIMEOUT_MS = 10_000;
+const WRITE_TIMEOUT_MS = 10_000;
+const RSSI_POLL_INTERVAL_MS = 5_000;
+const RSSI_DEGRADING_THRESHOLD = -90;
+const RSSI_RECOVER_THRESHOLD = -85;
+
 /** Map von Characteristic-UUIDs auf Handler-Funktionen. */
 interface CharHandler {
   uuid: string;
@@ -67,8 +85,14 @@ export class RealBleProvider implements BleProvider {
   private callbacks: BleEventCallbacks = {};
   private connectionState: ConnectionState = ConnectionState.Disconnected;
   private connectedDevice: BleDevice | null = null;
+  private connectedDeviceId: string | null = null;
   private subscriptions: (() => void)[] = [];
   private scanTimeout: ReturnType<typeof setTimeout> | null = null;
+  private rssiInterval: ReturnType<typeof setInterval> | null = null;
+  private reconnectTimer: ReturnType<typeof setTimeout> | null = null;
+  private reconnectAttempts = 0;
+  private isReconnecting = false;
+  private destroyed = false;
 
   constructor() {
     this.plx = new PlxBleManager();
@@ -77,12 +101,21 @@ export class RealBleProvider implements BleProvider {
   async init(): Promise<void> {
     this.plx.onStateChange((state: BluetoothState) => {
       if (state === BluetoothState.PoweredOff) {
-        this.setConnectionState(ConnectionState.Disconnected);
+        this.handleConnectionLost('Bluetooth powered off');
         this.callbacks.onError?.({
           code: BleErrorCode.BluetoothDisabled,
           message: 'Bluetooth is disabled',
           recoverable: true,
         });
+      } else if (state === BluetoothState.PoweredOn) {
+        // Bluetooth re-enabled — attempt reconnect if we were connected
+        if (
+          this.connectionState === ConnectionState.Disconnected &&
+          this.connectedDeviceId &&
+          !this.isReconnecting
+        ) {
+          this.startReconnect();
+        }
       }
     });
   }
@@ -93,6 +126,7 @@ export class RealBleProvider implements BleProvider {
   }
 
   async startScan(): Promise<void> {
+    if (this.destroyed) return;
     const btEnabled = await this.isBluetoothEnabled();
     if (!btEnabled) {
       this.callbacks.onError?.({
@@ -108,8 +142,15 @@ export class RealBleProvider implements BleProvider {
     if (this.scanTimeout) clearTimeout(this.scanTimeout);
     this.scanTimeout = setTimeout(() => {
       this.plx.stopDeviceScan();
-      this.setConnectionState(ConnectionState.Disconnected);
-    }, 10000);
+      if (this.connectionState === ConnectionState.Scanning) {
+        this.callbacks.onError?.({
+          code: BleErrorCode.ScanFailed,
+          message: 'Scan timeout — no Bordcomputer found',
+          recoverable: true,
+        });
+        this.setConnectionState(ConnectionState.Disconnected);
+      }
+    }, SCAN_TIMEOUT_MS);
 
     this.plx.startDeviceScan(null, null, (error, device) => {
       if (error) {
@@ -134,15 +175,25 @@ export class RealBleProvider implements BleProvider {
   }
 
   async connect(deviceId: string): Promise<void> {
+    if (this.destroyed) return;
     this.setConnectionState(ConnectionState.Connecting);
+    this.connectedDeviceId = deviceId;
 
     try {
-      const device = await this.plx.connectToDevice(deviceId, {
-        autoConnect: true,
-        requestMTU: 247,
-      });
+      const device = await this.withTimeout(
+        this.plx.connectToDevice(deviceId, {
+          autoConnect: true,
+          requestMTU: 247,
+        }),
+        CONNECT_TIMEOUT_MS,
+        'Connection timeout',
+      );
 
-      await device.discoverAllServicesAndCharacteristics();
+      await this.withTimeout(
+        device.discoverAllServicesAndCharacteristics(),
+        CONNECT_TIMEOUT_MS,
+        'GATT discovery timeout',
+      );
 
       this.connectedDevice = {
         id: device.id,
@@ -150,16 +201,29 @@ export class RealBleProvider implements BleProvider {
         rssi: device.rssi || 0,
       };
 
+      // Listen for unexpected disconnections
+      device.onDisconnected((_, disconnectedDevice) => {
+        if (disconnectedDevice.id === deviceId) {
+          this.handleConnectionLost('Device disconnected');
+        }
+      });
+
+      // Reset reconnect attempts on successful connection
+      this.reconnectAttempts = 0;
+      this.isReconnecting = false;
+
       this.setConnectionState(ConnectionState.Connected);
       this.callbacks.onRssi?.(this.connectedDevice.rssi);
       this.callbacks.onMtu?.(247);
 
       this.setupNotifications(device);
+      this.startRssiMonitoring(device);
     } catch (e) {
+      const message = e instanceof Error ? e.message : 'Connection failed';
       this.setConnectionState(ConnectionState.Disconnected);
       this.callbacks.onError?.({
         code: BleErrorCode.ConnectionFailed,
-        message: e instanceof Error ? e.message : 'Connection failed',
+        message,
         recoverable: true,
       });
     }
@@ -178,6 +242,7 @@ export class RealBleProvider implements BleProvider {
       { uuid: CHAR.systemStatus, service: SERVICE.diagnose, onValue: (dv) => this.callbacks.onSystemStatus?.(parseSystemStatus(dv)) },
       { uuid: CHAR.taskInfo, service: SERVICE.diagnose, onValue: (dv) => this.callbacks.onTaskInfo?.(parseTaskInfo(dv)) },
       { uuid: CHAR.otaStatus, service: SERVICE.ota, onValue: (dv) => this.callbacks.onOtaStatus?.(parseOtaStatus(dv)) },
+      { uuid: CHAR.carplayStatus, service: SERVICE.carplay, onValue: (dv) => this.callbacks.onCarPlayStatus?.(parseCarPlayStatus(dv)) },
     ];
 
     for (const h of handlers) {
@@ -185,21 +250,119 @@ export class RealBleProvider implements BleProvider {
         h.service, h.uuid,
         (error, characteristic) => {
           if (error || !characteristic?.value) return;
-          h.onValue(base64ToDataView(characteristic.value));
+          try {
+            h.onValue(base64ToDataView(characteristic.value));
+          } catch (parseErr) {
+            this.callbacks.onError?.({
+              code: BleErrorCode.Unknown,
+              message: `Parse error for ${h.uuid}: ${parseErr instanceof Error ? parseErr.message : String(parseErr)}`,
+              recoverable: false,
+            });
+          }
         }
       );
       this.subscriptions.push(() => { try { sub.remove(); } catch { /* ignore */ } });
     }
   }
 
+  /** Startet periodisches RSSI-Monitoring fuer Graceful Degradation. */
+  private startRssiMonitoring(device: import('react-native-ble-plx').Device): void {
+    if (this.rssiInterval) clearInterval(this.rssiInterval);
+
+    this.rssiInterval = setInterval(async () => {
+      if (this.connectionState !== ConnectionState.Connected &&
+          this.connectionState !== ConnectionState.Degrading) {
+        return;
+      }
+      try {
+        const refreshed = await device.readRSSI();
+        const rssi = refreshed.rssi ?? 0;
+        if (this.connectedDevice) {
+          this.connectedDevice = { ...this.connectedDevice, rssi };
+        }
+        this.callbacks.onRssi?.(rssi);
+
+        // Graceful degradation: Connected -> Degrading bei schlechtem RSSI
+        if (rssi < RSSI_DEGRADING_THRESHOLD && this.connectionState === ConnectionState.Connected) {
+          this.setConnectionState(ConnectionState.Degrading);
+        } else if (rssi > RSSI_RECOVER_THRESHOLD && this.connectionState === ConnectionState.Degrading) {
+          this.setConnectionState(ConnectionState.Connected);
+        }
+      } catch {
+        // RSSI read failed — non-critical, ignore
+      }
+    }, RSSI_POLL_INTERVAL_MS);
+  }
+
+  /** Behandelt unerwarteten Verbindungsabbruch und startet Auto-Reconnect. */
+  private handleConnectionLost(reason: string): void {
+    // Subscriptions und Timer bereinigen
+    for (const unsub of this.subscriptions) {
+      try { unsub(); } catch { /* ignore */ }
+    }
+    this.subscriptions = [];
+    if (this.rssiInterval) {
+      clearInterval(this.rssiInterval);
+      this.rssiInterval = null;
+    }
+
+    this.connectedDevice = null;
+    this.callbacks.onError?.({
+      code: BleErrorCode.ConnectionFailed,
+      message: reason,
+      recoverable: true,
+    });
+
+    this.startReconnect();
+  }
+
+  /** Startet Auto-Reconnect mit exponentiellem Backoff. */
+  private startReconnect(): void {
+    if (this.destroyed || this.isReconnecting) return;
+    if (!this.connectedDeviceId) return;
+
+    this.isReconnecting = true;
+    this.setConnectionState(ConnectionState.Reconnecting);
+
+    const attempt = this.reconnectAttempts;
+    this.reconnectAttempts++;
+
+    const delay = reconnectDelay(attempt);
+
+    this.reconnectTimer = setTimeout(() => {
+      if (this.destroyed) return;
+      if (this.reconnectAttempts > RECONNECT_MAX_ATTEMPTS) {
+        // Max attempts reached — back off to slow interval
+        this.reconnectAttempts = 0;
+      }
+      this.isReconnecting = false;
+      // Re-scan to find the device again
+      this.startScan();
+    }, delay);
+  }
+
   async disconnect(): Promise<void> {
+    // Reconnect-Timer stoppen
+    if (this.reconnectTimer) {
+      clearTimeout(this.reconnectTimer);
+      this.reconnectTimer = null;
+    }
+    this.isReconnecting = false;
+
     for (const unsub of this.subscriptions) {
       try { unsub(); } catch { /* ignore */ }
     }
     this.subscriptions = [];
 
+    if (this.rssiInterval) {
+      clearInterval(this.rssiInterval);
+      this.rssiInterval = null;
+    }
+
     if (this.connectedDevice) {
-      await this.plx.cancelDeviceConnection(this.connectedDevice.id);
+      try {
+        await this.plx.cancelDeviceConnection(this.connectedDevice.id);
+      } catch { /* ignore — device may already be disconnected */ }
       this.connectedDevice = null;
     }
     this.setConnectionState(ConnectionState.Disconnected);
@@ -207,125 +370,243 @@ export class RealBleProvider implements BleProvider {
 
   async readTelemetrySnapshot(): Promise<Partial<TelemetryLive>> {
     if (!this.connectedDevice) return {};
-    const char = await this.plx.readCharacteristicForDevice(
-      this.connectedDevice.id, SERVICE.telemetry, CHAR.tlmSnapshot
-    );
-    if (!char?.value) return {};
-    return parseTelemetryLive(base64ToDataView(char.value));
+    try {
+      const char = await this.withTimeout(
+        this.plx.readCharacteristicForDevice(
+          this.connectedDevice.id, SERVICE.telemetry, CHAR.tlmSnapshot
+        ),
+        READ_TIMEOUT_MS,
+        'Telemetry read timeout',
+      );
+      if (!char?.value) return {};
+      return parseTelemetryLive(base64ToDataView(char.value));
+    } catch (e) {
+      this.emitReadError('Telemetry', e);
+      return {};
+    }
   }
 
   async readConfig(): Promise<string> {
     if (!this.connectedDevice) return '';
-    const char = await this.plx.readCharacteristicForDevice(
-      this.connectedDevice.id, SERVICE.config, CHAR.configRead
-    );
-    return char?.value || '';
+    try {
+      const char = await this.withTimeout(
+        this.plx.readCharacteristicForDevice(
+          this.connectedDevice.id, SERVICE.config, CHAR.configRead
+        ),
+        READ_TIMEOUT_MS,
+        'Config read timeout',
+      );
+      return char?.value || '';
+    } catch (e) {
+      this.emitReadError('Config', e);
+      return '';
+    }
   }
 
   async writeConfig(configJson: string): Promise<void> {
     if (!this.connectedDevice) return;
-    await this.plx.writeCharacteristicWithResponseForDevice(
-      this.connectedDevice.id, SERVICE.config, CHAR.configWrite,
-      dataViewToBase64(new DataView(new TextEncoder().encode(configJson).buffer))
-    );
+    try {
+      await this.withTimeout(
+        this.plx.writeCharacteristicWithResponseForDevice(
+          this.connectedDevice.id, SERVICE.config, CHAR.configWrite,
+          dataViewToBase64(new DataView(new TextEncoder().encode(configJson).buffer))
+        ),
+        WRITE_TIMEOUT_MS,
+        'Config write timeout',
+      );
+    } catch (e) {
+      this.emitWriteError('Config', e);
+    }
   }
 
   async triggerSelfTest(mode?: SelfTestMode): Promise<void> {
     if (!this.connectedDevice) return;
-    const cmd = encodeSelfTestCommand(mode || SelfTestMode.Quick);
-    await this.plx.writeCharacteristicWithResponseForDevice(
-      this.connectedDevice.id, SERVICE.diagnose, CHAR.selfTest,
-      dataViewToBase64(new DataView(cmd.buffer))
-    );
+    try {
+      const cmd = encodeSelfTestCommand(mode || SelfTestMode.Quick);
+      await this.withTimeout(
+        this.plx.writeCharacteristicWithResponseForDevice(
+          this.connectedDevice.id, SERVICE.diagnose, CHAR.selfTest,
+          dataViewToBase64(new DataView(cmd.buffer))
+        ),
+        WRITE_TIMEOUT_MS,
+        'Self-test write timeout',
+      );
+    } catch (e) {
+      this.emitWriteError('Self-test', e);
+    }
   }
 
   async deleteAllBonds(): Promise<void> {
     if (!this.connectedDevice) return;
-    await this.plx.writeCharacteristicWithResponseForDevice(
-      this.connectedDevice.id, SERVICE.config, CHAR.bondMgmt,
-      dataViewToBase64(new DataView(new Uint8Array([0x00]).buffer))
-    );
+    try {
+      await this.withTimeout(
+        this.plx.writeCharacteristicWithResponseForDevice(
+          this.connectedDevice.id, SERVICE.config, CHAR.bondMgmt,
+          dataViewToBase64(new DataView(new Uint8Array([0x00]).buffer))
+        ),
+        WRITE_TIMEOUT_MS,
+        'Bond deletion timeout',
+      );
+    } catch (e) {
+      this.emitWriteError('Bond deletion', e);
+    }
   }
 
   async readDtcList(): Promise<DtcEntry[]> {
     if (!this.connectedDevice) return [];
-    const char = await this.plx.readCharacteristicForDevice(
-      this.connectedDevice.id, SERVICE.diagnose, CHAR.dtcList
-    );
-    if (!char?.value) return [];
-    return parseDtcList(base64ToDataView(char.value));
+    try {
+      const char = await this.withTimeout(
+        this.plx.readCharacteristicForDevice(
+          this.connectedDevice.id, SERVICE.diagnose, CHAR.dtcList
+        ),
+        READ_TIMEOUT_MS,
+        'DTC read timeout',
+      );
+      if (!char?.value) return [];
+      return parseDtcList(base64ToDataView(char.value));
+    } catch (e) {
+      this.emitReadError('DTC', e);
+      return [];
+    }
   }
 
   async clearDtc(code?: number): Promise<void> {
     if (!this.connectedDevice) return;
-    const cmd = encodeDtcClearCommand(code);
-    await this.plx.writeCharacteristicWithResponseForDevice(
-      this.connectedDevice.id, SERVICE.diagnose, CHAR.dtcList,
-      dataViewToBase64(new DataView(cmd.buffer))
-    );
+    try {
+      const cmd = encodeDtcClearCommand(code);
+      await this.withTimeout(
+        this.plx.writeCharacteristicWithResponseForDevice(
+          this.connectedDevice.id, SERVICE.diagnose, CHAR.dtcList,
+          dataViewToBase64(new DataView(cmd.buffer))
+        ),
+        WRITE_TIMEOUT_MS,
+        'DTC clear timeout',
+      );
+    } catch (e) {
+      this.emitWriteError('DTC clear', e);
+    }
   }
 
   async readSystemStatus(): Promise<SystemStatus | null> {
     if (!this.connectedDevice) return null;
-    const char = await this.plx.readCharacteristicForDevice(
-      this.connectedDevice.id, SERVICE.diagnose, CHAR.systemStatus
-    );
-    if (!char?.value) return null;
-    return parseSystemStatus(base64ToDataView(char.value));
+    try {
+      const char = await this.withTimeout(
+        this.plx.readCharacteristicForDevice(
+          this.connectedDevice.id, SERVICE.diagnose, CHAR.systemStatus
+        ),
+        READ_TIMEOUT_MS,
+        'System status read timeout',
+      );
+      if (!char?.value) return null;
+      return parseSystemStatus(base64ToDataView(char.value));
+    } catch (e) {
+      this.emitReadError('System status', e);
+      return null;
+    }
   }
 
   async readTaskInfo(): Promise<TaskInfo[]> {
     if (!this.connectedDevice) return [];
-    const char = await this.plx.readCharacteristicForDevice(
-      this.connectedDevice.id, SERVICE.diagnose, CHAR.taskInfo
-    );
-    if (!char?.value) return [];
-    return parseTaskInfo(base64ToDataView(char.value));
+    try {
+      const char = await this.withTimeout(
+        this.plx.readCharacteristicForDevice(
+          this.connectedDevice.id, SERVICE.diagnose, CHAR.taskInfo
+        ),
+        READ_TIMEOUT_MS,
+        'Task info read timeout',
+      );
+      if (!char?.value) return [];
+      return parseTaskInfo(base64ToDataView(char.value));
+    } catch (e) {
+      this.emitReadError('Task info', e);
+      return [];
+    }
   }
 
   async readOtaStatus(): Promise<OtaStatus | null> {
     if (!this.connectedDevice) return null;
-    const char = await this.plx.readCharacteristicForDevice(
-      this.connectedDevice.id, SERVICE.ota, CHAR.otaStatus
-    );
-    if (!char?.value) return null;
-    return parseOtaStatus(base64ToDataView(char.value));
+    try {
+      const char = await this.withTimeout(
+        this.plx.readCharacteristicForDevice(
+          this.connectedDevice.id, SERVICE.ota, CHAR.otaStatus
+        ),
+        READ_TIMEOUT_MS,
+        'OTA status read timeout',
+      );
+      if (!char?.value) return null;
+      return parseOtaStatus(base64ToDataView(char.value));
+    } catch (e) {
+      this.emitReadError('OTA status', e);
+      return null;
+    }
   }
 
   async startOta(_firmwareSize: number): Promise<void> {
     if (!this.connectedDevice) return;
-    const cmd = encodeOtaCommand(OtaCommand.Start);
-    await this.plx.writeCharacteristicWithResponseForDevice(
-      this.connectedDevice.id, SERVICE.ota, CHAR.otaControl,
-      dataViewToBase64(new DataView(cmd.buffer))
-    );
+    try {
+      const cmd = encodeOtaCommand(OtaCommand.Start);
+      await this.withTimeout(
+        this.plx.writeCharacteristicWithResponseForDevice(
+          this.connectedDevice.id, SERVICE.ota, CHAR.otaControl,
+          dataViewToBase64(new DataView(cmd.buffer))
+        ),
+        WRITE_TIMEOUT_MS,
+        'OTA start timeout',
+      );
+    } catch (e) {
+      this.emitWriteError('OTA start', e);
+    }
   }
 
   async writeOtaData(data: Uint8Array): Promise<void> {
     if (!this.connectedDevice) return;
-    const chunk = encodeOtaDataChunk(data);
-    await this.plx.writeCharacteristicWithoutResponseForDevice(
-      this.connectedDevice.id, SERVICE.ota, CHAR.otaData,
-      dataViewToBase64(new DataView(chunk.buffer))
-    );
+    try {
+      const chunk = encodeOtaDataChunk(data);
+      await this.withTimeout(
+        this.plx.writeCharacteristicWithoutResponseForDevice(
+          this.connectedDevice.id, SERVICE.ota, CHAR.otaData,
+          dataViewToBase64(new DataView(chunk.buffer))
+        ),
+        WRITE_TIMEOUT_MS,
+        'OTA data write timeout',
+      );
+    } catch (e) {
+      this.emitWriteError('OTA data', e);
+    }
   }
 
   async cancelOta(): Promise<void> {
     if (!this.connectedDevice) return;
-    const cmd = encodeOtaCommand(OtaCommand.Cancel);
-    await this.plx.writeCharacteristicWithResponseForDevice(
-      this.connectedDevice.id, SERVICE.ota, CHAR.otaControl,
-      dataViewToBase64(new DataView(cmd.buffer))
-    );
+    try {
+      const cmd = encodeOtaCommand(OtaCommand.Cancel);
+      await this.withTimeout(
+        this.plx.writeCharacteristicWithResponseForDevice(
+          this.connectedDevice.id, SERVICE.ota, CHAR.otaControl,
+          dataViewToBase64(new DataView(cmd.buffer))
+        ),
+        WRITE_TIMEOUT_MS,
+        'OTA cancel timeout',
+      );
+    } catch (e) {
+      this.emitWriteError('OTA cancel', e);
+    }
   }
 
   async verifyOta(): Promise<void> {
     if (!this.connectedDevice) return;
-    const cmd = encodeOtaCommand(OtaCommand.Verify);
-    await this.plx.writeCharacteristicWithResponseForDevice(
-      this.connectedDevice.id, SERVICE.ota, CHAR.otaControl,
-      dataViewToBase64(new DataView(cmd.buffer))
-    );
+    try {
+      const cmd = encodeOtaCommand(OtaCommand.Verify);
+      await this.withTimeout(
+        this.plx.writeCharacteristicWithResponseForDevice(
+          this.connectedDevice.id, SERVICE.ota, CHAR.otaControl,
+          dataViewToBase64(new DataView(cmd.buffer))
+        ),
+        WRITE_TIMEOUT_MS,
+        'OTA verify timeout',
+      );
+    } catch (e) {
+      this.emitWriteError('OTA verify', e);
+    }
   }
 
   async exportConfig(): Promise<string> {
@@ -341,23 +622,36 @@ export class RealBleProvider implements BleProvider {
   async readCarPlayStatus(): Promise<CarPlayStatus | null> {
     if (!this.connectedDevice) return null;
     try {
-      const char = await this.plx.readCharacteristicForDevice(
-        this.connectedDevice.id, SERVICE.carplay, CHAR.carplayStatus
+      const char = await this.withTimeout(
+        this.plx.readCharacteristicForDevice(
+          this.connectedDevice.id, SERVICE.carplay, CHAR.carplayStatus
+        ),
+        READ_TIMEOUT_MS,
+        'CarPlay status read timeout',
       );
       if (!char?.value) return null;
       return parseCarPlayStatus(base64ToDataView(char.value));
-    } catch {
+    } catch (e) {
+      this.emitReadError('CarPlay status', e);
       return null;
     }
   }
 
   async sendCarPlayControl(cmd: CarPlayControl): Promise<void> {
     if (!this.connectedDevice) return;
-    const data = encodeCarPlayControlCommand(cmd);
-    await this.plx.writeCharacteristicWithResponseForDevice(
-      this.connectedDevice.id, SERVICE.carplay, CHAR.carplayControl,
-      dataViewToBase64(new DataView(data.buffer))
-    );
+    try {
+      const data = encodeCarPlayControlCommand(cmd);
+      await this.withTimeout(
+        this.plx.writeCharacteristicWithResponseForDevice(
+          this.connectedDevice.id, SERVICE.carplay, CHAR.carplayControl,
+          dataViewToBase64(new DataView(data.buffer))
+        ),
+        WRITE_TIMEOUT_MS,
+        'CarPlay control timeout',
+      );
+    } catch (e) {
+      this.emitWriteError('CarPlay control', e);
+    }
   }
 
   subscribe(callbacks: BleEventCallbacks): Subscription {
@@ -374,16 +668,54 @@ export class RealBleProvider implements BleProvider {
   }
 
   destroy(): void {
+    this.destroyed = true;
+    this.isReconnecting = false;
     for (const unsub of this.subscriptions) {
       try { unsub(); } catch { /* ignore */ }
     }
     this.subscriptions = [];
     if (this.scanTimeout) clearTimeout(this.scanTimeout);
-    this.plx.destroy();
+    if (this.reconnectTimer) clearTimeout(this.reconnectTimer);
+    if (this.rssiInterval) clearInterval(this.rssiInterval);
+    this.rssiInterval = null;
+    try {
+      this.plx.destroy();
+    } catch { /* ignore */ }
   }
 
   private setConnectionState(state: ConnectionState): void {
     this.connectionState = state;
     this.callbacks.onConnectionStateChanged?.(state);
+  }
+
+  /** Wrap a promise with a timeout. Rejects with an Error if the timeout fires. */
+  private withTimeout<T>(promise: Promise<T>, ms: number, timeoutMessage: string): Promise<T> {
+    return new Promise<T>((resolve, reject) => {
+      const timer = setTimeout(() => {
+        reject(new Error(timeoutMessage));
+      }, ms);
+      promise.then(
+        (result) => { clearTimeout(timer); resolve(result); },
+        (err) => { clearTimeout(timer); reject(err); },
+      );
+    });
+  }
+
+  private emitReadError(operation: string, e: unknown): void {
+    const message = e instanceof Error ? e.message : String(e);
+    this.callbacks.onError?.({
+      code: BleErrorCode.ReadFailed,
+      message: `${operation} read failed: ${message}`,
+      recoverable: true,
+    });
+  }
+
+  private emitWriteError(operation: string, e: unknown): void {
+    const message = e instanceof Error ? e.message : String(e);
+    this.callbacks.onError?.({
+      code: BleErrorCode.WriteFailed,
+      message: `${operation} write failed: ${message}`,
+      recoverable: true,
+    });
   }
 }

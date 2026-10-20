@@ -25,3 +25,7 @@ hardware/case/*.stl.tmp
 .DS_Store
 .env
 firmware/test_results/
+
+# Secure Boot — signing key (private, never commit)
+firmware/secure_boot/ota_signing_key.pem
+firmware/secure_boot/*.pem

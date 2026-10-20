@@ -1,0 +1,251 @@
+name: Integration Tests
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'firmware/**'
+      - 'tools/simulator/**'
+      - 'companion-app/**'
+      - '.github/workflows/integration-tests.yml'
+  pull_request:
+    paths:
+      - 'firmware/**'
+      - 'tools/simulator/**'
+      - 'companion-app/**'
+      - '.github/workflows/integration-tests.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: integration-tests-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  firmware-integration-tests:
+    name: Firmware Integration Tests (Unity + GCC)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install build tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq build-essential gcc g++ cmake python3
+
+      - name: Clone Unity test framework
+        run: |
+          git clone --depth 1 https://github.com/ThrowTheSwitch/Unity.git /tmp/unity
+
+      - name: Build and run integration tests
+        working-directory: firmware/test/integration
+        run: |
+          UNITY_DIR=/tmp/unity/src
+          mkdir -p /tmp/int_results
+
+          INCLUDES="-I../../components/gps/include"
+          INCLUDES="$INCLUDES -I../../components/utils/include"
+          INCLUDES="$INCLUDES -I../../components/diagnostics/include"
+          INCLUDES="$INCLUDES -I../../components/sensors/include"
+          INCLUDES="$INCLUDES -I../../components/power/include"
+          INCLUDES="$INCLUDES -I../../components/storage/include"
+          INCLUDES="$INCLUDES -I../../components/ble/include"
+          INCLUDES="$INCLUDES -I../../components/display/include"
+          INCLUDES="$INCLUDES -I../../components/ota/include"
+          INCLUDES="$INCLUDES -I../../components/hid_controller/include"
+          INCLUDES="$INCLUDES -I../../components/carplay_bridge/include"
+          INCLUDES="$INCLUDES -I../../main"
+          INCLUDES="$INCLUDES -I../mocks"
+          INCLUDES="$INCLUDES -I$UNITY_DIR"
+
+          CFLAGS="-DUNITY_INCLUDE_DOUBLE -DTEST_HOST -std=c11 -Wall -Wextra -Wno-unused-parameter"
+          UNITY_SRC="$UNITY_DIR/unity.c"
+
+          FAIL=0
+
+          # 1. Sensor -> BLE telemetry pipeline
+          echo "=== Building test_integration_sensor_to_ble ==="
+          gcc $INCLUDES $CFLAGS \
+            test_integration_sensor_to_ble.c $UNITY_SRC \
+            -o /tmp/int_results/test_int_sensor_ble -lm -lpthread 2>&1 || FAIL=1
+
+          # 2. GPS NMEA pipeline
+          echo "=== Building test_integration_gps_nmea_pipeline ==="
+          gcc $INCLUDES $CFLAGS \
+            test_integration_gps_nmea_pipeline.c $UNITY_SRC \
+            -o /tmp/int_results/test_int_gps -lm -lpthread 2>&1 || FAIL=1
+
+          # 3. Controller mapping (links component sources)
+          echo "=== Building test_integration_controller_mapping ==="
+          gcc $INCLUDES $CFLAGS \
+            -include ../mocks/esp_idf_mock.h \
+            test_integration_controller_mapping.c \
+            ../../components/hid_controller/controller_input.c \
+            ../../components/hid_controller/controller_mapping.c \
+            $UNITY_SRC \
+            -o /tmp/int_results/test_int_controller -lm -lpthread 2>&1 || FAIL=1
+
+          # 4. DTC + diagnostics + event bus
+          echo "=== Building test_integration_dtc_diagnostics ==="
+          gcc $INCLUDES $CFLAGS \
+            test_integration_dtc_diagnostics.c $UNITY_SRC \
+            -o /tmp/int_results/test_int_dtc -lm -lpthread 2>&1 || FAIL=1
+
+          # 5. Filter + sensor pipeline
+          echo "=== Building test_integration_filter_sensor_pipeline ==="
+          gcc $INCLUDES $CFLAGS \
+            test_integration_filter_sensor_pipeline.c $UNITY_SRC \
+            -o /tmp/int_results/test_int_filter -lm -lpthread 2>&1 || FAIL=1
+
+          # 6. BLE GATT interface consistency
+          echo "=== Building test_integration_ble_gatt_interface ==="
+          gcc $INCLUDES $CFLAGS \
+            test_integration_ble_gatt_interface.c $UNITY_SRC \
+            -o /tmp/int_results/test_int_ble -lm -lpthread 2>&1 || FAIL=1
+
+          echo ""
+          echo "=== Running all firmware integration tests ==="
+          for t in /tmp/int_results/test_int_*; do
+            if [ -x "$t" ]; then
+              echo "--- $(basename $t) ---"
+              "$t" || FAIL=1
+              echo ""
+            fi
+          done
+
+          if [ "$FAIL" -eq 0 ]; then
+            echo "=== ALL FIRMWARE INTEGRATION TESTS PASSED ==="
+          else
+            echo "=== FIRMWARE INTEGRATION TESTS FAILED ==="
+            exit 1
+          fi
+
+      - name: Upload integration test results
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: firmware-integration-test-results
+          path: /tmp/int_results/
+          retention-days: 30
+
+  simulator-integration-tests:
+    name: Simulator Integration Tests (pytest)
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        python-version: ['3.10', '3.11', '3.12']
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        working-directory: tools/simulator
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run simulator integration tests
+        working-directory: tools/simulator
+        run: |
+          python -m pytest tests/integration/ -v --tb=short
+
+      - name: Run full test suite (unit + integration)
+        working-directory: tools/simulator
+        run: |
+          python -m pytest tests/ -v --tb=short -q
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: simulator-integration-results-${{ matrix.os }}-${{ matrix.python-version }}
+          path: tools/simulator/tests/
+          retention-days: 30
+
+  cross-component-validation:
+    name: Cross-Component Validation
+    runs-on: ubuntu-latest
+    needs: [firmware-integration-tests, simulator-integration-tests]
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        working-directory: tools/simulator
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Validate BLE UUID consistency (firmware vs simulator vs app)
+        working-directory: tools/simulator
+        run: |
+          echo "=== Cross-Component BLE UUID Validation ==="
+          python -m pytest tests/integration/test_simulator_firmware_interface.py::TestBleInterfaceMatchesFirmware -v --tb=short
+
+      - name: Validate sensor data consistency (firmware vs simulator)
+        working-directory: tools/simulator
+        run: |
+          echo "=== Cross-Component Sensor Data Validation ==="
+          python -m pytest tests/integration/test_simulator_firmware_interface.py::TestSensorDataMatchesFirmware -v --tb=short
+
+      - name: Validate controller interface consistency (firmware vs simulator vs app)
+        working-directory: tools/simulator
+        run: |
+          echo "=== Cross-Component Controller Validation ==="
+          python -m pytest tests/integration/test_simulator_firmware_interface.py::TestControllerInterfaceMatchesFirmware -v --tb=short
+
+      - name: Validate display interface consistency (firmware vs simulator)
+        working-directory: tools/simulator
+        run: |
+          echo "=== Cross-Component Display Validation ==="
+          python -m pytest tests/integration/test_simulator_firmware_interface.py::TestDisplayInterfaceMatchesFirmware -v --tb=short
+
+      - name: Run full pipeline integration tests
+        working-directory: tools/simulator
+        run: |
+          echo "=== Full Pipeline Integration Tests ==="
+          python -m pytest tests/integration/test_simulator_firmware_interface.py::TestFullSimulatorPipeline -v --tb=short
+
+  regression-summary:
+    name: Regression Test Summary
+    runs-on: ubuntu-latest
+    needs: [firmware-integration-tests, simulator-integration-tests, cross-component-validation]
+    if: always()
+
+    steps:
+      - name: Summary
+        run: |
+          echo "============================================"
+          echo "  Integration Test Summary (TOT-32)"
+          echo "============================================"
+          echo ""
+          echo "Firmware Integration Tests: ${{ needs.firmware-integration-tests.result }}"
+          echo "  - 70 C tests (Unity + GCC)"
+          echo "  - Sensor->BLE, GPS NMEA, Controller, DTC, Filters, GATT"
+          echo ""
+          echo "Simulator Integration Tests: ${{ needs.simulator-integration-tests.result }}"
+          echo "  - 61 Python tests (pytest)"
+          echo "  - Sensor, GPS, BLE, Controller, Display, Pipeline"
+          echo ""
+          echo "Cross-Component Validation: ${{ needs.cross-component-validation.result }}"
+          echo "  - BLE UUID consistency (firmware + simulator + app)"
+          echo "  - Sensor data field consistency"
+          echo "  - Controller button ID consistency"
+          echo "  - Display constant consistency"
+          echo ""
+          echo "Total: 131 integration tests"
+          echo "============================================"

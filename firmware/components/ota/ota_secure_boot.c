@@ -14,6 +14,7 @@
  */
 
 #include "ota_update.h"
+#include "ota_public_key_der.h"
 
 #include <string.h>
 
@@ -40,55 +41,62 @@ static const char *TAG = "ota_secure";
 /* ============================================================
  * Public-Key Storage
  *
- * Der RSA-3072 Public-Key ist als kompiliertes PEM- oder DER-
- * Blob in der Firmware eingebettet. Bei aktiviertem Secure Boot V2
- * wird der Key zusaetzlich im eFuseSecure-Block gespeichert und
- * vom Bootloader beim Boot geprueft.
+ * Der RSA-3072 Public Key wird zur Build-Zeit aus dem
+ * Secure-Boot-Signing-Key (PEM) extrahiert und als DER-Blob
+ * in ota_public_key_der.h eingebettet (build-time codegen
+ * via scripts/gen_ota_key_header.py).
  *
- * Der hier abgelegte Key wird fuer die Anwendungs-Layer-Verifikation
- * vor dem Reboot verwendet.
+ * Bei aktiviertem Secure Boot V2 wird der Key zusaetzlich im
+ * eFuse-Secure-Block gespeichert und vom Bootloader beim Boot
+ * geprueft. Der hier abgelegte Key wird fuer die Anwendungs-
+ * Layer-Verifikation vor dem Reboot verwendet.
  * ============================================================ */
 
-/* Platzhalter: RSA-3072 Public Key (wird zur Build-Zeit eingefuegt).
+/* ============================================================
+ * Anti-Rollback: eFuse SECURE_VERSION
  *
- * WARNUNG: Dieser Key ist ein Null-Platzhalter fuer Development.
- * RSA-Verifikation ist mit diesem Key NICHT funktional.
- * In Produktion muss ein echter RSA-3072 Public Key (DER-encodiert)
- * hier eingefuegt werden, z.B. per build-time code generation. */
-#if defined(CONFIG_SECURE_BOOT_V2_ENABLED) || defined(CONFIG_SECURE_SIGNED_APPS_NO_SECURE_BOOT)
-#warning "Secure Boot ist aktiviert, aber ota_public_key_der enthaelt noch den Platzhalter (Nullen). RSA-Verifikation schlaegt fehl. Echten RSA-3072 Public Key einfuegen!"
-#endif
+ * Das ESP32-S3 eFuse-Feld SECURE_VERSION ist 32 Bits breit.
+ * eFuse-Bits koennen nur von 0->1 gesetzt werden (burn).
+ * Der Versions-Counter wird als "count of set bits" interpretiert
+ * (popcount des Rohwerts). Jedes Update brennt ein weiteres Bit,
+ * so dass die Version monoton steigt und nie zurueckgesetzt
+ * werden kann.
+ * ============================================================ */
 
-__attribute__((aligned(4)))
-static const uint8_t ota_public_key_der[OTA_RSA_KEY_LEN * 2] = {
-    /* In Produktion: echter RSA-3072 Public Key (DER-encodiert).
-     * Platzhalter mit Nullen fuer Development. */
-    0x30, 0x82, 0x03, 0x0d, 0x02, 0x01, 0x00, 0x00,
-    /* ... Rest mit Nullen aufgefuellt bis RSA Key Laenge ... */
-};
+/* Cached eFuse version (read once at init to avoid repeated eFuse reads). */
+static uint32_t s_efuse_version_cache = 0;
+static bool s_efuse_version_cached = false;
 
-/* Runtime-Check: detektiere Null-Platzhalter.
- * Gibt true zurueck wenn der Key noch der Platzhalter ist. */
-static bool ota_public_key_is_placeholder(void)
+/* Liest die aktuelle Secure-Version aus dem eFuse SECURE_VERSION-Feld.
+ * Gibt die Anzahl der gesetzten Bits (popcount) zurueck. */
+static uint32_t ota_efuse_read_secure_version(void)
 {
-    /* Die ersten 8 Bytes des Platzhalters sind der DER-Header,
-     * danach folgen Nullen. Wenn Byte 8+ alle Null sind, ist es
-     * der Platzhalter. */
-    for (size_t i = 8; i < sizeof(ota_public_key_der); i++) {
-        if (ota_public_key_der[i] != 0x00) {
-            return false;
-        }
+    uint32_t raw = 0;
+    esp_err_t err = esp_efuse_read_field_blob(
+        ESP_EFUSE_SECURE_VERSION, &raw, ESP_EFUSE_SECURE_VERSION_BIT_CNT);
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to read SECURE_VERSION eFuse: %s",
+                 esp_err_to_name(err));
+        return 0;
     }
-    return true;
+    return __builtin_popcount(raw);
 }
 
-/* eFuse-Block fuer Anti-Rollback-Counter (Secure Boot V2 Block) */
-#define OTA_EFUSE_VERSION_BLOCK  0
-
-/* Dummy-Version-Counter (eFuse Block 0 wird durch Secure Boot V2 belegt).
- * In der echten Implementierung wird ein freier eFuse-Block fuer
- * den Versions-Counter reserviert. */
-static uint32_t s_efuse_version_counter = 0;
+/* Brennt 'count' zusaetzliche Bits ins SECURE_VERSION-Feld.
+ * Jeder Aufruf von esp_efuse_write_field_bit setzt das naechste
+ * freie Bit (0->1). */
+static esp_err_t ota_efuse_burn_version_bits(uint32_t count)
+{
+    for (uint32_t i = 0; i < count; i++) {
+        esp_err_t err = esp_efuse_write_field_bit(ESP_EFUSE_SECURE_VERSION);
+        if (err != ESP_OK) {
+            ESP_LOGE(TAG, "Failed to burn SECURE_VERSION bit %lu: %s",
+                     (unsigned long)(i + 1), esp_err_to_name(err));
+            return err;
+        }
+    }
+    return ESP_OK;
+}
 
 /* ============================================================
  * Internal Helpers
@@ -186,27 +194,20 @@ esp_err_t ota_secure_verify_signature(const esp_partition_t *partition,
         ESP_LOG_BUFFER_HEX(TAG, hash_to_use, OTA_SHA256_LEN);
     }
 
-    /* 2. RSA-Signatur verifizieren mit mbedTLS */
-    if (ota_public_key_is_placeholder()) {
-        ESP_LOGW(TAG, "OTA Public Key ist noch der Null-Platzhalter. "
-                     "RSA-Verifikation wird uebersprungen (Development-Modus). "
-                     "In Produktion echten RSA-3072 Key einfuegen!");
-        return ESP_ERR_NOT_SUPPORTED;
-    }
-
+    /* 2. RSA-Signatur mit mbedTLS verifizieren.
+     * Der Public Key wird zur Build-Zeit aus dem Signing-Key generiert
+     * (ota_public_key_der.h) und ist kein Null-Platzhalter mehr. */
     mbedtls_pk_context pk_ctx;
     mbedtls_pk_init(&pk_ctx);
 
-    /* Public Key parsen (DER-format) */
     int ret = mbedtls_pk_parse_public_key(&pk_ctx,
-                                           ota_public_key_der,
-                                           sizeof(ota_public_key_der));
+                                          ota_public_key_der,
+                                          OTA_PUBLIC_KEY_DER_LEN);
     if (ret != 0) {
         ESP_LOGE(TAG, "mbedtls_pk_parse_public_key: -0x%04x", -ret);
-        /* Im Development-Modus ohne echten Key: SHA-Only-Check */
-        ESP_LOGW(TAG, "Falling back to hash-only verification (dev mode)");
+        ESP_LOGE(TAG, "RSA public key parse failed — rejecting image");
         mbedtls_pk_free(&pk_ctx);
-        return ESP_OK;
+        return ESP_ERR_INVALID_VERSION;
     }
 
     /* RSA-Verifikation */
@@ -232,56 +233,57 @@ esp_err_t ota_secure_verify_signature(const esp_partition_t *partition,
 
 esp_err_t ota_secure_check_anti_rollback(uint32_t new_version)
 {
-    ESP_LOGI(TAG, "Anti-rollback check: new=%lu, efuse=%lu",
-             (unsigned long)new_version,
-             (unsigned long)s_efuse_version_counter);
-
-    if (new_version < s_efuse_version_counter) {
-        ESP_LOGE(TAG, "ANTI-ROLLBACK: firmware version %lu < efuse %lu",
-                 (unsigned long)new_version,
-                 (unsigned long)s_efuse_version_counter);
-        return ESP_ERR_INVALID_VERSION;
+    if (!s_efuse_version_cached) {
+        s_efuse_version_cache = ota_efuse_read_secure_version();
+        s_efuse_version_cached = true;
     }
 
-    /*
-     * Bei echter eFuse-Implementierung:
-     *
-     *   esp_err_t err = esp_efuse_read_field_blob(
-     *       ESP_EFUSE_SECURE_VERSION, &s_efuse_version_counter,
-     *       ESP_EFUSE_SECURE_VERSION_BIT_CNT);
-     *
-     * eFuse-Bits koennen nur von 0->1 gesetzt werden (burn).
-     * Der Versions-Counter wird als "count of set bits" interpretiert.
-     * Jedes Update brennt ein weiteres Bit.
-     */
+    ESP_LOGI(TAG, "Anti-rollback check: new=%lu, efuse=%lu",
+             (unsigned long)new_version,
+             (unsigned long)s_efuse_version_cache);
+
+    if (new_version < s_efuse_version_cache) {
+        ESP_LOGE(TAG, "ANTI-ROLLBACK: firmware version %lu < efuse %lu",
+                 (unsigned long)new_version,
+                 (unsigned long)s_efuse_version_cache);
+        return ESP_ERR_INVALID_VERSION;
+    }
 
     return ESP_OK;
 }
 
 esp_err_t ota_secure_update_version_counter(uint32_t version)
 {
-    ESP_LOGI(TAG, "Updating version counter to %lu",
-             (unsigned long)version);
+    uint32_t current = ota_efuse_read_secure_version();
 
-    if (version <= s_efuse_version_counter) {
+    ESP_LOGI(TAG, "Updating version counter: target=%lu, current=%lu",
+             (unsigned long)version, (unsigned long)current);
+
+    if (version <= current) {
         ESP_LOGW(TAG, "Version %lu <= current %lu, not updating eFuse",
-                 (unsigned long)version,
-                 (unsigned long)s_efuse_version_counter);
+                 (unsigned long)version, (unsigned long)current);
+        s_efuse_version_cache = current;
+        s_efuse_version_cached = true;
         return ESP_OK;
     }
 
-    /*
-     * Bei echter eFuse-Implementierung:
-     *
-     *   uint32_t diff = version - s_efuse_version_counter;
-     *   for (uint32_t i = 0; i < diff; i++) {
-     *       esp_efuse_write_field_bit(ESP_EFUSE_SECURE_VERSION);
-     *   }
-     *   s_efuse_version_counter = version;
-     *
-     * In Development ohne eFuse-Schreibzugriff: nur RAM-Update.
-     */
-    s_efuse_version_counter = version;
+    /* eFuse-Bits koennen nur 0->1 gesetzt werden.
+     * Version = popcount(SECURE_VERSION). Um von 'current' auf
+     * 'version' zu kommen, brennen wir (version - current) Bits. */
+    uint32_t diff = version - current;
+    esp_err_t err = ota_efuse_burn_version_bits(diff);
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to burn %lu eFuse version bits: %s",
+                 (unsigned long)diff, esp_err_to_name(err));
+        return err;
+    }
+
+    /* Cache aktualisieren */
+    s_efuse_version_cache = ota_efuse_read_secure_version();
+    s_efuse_version_cached = true;
+
+    ESP_LOGI(TAG, "eFuse version counter updated to %lu",
+             (unsigned long)s_efuse_version_cache);
 
     return ESP_OK;
 }

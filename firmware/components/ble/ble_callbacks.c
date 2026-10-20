@@ -37,6 +37,7 @@
 #include "power.h"
 #include "diagnostics.h"
 #include "event_bus.h"
+#include "ota_update.h"
 
 static const char *TAG = "ble_cb";
 
@@ -670,33 +671,150 @@ static void process_log_export_ctrl(const uint8_t *data, uint16_t len)
     /* 0x01=start, 0x02=cancel */
 }
 
+static uint8_t ota_state_to_spec(ota_state_t s)
+{
+    switch (s) {
+    case OTA_STATE_IDLE:         return 0;  /* idle */
+    case OTA_STATE_DOWNLOADING:  return 1;  /* uploading */
+    case OTA_STATE_VERIFYING:    return 2;  /* verifying */
+    case OTA_STATE_FLASHING:     return 3;  /* done */
+    case OTA_STATE_REBOOTING:    return 3;  /* done */
+    case OTA_STATE_ERROR:        return 4;  /* failed */
+    case OTA_STATE_ROLLBACK:     return 4;  /* failed */
+    default:                     return 4;
+    }
+}
+
+static void notify_ota_status(void)
+{
+    struct __attribute__((packed)) {
+        uint8_t state;
+        uint8_t progress;
+        uint8_t error;
+    } pkt = {
+        .state    = ota_state_to_spec(ota_get_state()),
+        .progress = ota_get_progress(),
+        .error    = (uint8_t)ota_get_error(),
+    };
+    ble_notify(ble_val_handles[CHR_H_OTA_CONTROL], &pkt, sizeof(pkt));
+}
+
+/* CHR_OTA_VERIFY (0x8003) notify — see docs/BLE-INTERFACE-SPEC.md §9.3.
+ * Payload: u8 status + u8[32] sha256 + u32 size + u32 version (41 bytes).
+ * Emitted on the commit failure path so a subscribed app learns the
+ * computed hash and failure reason. On success the device reboots inside
+ * ota_ble_commit() before this can be delivered (TOT-33: verify/commit split). */
+static void notify_ota_verify(void)
+{
+    ota_verify_result_t result;
+    if (ota_ble_get_verify_result(&result) != ESP_OK) {
+        return;
+    }
+
+    struct __attribute__((packed)) {
+        uint8_t  status;
+        uint8_t  sha256[OTA_SHA256_LEN];
+        uint32_t size;
+        uint32_t version;
+    } pkt;
+
+    pkt.status  = result.status;
+    memcpy(pkt.sha256, result.sha256, OTA_SHA256_LEN);
+    pkt.size    = result.size;
+    pkt.version = result.version;
+
+    _Static_assert(sizeof(pkt) == OTA_VERIFY_NOTIFY_SIZE,
+                   "OTA_VERIFY notify payload size mismatch (spec §9.3)");
+
+    ble_notify(ble_val_handles[CHR_H_OTA_VERIFY], &pkt, sizeof(pkt));
+}
+
 static void process_ota_control(const uint8_t *data, uint16_t len)
 {
     if (len < 1) return;
     uint8_t cmd = data[0];
     ESP_LOGI(TAG, "OTA control: 0x%02x", cmd);
 
+    /* Command bytes per docs/BLE-INTERFACE-SPEC.md §9.1 */
     switch (cmd) {
-    case 0x01:  /* begin */
-        event_bus_set(EVT_OTA_START);
+    case 0x00: {  /* Start */
+        if (len < 1 + sizeof(uint32_t)) {
+            ESP_LOGE(TAG, "OTA Start: missing total_size (len=%u)", len);
+            notify_ota_status();
+            return;
+        }
+        uint32_t total_size;
+        memcpy(&total_size, &data[1], sizeof(total_size));
+        esp_err_t err = ota_update_from_ble(total_size);
+        if (err != ESP_OK) {
+            ESP_LOGE(TAG, "ota_update_from_ble failed: %s", esp_err_to_name(err));
+        }
+        notify_ota_status();
         break;
-    case 0x02:  /* commit */
-        event_bus_set(EVT_OTA_DONE);
+    }
+    case 0x01: {  /* Cancel */
+        esp_err_t err = ota_abort();
+        if (err != ESP_OK) {
+            ESP_LOGE(TAG, "ota_abort failed: %s", esp_err_to_name(err));
+        }
+        notify_ota_status();
         break;
-    case 0x03:  /* abort */
-        event_bus_clear(EVT_OTA_START);
+    }
+    case 0x02: {  /* Verify — status checkpoint (verify+commit fused in ota_ble_commit) */
+        notify_ota_status();
         break;
+    }
+    case 0x03: {  /* Commit — verify + set boot partition + reboot */
+        const uint8_t *expected_hash = NULL;
+        if (len >= 1 + OTA_SHA256_LEN) {
+            expected_hash = &data[1];
+        }
+        esp_err_t err = ota_ble_commit(expected_hash);
+        if (err != ESP_OK) {
+            ESP_LOGE(TAG, "ota_ble_commit failed: %s", esp_err_to_name(err));
+            notify_ota_status();
+            /* Emit the verify result on 0x8003 (CHR_OTA_VERIFY) so a
+             * subscribed app receives the computed hash and the failure
+             * reason (spec §9.3). On success ota_ble_commit() reboots
+             * before this can be delivered — see TOT-33. */
+            notify_ota_verify();
+        }
+        break;
+    }
     default:
         ESP_LOGW(TAG, "Unknown OTA cmd 0x%02x", cmd);
+        notify_ota_status();
         break;
     }
 }
 
 static void process_ota_data(const uint8_t *data, uint16_t len)
 {
-    /* OTA data chunks — write to OTA partition */
-    ESP_LOGD(TAG, "OTA data: %d bytes", len);
-    /* TODO: esp_ota_write() with proper partition handling */
+    ESP_LOGD(TAG, "OTA data: %u bytes", len);
+
+    /* Wire payload is a packed ota_chunk_t: offset(4) + length(2) + crc16(2) + data[length].
+     * Only 8 + length bytes are valid; ota_ble_write_chunk reads length bytes of data. */
+    if (len < 8) {
+        ESP_LOGE(TAG, "OTA chunk too short: %u bytes", len);
+        notify_ota_status();
+        return;
+    }
+
+    const ota_chunk_t *chunk = (const ota_chunk_t *)data;
+
+    if (chunk->length > (OTA_BLE_MTU_PAYLOAD - 8) ||
+        (uint16_t)(chunk->length + 8) != len) {
+        ESP_LOGE(TAG, "OTA chunk length mismatch: length=%u, len=%u",
+                 chunk->length, len);
+        notify_ota_status();
+        return;
+    }
+
+    esp_err_t err = ota_ble_write_chunk(chunk);
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "ota_ble_write_chunk failed: %s", esp_err_to_name(err));
+        notify_ota_status();
+    }
 }
 
 /* ============================================================

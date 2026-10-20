@@ -23,6 +23,13 @@ from mock_ble import (
     CHR_CONFIG_WRITE,
     SVC_TELEMETRY,
     DTC_SEV_WARNING, DTC_SEV_CRITICAL,
+    DTC_ENTRY_SIZE, TLM_LIVE_SIZE, TLM_LIVE_FMT,
+    SENSOR_GPS_OK, SENSOR_GPS_NO_FIX, SENSOR_GPS_ERROR,
+    SENSOR_RPM_OK, SENSOR_RPM_NO_SIGNAL,
+    SENSOR_TEMP_OK, SENSOR_TEMP_ERROR,
+    SENSOR_FUEL_OK, SENSOR_FUEL_ERROR,
+    SENSOR_SD_OK, SENSOR_SD_NOT_PRESENT,
+    SELF_TEST_RESULT_PASS,
 )
 
 
@@ -109,12 +116,15 @@ class TestGattWrite:
             ble.write(CHR_TLM_SNAPSHOT, b"\x00")
 
     def test_self_test_trigger(self):
-        """Self-Test Write setzt Ergebnis auf pass."""
+        """Self-Test Write setzt Ergebnis auf pass (u8 result + u8 detail)."""
         ble = MockBle()
         ble.connect()
         ble.write(CHR_SELF_TEST, b"\x01")
         result = ble._chars[CHR_SELF_TEST].value
-        assert struct.unpack("<I", result)[0] == 0
+        assert len(result) == 2
+        res_code, detail_count = struct.unpack("<BB", result)
+        assert res_code == SELF_TEST_RESULT_PASS
+        assert detail_count == 0
 
 
 class TestSubscribeNotify:
@@ -160,9 +170,9 @@ class TestDtcManagement:
         ble = MockBle()
         ble.connect()
         ble.subscribe(CHR_DTC_LIST)
-        ble.add_dtc(0x0101, DTC_SEV_WARNING)
+        ble.add_dtc(0x0101, DTC_SEV_WARNING, timestamp=1700000000)
         data = ble.read(CHR_DTC_LIST)
-        assert len(data) == 6  # 6 bytes per DTC
+        assert len(data) == DTC_ENTRY_SIZE  # 7 bytes per DTC
 
     def test_clear_dtcs(self):
         """DTCs koennen geloescht werden."""
@@ -175,15 +185,14 @@ class TestDtcManagement:
         assert len(data) == 0
 
     def test_dtc_packing(self):
-        """DTC wird als 6 Bytes gepackt."""
-        dtc = DtcEntry(code=0x0102, severity=DTC_SEV_WARNING, active=True, occurrences=3)
+        """DTC wird als 7 Bytes gepackt (code u16 + severity u8 + timestamp u32)."""
+        dtc = DtcEntry(code=0x0102, severity=DTC_SEV_WARNING, timestamp=1700000000)
         packed = dtc.pack()
-        assert len(packed) == 6
-        code, sev, active, occ = struct.unpack("<HBHB", packed)
+        assert len(packed) == DTC_ENTRY_SIZE
+        code, sev, ts = struct.unpack("<HBI", packed)
         assert code == 0x0102
         assert sev == DTC_SEV_WARNING
-        assert active == 1
-        assert occ == 3
+        assert ts == 1700000000
 
 
 class TestSensorStatus:

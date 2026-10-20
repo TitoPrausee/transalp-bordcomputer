@@ -957,3 +957,102 @@ Silica-Gel (Feuchtigkeitsschutz, MSL-Klassifizierung beachten).
 - docs/CASE-DESIGN.md: Gehaeuse-Materialien und Mechanik
 - docs/PRODUCT-CATALOG.md: Produktkatalog mit 5 Produktvarianten
 - docs/SHOPPING-LIST.md: Einkaufsliste mit China-Marktplatz-Links
+
+## 8. Manufacturing Readiness & Verification
+
+> Stand: 20. Oktober 2026 · Verifiziert durch: Wolfgang (@wolfgang) · Issue: TOT-30
+
+Diese Sektion dokumentiert den Fertigungs-Reifegrad der BOM fuer die
+PCB-Produktifizierung (Sprint 2). Sie ergaenzt die sourcing-Strategie aus
+Abschnitt 2 mit Hersteller-Teilenummern (MPN), damit ein Contract
+Manufacturer (CM) die Bauteile eindeutig identifizieren und bestellen kann.
+
+### 8.1 Lieferanten-Anonymisierung
+
+Die BOM und `docs/SHOPPING-LIST.md` verwenden bewusst Pseudonyme
+("B2B-Distributor US #1", "Elektronik-Distributor DE #1", "China-Marktplatz",
+"Online-Marktplatz", "Spezial-Distributor", "Distributor EU/CN",
+"Display-Modul-Hersteller"). Dadurch werden keine einzelnen Händler bevorzugt
+(oeffentliches Repo). Fuer eine CM-Bestellung muessen diese auf reale
+Lieferanten gemappt werden — empfohlene reale Quellen je Kategorie:
+
+| Pseudonym                  | Reale Empfehlung (Beispiel)                                  |
+|----------------------------|--------------------------------------------------------------|
+| B2B-Distributor US #1/#2   | Mouser, Digi-Key                                            |
+| Elektronik-Distributor DE #1 | Conrad, Voelkner, BerryBase, Reichelt                     |
+| China-Marktplatz           | AliExpress, LCSC                                            |
+| Online-Marktplatz          | Amazon, eBay                                                |
+| Spezial-Distributor        | Spezialisierte Motorrad-Elektronik-Haendler                |
+| Distributor EU             | Mouser EU, Farnell                                          |
+| Distributor CN             | LCSC, AliExpress                                            |
+| Display-Modul-Hersteller  | Waveshare, BuyDisplay (dealextreme)                          |
+
+### 8.2 MPN-Referenztabelle (Kernbauteile)
+
+Hersteller-Teilenummern fuer die SMT-Bestueckung. Diese MPN sind die
+Bestellgrundlage fuer Pick&Place bei JLCPCB/LCSC-Assembly.
+
+| Bauteil                  | Hersteller   | MPN                        | Footprint      | BOM-Preis |
+|--------------------------|--------------|----------------------------|----------------|-----------|
+| ESP32-S3-WROOM-1         | Espressif    | ESP32-S3-WROOM-1-N8R2*     | Module         | 5,40 EUR  |
+| IMU                      | Bosch        | BMI270                     | LGA-14         | 5,00 EUR  |
+| Barometer                | Bosch        | BMP390 (BMP388 obsolete)   | LGA-10         | 3,50 EUR  |
+| GPS-Modul                | u-blox        | NEO-M9N-00B               | Module         | 24,60 EUR |
+| Buck-Regler              | Monolithic Power | MP1584EN                | SOIC-8 / Modul | 1,50 EUR  |
+| LDO 3,3V                 | Holtek       | HT7333-3.3                | SOT-89         | 0,50 EUR  |
+| Li-Ion-Lader             | NanJing Top Power | TP4056                 | SOP-8 / Modul  | 0,50 EUR  |
+| Boost-Regler             | Aerosemi     | MT3608                     | SOT-23-6 / Modul | 0,80 EUR |
+| Optokoppler              | Sharp        | PC817C                     | DIP-4 / SMD    | 0,50 EUR  |
+| Gate-Driver              | Microchip    | TC4427VOA                  | SOIC-8         | 1,50 EUR  |
+| MOSFET                   | Infineon     | IRLZ44N                    | TO-220         | 1,50 EUR  |
+| Schottky-Diode           | Multicomp/Vis | 1N5822                   | DO-201AD       | 0,10 EUR  |
+| TVS-Diode                | Littelfuse   | SMAJ15A                    | SMA            | 0,50 EUR  |
+| Freilaufdiode            | Multicomp    | 1N5408                     | DO-201AD       | 0,10 EUR  |
+| Kuehlmitteltemp-Sensor   | Maxim (ADI)  | DS18B20                    | TO-92 wasserd. | 3,00 EUR  |
+| Ferrite Bead             | Murata       | BLM18AG601SN1              | 0805           | 0,20 EUR  |
+
+*Konsolidierung noetig: BOM nennt N8R2 (8MB Flash/2MB PSRAM), PINMAP.md und
+HARDWARE-TEST-BENCH.md nennen N16R8 (16MB Flash/8MB Octal PSRAM) — siehe §8.4.
+
+### 8.3 Preis-Verifizierungsstatus
+
+| Kategorie               | Preise vorhanden | Datum-Stempel | URL/Link |
+|-------------------------|:---:|:---:|:---:|
+| Kern-Elektronik         | ja  | Oktober 2026 | nein (Pseudonym) |
+| Fahrzeug-Sensoren       | ja  | Oktober 2026 | nein (Pseudonym) |
+| Power-Management        | ja  | Oktober 2026 | nein (Pseudonym) |
+| Passive Bauelemente     | ja  | Oktober 2026 | nein (Pseudonym) |
+| PCB-Fertigung           | ja  | 2026         | jlcpcb.com       |
+| Gehaeuse/Mechanik       | ja  | Oktober 2026 | nein (Pseudonym) |
+| CarPlay/Controller      | ja  | Oktober 2026 | teils (chigee/silverfox/sportsbikeshop) |
+
+Preise sind als Einzelstueckpreise (Stand Oktober 2026) verifiziert und aktuell.
+Direkte Produkt-URLs fehlen bewusst (Pseudonym-Konvention); die
+MPN-Tabelle §8.2 ermoeglicht die eindeutige Bestellung bei jedem Distributor.
+
+### 8.4 Offene Diskrepanzen (vor CM-Handoff loesen)
+
+1. **MCU-Variante N8R2 vs. N16R8** — BOM/SHOPPING-LIST: N8R2 (8MB/2MB);
+   `PINMAP.md`/`HARDWARE-TEST-BENCH.md`: N16R8 (16MB/8MB Octal PSRAM).
+   Beeinflusst Flash/PSRAM-Konfiguration und Bestellung. Klärung mit @klaus.
+2. **Barometer BMP388 (obsolete) → BMP390** — bereits als Ersatz hinterlegt,
+   Footprint und I2C-Adresse (0x76/0x77) verifizieren.
+3. **IMU MPU6050 vs. BMI270** — Firmware (`board_config.h`) referenziert
+   MPU6050 (0x68), BOM/Layout verwenden BMI270. Treiber und I2C-Adresse
+   abstimmen. Siehe Pinmap-Verifikationsbericht
+   `docs/research/pinmap-firmware-verification.md`.
+4. **GPS AT6558 vs. NEO-M9N** — PINMAP.md nennt AT6558, Firmware/BOM NEO-M9N.
+   Baudrate und Protokoll (NMEA/UBX) abklaeren.
+5. **Referenz-Designatoren (R1, C1, U1 ...)** fehlen — werden im KiCad-Schema
+   vergeben (PCB-LAYOUT.md §9 Schritt 1). Fuer die CM-Pick&Place-Datei
+   (BOM/Position/Centroid) noetig.
+6. **MSL/Verpackung** (Tape&Reel, Feuchtigkeitsklasse) — fuer JLCPCB-Assembly
+   bei den Modulen (WROOM-1, NEO-M9N) anzugeben.
+
+### 8.5 Empfehlung
+
+Preise und Bezugsquellen sind verifiziert und aktuell (Oktober 2026). Fuer den
+fertigen CM-Handoff muessen (a) die Lieferanten-Pseudonyme auf reale Distributoren
+gemappt, (b) die MCU/Sensor-Diskrepanzen geklaert und (c) die Referenzdesignatoren
+im KiCad-Schema vergeben werden. Die MPN-Tabelle §8.2 schließt die wesentliche
+Luecke ("welches Bauteil genau?").

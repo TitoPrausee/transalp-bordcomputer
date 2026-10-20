@@ -13,6 +13,7 @@
 
 import { useAppStore, EMPTY_TELEMETRY, MOCK_TOURS, MOCK_SENSOR_STATUS } from './store';
 import { ConnectionState } from '../ble/connection-state';
+import { BleErrorCode } from '../ble/BleProvider';
 import { DEFAULT_CONFIG } from './config';
 
 // Reset store before each test
@@ -48,6 +49,9 @@ beforeEach(() => {
     otaStatus: null,
     tours: [...MOCK_TOURS],
     isMockMode: true,
+    lastError: null,
+    reconnectAttempts: 0,
+    isRetrying: false,
   });
 });
 
@@ -278,5 +282,90 @@ describe('System status and OTA', () => {
     };
     useAppStore.getState().setOtaStatus(ota);
     expect(useAppStore.getState().otaStatus).toEqual(ota);
+  });
+});
+
+// ============================================================
+// Error / Reconnection State
+// ============================================================
+
+describe('Error and reconnection state', () => {
+  it('should start with no error', () => {
+    expect(useAppStore.getState().lastError).toBeNull();
+  });
+
+  it('should start with zero reconnect attempts', () => {
+    expect(useAppStore.getState().reconnectAttempts).toBe(0);
+  });
+
+  it('should start not retrying', () => {
+    expect(useAppStore.getState().isRetrying).toBe(false);
+  });
+
+  it('should set last error', () => {
+    const error = { code: BleErrorCode.ConnectionFailed, message: 'Device disconnected', recoverable: true };
+    useAppStore.getState().setLastError(error);
+    const state = useAppStore.getState();
+    expect(state.lastError).toEqual(error);
+    expect(state.lastError?.code).toBe(BleErrorCode.ConnectionFailed);
+  });
+
+  it('should clear error', () => {
+    useAppStore.getState().setLastError({
+      code: BleErrorCode.ScanFailed,
+      message: 'Scan failed',
+      recoverable: true,
+    });
+    expect(useAppStore.getState().lastError).not.toBeNull();
+
+    useAppStore.getState().clearError();
+    expect(useAppStore.getState().lastError).toBeNull();
+  });
+
+  it('should set error to null explicitly', () => {
+    useAppStore.getState().setLastError({
+      code: BleErrorCode.ReadFailed,
+      message: 'Read failed',
+      recoverable: true,
+    });
+    useAppStore.getState().setLastError(null);
+    expect(useAppStore.getState().lastError).toBeNull();
+  });
+
+  it('should track reconnect attempts', () => {
+    useAppStore.getState().setReconnectAttempts(1);
+    expect(useAppStore.getState().reconnectAttempts).toBe(1);
+
+    useAppStore.getState().setReconnectAttempts(3);
+    expect(useAppStore.getState().reconnectAttempts).toBe(3);
+  });
+
+  it('should track retry state', () => {
+    useAppStore.getState().setRetrying(true);
+    expect(useAppStore.getState().isRetrying).toBe(true);
+
+    useAppStore.getState().setRetrying(false);
+    expect(useAppStore.getState().isRetrying).toBe(false);
+  });
+
+  it('should clear error and reset retry state on successful connection', () => {
+    // Simulate error state
+    useAppStore.getState().setLastError({
+      code: BleErrorCode.ConnectionFailed,
+      message: 'Lost connection',
+      recoverable: true,
+    });
+    useAppStore.getState().setRetrying(true);
+    useAppStore.getState().setReconnectAttempts(3);
+
+    // Simulate successful reconnection
+    useAppStore.getState().clearError();
+    useAppStore.getState().setReconnectAttempts(0);
+    useAppStore.getState().setRetrying(false);
+
+    const state = useAppStore.getState();
+    expect(state.lastError).toBeNull();
+    expect(state.reconnectAttempts).toBe(0);
+    expect(state.isRetrying).toBe(false);
   });
 });

@@ -51,6 +51,7 @@ Nicht sicher, wo Sie anfangen sollen? Waehlen Sie Ihr Ziel:
 | SENSOR-MOUNTING | Sensor-Anschlusspunkte an der PD06: CDI-Pinout, Öldruckschalter, Kühlmitteltemp, Kraftstoff, Tacho, Kabelverlegung. | [docs/SENSOR-MOUNTING.md](SENSOR-MOUNTING.md) |
 | SHOPPING-LIST | Kompakte Einkaufsliste Standard-Konfiguration: 61 Bauteile mit Preisen, Quellen und Bestellreihenfolge. | [docs/SHOPPING-LIST.md](SHOPPING-LIST.md) |
 | INSTALLATION-GUIDE | Montage-Anleitung fuer die PD06: PCB-Einbau, Verkabelung, Display-Montage, Inbetriebnahme und PD06-spezifische Hinweise. | [docs/INSTALLATION-GUIDE.md](INSTALLATION-GUIDE.md) |
+| ASSEMBLY-GUIDE | PCB-Bestueckungs- und Inbetriebnahme-Guide: gestaffelter Bring-up (Pre-Power-Kurzschlusstest, Smoke-Test, I2C-Scan), Abschnittsbestueckung, Subsystem-Tests und Conformal Coating. | [docs/ASSEMBLY-GUIDE.md](ASSEMBLY-GUIDE.md) |
 | CASE-DESIGN | Gehaeuse-Design: 3D-Druck-Konzept, Montage-Strategie, Wasserfestigkeit (IP65), Vibration-daempfung und Temperatur-Management. | [docs/CASE-DESIGN.md](CASE-DESIGN.md) |
 
 ### Ich will beitragen

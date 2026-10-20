@@ -18,6 +18,7 @@
 6. Risiken und Mitigation
 7. Test-Schedule
 8. Test-Ablauf-Diagramm
+9. Integration-Test-Suite und Simulator-Validierung
 
 ---
 
@@ -1218,6 +1219,89 @@ Fuer die Metrik-Erfassung werden folgende Referenz-Messgeraete benoetigt:
 - **TFT**: Thin Film Transistor (Display-Typ)
 - **UART**: Universal Asynchronous Receiver/Transmitter (serielle Schnittstelle)
 - **Watchdog**: Hardware-Timer, der System bei Blockade neu startet
+
+---
+
+## 9. Integration-Test-Suite und Simulator-Validierung
+
+> Ergaenzung durch TOT-32 (Sprint 2 — Integration & Production Readiness)
+> Stand: Oktober 2026
+
+### 9.1 Integration-Test-Abdeckung
+
+Vor jedem Feldtest muss die Integration-Test-Suite bestanden werden.
+Die Tests verifizieren die Komponenten-Interaktionen, die im Feldtest
+vorausgesetzt werden.
+
+**Firmware Integration Tests** (`firmware/test/integration/`):
+
+| Test-Modul | Tests | Abdeckung |
+|-----------|-------|-----------|
+| `test_integration_sensor_to_ble.c` | 9 | Sensor-Daten -> BLE Telemetry Packing (22-Byte Payload) |
+| `test_integration_gps_nmea_pipeline.c` | 10 | NMEA-Saetze -> Firmware Parser -> gps_data_t |
+| `test_integration_controller_mapping.c` | 14 | Button -> Debounce -> Mapping -> Event-Dispatch |
+| `test_integration_dtc_diagnostics.c` | 15 | DTC-Report -> Diagnostics -> Event-Bus |
+| `test_integration_filter_sensor_pipeline.c` | 11 | Kalman / Complementary / Moving Average Filter |
+| `test_integration_ble_gatt_interface.c` | 11 | GATT UUID Konsistenz (Firmware + Simulator + App) |
+| **Total** | **70** | |
+
+**Simulator Integration Tests** (`tools/simulator/tests/integration/`):
+
+| Test-Klasse | Tests | Abdeckung |
+|------------|-------|-----------|
+| `TestSensorDataMatchesFirmware` | 16 | SensorData Felder + Wertebereiche vs sensors.h |
+| `TestGpsDataMatchesFirmware` | 11 | GpsData Felder + NMEA-Format vs gps.h |
+| `TestBleInterfaceMatchesFirmware` | 13 | GATT UUIDs + Payload-Formate vs gatt_uuids.h |
+| `TestControllerInterfaceMatchesFirmware` | 8 | Button-IDs + Debounce vs controller_input.h |
+| `TestDisplayInterfaceMatchesFirmware` | 10 | Dimensionen + Farben vs display.h |
+| `TestFullSimulatorPipeline` | 5 | Sensor->BLE, GPS->NMEA, Controller->Display |
+| **Total** | **61** | |
+
+### 9.2 Simulator-Validierung vor Feldtest
+
+Der Simulator muss vor jedem Feldtest erfolgreich validiert werden:
+
+```bash
+# 1. Simulator-Unit-Tests (121 Tests)
+cd tools/simulator && python -m pytest tests/ -v --ignore=tests/integration
+
+# 2. Simulator-Integration-Tests (61 Tests)
+cd tools/simulator && python -m pytest tests/integration/ -v
+
+# 3. 24h Simulated Ride (beschleunigt)
+python3 simulator.py --track tracks/sample_alps.gpx --duration 86400 \
+  --speed-multiplier 1000 --tick-hz 1 --ci-mode --fast --skip-display --seed 42
+```
+
+### 9.3 PD06-spezifische Test-Szenarien
+
+Die folgenden Szenarien muessen im Simulator abgedeckt sein, bevor sie
+im Feldtest getestet werden:
+
+| Szenario | Simulator-Test | Feldtest-Phase |
+|----------|---------------|----------------|
+| Stadtverkehr (Stop-and-Go) | Default-RPM-Kurve | Phase 4: Feldtest Stadt |
+| Landstrasse (60-100 km/h) | Custom-Curve 4000-6000 RPM | Phase 5: Feldtest Landstrasse |
+| Ueberholen (Vollgas) | RPM-Spike auf 7500 | Phase 5: Feldtest Landstrasse |
+| Kraftstoff-Reserve (< 3L) | Fuel-Curve auf 2L | Phase 3+5 |
+| Ueberhitzung (> 120C) | Temp-Curve auf 120C | Phase 3: Stand-Test |
+| Kurvenfahrt (Roll +/- 20°) | IMU-Curve | Phase 5 |
+| GPS-Verlust (Tunnel) | Track unterbrochen | Phase 5 |
+| Motorstillstand | RPM auf 0, Gear=N | Phase 3+4 |
+| Regenfahrt | (nicht simulierbar) | Phase 6: Witterung |
+| Nachtfahrt | Display Backlight dimmen | Phase 4+5 |
+
+### 9.4 Sicherheits-Checklist vor Feldtest
+
+Vor jedem Feldtest muss die `docs/SAFETY-CHECKLIST.md` ausgefuellt
+und von @wolfgang (Hardware) und @klaus (CTO) freigegeben werden.
+
+Die Checklist deckt ab:
+- Elektrische Sicherheit (Bordnetz, Verkabelung, Sensoren)
+- Thermische Sicherheit (Betriebstemperaturen, Waermemanagement)
+- Vibrations- und Stossfestigkeit (Befestigung, Vibrations-Test)
+- Witterungsschutz (Wasser, Staub, UV, Temperaturwechsel)
+- Funktionale Sicherheit (Notfall-Verhalten, Datenintegritaet)
 
 ---
 

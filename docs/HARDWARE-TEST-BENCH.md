@@ -682,6 +682,88 @@ Checkliste gefuehrt und bei jedem Release manuell abgehakt.
 
 ## 5. Test-Prozeduren fuer Subsysteme
 
+### 5.0 PCB-Inbetriebnahme (Bring-up) — Erst-Inbetriebnahme nach Bestueckung
+
+Die Prozeduren §5.1–§5.10 setzen ein bereits bootfaehiges, lauffaehiges DUT
+voraus ("Self-Test bestanden"). Fuer eine **frisch bestueckte Leiterplatte** ist
+zuvor die gestaffelte Inbetriebnahme (Bring-up) noetig. Die detaillierte
+Schritt-fuer-Schritt-Anleitung steht in
+[`docs/ASSEMBLY-GUIDE.md`](ASSEMBLY-GUIDE.md) §5–§7; hier die
+Test-Bench-spezifischen Eckpunkte.
+
+#### 5.0.1 Pre-Power Kontinuitaets- und Kurzschlusstest
+
+**Vorbedingung:** PCB bestueckt, nicht bestromt. Labornetzteil aus.
+Testpunkte TP01 (3,3V) / TP02 (5V) / TP03 (12V) / TP04 (GND) — siehe §3.1.
+
+| Schritt | Messung (Multimeter Widerstand) | Soll (unbestromt) |
+|---|---|---|
+| 1 | 12V ↔ GND (TP03↔TP04) | > 10 kΩ (ideal ∞) |
+| 2 | 5V ↔ GND (TP02↔TP04) | > 1 kΩ |
+| 3 | 3,3V ↔ GND (TP01↔TP04) | > 500 Ω |
+| 4 | 12V ↔ 5V (TP03↔TP02) | > 10 kΩ |
+| 5 | 5V ↔ 3,3V (TP02↔TP01) | > 1 kΩ |
+
+Pass/Fail: alle Widerstaende im gruenen Bereich. Bei Abweichung: Kurzschluss
+lokalisieren, Reflow pruefen, erst danach weiter mit Phase 1.
+
+#### 5.0.2 Smoke-Test / Strombegrenztes Erst-Einschalten
+
+**Vorbedingung:** §5.0.1 bestanden. Labornetzteil 12 V, Strombegrenzung 50 mA.
+
+| Schritt | Aktion | Erwartetes Ergebnis |
+|---|---|---|
+| 1 | Netzteil an 12V-Eingang (TP03 / AMP Superseal 2-polig) | — |
+| 2 | Strombegrenzung 50 mA, einschalten | Stromaufnahme < 50 mA |
+| 3 | 5V-Schiene messen (TP02) | 5,0 V ± 0,1 V |
+| 4 | 3,3V-Schiene messen (TP01) | 3,3 V ± 0,1 V |
+| 5 | Strombegrenzung auf 200 mA hochregeln | Schienen stabil, kein Overcurrent |
+
+Pass/Fail: beide Schienen im Toleranzbereich, kein Ueberstrom.
+Bei Ueberstrom → sofort aus, Kurzschluss suchen. Siehe Debug-Tree ASSEMBLY-GUIDE §10.
+
+#### 5.0.3 USB-C Erst-Flash & Boot-Verifikation
+
+| Schritt | Aktion | Erwartetes Ergebnis |
+|---|---|---|
+| 1 | USB-C (Service-Port) an PC | Serieller Port erkannt |
+| 2 | Bootloader: BOOT(GPIO0) + RESET | ESP32 im Download-Mode |
+| 3 | `idf.py -p /dev/cu.usbmodem* flash monitor` | Flash + Monitor startet |
+| 4 | Boot-Log beobachten | keine Panic/Backtrace, selftest OK |
+| 5 | STATUS_LED (TP22) | Heartbeat-Blinken |
+
+Pass/Fail: Firmware geflasht, Boot ohne Exception, STATUS_LED blinkt.
+
+#### 5.0.4 I2C-Bus-Scan
+
+**Vorbedingung:** §5.0.3 bestanden (MCU laeuft). Ueber serielle Test-Schnittstelle (§4.1):
+
+```
+i2c-scan
+```
+
+| Erwartete Adresse | Geraet |
+|---|---|
+| 0x68 | IMU (BMI270/MPU6050, AD0=LOW) |
+| 0x76 | Barometer (BMP390/BMP388) |
+
+Pass/Fail: beide Adressen gefunden. Fehlt eine → Verdrahtung SDA=8/SCL=9,
+Pull-Ups 4,7 kΩ, VCC pruefen (siehe Debug-Tree ASSEMBLY-GUIDE §10).
+
+#### 5.0.5 Gestaffeltes Bring-up (Uebersicht)
+
+Vollstaendige Reihenfolge siehe ASSEMBLY-GUIDE §6:
+
+1. Phase 1 — Power-Sektion (strombegrenzt, §5.0.2)
+2. Phase 2 — ESP32-S3 Flash & Boot (§5.0.3)
+3. Phase 3 — I2C-Bus-Scan (§5.0.4)
+4. Phase 4 — SPI-Geraete (TFT, E-Paper, MicroSD) enumerieren
+5. Phase 5 — Peripherie (ADC-Sensoren, RPM/Tacho, GPS, BLE, Buttons)
+
+Erst nach Abschluss aller Phasen Übergang zu den funktionalen Subsystem-Tests §5.1–§5.15.
+
+---
+
 ### 5.1 RPM/Tacho (PCNT) Test-Prozedur
 
 **Vorbedingung:** DUT eingeschaltet, Self-Test bestanden,
@@ -860,6 +942,82 @@ per Multimeter mit serieller Schnittstelle).
 
 Pass/Fail: Boot bis Self-Test < 3s.
 Automatisierbar: Ja (Zeitmessung per Oszilloskop oder `benchmark boot`).
+
+### 5.11 Taster Test-Prozedur
+
+**Vorbedingung:** DUT bootfaehig (§5.0.3). Taster: BOOT(GPIO0), MENU(GPIO6),
+SELECT(GPIO7), BACK(GPIO3) — alle Active-LOW mit internem Pull-Up.
+
+| Schritt | Aktion | Erwartetes Ergebnis |
+|---|---|---|
+| 1 | `button-test` ueber serielle Schnittstelle | Test-Modus aktiv |
+| 2 | BOOT-Taster druecken | Event "BOOT" protokolliert |
+| 3 | MENU-Taster druecken | Event "MENU" |
+| 4 | SELECT-Taster druecken | Event "SELECT" |
+| 5 | BACK-Taster druecken | Event "BACK" |
+
+Pass/Fail: jeder Taster erzeugt genau ein Event pro Druck (entprellt).
+Hinweis: GPIO3 ist Strapping-Pin (JTAG-Select) — beim Boot muss er HIGH sein
+(Pull-Up). Bei Fehlfunktion Pull-Up und Boot-Verhalten pruefen.
+
+### 5.12 Buzzer Test-Prozedur
+
+**Vorbedingung:** DUT bootfaehig. Buzzer an GPIO38 (LEDC PWM, TP23).
+
+| Schritt | Aktion | Erwartetes Ergebnis |
+|---|---|---|
+| 1 | `buzzer-test` senden | Piezo toont (ca. 2 kHz) |
+| 2 | Pegel per Oszilloskop an TP23 messen | PWM-Signal sichtbar |
+| 3 | `buzzer-test stop` | Ton endet |
+
+Pass/Fail: akustisches Signal hoerbar, PWM an TP23 messbar.
+
+### 5.13 Status-LED Test-Prozedur
+
+**Vorbedingung:** DUT bootfaehig. STATUS_LED an GPIO21 (TP22).
+
+| Schritt | Aktion | Erwartetes Ergebnis |
+|---|---|---|
+| 1 | Boot abwarten | Heartbeat-Blinken (gruen) |
+| 2 | BLE verbinden | LED wechselt zu BLE-Status (dauerhaft/steady) |
+| 3 | BLE trennen | zurueck zu Heartbeat |
+| 4 | `led-test` | definiertes Blinkmuster |
+
+Pass/Fail: LED zeigt Heartbeat und BLE-Status korrekt.
+Hinweis: PINMAP weist GPIO21 der STATUS_LED zu; board_config.h verwendet GPIO21
+aktuell als DISPLAY_RST — Diskrepanz siehe Pinmap-Verifikationsbericht
+`docs/research/pinmap-firmware-verification.md`.
+
+### 5.14 MOSFET / Relais Test-Prozedur
+
+**Vorbedingung:** DUT bootfaehig. Gate-Driver TC4427, MOSFET IRLZ44N,
+Optokoppler PC817 (Heizgriff/Hilfslicht-Steuerung).
+
+| Schritt | Aktion | Erwartetes Ergebnis |
+|---|---|---|
+| 1 | `output-test heat on` | Heizgriff-Ausgang schaltet (MOSFET durch) |
+| 2 | Drain-Spannung MOSFET messen | niedrig (Durchlass) |
+| 3 | `output-test heat off` | Ausgang aus, Drain = Versorgungsspannung |
+| 4 | `output-test aux on/off` | Hilfslicht-Ausgang schaltet |
+| 5 | Optokoppler-LED (PC817) pruefen | leuchtet bei aktiviertem Kanal |
+
+Pass/Fail: alle Ausgaenge schalten sauber, keine Kurzschlüsse, Rueckweg sauber.
+Achtung: induktive Lasten mit Freilaufdiode (1N5408) — Diode pruefen.
+
+### 5.15 Barometer (BMP390/BMP388) Test-Prozedur
+
+**Vorbedingung:** DUT bootfaehig, I2C-Scan (§5.0.4) findet Adresse 0x76.
+
+| Schritt | Aktion | Erwartetes Ergebnis |
+|---|---|---|
+| 1 | `baro-read` ueber serielle Schnittstelle | Druck + Temperatur plausibel |
+| 2 | Hoehe ableiten | ~ Hoehe des Standorts ± 50 m |
+| 3 | Lüftungsöffnung im Gehaeuse freimachen | Wert stabil |
+| 4 | Mit Referenzbarometer vergleichen | Abweichung < 1 hPa |
+
+Pass/Fail: Druck ~960–1013 hPa (je Hoehe), Temperatur plausibel, stabil.
+Hinweis: BMP388 ist "Obsolete" — Ersatz BMP390 (BOM §8.2). I2C-Adresse 0x76/0x77
+je Modul-Belegung verifizieren.
 
 ---
 

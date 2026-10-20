@@ -163,8 +163,9 @@ class Simulator:
         if not self.config.skip_display:
             self._update_display()
 
-        # 4. BLE Telemetry pushen
-        self.ble.set_telemetry_data(self._state.sensor_data)
+        # 4. BLE Telemetry pushen (sensor + gps data for telemetry_live_t)
+        self.ble.set_telemetry_data(self._state.sensor_data,
+                                   self._state.gps_data)
 
         # 5. Controller-Events verarbeiten
         events = self.controller.poll_events()
@@ -256,13 +257,18 @@ class Simulator:
         if self.gps is None and self.config.track_file:
             self._state.warnings.append("GPS TRACK ENDED")
 
-        # BLE Sensor-Status updaten
+        # BLE Sensor-Status updaten (5 distinct bytes, sensor_status_t)
+        from mock_ble import (SENSOR_GPS_OK, SENSOR_GPS_NO_FIX, SENSOR_GPS_ERROR,
+                               SENSOR_RPM_OK, SENSOR_TEMP_OK, SENSOR_TEMP_ERROR,
+                               SENSOR_FUEL_OK, SENSOR_SD_OK)
+        gps_status = SENSOR_GPS_OK if self._state.gps_data.has_fix else SENSOR_GPS_NO_FIX
+        temp_status = SENSOR_TEMP_OK if s.coolant_temp_c < TEMP_OVERTEMP_C else SENSOR_TEMP_ERROR
         self.ble.set_sensor_status(
-            rpm_ok=True,
-            temp_ok=s.coolant_temp_c < TEMP_OVERTEMP_C,
-            fuel_ok=s.fuel_level_l > 0,
-            gps_ok=self._state.gps_data.has_fix,
-            imu_ok=True,
+            gps=gps_status,
+            rpm=SENSOR_RPM_OK,
+            temp=temp_status,
+            fuel=SENSOR_FUEL_OK,
+            sd_card=SENSOR_SD_OK,
         )
 
     def _log_status(self) -> None:

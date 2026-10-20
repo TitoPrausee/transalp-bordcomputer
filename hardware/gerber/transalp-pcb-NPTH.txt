@@ -1,0 +1,9 @@
+TRANSALP Bordcomputer PD06 — Non-Plated Drill List
+Generated: 2026-10-20
+Board: 80.0 x 50.0 mm, 4-layer ENIG 1.6 mm
+Mounting holes: 4x M3 (3.2 mm NPTH)
+
+  H1: X5.00 Y5.00 mm  D3.2 NPTH (M3)
+  H2: X75.00 Y5.00 mm  D3.2 NPTH (M3)
+  H3: X5.00 Y45.00 mm  D3.2 NPTH (M3)
+  H4: X75.00 Y45.00 mm  D3.2 NPTH (M3)
