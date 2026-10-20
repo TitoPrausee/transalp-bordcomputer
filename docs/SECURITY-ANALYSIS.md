@@ -1398,7 +1398,7 @@ Der Private Key darf **niemals** in das Git-Repository committet werden
 
 **Produktions-Empfehlung:** Fuer Hochsicherheits-Deployments sollte der
 Private Key in einem HSM (Hardware Security Module) oder einem
-Cloud-KMS (z.B. AWS KMS, Google Cloud KMS) gespeichert werden, und die
+Cloud-KMS (z.B. AWS KMS, verwalteter Cloud-KMS-Dienst) gespeichert werden, und die
 Signierung sollte remote erfolgen (offline signing).
 
 #### 4.6.5 Key-Rotation-Policy
