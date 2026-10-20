@@ -236,6 +236,47 @@ int sd_card_mkdir(const char *path)
     return SD_ERR_OPEN_FAILED;
 }
 
+/* Retry write with exponential backoff: 3 attempts (100ms, 200ms, 400ms) */
+#define SD_WRITE_MAX_RETRIES  3
+#define SD_WRITE_BACKOFF_BASE_MS 100
+
+static int sd_write_with_retry(const char *full, const void *data, size_t len, const char *mode)
+{
+    int rc = SD_ERR_WRITE_FAILED;
+
+    for (int attempt = 0; attempt < SD_WRITE_MAX_RETRIES; attempt++) {
+        FILE *f = fopen(full, mode);
+        if (!f) {
+            ESP_LOGE(TAG, "open('%s', '%s') attempt %d failed: %s",
+                     full, mode, attempt + 1, strerror(errno));
+            rc = SD_ERR_OPEN_FAILED;
+        } else {
+            size_t written = fwrite(data, 1, len, f);
+            fflush(f);
+            fsync(fileno(f));
+            fclose(f);
+
+            if (written == len) {
+                s_info.bytes_written += (uint32_t)len;
+                return SD_OK;
+            }
+
+            ESP_LOGW(TAG, "Short write attempt %d: %u/%u",
+                     attempt + 1, (unsigned)written, (unsigned)len);
+            rc = SD_ERR_WRITE_FAILED;
+        }
+
+        if (attempt < SD_WRITE_MAX_RETRIES - 1) {
+            uint32_t delay_ms = SD_WRITE_BACKOFF_BASE_MS << attempt;
+            ESP_LOGI(TAG, "Retrying in %lu ms...", (unsigned long)delay_ms);
+            vTaskDelay(pdMS_TO_TICKS(delay_ms));
+        }
+    }
+
+    s_info.errors++;
+    return rc;
+}
+
 int sd_card_write_file(const char *path, const void *data, size_t len)
 {
     if (!path || (!data && len > 0)) {
@@ -252,28 +293,9 @@ int sd_card_write_file(const char *path, const void *data, size_t len)
         return SD_ERR_OPEN_FAILED;
     }
 
-    FILE *f = fopen(full, "wb");
-    if (!f) {
-        ESP_LOGE(TAG, "open('%s', 'wb') failed: %s", full, strerror(errno));
-        s_info.errors++;
-        xSemaphoreGive(s_file_mutex);
-        return SD_ERR_OPEN_FAILED;
-    }
-
-    size_t written = fwrite(data, 1, len, f);
-    fflush(f);
-    fsync(fileno(f));
-    fclose(f);
+    int rc = sd_write_with_retry(full, data, len, "wb");
     xSemaphoreGive(s_file_mutex);
-
-    if (written != len) {
-        ESP_LOGE(TAG, "Short write: %u/%u", (unsigned)written, (unsigned)len);
-        s_info.errors++;
-        return SD_ERR_WRITE_FAILED;
-    }
-
-    s_info.bytes_written += (uint32_t)len;
-    return SD_OK;
+    return rc;
 }
 
 int sd_card_read_file(const char *path, void *buf, size_t max_len)
@@ -326,28 +348,9 @@ int sd_card_append_file(const char *path, const void *data, size_t len)
         return SD_ERR_OPEN_FAILED;
     }
 
-    FILE *f = fopen(full, "ab");
-    if (!f) {
-        ESP_LOGE(TAG, "open('%s', 'ab') failed: %s", full, strerror(errno));
-        s_info.errors++;
-        xSemaphoreGive(s_file_mutex);
-        return SD_ERR_OPEN_FAILED;
-    }
-
-    size_t written = fwrite(data, 1, len, f);
-    fflush(f);
-    fsync(fileno(f));
-    fclose(f);
+    int rc = sd_write_with_retry(full, data, len, "ab");
     xSemaphoreGive(s_file_mutex);
-
-    if (written != len) {
-        ESP_LOGE(TAG, "Short append write: %u/%u", (unsigned)written, (unsigned)len);
-        s_info.errors++;
-        return SD_ERR_WRITE_FAILED;
-    }
-
-    s_info.bytes_written += (uint32_t)len;
-    return SD_OK;
+    return rc;
 }
 
 int sd_card_delete_file(const char *path)

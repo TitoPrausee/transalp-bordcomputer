@@ -39,6 +39,7 @@
 #include "event_bus.h"
 #include "ota_update.h"
 #include "storage.h"
+#include "app_event_loop.h"
 
 static const char *TAG = "ble_cb";
 
@@ -665,7 +666,22 @@ static void process_nav_cmd(const uint8_t *data, uint16_t len)
     if (len < 1) return;
     uint8_t cmd = data[0];
     ESP_LOGI(TAG, "Nav command: 0x%02x", cmd);
+
     /* 0x01=cancel route, 0x02=repeat maneuver, 0x03=alternative route */
+    switch (cmd) {
+    case 0x01:
+        app_event_dispatch_simple(APP_EVENT_CTRL_BACK);
+        break;
+    case 0x02:
+        app_event_dispatch_simple(APP_EVENT_CTRL_SELECT);
+        break;
+    case 0x03:
+        app_event_dispatch_simple(APP_EVENT_CTRL_HOME);
+        break;
+    default:
+        ESP_LOGW(TAG, "Unknown nav command: 0x%02x", cmd);
+        break;
+    }
 }
 
 static void process_media_control(const uint8_t *data, uint16_t len)
@@ -673,7 +689,28 @@ static void process_media_control(const uint8_t *data, uint16_t len)
     if (len < 1) return;
     uint8_t cmd = data[0];
     ESP_LOGI(TAG, "Media control: 0x%02x", cmd);
+
     /* 0x01=play/pause, 0x02=next, 0x03=prev, 0x04=seek+, 0x05=seek- */
+    switch (cmd) {
+    case 0x01:
+        app_event_dispatch_simple(APP_EVENT_CTRL_SELECT);
+        break;
+    case 0x02:
+        app_event_dispatch_simple(APP_EVENT_CTRL_MEDIA_NEXT);
+        break;
+    case 0x03:
+        app_event_dispatch_simple(APP_EVENT_CTRL_MEDIA_PREV);
+        break;
+    case 0x04:
+        app_event_dispatch_simple(APP_EVENT_CTRL_VOL_UP);
+        break;
+    case 0x05:
+        app_event_dispatch_simple(APP_EVENT_CTRL_VOL_DOWN);
+        break;
+    default:
+        ESP_LOGW(TAG, "Unknown media command: 0x%02x", cmd);
+        break;
+    }
 }
 
 static void process_media_volume(const uint8_t *data, uint16_t len)
