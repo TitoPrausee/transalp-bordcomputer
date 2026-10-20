@@ -8,9 +8,9 @@
 @property --g{syntax:'<integer>';inherits:true;initial-value:1}
 @property --p{syntax:'<integer>';inherits:true;initial-value:0}
 @property --n{syntax:'<integer>';inherits:true;initial-value:0}
-:root{--page:#0c0c0c;--bg:#000;--text:#fff;--muted:#8c8c8c;--line:#1d1d1d;--acc:#f0a020;--ok:#3ddc84;--bad:#e5322d;--font:"SF Pro Display",-apple-system,"Helvetica Neue","Inter",Arial,sans-serif;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--page:#0c0c0c}}
-:root[data-theme="dark"]{--page:#0c0c0c}
+:root{--page:#0A0A0C;--bg:#000;--text:#fff;--muted:#8E8E93;--line:#2C2C2E;--acc:#FF9500;--ok:#30D158;--bad:#FF3B30;--font:"SF Pro Display",-apple-system,"Helvetica Neue","Inter",Arial,sans-serif;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--page:#0A0A0C}}
+:root[data-theme="dark"]{--page:#0A0A0C}
 body{margin:0;background:var(--page);color:var(--text);font-family:var(--font)}
 main{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr));gap:28px;padding:24px;max-width:1500px;margin:auto}
 figure{margin:0}figcaption{color:var(--muted);font-size:14px;margin-top:10px}
@@ -46,7 +46,7 @@ figure{margin:0}figcaption{color:var(--muted);font-size:14px;margin-top:10px}
 @keyframes fblink{0%,70%{opacity:1}72%{opacity:.2}76%{opacity:1}80%{opacity:.2}83%,100%{opacity:1}}
 @keyframes btxt2{0%,30%{opacity:0;letter-spacing:24px}46%,92%{opacity:1;letter-spacing:8px}100%{opacity:0}}
 /* Diagnose */
-.t{background:#0f0f0f;border-radius:10px;padding:10px;height:46px;font-size:12px;position:relative}
+.t{background:#1C1C1E;border-radius:10px;padding:10px;height:46px;font-size:12px;position:relative}
 .t small{display:block;margin-top:6px;font-size:11px;color:var(--c)}
 .t b{position:absolute;right:10px;top:12px;width:8px;height:8px;border-radius:50%;background:#444;animation:chk 8s infinite;animation-delay:var(--d)}
 @keyframes chk{0%,25%{background:#444}30%,90%{background:var(--c)}100%{background:#444}}
@@ -55,16 +55,16 @@ figure{margin:0}figcaption{color:var(--muted);font-size:14px;margin-top:10px}
 .row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--line);font-size:13px}
 /* Einstellungen */
 .set{left:28px;right:28px;height:62px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);font-size:16px;font-weight:300}
-.tg{width:52px;height:30px;border-radius:15px;background:#262626;position:relative;animation:tgb 6s infinite;animation-delay:var(--d,0s)}
+.tg{width:52px;height:30px;border-radius:15px;background:#2C2C2E;position:relative;animation:tgb 6s infinite;animation-delay:var(--d,0s)}
 .tg i{position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;animation:tgk 6s infinite;animation-delay:var(--d,0s)}
-@keyframes tgb{0%,45%{background:#262626}50%,95%{background:var(--acc)}100%{background:#262626}}
+@keyframes tgb{0%,45%{background:#2C2C2E}50%,95%{background:var(--acc)}100%{background:#2C2C2E}}
 @keyframes tgk{0%,45%{translate:0 0}50%,95%{translate:22px 0}100%{translate:0 0}}
-.sl{width:200px;height:4px;background:#262626;border-radius:2px;position:relative}
+.sl{width:200px;height:4px;background:#2C2C2E;border-radius:2px;position:relative}
 .sl i{position:absolute;left:0;top:0;height:4px;border-radius:2px;background:#fff;animation:slf 6s ease-in-out infinite}
 .sl b{position:absolute;top:-8px;margin-left:-10px;width:20px;height:20px;border-radius:50%;background:#fff;animation:slk 6s ease-in-out infinite}
 @keyframes slf{0%,100%{width:30%}50%{width:85%}}
 @keyframes slk{0%,100%{left:30%}50%{left:85%}}
-.seg3{display:flex;background:#161616;border-radius:8px;position:relative;font-size:13px}
+.seg3{display:flex;background:#1C1C1E;border-radius:8px;position:relative;font-size:13px}
 .seg3 span{width:56px;text-align:center;padding:7px 0;position:relative;z-index:1}
 .seg3 i{position:absolute;left:0;top:0;width:56px;height:100%;border-radius:8px;background:#333;animation:sg 6s infinite}
 @keyframes sg{0%,28%{translate:0 0}33%,61%{translate:56px 0}66%,95%{translate:112px 0}100%{translate:0 0}}
@@ -74,7 +74,7 @@ figure{margin:0}figcaption{color:var(--muted);font-size:14px;margin-top:10px}
 @keyframes up{0%{--n:0}35%,90%{--n:var(--t)}100%{--n:0}}
 .z2::after{content:counter(c,decimal-leading-zero)}
 #bars{display:flex;align-items:flex-end;gap:4px;height:140px}
-#bars i{flex:1;height:calc(var(--h)*1%);background:#d9d9d9;border-radius:2px 2px 0 0;transform-origin:bottom;animation:grow 8s infinite;animation-delay:calc(var(--i)*40ms)}
+#bars i{flex:1;height:calc(var(--h)*1%);background:#FFFFFF;border-radius:2px 2px 0 0;transform-origin:bottom;animation:grow 8s infinite;animation-delay:calc(var(--i)*40ms)}
 @keyframes grow{0%{transform:scaleY(0)}30%,90%{transform:scaleY(1)}100%{transform:scaleY(0)}}
 /* Boot */
 .bt{fill:none;stroke:#fff;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
@@ -109,7 +109,7 @@ figure{margin:0}figcaption{color:var(--muted);font-size:14px;margin-top:10px}
 /* Warnung */
 .w{inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;animation:ph3 12s infinite,wbg .9s infinite}
 @keyframes ph3{0%,30%{opacity:1}33%,100%{opacity:0}}
-@keyframes wbg{0%,100%{background:#3a0707}50%{background:#c4161c}}
+@keyframes wbg{0%,100%{background:#3A3A3C}50%{background:#FF3B30}}
 @keyframes wbl{50%{opacity:.15}}
 @media (prefers-reduced-motion:reduce){*{animation-play-state:paused!important}}
 </style></head><body>
@@ -135,7 +135,7 @@ figure{margin:0}figcaption{color:var(--muted);font-size:14px;margin-top:10px}
 <svg class="a am rl" style="right:30px;bottom:34px" width="34" height="34" viewBox="0 0 34 34"><path d="M17 4L31 29H3Z"/><path d="M17 13v8"/><circle cx="17" cy="25" r=".5"/></svg>
 </div></div><figcaption>Instrument</figcaption></figure>
 <figure><div class="fr"><div class="s tank">
-<svg class="a" width="480" height="480"><path d="M125.1 365.3A170 170 0 1 1 354.9 365.3" fill="none" stroke="#1d1d1d" stroke-width="10" stroke-linecap="round"/><path class="fp" d="M125.1 365.3A170 170 0 1 1 354.9 365.3" pathLength="1" fill="none" stroke="#f0a020" stroke-width="10" stroke-linecap="round" style="animation:fcol 14s linear infinite"/><path d="M83.9 257.1L58.1 259.9" stroke="#e5322d" stroke-width="3" stroke-linecap="round"/></svg>
+<svg class="a" width="480" height="480"><path d="M125.1 365.3A170 170 0 1 1 354.9 365.3" fill="none" stroke="#2C2C2E" stroke-width="10" stroke-linecap="round"/><path class="fp" d="M125.1 365.3A170 170 0 1 1 354.9 365.3" pathLength="1" fill="none" stroke="#FF9500" stroke-width="10" stroke-linecap="round" style="animation:fcol 14s linear infinite"/><path d="M83.9 257.1L58.1 259.9" stroke="#FF3B30" stroke-width="3" stroke-linecap="round"/></svg>
 <svg class="a am" style="left:224px;top:92px;animation:fcol 14s linear infinite,fblink 14s linear infinite" width="32" height="42" viewBox="0 0 32 42"><rect x="2" y="3" width="18" height="34" rx="2"/><path d="M6 9h10v8H6z"/><path d="M20 14h4a4 4 0 0 1 4 4v14a3 3 0 0 0 6 0V12l-5-5"/></svg>
 <div class="a c" style="top:134px;animation:fcolt 14s linear infinite"><div class="cnt v" style="font-size:150px;line-height:1"></div></div>
 <div class="a c" style="top:288px;font-size:22px;color:var(--muted)">km Restreichweite</div>
@@ -182,7 +182,7 @@ figure{margin:0}figcaption{color:var(--muted);font-size:14px;margin-top:10px}
 <figure><div class="fr"><div class="s">
 <div class="a" style="left:28px;top:24px;font-size:18px;font-weight:300">Diagnose</div>
 <div class="a l" style="right:28px;top:30px"><span class="cnt" style="animation:pct 8s infinite"></span> %</div>
-<div class="a" style="left:28px;top:60px;width:424px;height:4px;background:#1d1d1d"><div style="height:4px;background:var(--text);transform-origin:left;animation:fill 8s infinite"></div></div>
+<div class="a" style="left:28px;top:60px;width:424px;height:4px;background:#2C2C2E"><div style="height:4px;background:var(--text);transform-origin:left;animation:fill 8s infinite"></div></div>
 <div class="a" style="left:28px;top:84px;display:grid;grid-template-columns:repeat(4,98px);gap:10px">
 <div class="t" style="--c:var(--ok);--d:.4s"><b></b>Öldruck<small>OK</small></div>
 <div class="t" style="--c:var(--ok);--d:.8s"><b></b>Kühlmittel<small>OK</small></div>
@@ -222,7 +222,7 @@ figure{margin:0}figcaption{color:var(--muted);font-size:14px;margin-top:10px}
 <figure><div class="fr"><div class="s">
 <svg id="boot" class="a lg go" width="480" height="480" viewBox="0 0 480 480">
 <g class="wm" transform="translate(-10 43) scale(.5)">
-<rect class="la" x="142" y="484" width="716" height="2" fill="#2a2a2a"/>
+<rect class="la" x="142" y="484" width="716" height="2" fill="#3A3A3C"/>
 <rect class="lb" style="--d:.3s" x="185" y="160" width="64" height="290"/>
 <rect class="lx" style="--d:.3s" x="142" y="230" width="150" height="40"/>
 <path class="lr" style="--d:.6s" d="M446 262A78 78 0 1 1 446 418A78 78 0 1 1 446 262" fill="none" stroke="var(--text)" stroke-width="64" pathLength="1" stroke-dasharray="1"/>
@@ -233,7 +233,7 @@ figure{margin:0}figcaption{color:var(--muted);font-size:14px;margin-top:10px}
 <circle class="ld" cx="826" cy="170" r="32" fill="var(--acc)"/>
 </g>
 <rect x="160" y="346" width="160" height="3" fill="#222"/>
-<rect class="lbar" x="160" y="346" width="160" height="3" fill="#f0a020" style="transform-origin:160px 0"/>
+<rect class="lbar" x="160" y="346" width="160" height="3" fill="#FF9500" style="transform-origin:160px 0"/>
 </svg>
 </div></div><figcaption>Boot</figcaption></figure>
 
@@ -246,15 +246,15 @@ figure{margin:0}figcaption{color:var(--muted);font-size:14px;margin-top:10px}
 </main>
 <script>
 (function(){
-var A0=132.5,SP=275,C=['#3ddc84','#8fe25f','#d6e04a','#f5c030','#f0a020','#ee7b27','#e8472d','#e5322d'];
+var A0=132.5,SP=275,C=['#30D158','#30D158','#FFD60A','#FFD60A','#FF9500','#FF9500','#FF6B00','#FF3B30'];
 function P(cx,cy,r,a){a=a*Math.PI/180;return (cx+r*Math.cos(a)).toFixed(1)+' '+(cy+r*Math.sin(a)).toFixed(1)}
 function arc(cx,cy,r,a,b){return 'M'+P(cx,cy,r,a)+'A'+r+' '+r+' 0 '+(b-a>180?1:0)+' 1 '+P(cx,cy,r,b)}
 document.querySelectorAll('[data-ring]').forEach(function(g){
   var p=g.dataset.ring.split(','),cx=+p[0],cy=+p[1],r=+p[2],w=+p[3],h='';
   if(p[4]==='s'){var d=arc(cx,cy,r,A0,A0+SP);
-    h='<path d="'+d+'" fill="none" stroke="#1d1d1d" stroke-width="'+w+'" stroke-linecap="round"/><path class="sp" d="'+d+'" pathLength="1" fill="none" stroke="#e6e6e6" stroke-width="'+w+'" stroke-linecap="round"/>';
+    h='<path d="'+d+'" fill="none" stroke="#2C2C2E" stroke-width="'+w+'" stroke-linecap="round"/><path class="sp" d="'+d+'" pathLength="1" fill="none" stroke="#FFFFFF" stroke-width="'+w+'" stroke-linecap="round"/>';
   }else{
-    h='<path d="'+arc(cx,cy,r,A0,A0+SP)+'" fill="none" stroke="#161616" stroke-width="'+w+'"/>';
+    h='<path d="'+arc(cx,cy,r,A0,A0+SP)+'" fill="none" stroke="#1C1C1E" stroke-width="'+w+'"/>';
     for(var i=0;i<8;i++)h+='<path class="seg" style="--a:'+i/8+'" d="'+arc(cx,cy,r,A0+SP*i/8,A0+SP*(i+1)/8)+'" pathLength="1" fill="none" stroke="'+C[i]+'" stroke-width="'+w+'"/>';
   }
   g.innerHTML=h;
