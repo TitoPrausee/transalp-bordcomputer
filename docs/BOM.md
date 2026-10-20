@@ -990,7 +990,7 @@ Lieferanten gemappt werden — empfohlene reale Quellen je Kategorie:
 ### 8.2 MPN-Referenztabelle (Kernbauteile)
 
 Hersteller-Teilenummern fuer die SMT-Bestueckung. Diese MPN sind die
-Bestellgrundlage fuer Pick&Place bei JLCPCB/LCSC-Assembly.
+Bestellgrundlage fuer Pick&Place bei JLCPCB/PCB-Assembly-Service.
 
 | Bauteil                  | Hersteller   | MPN                        | Footprint      | BOM-Preis |
 |--------------------------|--------------|----------------------------|----------------|-----------|
