@@ -1,5 +1,10 @@
 # App Store Screenshots
 
+Generated screenshots live in `../../assets/screenshots/` and were produced with
+`tools/gen_screenshots.py` (branded placeholder images matching the store size
+requirements; replace with real device captures from an Expo Go / EAS build
+before final submission).
+
 ## Required Screenshots
 
 ### iOS (App Store Connect)
