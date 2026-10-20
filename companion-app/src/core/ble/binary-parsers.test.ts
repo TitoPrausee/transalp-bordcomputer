@@ -25,11 +25,11 @@ import {
   base64ToDataView,
   dataViewToBase64,
   uint8ArrayToBase64,
-  parseCarPlayStatus,
-  encodeCarPlayStatus,
-  encodeCarPlayControlCommand,
+  parseOtaStatus,
+  parseOtaVerifyResult,
+  encodeOtaCommitCommand,
 } from './binary-parsers';
-import { SelfTestMode } from './gatt-uuids';
+import { SelfTestMode, OtaCommand, OtaVerifyStatus } from './gatt-uuids';
 
 // ============================================================
 // Telemetry Live (22 bytes)
@@ -347,95 +347,95 @@ describe('base64 conversion helpers', () => {
   });
 });
 
+
 // ============================================================
-// CarPlay Status (194 bytes: 2 + 3x64)
+// OTA Status (0x8001 control notify, 3 bytes)
 // ============================================================
 
-describe('parseCarPlayStatus / encodeCarPlayStatus', () => {
-  it('should parse a connected CarPlay status with music metadata', () => {
-    const buf = new ArrayBuffer(194);
+describe('parseOtaStatus', () => {
+  it('should parse a 3-byte OTA status notify', () => {
+    const buf = new ArrayBuffer(3);
     const dv = new DataView(buf);
-    dv.setUint8(0, 1); // connected = true
-    dv.setUint8(1, 2); // activeApp = Music
+    dv.setUint8(0, 1);  // state: uploading
+    dv.setUint8(1, 50); // progress: 50%
+    dv.setUint8(2, 0);  // errorCode: 0
 
-    // artist at offset 2 (64 bytes)
-    const artist = 'Iron Maiden';
-    const artistBytes = new TextEncoder().encode(artist);
-    for (let i = 0; i < artistBytes.length; i++) {
-      dv.setUint8(2 + i, artistBytes[i]);
+    const result = parseOtaStatus(dv);
+    expect(result.state).toBe(1);
+    expect(result.progress).toBe(50);
+    expect(result.errorCode).toBe(0);
+  });
+
+  it('should parse failed OTA status', () => {
+    const buf = new ArrayBuffer(3);
+    const dv = new DataView(buf);
+    dv.setUint8(0, 4);  // state: failed
+    dv.setUint8(1, 75);
+    dv.setUint8(2, 3);  // errorCode: 3
+
+    const result = parseOtaStatus(dv);
+    expect(result.state).toBe(4);
+    expect(result.errorCode).toBe(3);
+  });
+});
+
+// ============================================================
+// OTA Verify Result (0x8003 notify, 41 bytes)
+// ============================================================
+
+describe('parseOtaVerifyResult', () => {
+  it('should parse a 41-byte verify result with hash_mismatch', () => {
+    const buf = new ArrayBuffer(41);
+    const dv = new DataView(buf);
+    dv.setUint8(0, OtaVerifyStatus.HashMismatch); // status: 3
+
+    for (let i = 0; i < 32; i++) {
+      dv.setUint8(1 + i, i);
     }
 
-    // title at offset 66 (64 bytes)
-    const title = 'The Trooper';
-    const titleBytes = new TextEncoder().encode(title);
-    for (let i = 0; i < titleBytes.length; i++) {
-      dv.setUint8(66 + i, titleBytes[i]);
-    }
+    dv.setUint32(33, 65536, true);
+    dv.setUint32(37, 0x01020300, true);
 
-    // album at offset 130 (64 bytes)
-    const album = 'Piece of Mind';
-    const albumBytes = new TextEncoder().encode(album);
-    for (let i = 0; i < albumBytes.length; i++) {
-      dv.setUint8(130 + i, albumBytes[i]);
-    }
-
-    const result = parseCarPlayStatus(dv);
-    expect(result.connected).toBe(true);
-    expect(result.activeApp).toBe(2); // Music
-    expect(result.artist).toBe('Iron Maiden');
-    expect(result.title).toBe('The Trooper');
-    expect(result.album).toBe('Piece of Mind');
+    const result = parseOtaVerifyResult(dv);
+    expect(result.status).toBe(OtaVerifyStatus.HashMismatch);
+    expect(result.sha256.length).toBe(64);
+    expect(result.sha256).toBe('000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f');
+    expect(result.size).toBe(65536);
+    expect(result.version).toBe(0x01020300);
   });
 
-  it('should parse disconnected CarPlay status', () => {
-    const buf = new ArrayBuffer(194);
+  it('should parse an ok verify result', () => {
+    const buf = new ArrayBuffer(41);
     const dv = new DataView(buf);
-    dv.setUint8(0, 0); // disconnected
-    dv.setUint8(1, 0); // None
+    dv.setUint8(0, OtaVerifyStatus.Ok);
 
-    const result = parseCarPlayStatus(dv);
-    expect(result.connected).toBe(false);
-    expect(result.activeApp).toBe(0);
-    expect(result.artist).toBe('');
+    const result = parseOtaVerifyResult(dv);
+    expect(result.status).toBe(OtaVerifyStatus.Ok);
+    expect(result.sha256.length).toBe(64);
+    expect(result.size).toBe(0);
+    expect(result.version).toBe(0);
   });
+});
 
-  it('should handle short payload (< 194 bytes)', () => {
-    const buf = new ArrayBuffer(2);
-    const dv = new DataView(buf);
-    dv.setUint8(0, 1); // connected
-    dv.setUint8(1, 1); // Navigation
+// ============================================================
+// OTA Commit Command Encoding
+// ============================================================
 
-    const result = parseCarPlayStatus(dv);
-    expect(result.connected).toBe(true);
-    expect(result.activeApp).toBe(1);
-    expect(result.artist).toBe('');
-    expect(result.title).toBe('');
-  });
-
-  it('should encode and roundtrip CarPlay status', () => {
-    const data = {
-      connected: true,
-      activeApp: 2, // Music
-      artist: 'Metallica',
-      title: 'For Whom the Bell Tolls',
-      album: 'Ride the Lightning',
-    };
-
-    const encoded = encodeCarPlayStatus(data);
-    expect(encoded.length).toBe(194);
-
-    const dv = new DataView(encoded.buffer);
-    const parsed = parseCarPlayStatus(dv);
-    expect(parsed.connected).toBe(true);
-    expect(parsed.activeApp).toBe(2);
-    expect(parsed.artist).toBe('Metallica');
-    expect(parsed.title).toBe('For Whom the Bell Tolls');
-    expect(parsed.album).toBe('Ride the Lightning');
-  });
-
-  it('should encode CarPlay control command', () => {
-    const cmd = encodeCarPlayControlCommand(2); // NextTrack
+describe('encodeOtaCommitCommand', () => {
+  it('should encode commit command without sha256 (1 byte)', () => {
+    const cmd = encodeOtaCommitCommand();
     expect(cmd.length).toBe(1);
-    expect(cmd[0]).toBe(2);
+    expect(cmd[0]).toBe(OtaCommand.Commit);
+  });
+
+  it('should encode commit command with sha256 (33 bytes)', () => {
+    const hash = new Uint8Array(32);
+    for (let i = 0; i < 32; i++) hash[i] = i;
+
+    const cmd = encodeOtaCommitCommand(hash);
+    expect(cmd.length).toBe(33);
+    expect(cmd[0]).toBe(OtaCommand.Commit);
+    expect(cmd[1]).toBe(0);
+    expect(cmd[32]).toBe(31);
   });
 });

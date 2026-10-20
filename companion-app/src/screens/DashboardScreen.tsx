@@ -177,20 +177,13 @@ export function DashboardScreen() {
   const systemStatus = useAppStore((s) => s.systemStatus);
   const isRetrying = useAppStore((s) => s.isRetrying);
   const lastError = useAppStore((s) => s.lastError);
-  const { readSystemStatus, reconnect } = useBleManager();
+  const { reconnect } = useBleManager();
   const { width, height } = useWindowDimensions();
   const isLandscape = width > height;
   const connected = isConnected(ble.state);
 
   const voltage = (telemetry.voltage / 10).toFixed(1);
   const gpsSpeed = telemetry.speed;
-
-  useEffect(() => {
-    if (!connected) return;
-    readSystemStatus();
-    const interval = setInterval(() => { readSystemStatus(); }, 10000);
-    return () => clearInterval(interval);
-  }, [connected, readSystemStatus]);
 
   const formatUptime = (sec: number): string => {
     const h = Math.floor(sec / 3600); const m = Math.floor((sec % 3600) / 60); const s = sec % 60;

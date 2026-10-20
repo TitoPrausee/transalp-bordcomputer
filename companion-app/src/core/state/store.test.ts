@@ -45,8 +45,8 @@ beforeEach(() => {
       rainProbability: 20,
     },
     systemStatus: null,
-    taskInfo: [],
     otaStatus: null,
+    otaVerifyResult: null,
     tours: [...MOCK_TOURS],
     isMockMode: true,
     lastError: null,
@@ -276,9 +276,7 @@ describe('System status and OTA', () => {
     const ota = {
       state: 1,
       progress: 50,
-      firmwareVersion: '1.3.0',
       errorCode: 0,
-      imageHash: 'abc123',
     };
     useAppStore.getState().setOtaStatus(ota);
     expect(useAppStore.getState().otaStatus).toEqual(ota);

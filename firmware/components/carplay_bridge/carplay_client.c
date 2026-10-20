@@ -48,6 +48,7 @@ static bool s_peer_valid = false;
 /* Discovered characteristic value handles (peer-side 0x9100 service) */
 static uint16_t s_h_nav_status = 0;
 static uint16_t s_h_media_now  = 0;
+static uint16_t s_h_media_ctrl = 0;  /* CHR_CP_MEDIA_CTRL (0x9104), write target */
 
 /* Reconnect backoff */
 static int64_t s_reconnect_at_us = 0;
@@ -58,6 +59,7 @@ static uint8_t s_backoff_step = 0;
 /* Target UUIDs for discovery matching (peer display service 0x9100) */
 static ble_uuid128_t cp_uuid_nav_status = CARPLAY_UUID128(CHR_CP_NAV_STATUS);
 static ble_uuid128_t cp_uuid_media_now  = CARPLAY_UUID128(CHR_CP_MEDIA_NOW);
+static ble_uuid128_t cp_uuid_media_ctrl = CARPLAY_UUID128(CHR_CP_MEDIA_CTRL);
 
 /* ============================================================
  * State helpers
@@ -145,8 +147,8 @@ static int cp_chr_disc_cb(uint16_t conn_handle,
 
         cp_set_state(CP_CLIENT_CONNECTED);
         carplay_client_on_connected();
-        ESP_LOGI(TAG, "Discovery done (nav=%u media=%u)",
-                 s_h_nav_status, s_h_media_now);
+        ESP_LOGI(TAG, "Discovery done (nav=%u media=%u ctrl=%u)",
+                 s_h_nav_status, s_h_media_now, s_h_media_ctrl);
         return 0;
     }
 
@@ -159,6 +161,8 @@ static int cp_chr_disc_cb(uint16_t conn_handle,
         s_h_nav_status = chr->val_handle;
     } else if (ble_uuid_cmp(&cp_uuid_media_now.u, (const ble_uuid_t *)&chr->uuid) == 0) {
         s_h_media_now = chr->val_handle;
+    } else if (ble_uuid_cmp(&cp_uuid_media_ctrl.u, (const ble_uuid_t *)&chr->uuid) == 0) {
+        s_h_media_ctrl = chr->val_handle;
     }
 
     return 0;
@@ -208,6 +212,7 @@ int carplay_client_gap_event(struct ble_gap_event *event, void *arg)
 
         s_h_nav_status = 0;
         s_h_media_now = 0;
+        s_h_media_ctrl = 0;
         s_backoff_step = 0;
 
         carplay_client_on_disconnected();
@@ -304,6 +309,7 @@ void carplay_client_init(void)
     s_peer_valid = false;
     s_h_nav_status = 0;
     s_h_media_now = 0;
+    s_h_media_ctrl = 0;
     s_backoff_step = 0;
 }
 
@@ -362,4 +368,37 @@ void carplay_client_poll(void)
     }
 
     cp_connect(&s_peer);
+}
+
+/* ============================================================
+ * Media control forward path (gap C4 / FU-4)
+ *
+ * Writes a single command byte (carplay_media_cmd) to the peer
+ * display's CHR_CP_MEDIA_CTRL (0x9104).  Called by the CarPlay
+ * bridge when an APP_EVENT_CTRL_MEDIA_* is received from the
+ * Lenker-Controller.  Safe to call from any task; no-ops when
+ * not connected or the characteristic was not discovered.
+ * ============================================================ */
+
+void carplay_client_media_ctrl(uint8_t cmd)
+{
+    uint16_t conn = carplay_client_get_conn_handle();
+    if (conn == BLE_HS_CONN_HANDLE_NONE) {
+        ESP_LOGD(TAG, "media_ctrl: not connected, drop cmd=0x%02X", cmd);
+        return;
+    }
+    if (s_h_media_ctrl == 0) {
+        ESP_LOGW(TAG, "media_ctrl: CHR_CP_MEDIA_CTRL not discovered, drop cmd=0x%02X",
+                 cmd);
+        return;
+    }
+
+    int rc = ble_gattc_write_flat(conn, s_h_media_ctrl,
+                                  &cmd, sizeof(cmd), NULL, NULL);
+    if (rc != 0 && rc != BLE_HS_ENOTCONN) {
+        ESP_LOGW(TAG, "media_ctrl write (handle=%u cmd=0x%02X) rc=%d",
+                 s_h_media_ctrl, cmd, rc);
+    } else {
+        ESP_LOGI(TAG, "media_ctrl -> display (cmd=0x%02X)", cmd);
+    }
 }

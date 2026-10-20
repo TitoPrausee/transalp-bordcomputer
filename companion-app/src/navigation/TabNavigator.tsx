@@ -13,7 +13,6 @@ import { NavigationScreen } from '../screens/NavigationScreen';
 import { DiagnoseScreen } from '../screens/DiagnoseScreen';
 import { SettingsScreen } from '../screens/SettingsScreen';
 import { ToursScreen } from '../screens/ToursScreen';
-import { CarPlayStatusScreen } from '../screens/CarPlayStatusScreen';
 import { ControllerPairingScreen } from '../screens/ControllerPairingScreen';
 
 export type TabParamList = {
@@ -21,7 +20,6 @@ export type TabParamList = {
   Navigation: undefined;
   Tours: undefined;
   Diagnose: undefined;
-  CarPlay: undefined;
   Controller: undefined;
   Settings: undefined;
 };
@@ -67,11 +65,6 @@ export function TabNavigator() {
         name="Diagnose"
         component={DiagnoseScreen}
         options={{ tabBarLabel: 'Diag' }}
-      />
-      <Tab.Screen
-        name="CarPlay"
-        component={CarPlayStatusScreen}
-        options={{ tabBarLabel: 'CarPlay' }}
       />
       <Tab.Screen
         name="Controller"

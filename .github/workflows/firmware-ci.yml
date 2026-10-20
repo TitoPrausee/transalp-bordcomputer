@@ -121,6 +121,7 @@ jobs:
           INCLUDES="$INCLUDES -Icomponents/ota/include"
           INCLUDES="$INCLUDES -Icomponents/hid_controller/include"
           INCLUDES="$INCLUDES -Icomponents/carplay_bridge/include"
+          INCLUDES="$INCLUDES -Imain"
           INCLUDES="$INCLUDES -Itest"
           INCLUDES="$INCLUDES -Itest/mocks"
           INCLUDES="$INCLUDES -I$UNITY_DIR"
@@ -129,7 +130,7 @@ jobs:
           # test_controller is excluded from the generic loop because it
           # links component source files (controller_input.c,
           # controller_mapping.c) and needs the -include mock header flag.
-          TESTS="test_nmea_parser test_event_loop test_dtc test_filters test_config test_dtc_extended test_ble_callbacks test_power_manager test_controller test_carplay_bridge"
+          TESTS="test_nmea_parser test_event_loop test_event_bridge test_dtc test_filters test_config test_dtc_extended test_ble_callbacks test_power_manager test_controller test_carplay_bridge test_carplay_media"
           FAIL=0
 
           for t in $TESTS; do

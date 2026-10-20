@@ -22,9 +22,8 @@ import type {
   SelfTestResult,
   WeatherCurrent,
   SystemStatus,
-  TaskInfo,
   OtaStatus,
-  CarPlayStatus,
+  OtaVerifyResult,
 } from '../ble/gatt-uuids';
 import { ControllerType, ControllerButton, ControllerAction } from '../ble/gatt-uuids';
 import type { BleError } from '../ble/BleProvider';
@@ -132,16 +131,6 @@ export const MOCK_WEATHER: WeatherCurrent = {
   rainProbability: 20,
 };
 
-// --- Mock-CarPlay-Status ---
-
-export const MOCK_CARPLAY: CarPlayStatus = {
-  connected: false,
-  activeApp: 0, // CarPlayApp.None
-  artist: '',
-  title: '',
-  album: '',
-};
-
 // --- Default Controller-Button-Mapping ---
 
 export const DEFAULT_CONTROLLER_MAP: Record<ControllerButton, ControllerAction> = {
@@ -197,21 +186,17 @@ interface AppState {
   weather: WeatherCurrent;
   setWeather: (data: WeatherCurrent) => void;
 
-  // System-Status
+  // System-Status (via Telemetry Snapshot 0x5002)
   systemStatus: SystemStatus | null;
   setSystemStatus: (data: SystemStatus) => void;
 
-  // Task-Info
-  taskInfo: TaskInfo[];
-  setTaskInfo: (tasks: TaskInfo[]) => void;
-
-  // OTA-Status
+  // OTA-Status (via 0x8001 control notify)
   otaStatus: OtaStatus | null;
   setOtaStatus: (status: OtaStatus) => void;
 
-  // CarPlay-Status
-  carplay: CarPlayStatus;
-  setCarPlayStatus: (status: CarPlayStatus) => void;
+  // OTA Verify Result (via 0x8003 notify)
+  otaVerifyResult: OtaVerifyResult | null;
+  setOtaVerifyResult: (result: OtaVerifyResult) => void;
 
   // Controller-Mapping
   controllerMap: Record<ControllerButton, ControllerAction>;
@@ -293,17 +278,13 @@ export const useAppStore = create<AppState>((set) => ({
   systemStatus: null,
   setSystemStatus: (data) => set({ systemStatus: data }),
 
-  // Task-Info
-  taskInfo: [],
-  setTaskInfo: (tasks) => set({ taskInfo: tasks }),
-
   // OTA-Status
   otaStatus: null,
   setOtaStatus: (status) => set({ otaStatus: status }),
 
-  // CarPlay
-  carplay: { ...MOCK_CARPLAY },
-  setCarPlayStatus: (status) => set({ carplay: status }),
+  // OTA Verify Result
+  otaVerifyResult: null,
+  setOtaVerifyResult: (result) => set({ otaVerifyResult: result }),
 
   // Controller-Mapping
   controllerMap: { ...DEFAULT_CONTROLLER_MAP },

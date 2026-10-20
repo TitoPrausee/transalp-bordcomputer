@@ -12,7 +12,7 @@
  *  - Echtzeit-Sensor-Werte (live-updating)
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   View,
   Text,
@@ -27,7 +27,7 @@ import { useAppStore } from '../core/state/store';
 import { useBleManager } from '../hooks/useBleManager';
 import { bg, fg, accent, fontSize } from '../core/theme/colors';
 import { SelfTestMode } from '../core/ble/gatt-uuids';
-import type { DtcEntry, SensorStatus, SystemStatus, TaskInfo } from '../core/ble/gatt-uuids';
+import type { DtcEntry, SensorStatus, SystemStatus } from '../core/ble/gatt-uuids';
 
 // --- DTC-Beschreibungen (statische Lookup) ---
 
@@ -71,8 +71,6 @@ const SENSOR_STATUS_LABELS: Record<string, string[]> = {
 
 const DTC_SEVERITY = ['Info', 'Warnung', 'Kritisch'];
 const DTC_SEVERITY_COLOR: string[] = [accent.blue, accent.yellow, accent.red];
-
-const TASK_STATES = ['Laufend', 'Blockiert', 'Pausiert', 'Geloescht'];
 
 // --- DTC Row ---
 
@@ -199,57 +197,6 @@ const dtcStyles = StyleSheet.create({
   },
 });
 
-// --- Task Row ---
-
-function TaskRow({ task }: { task: TaskInfo }) {
-  const stateLabel = TASK_STATES[task.state] ?? 'Unbekannt';
-  const stateColor = task.state === 0 ? accent.green : task.state === 2 ? accent.yellow : fg.tertiary;
-  const stackColor = task.stackFree < 1024 ? accent.red : task.stackFree < 2048 ? accent.yellow : accent.green;
-
-  return (
-    <View style={taskStyles.row}>
-      <Text style={taskStyles.name}>{task.name}</Text>
-      <Text style={taskStyles.priority}>P{task.priority}</Text>
-      <Text style={[taskStyles.stack, { color: stackColor }]}>{task.stackFree} B</Text>
-      <Text style={[taskStyles.state, { color: stateColor }]}>{stateLabel}</Text>
-    </View>
-  );
-}
-
-const taskStyles = StyleSheet.create({
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 6,
-    borderBottomWidth: 1,
-    borderBottomColor: bg.raised,
-  },
-  name: {
-    fontSize: fontSize.body,
-    color: fg.primary,
-    fontFamily: 'monospace',
-    flex: 1,
-  },
-  priority: {
-    fontSize: fontSize.body,
-    color: fg.secondary,
-    width: 40,
-    textAlign: 'center',
-  },
-  stack: {
-    fontSize: fontSize.body,
-    fontFamily: 'monospace',
-    width: 70,
-    textAlign: 'right',
-  },
-  state: {
-    fontSize: fontSize.label,
-    width: 70,
-    textAlign: 'right',
-  },
-});
-
 // --- Main Diagnose Screen ---
 
 export function DiagnoseScreen() {
@@ -257,19 +204,12 @@ export function DiagnoseScreen() {
   const sensorStatus = useAppStore((s) => s.sensorStatus);
   const selfTestResult = useAppStore((s) => s.selfTestResult);
   const systemStatus = useAppStore((s) => s.systemStatus);
-  const taskInfo = useAppStore((s) => s.taskInfo);
   const telemetry = useAppStore((s) => s.telemetry);
   const ble = useAppStore((s) => s.ble);
 
-  const { triggerSelfTest, clearDtc, readSystemStatus, readTaskInfo } = useBleManager();
+  const { triggerSelfTest, clearDtc } = useBleManager();
   const [testing, setTesting] = useState<null | 'quick' | 'full'>(null);
   const [refreshing, setRefreshing] = useState(false);
-
-  // System-Status und Task-Info beim Oeffnen laden
-  useEffect(() => {
-    readSystemStatus();
-    readTaskInfo();
-  }, [readSystemStatus, readTaskInfo]);
 
   const handleSelfTest = async (mode: SelfTestMode) => {
     setTesting(mode === SelfTestMode.Quick ? 'quick' : 'full');
@@ -313,9 +253,9 @@ export function DiagnoseScreen() {
 
   const handleRefresh = useCallback(async () => {
     setRefreshing(true);
-    await Promise.all([readSystemStatus(), readTaskInfo()]);
+    await Promise.resolve();
     setRefreshing(false);
-  }, [readSystemStatus, readTaskInfo]);
+  }, []);
 
   const sensorEntries: { name: string; status: number; labels: string[] }[] = [
     { name: 'GPS', status: sensorStatus.gps, labels: SENSOR_STATUS_LABELS.gps },
@@ -550,21 +490,6 @@ export function DiagnoseScreen() {
           </View>
         </Card>
 
-        {/* Task-Liste */}
-        {taskInfo.length > 0 && (
-          <Card>
-            <Text style={styles.sectionTitle}>TASK-LISTE</Text>
-            <View style={taskStyles.row}>
-              <Text style={[styles.label, { flex: 1 }]}>NAME</Text>
-              <Text style={[styles.label, { width: 40, textAlign: 'center' }]}>PRIO</Text>
-              <Text style={[styles.label, { width: 70, textAlign: 'right' }]}>STACK</Text>
-              <Text style={[styles.label, { width: 70, textAlign: 'right' }]}>STATUS</Text>
-            </View>
-            {taskInfo.map((task, i) => (
-              <TaskRow key={i} task={task} />
-            ))}
-          </Card>
-        )}
       </ScrollView>
     </ScreenContainer>
   );

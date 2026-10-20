@@ -35,6 +35,7 @@ if(NOT IDF_PATH)
         ${CMAKE_CURRENT_SOURCE_DIR}/../components/ota/include
         ${CMAKE_CURRENT_SOURCE_DIR}/../components/hid_controller/include
         ${CMAKE_CURRENT_SOURCE_DIR}/../components/carplay_bridge/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/../components/carplay_bridge
         ${CMAKE_CURRENT_SOURCE_DIR}/../main
         ${CMAKE_CURRENT_SOURCE_DIR}/mocks
         ${UNITY_DIR}/src
@@ -53,6 +54,7 @@ if(NOT IDF_PATH)
         test_power_manager.c
         test_controller.c
         test_carplay_bridge.c
+        test_carplay_media.c
     )
 
     # Compiler flags

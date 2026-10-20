@@ -28,7 +28,7 @@ import { useAppStore } from '../core/state/store';
 import { useBleManager } from '../hooks/useBleManager';
 import { bg, fg, accent, fontSize } from '../core/theme/colors';
 import type { BordcomputerConfig } from '../core/state/config';
-import { CarPlayControl, ControllerType } from '../core/ble/gatt-uuids';
+import { ControllerType } from '../core/ble/gatt-uuids';
 
 // --- Slider Component ---
 
@@ -228,14 +228,12 @@ export function SettingsScreen() {
   const {
     writeConfig,
     deleteAllBonds,
-    readOtaStatus,
     startOta,
     writeOtaData,
     cancelOta,
     verifyOta,
     exportConfig,
     importConfig,
-    sendCarPlayControl,
   } = useBleManager();
 
   const [applying, setApplying] = useState(false);
@@ -243,35 +241,10 @@ export function SettingsScreen() {
   const [otaProgress, setOtaProgress] = useState(0);
   const [units, setUnits] = useState<'metric' | 'imperial'>('metric');
 
-  const handleCarPlayPair = async () => {
-    await sendCarPlayControl(CarPlayControl.Pair);
-    updateConfig({ carplayPaired: true });
-    Alert.alert('CarPlay', 'Pairing-Befehl gesendet.');
-  };
-
-  const handleCarPlayUnpair = async () => {
-    Alert.alert(
-      'CarPlay trennen',
-      'CarPlay-Display-Verbindung trennen?',
-      [
-        { text: 'Abbrechen', style: 'cancel' },
-        {
-          text: 'Trennen',
-          style: 'destructive',
-          onPress: async () => {
-            await sendCarPlayControl(CarPlayControl.Unpair);
-            updateConfig({ carplayPaired: false });
-            Alert.alert('Erledigt', 'CarPlay getrennt.');
-          },
-        },
-      ],
-    );
-  };
-
   // OTA-Status laden
   useEffect(() => {
-    readOtaStatus();
-  }, [readOtaStatus]);
+    // OTA status arrives via 0x8001 control notify (subscribed in provider)
+  }, []);
 
   const handleApply = async () => {
     setApplying(true);
@@ -539,9 +512,7 @@ export function SettingsScreen() {
 
           <View style={styles.row}>
             <Text style={styles.label}>Aktuelle Version</Text>
-            <Text style={styles.value}>
-              v{otaStatus?.firmwareVersion ?? '1.2.0'}
-            </Text>
+            <Text style={styles.value}>v1.2.0</Text>
           </View>
           <View style={styles.row}>
             <Text style={styles.label}>Status</Text>
@@ -647,27 +618,6 @@ export function SettingsScreen() {
             >
               {config.carplayPaired ? 'Ja' : 'Nein'}
             </Text>
-          </View>
-
-          <View style={styles.backupRow}>
-            <TouchableOpacity
-              style={[styles.backupBtn, { borderColor: accent.green }]}
-              onPress={handleCarPlayPair}
-              disabled={!config.carplayEnabled}
-            >
-              <Text style={[styles.backupBtnText, { color: accent.green }]}>
-                KOPPELN
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.backupBtn, { borderColor: accent.red }]}
-              onPress={handleCarPlayUnpair}
-              disabled={!config.carplayPaired}
-            >
-              <Text style={[styles.backupBtnText, { color: accent.red }]}>
-                TRENNEN
-              </Text>
-            </TouchableOpacity>
           </View>
         </Card>
 

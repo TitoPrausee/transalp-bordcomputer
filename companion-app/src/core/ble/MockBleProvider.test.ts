@@ -221,41 +221,6 @@ describe('MockBleProvider self-test', () => {
   }, 5000);
 });
 
-describe('MockBleProvider system status', () => {
-  let provider: MockBleProvider;
-
-  beforeEach(() => {
-    provider = new MockBleProvider();
-  });
-
-  afterEach(() => {
-    provider.destroy();
-  });
-
-  it('should read system status', async () => {
-    const status = await provider.readSystemStatus();
-    expect(status).not.toBeNull();
-    expect(status!.uptime).toBeGreaterThanOrEqual(0);
-    expect(status!.heapFree).toBeGreaterThan(0);
-    expect(status!.batteryPct).toBeGreaterThan(0);
-    expect(status!.batteryPct).toBeLessThanOrEqual(100);
-  });
-
-  it('should read task info', async () => {
-    const tasks = await provider.readTaskInfo();
-    expect(tasks.length).toBeGreaterThan(0);
-    expect(tasks[0]).toHaveProperty('name');
-    expect(tasks[0]).toHaveProperty('priority');
-    expect(tasks[0]).toHaveProperty('stackFree');
-  });
-
-  it('should read OTA status', async () => {
-    const status = await provider.readOtaStatus();
-    expect(status).not.toBeNull();
-    expect(status!.state).toBe(0); // idle
-  });
-});
-
 describe('MockBleProvider OTA', () => {
   let provider: MockBleProvider;
 
@@ -314,6 +279,33 @@ describe('MockBleProvider OTA', () => {
     await provider.startOta(1024);
     await provider.cancelOta();
     // No error = success
+  });
+
+  it('should emit verify result on commit with mismatched hash', async () => {
+    const verifyResults: unknown[] = [];
+    provider.subscribe({
+      onOtaVerifyResult: (result) => verifyResults.push(result),
+    });
+
+    const wrongHash = new Uint8Array(32); // all zeros = mismatch
+    await provider.commitOta(wrongHash);
+
+    expect(verifyResults.length).toBe(1);
+    const result = verifyResults[0] as { status: number; sha256: string };
+    expect(result.status).toBe(3); // HashMismatch
+    expect(result.sha256.length).toBe(64); // 32 bytes as hex
+  });
+
+  it('should report done on commit without hash', async () => {
+    const otaUpdates: unknown[] = [];
+    provider.subscribe({
+      onOtaStatus: (status) => otaUpdates.push(status),
+    });
+
+    await provider.commitOta();
+
+    const last = otaUpdates[otaUpdates.length - 1] as { state: number };
+    expect(last.state).toBe(3); // done
   });
 });
 

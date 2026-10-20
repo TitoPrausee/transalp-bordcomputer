@@ -21,14 +21,12 @@ import {
 } from 'react-native';
 import { ScreenContainer, ScreenHeader, Card, EmptyState } from '../components/UI';
 import { useAppStore } from '../core/state/store';
-import { useBleManager } from '../hooks/useBleManager';
 import { bg, fg, accent, fontSize } from '../core/theme/colors';
 import {
   ControllerType,
   ControllerButton,
   ControllerAction,
   CONTROLLER_KEY_MAP,
-  CarPlayControl,
 } from '../core/ble/gatt-uuids';
 
 // --- Controller-Typ-Labels ---
@@ -70,21 +68,6 @@ const ACTION_LABELS: Record<ControllerAction, string> = {
   [ControllerAction.Dashboard]: 'Dashboard',
   [ControllerAction.CarPlay]: 'CarPlay',
 };
-
-// --- Mapping von ControllerAction auf CarPlayControl ---
-
-function actionToCarPlayControl(action: ControllerAction): CarPlayControl | null {
-  switch (action) {
-    case ControllerAction.NextTrack:
-      return CarPlayControl.NextTrack;
-    case ControllerAction.PrevTrack:
-      return CarPlayControl.PrevTrack;
-    case ControllerAction.PlayPause:
-      return CarPlayControl.PlayPause;
-    default:
-      return null;
-  }
-}
 
 // --- Alle Buttons in Reihenfolge ---
 
@@ -263,8 +246,6 @@ export function ControllerPairingScreen() {
   const updateConfig = useAppStore((s) => s.updateConfig);
   const controllerMap = useAppStore((s) => s.controllerMap);
   const setControllerButton = useAppStore((s) => s.setControllerButton);
-  const carplay = useAppStore((s) => s.carplay);
-  const { sendCarPlayControl } = useBleManager();
 
   const [lastButton, setLastButton] = useState<ControllerButton | null>(null);
   const [lastAction, setLastAction] = useState<ControllerAction | null>(null);
@@ -280,13 +261,8 @@ export function ControllerPairingScreen() {
 
       const entry = `${BUTTON_LABELS[button]} -> ${ACTION_LABELS[action] ?? 'Keine'}`;
       setLog((prev) => [entry, ...prev].slice(0, 8));
-
-      const cpCmd = actionToCarPlayControl(action);
-      if (cpCmd !== null && carplay.connected) {
-        sendCarPlayControl(cpCmd);
-      }
     },
-    [controllerMap, carplay.connected, sendCarPlayControl],
+    [controllerMap],
   );
 
   useKeyboardController(isKeyboardMock, handleButton);

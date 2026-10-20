@@ -13,5 +13,6 @@
 #define ESP_LOGI(tag, fmt, ...)  fprintf(stderr, "I %s: " fmt "\n", tag, ##__VA_ARGS__)
 #define ESP_LOGD(tag, fmt, ...)  /* suppressed in tests */
 #define ESP_LOGV(tag, fmt, ...)  /* suppressed in tests */
+#define ESP_LOG_BUFFER_HEX(tag, buf, len) (void)(tag), (void)(buf), (void)(len)
 
 #endif /* _ESP_LOG_MOCK_H_ */

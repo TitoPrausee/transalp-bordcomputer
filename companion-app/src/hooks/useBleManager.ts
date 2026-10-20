@@ -15,7 +15,7 @@ import type { BleProvider } from '../core/ble/BleProvider';
 import { MockBleProvider } from '../core/ble/MockBleProvider';
 import { RealBleProvider } from '../core/ble/RealBleProvider';
 import { ConnectionState } from '../core/ble/connection-state';
-import { SelfTestMode, CarPlayControl } from '../core/ble/gatt-uuids';
+import { SelfTestMode } from '../core/ble/gatt-uuids';
 import { useAppStore } from '../core/state/store';
 
 export function useBleManager() {
@@ -36,9 +36,8 @@ export function useBleManager() {
   const setSelfTestResult = useAppStore((s) => s.setSelfTestResult);
   const setWeather = useAppStore((s) => s.setWeather);
   const setSystemStatus = useAppStore((s) => s.setSystemStatus);
-  const setTaskInfo = useAppStore((s) => s.setTaskInfo);
   const setOtaStatus = useAppStore((s) => s.setOtaStatus);
-  const setCarPlayStatus = useAppStore((s) => s.setCarPlayStatus);
+  const setOtaVerifyResult = useAppStore((s) => s.setOtaVerifyResult);
 
   // Error / Reconnection State
   const setLastError = useAppStore((s) => s.setLastError);
@@ -75,10 +74,8 @@ export function useBleManager() {
         onDtcList: (entries) => setDtcList(entries),
         onSelfTestResult: (result) => setSelfTestResult(result),
         onWeatherCurrent: (data) => setWeather(data),
-        onSystemStatus: (data) => setSystemStatus(data),
-        onTaskInfo: (tasks) => setTaskInfo(tasks),
         onOtaStatus: (status) => setOtaStatus(status),
-        onCarPlayStatus: (status) => setCarPlayStatus(status),
+        onOtaVerifyResult: (result) => setOtaVerifyResult(result),
         onRssi: (rssi) => setBleRssi(rssi),
         onMtu: (mtu) => setBleMtu(mtu),
         onError: (error) => setLastError(error),
@@ -107,9 +104,8 @@ export function useBleManager() {
     setSelfTestResult,
     setWeather,
     setSystemStatus,
-    setTaskInfo,
     setOtaStatus,
-    setCarPlayStatus,
+    setOtaVerifyResult,
     setLastError,
     clearError,
     setReconnectAttempts,
@@ -155,31 +151,12 @@ export function useBleManager() {
   }, []);
 
   const readSystemStatus = useCallback(async () => {
-    if (providerRef.current) {
-      const status = await providerRef.current.readSystemStatus();
-      if (status) setSystemStatus(status);
-      return status;
-    }
-    return null;
-  }, [setSystemStatus]);
-
-  const readTaskInfo = useCallback(async () => {
-    if (providerRef.current) {
-      const tasks = await providerRef.current.readTaskInfo();
-      setTaskInfo(tasks);
-      return tasks;
-    }
-    return [];
-  }, [setTaskInfo]);
+    return useAppStore.getState().systemStatus;
+  }, []);
 
   const readOtaStatus = useCallback(async () => {
-    if (providerRef.current) {
-      const status = await providerRef.current.readOtaStatus();
-      if (status) setOtaStatus(status);
-      return status;
-    }
-    return null;
-  }, [setOtaStatus]);
+    return useAppStore.getState().otaStatus;
+  }, []);
 
   const startOta = useCallback(async (firmwareSize: number) => {
     if (providerRef.current) {
@@ -205,6 +182,12 @@ export function useBleManager() {
     }
   }, []);
 
+  const commitOta = useCallback(async (expectedSha256?: Uint8Array) => {
+    if (providerRef.current) {
+      await providerRef.current.commitOta(expectedSha256);
+    }
+  }, []);
+
   const exportConfig = useCallback(async () => {
     if (providerRef.current) {
       return await providerRef.current.exportConfig();
@@ -218,21 +201,6 @@ export function useBleManager() {
     }
   }, []);
 
-  const readCarPlayStatus = useCallback(async () => {
-    if (providerRef.current) {
-      const status = await providerRef.current.readCarPlayStatus();
-      if (status) setCarPlayStatus(status);
-      return status;
-    }
-    return null;
-  }, [setCarPlayStatus]);
-
-  const sendCarPlayControl = useCallback(async (cmd: CarPlayControl) => {
-    if (providerRef.current) {
-      await providerRef.current.sendCarPlayControl(cmd);
-    }
-  }, []);
-
   return {
     reconnect,
     disconnect,
@@ -241,15 +209,13 @@ export function useBleManager() {
     deleteAllBonds,
     writeConfig,
     readSystemStatus,
-    readTaskInfo,
     readOtaStatus,
     startOta,
     writeOtaData,
     cancelOta,
     verifyOta,
+    commitOta,
     exportConfig,
     importConfig,
-    readCarPlayStatus,
-    sendCarPlayControl,
   };
 }

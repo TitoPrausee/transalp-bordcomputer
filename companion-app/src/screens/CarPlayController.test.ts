@@ -1,69 +1,26 @@
 /**
- * CarPlayController.test.ts — Tests fuer CarPlay-Status und Controller-Support.
+ * ControllerMapping.test.ts — Tests fuer Controller-Support.
  *
  * Testet:
- *   - CarPlay-Status im Store (setCarPlayStatus)
  *   - Controller-Button-Mapping im Store (setControllerButton, DEFAULT_CONTROLLER_MAP)
  *   - CONTROLLER_KEY_MAP Tastatur-Mapping
- *   - BleManager.encodeCarPlayCmd (CarPlay-Control-Encoding)
- *   - BleManager handleNotification fuer CarPlay-Status
- *   - MockBleProvider CarPlay-Control (NextTrack, PrevTrack, Unpair, Pair)
- *   - MockBleProvider readCarPlayStatus
+ *   - ControllerType enum
+ *
+ * CarPlay 0x9000 service tests removed (spec §11: app must not touch service 0x9000).
  */
 
-import { useAppStore, DEFAULT_CONTROLLER_MAP, MOCK_CARPLAY } from '../core/state/store';
-import { BleManager } from '../services/BleManager';
-import { MockBleProvider } from '../core/ble/MockBleProvider';
+import { useAppStore, DEFAULT_CONTROLLER_MAP } from '../core/state/store';
 import {
-  CarPlayApp,
-  CarPlayControl,
   ControllerType,
   ControllerButton,
   ControllerAction,
   CONTROLLER_KEY_MAP,
 } from '../core/ble/gatt-uuids';
-import { ConnectionState } from '../core/ble/connection-state';
-
-// Helper
-function waitFor(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
 
 // Reset store before each test
 beforeEach(() => {
   useAppStore.setState({
-    carplay: { ...MOCK_CARPLAY },
     controllerMap: { ...DEFAULT_CONTROLLER_MAP },
-  });
-});
-
-// ============================================================
-// CarPlay-Status Store
-// ============================================================
-
-describe('CarPlay store state', () => {
-  it('should update CarPlay status via setCarPlayStatus', () => {
-    const status = {
-      connected: true,
-      activeApp: CarPlayApp.Music,
-      artist: 'Iron Maiden',
-      title: 'The Trooper',
-      album: 'Piece of Mind',
-    };
-    useAppStore.getState().setCarPlayStatus(status);
-    const state = useAppStore.getState();
-    expect(state.carplay.connected).toBe(true);
-    expect(state.carplay.activeApp).toBe(CarPlayApp.Music);
-    expect(state.carplay.artist).toBe('Iron Maiden');
-    expect(state.carplay.title).toBe('The Trooper');
-    expect(state.carplay.album).toBe('Piece of Mind');
-  });
-
-  it('should start with disconnected mock CarPlay state', () => {
-    useAppStore.setState({ carplay: { ...MOCK_CARPLAY } });
-    const state = useAppStore.getState();
-    expect(state.carplay.connected).toBe(false);
-    expect(state.carplay.activeApp).toBe(CarPlayApp.None);
   });
 });
 
@@ -131,119 +88,6 @@ describe('CONTROLLER_KEY_MAP keyboard mapping', () => {
   it('should return undefined for unmapped keys', () => {
     expect(CONTROLLER_KEY_MAP['x']).toBeUndefined();
     expect(CONTROLLER_KEY_MAP['Space']).toBeUndefined();
-  });
-});
-
-// ============================================================
-// BleManager CarPlay Encoding
-// ============================================================
-
-describe('BleManager CarPlay encode', () => {
-  const provider = new MockBleProvider();
-  const mgr = new BleManager(provider);
-
-  it('should encode CarPlay control command as base64 string', () => {
-    const encoded = mgr.encodeCarPlayCmd(CarPlayControl.NextTrack);
-    expect(typeof encoded).toBe('string');
-    expect(encoded.length).toBeGreaterThan(0);
-  });
-
-  it('should produce different encodings for different commands', () => {
-    const next = mgr.encodeCarPlayCmd(CarPlayControl.NextTrack);
-    const prev = mgr.encodeCarPlayCmd(CarPlayControl.PrevTrack);
-    const pair = mgr.encodeCarPlayCmd(CarPlayControl.Pair);
-    expect(next).not.toBe(prev);
-    expect(next).not.toBe(pair);
-    expect(prev).not.toBe(pair);
-  });
-
-  mgr.destroy();
-});
-
-// ============================================================
-// BleManager CarPlay Notification
-// ============================================================
-
-describe('BleManager CarPlay notification', () => {
-  it('should dispatch CarPlay status on carplayStatus notification', async () => {
-    const provider = new MockBleProvider();
-    const mgr = new BleManager(provider);
-    await mgr.init();
-
-    const statuses: unknown[] = [];
-    mgr.addListener({ onCarPlayStatus: (s) => statuses.push(s) });
-
-    // Connect to get CarPlay stream running
-    await mgr.startScan();
-    await waitFor(4200);
-
-    // The mock provider sends an initial CarPlay status on connect
-    expect(statuses.length).toBeGreaterThan(0);
-    const status = statuses[0] as { connected: boolean; activeApp: number };
-    expect(status.connected).toBe(true);
-
-    mgr.destroy();
-  }, 15000);
-});
-
-// ============================================================
-// MockBleProvider CarPlay Control
-// ============================================================
-
-describe('MockBleProvider CarPlay control', () => {
-  let provider: MockBleProvider;
-
-  beforeEach(async () => {
-    provider = new MockBleProvider();
-    await provider.init();
-  });
-
-  afterEach(() => {
-    provider.destroy();
-  });
-
-  it('should read CarPlay status with music metadata', async () => {
-    const status = await provider.readCarPlayStatus();
-    expect(status).not.toBeNull();
-    expect(status!.connected).toBe(true);
-    expect(status!.activeApp).toBe(CarPlayApp.Music);
-    expect(status!.artist.length).toBeGreaterThan(0);
-    expect(status!.title.length).toBeGreaterThan(0);
-  });
-
-  it('should advance to next track on NextTrack command', async () => {
-    const before = await provider.readCarPlayStatus();
-    await provider.sendCarPlayControl(CarPlayControl.NextTrack);
-    const after = await provider.readCarPlayStatus();
-    expect(after!.connected).toBe(true);
-    expect(after!.title).not.toBe(before!.title);
-  });
-
-  it('should go to previous track on PrevTrack command', async () => {
-    const initial = await provider.readCarPlayStatus();
-    await provider.sendCarPlayControl(CarPlayControl.NextTrack);
-    await provider.sendCarPlayControl(CarPlayControl.PrevTrack);
-    const after = await provider.readCarPlayStatus();
-    expect(after!.title).toBe(initial!.title);
-    expect(after!.artist).toBe(initial!.artist);
-  });
-
-  it('should disconnect CarPlay on Unpair command', async () => {
-    await provider.sendCarPlayControl(CarPlayControl.Unpair);
-    const status = await provider.readCarPlayStatus();
-    expect(status!.connected).toBe(false);
-    expect(status!.activeApp).toBe(CarPlayApp.None);
-    expect(status!.artist).toBe('');
-  });
-
-  it('should reconnect CarPlay on Pair command after unpair', async () => {
-    await provider.sendCarPlayControl(CarPlayControl.Unpair);
-    expect((await provider.readCarPlayStatus())!.connected).toBe(false);
-
-    await provider.sendCarPlayControl(CarPlayControl.Pair);
-    const status = await provider.readCarPlayStatus();
-    expect(status!.connected).toBe(true);
-    expect(status!.activeApp).toBe(CarPlayApp.Music);
   });
 });
 

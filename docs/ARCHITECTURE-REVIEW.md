@@ -97,9 +97,17 @@ the firmware does not implement, and collides on the CarPlay service:
 ### C4. Controller → CarPlay bridge not wired
 
 Lenker-Controller media buttons dispatch `APP_EVENT_CTRL_MEDIA_NEXT/PREV` on the
-payload event loop, but `carplay_bridge` subscribes to **no** `APP_EVENT_CTRL_*`.
-There is no code writing `CHR_CP_MEDIA_CTRL` (display 0x9104) in response. A rider
-pressing "next track" on the handlebar cannot control CarPlay media.
+payload event loop, but `carplay_bridge` subscribed to **no** `APP_EVENT_CTRL_*`.
+There was no code writing `CHR_CP_MEDIA_CTRL` (display 0x9104) in response. A rider
+pressing "next track" on the handlebar could not control CarPlay media.
+
+**→ Resolved (TOT-36):** `carplay_bridge` now subscribes to
+`APP_EVENT_CTRL_MEDIA_NEXT/PREV` (registered in `carplay_bridge_init()`). The
+subscriber maps the event to a `carplay_media_cmd` byte
+(`carplay_media_cmd_from_event()`) and forwards it via
+`carplay_client_media_ctrl()`, which writes the command byte to the peer
+display's `CHR_CP_MEDIA_CTRL` (0x9104) — the handle is now discovered during
+GATT service discovery. Mapping is unit-tested in `test_carplay_media.c`.
 
 **Impact:** core UX feature non-functional. (Follow-up FU-4.)
 

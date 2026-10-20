@@ -120,17 +120,25 @@ then `controller_mapping_dispatch()` → `app_event_dispatch(APP_EVENT_CTRL_*)`.
 
 | # | Finding | Severity |
 |---|---|---|
-| D2-1 | **No event path connects controller events to the CarPlay bridge.** Controller presses dispatch `APP_EVENT_CTRL_*` on the payload event loop. The CarPlay bridge does **not** subscribe to any `APP_EVENT_CTRL_*`. So a handlebar button press does not propagate to the CarPlay display via the bridge. | **Critical** |
+| D2-1 | **No event path connects controller events to the CarPlay bridge.** Controller presses dispatch `APP_EVENT_CTRL_*` on the payload event loop. The CarPlay bridge does **not** subscribe to any `APP_EVENT_CTRL_*`. So a handlebar button press does not propagate to the CarPlay display via the bridge. **→ Resolved (TOT-36):** `carplay_bridge` now subscribes to `APP_EVENT_CTRL_MEDIA_NEXT/PREV` in `carplay_bridge_init()` and forwards to the display via `carplay_client_media_ctrl()`. | **Critical** |
 | D2-2 | The bridge reads sensor/GPS caches directly (same hard-wired call pattern as BLE). No event-bus mediation. | Medium |
 | D2-3 | `test_integration_controller_mapping` (14/14 PASS) verifies button→debounce→mapping→event-ID, but **stops at dispatch** — it does not assert any subscriber (CarPlay or otherwise) received the event. End-to-end controller→CarPlay is untested. | High |
-| D2-4 | Controller media buttons (NEXT/PREV/VOL) are intended to control the CarPlay display's media, but there is no code writing `CHR_CP_MEDIA_CTRL` (0x9104 on the display) in response to `APP_EVENT_CTRL_MEDIA_*`. The forward path is missing. | **Critical** |
+| D2-4 | Controller media buttons (NEXT/PREV/VOL) are intended to control the CarPlay display's media, but there is no code writing `CHR_CP_MEDIA_CTRL` (0x9104 on the display) in response to `APP_EVENT_CTRL_MEDIA_*`. The forward path is missing. **→ Resolved (TOT-36):** `carplay_client.c` now discovers `CHR_CP_MEDIA_CTRL` (0x9104) during GATT discovery and `carplay_client_media_ctrl()` writes the command byte; the bridge subscriber maps NEXT/PREV → `CARPLAY_MEDIA_CMD_NEXT/PREV`. (VOL has no display-protocol command and remains unmapped by design.) | **Critical** |
 
 ### 3.4 Verdict
 
-The CarPlay bridge and Lenker-Controller are **independent islands**. The
-"interaction via event bus" required by the task does not exist. Controller
-media buttons do not reach the CarPlay display. Requires a follow-up to wire
-`APP_EVENT_CTRL_*` subscribers in `carplay_bridge` that forward to the display.
+The CarPlay bridge and Lenker-Controller were **independent islands**. The
+"interaction via event bus" required by the task did not exist. Controller
+media buttons did not reach the CarPlay display.
+
+**→ Resolved (TOT-36):** The forward path is now wired —
+`carplay_bridge` subscribes to `APP_EVENT_CTRL_MEDIA_NEXT/PREV` and forwards
+each to the display's `CHR_CP_MEDIA_CTRL` (0x9104) via
+`carplay_client_media_ctrl()`. The event→command mapping
+(`carplay_media_cmd_from_event()`) is covered by `test_carplay_media.c`
+(6/6 PASS). D2-3 (end-to-end subscriber assertion) is partially addressed by
+the new unit test; full hardware end-to-end validation remains pending a
+CarPlay-display mock in the simulator (FU-2 scope).
 
 ---
 
@@ -185,7 +193,7 @@ issue IDs). Summary:
 | FU-1 | Bridge the dual event systems (`event_bus` ↔ `app_event_loop`) or consolidate | High | D1-2 |
 | FU-2 | Fix simulator telemetry format to match firmware `telemetry_live_t` | Critical | D1-3 |
 | FU-3 | Rewrite `test_integration_sensor_to_ble.c` to validate the firmware struct, not the simulator format | Critical | D1-4 |
-| FU-4 | Wire Lenker-Controller `APP_EVENT_CTRL_*` → CarPlay bridge → display media control | Critical | D2-1, D2-4 |
+| FU-4 | ~~Wire Lenker-Controller `APP_EVENT_CTRL_*` → CarPlay bridge → display media control~~ **Done (TOT-36):** bridge subscribes to media events; client discovers + writes `CHR_CP_MEDIA_CTRL` (0x9104); mapping unit-tested. | Critical | D2-1, D2-4 |
 | FU-5 | Implement BLE OTA data path: `process_ota_data()` → `ota_ble_write_chunk()` | Critical | D3-4 |
 | FU-6 | Wire BLE OTA control (`process_ota_control`) to the OTA state machine | Critical | D3-5 |
 | FU-7 | Insert real RSA-3072 public key + enable Secure Boot V2 / Flash Encryption for production | Critical | D3-6 |

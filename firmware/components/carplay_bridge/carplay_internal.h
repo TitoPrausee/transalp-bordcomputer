@@ -163,6 +163,13 @@ carplay_client_state_t carplay_client_get_state(void);
  * if not connected). Used by the server-side notify path. */
 uint16_t carplay_client_get_conn_handle(void);
 
+/*
+ * Forward a media-control command byte (carplay_media_cmd) to the peer
+ * display's CHR_CP_MEDIA_CTRL (0x9104).  No-op when not connected or the
+ * characteristic has not been discovered.  Closes gap C4 / FU-4.
+ */
+void carplay_client_media_ctrl(uint8_t cmd);
+
 /* GATT access callback for the Bordcomputer-side service 0x9000
  * (defined in carplay_bridge.c, referenced by the service table). */
 int carplay_gatt_access_cb(uint16_t conn_handle, uint16_t attr_handle,

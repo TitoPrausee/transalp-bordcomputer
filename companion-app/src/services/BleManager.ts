@@ -328,14 +328,11 @@ export class BleManager {
         case CHAR.selfTest:
           this.dispatch('onSelfTestResult', parseSelfTestResult(data));
           break;
-        case CHAR.systemStatus:
-          this.dispatch('onSystemStatus', parseSystemStatus(data));
-          break;
-        case CHAR.taskInfo:
-          this.dispatch('onTaskInfo', parseTaskInfo(data));
-          break;
-        case CHAR.otaStatus:
+        case CHAR.otaControl:
           this.dispatch('onOtaStatus', parseOtaStatus(data));
+          break;
+        case CHAR.otaVerify:
+          this.dispatch('onOtaVerifyResult', parseOtaVerifyResult(data));
           break;
         case CHAR.wxCurrent:
           this.dispatch('onWeatherCurrent', parseWeatherCurrent(data));
@@ -348,9 +345,6 @@ export class BleManager {
           break;
         case CHAR.navRoad:
           this.dispatch('onNavRoad', parseNavRoad(data));
-          break;
-        case CHAR.carplayStatus:
-          this.dispatch('onCarPlayStatus', parseCarPlayStatus(data));
           break;
         default:
           // Unbekannte Characteristic ignorieren

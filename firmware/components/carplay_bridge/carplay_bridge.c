@@ -31,6 +31,8 @@
 #include "freertos/semphr.h"
 
 #include "event_bus.h"
+#include "app_event_loop.h"
+#include "carplay_media.h"
 
 static const char *TAG = "carplay";
 
@@ -384,6 +386,36 @@ void carplay_bridge_unpair(void)
 }
 
 /* ============================================================
+ * Lenker-Controller -> CarPlay media-control forward path (gap C4 / FU-4)
+ *
+ * The handlebar controller dispatches APP_EVENT_CTRL_MEDIA_NEXT/PREV on the
+ * payload event loop (controller_mapping_dispatch in hid_controller).  This
+ * subscriber maps the event to a carplay_media_cmd byte and forwards it to
+ * the peer display's CHR_CP_MEDIA_CTRL (0x9104) via the GATT client.
+ *
+ * Runs in the app_event_loop task context.  The write itself is non-blocking
+ * (ble_gattc_write_flat, no callback), so it does not stall the loop.
+ * ============================================================ */
+
+static void carplay_on_ctrl_media(const app_event_t *event, void *user_ctx)
+{
+    (void)user_ctx;
+
+    uint8_t cmd = carplay_media_cmd_from_event(event->type);
+    if (cmd == 0) {
+        return;  /* unmapped controller event (e.g. VOL_*) — no display protocol */
+    }
+
+    if (!carplay_bridge_is_connected()) {
+        ESP_LOGD(TAG, "ctrl media evt=%d: CarPlay not connected, drop", event->type);
+        return;
+    }
+
+    ESP_LOGI(TAG, "ctrl media evt=%d -> cmd=0x%02X", event->type, cmd);
+    carplay_client_media_ctrl(cmd);
+}
+
+/* ============================================================
  * Lifecycle
  * ============================================================ */
 
@@ -407,6 +439,12 @@ void carplay_bridge_init(void)
 
     /* Initialise GATT client */
     carplay_client_init();
+
+    /* Subscribe to Lenker-Controller media events and forward them to the
+     * CarPlay display's CHR_CP_MEDIA_CTRL (closes gap C4 / FU-4, D2-1/D2-4). */
+    app_event_subscribe((1U << APP_EVENT_CTRL_MEDIA_NEXT) |
+                        (1U << APP_EVENT_CTRL_MEDIA_PREV),
+                        carplay_on_ctrl_media, NULL);
 
     /* If a paired display exists, start auto-connect */
     carplay_peer_t peer;
