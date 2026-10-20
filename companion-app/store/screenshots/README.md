@@ -14,7 +14,7 @@
 | iPhone 6.5" | 1242x2688  | Portrait    | Dashboard — Landscape mode                      |
 | iPad 12.9"  | 2048x2732  | Portrait    | Dashboard + system status                       |
 
-### Android (Google Play Console)
+### Android (Play Store)
 
 | Type   | Size       | Content                                      |
 |--------|------------|-----------------------------------------------|

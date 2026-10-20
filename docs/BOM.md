@@ -978,14 +978,14 @@ Lieferanten gemappt werden — empfohlene reale Quellen je Kategorie:
 
 | Pseudonym                  | Reale Empfehlung (Beispiel)                                  |
 |----------------------------|--------------------------------------------------------------|
-| B2B-Distributor US #1/#2   | Mouser, Digi-Key                                            |
-| Elektronik-Distributor DE #1 | Conrad, Voelkner, BerryBase                               |
-| China-Marktplatz           | LCSC                                                        |
+| B2B-Distributor US #1/#2   | Major US electronics distributor                            |
+| Elektronik-Distributor DE #1 | German electronics distributor                             |
+| China-Marktplatz           | Chinese PCB assembly service                                |
 | Online-Marktplatz          | Generic online marketplace                                  |
 | Spezial-Distributor        | Spezialisierte Motorrad-Elektronik-Haendler                |
-| Distributor EU             | Mouser EU, Farnell                                          |
-| Distributor CN             | LCSC                                                        |
-| Display-Modul-Hersteller  | Waveshare, BuyDisplay (dealextreme)                          |
+| Distributor EU             | European electronics distributor                           |
+| Distributor CN             | Chinese electronics distributor                             |
+| Display-Modul-Hersteller  | Generic display module supplier                             |
 
 ### 8.2 MPN-Referenztabelle (Kernbauteile)
 
