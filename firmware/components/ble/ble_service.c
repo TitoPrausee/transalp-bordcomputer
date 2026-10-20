@@ -487,7 +487,12 @@ ble_gap_event_handler(struct ble_gap_event *event, void *arg)
 
     case BLE_GAP_EVENT_REPEAT_PAIRING:
         /* Remove old bond, accept new pairing */
-        ble_store_util_delete_peer(&event->repeat_pairing.conn.peer_id_addr);
+        {
+            struct ble_gap_conn_desc desc;
+            if (ble_gap_conn_find(event->repeat_pairing.conn_handle, &desc) == 0) {
+                ble_store_util_delete_peer(&desc.peer_id_addr);
+            }
+        }
         return BLE_GAP_REPEAT_PAIRING_RETRY;
 
     default:

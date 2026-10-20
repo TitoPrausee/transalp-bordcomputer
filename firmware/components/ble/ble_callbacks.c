@@ -255,7 +255,7 @@ static void ble_indicate(uint16_t attr_handle, const void *data, uint16_t len)
         return;
     }
 
-    int rc = ble_gattc_indicate(conn, attr_handle, om);
+    int rc = ble_gattc_indicate_custom(conn, attr_handle, om);
     if (rc != 0) {
         ESP_LOGW(TAG, "indicate rc=%d handle=%d", rc, attr_handle);
     }
@@ -475,7 +475,7 @@ int ble_handle_write(uint16_t attr_handle, struct ble_gatt_access_ctxt *ctxt)
     }
 
     /* Enqueue for asynchronous processing */
-    if (!ble_cmd_enqueue(cmd_type, ctxt->conn_handle, buf, len)) {
+    if (!ble_cmd_enqueue(cmd_type, conn_handle, buf, len)) {
         ESP_LOGW(TAG, "cmd queue full, dropping %d", cmd_type);
         return BLE_ATT_ERR_INSUFFICIENT_RES;
     }
