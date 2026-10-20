@@ -40,7 +40,7 @@ extern uint8_t  g_ota_get_state_partition_ok;  /* 1 = ESP_OK */
  * sufficient to test the comparison logic in ota_finish_and_verify().
  */
 static inline int esp_partition_get_sha256(const esp_partition_t *part,
-                                            uint8_t *sha256)
+                                             uint8_t *sha256)
 {
     (void)part;
     if (sha256 == NULL) return -1;
@@ -52,6 +52,21 @@ static inline int esp_partition_get_sha256(const esp_partition_t *part,
             sha256[i] = (uint8_t)(i * 0x5Au);
         }
     }
+    return 0;
+}
+
+/*
+ * Mock esp_partition_read: reads from the in-RAM flash backing store
+ * (g_ota_flash) so ota_compute_partition_sha256() can hash real data.
+ */
+static inline int esp_partition_read(const esp_partition_t *part,
+                                      uint32_t src_offset, void *dst,
+                                      size_t size)
+{
+    (void)part;
+    if (dst == NULL) return -1;
+    if (src_offset + size > OTA_MOCK_FLASH_SIZE) return -1;
+    memcpy(dst, &g_ota_flash[src_offset], size);
     return 0;
 }
 

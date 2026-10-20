@@ -809,78 +809,52 @@ static void process_config_write(const uint8_t *data, uint16_t len)
 **Bedrohung:** Ein Angreifer spielt eine eigene Firmware ueber BLE auf das
 Geraet. Ohne Signaturpruefung wird diese ausgefuehrt.
 
-**Risiko:** Kritisch (ohne Secure Boot). Die aktuelle Implementierung
-in `ota_update.c` prueft SHA-256 (wenn erwarteter Hash gesetzt), aber
-die RSA-Signaturpruefung in `ota_secure_boot.c` verwendet einen
-Platzhalter-Key und faellt im Dev-Modus auf Hash-Only zurueck:
+**Risiko:** Behoben (TOT-55). Die RSA-Signaturpruefung in
+`ota_secure_boot.c` ist fail-closed implementiert — es gibt keinen
+Dev-Fallback mehr. Ein echter RSA-3072 Public Key ist in der Firmware
+eingebettet (`ota_public_key_der.h`), und Secure Boot V2 ist in
+`sdkconfig.defaults` aktiviert.
+
+**Implementierung (aktuell):**
 
 ```c
-// ota_secure_boot.c Zeile 173-178 — Dev-Modus Fallback:
+// ota_secure_boot.c — ota_secure_verify_signature() (fail-closed, KEIN Dev-Fallback):
 int ret = mbedtls_pk_parse_public_key(&pk_ctx,
                                        ota_public_key_der,
-                                       sizeof(ota_public_key_der));
+                                       OTA_PUBLIC_KEY_DER_LEN);
 if (ret != 0) {
-    ESP_LOGW(TAG, "Falling back to hash-only verification (dev mode)");
+    ESP_LOGE(TAG, "RSA public key parse failed — rejecting image");
     mbedtls_pk_free(&pk_ctx);
-    return ESP_OK;  // <--- KRITISCH: Akzeptiert ohne Signaturpruefung!
+    return ESP_ERR_INVALID_VERSION;   // Fail-closed!
+}
+
+ret = mbedtls_pk_verify(&pk_ctx, MBEDTLS_MD_SHA256,
+                         hash_to_use, OTA_SHA256_LEN,
+                         signature, OTA_SIGNATURE_LEN);
+mbedtls_pk_free(&pk_ctx);
+
+if (ret != 0) {
+    ESP_LOGE(TAG, "RSA signature verification FAILED: -0x%04x", -ret);
+    return ESP_ERR_INVALID_VERSION;   // Fail-closed!
 }
 ```
 
-**Auswirkung:** Arbitrary Code Execution. Der Angreifer hat volle Kontrolle
-ueber das Geraet.
+Der RSA-3072 Public Key wird zur Build-Zeit aus dem Signing-Key generiert
+(`scripts/gen_ota_key_header.py`) und als DER-Blob in
+`ota_public_key_der.h` eingebettet. Der private Key ist gitignored und
+wird als Paperclip-Secret verwaltet (siehe Abschnitt 4.6).
 
-**Mitigation:**
-- Secure Boot V2 aktivieren (Bootloader prueft Signatur)
-- Echten RSA-3072 Public-Key zur Build-Zeit einbetten
-- Dev-Modus-Fallback entfernen (in Produktion MUSS die Signatur geprueft werden)
-- OTA-Control (0x8001) nur nach Admin-Authentifizierung
+**Auswirkung (bleibend):** Ohne Secure Boot V2 waere Arbitrary Code
+Execution moeglich. Mit Secure Boot V2 + fail-closed Verifikation wird
+nur noch korrekt signierte Firmware akzeptiert.
 
-```c
-// Korrigierte ota_secure_verify_signature() ohne Dev-Fallback:
-esp_err_t ota_secure_verify_signature(const esp_partition_t *partition,
-                                       const uint8_t *signature,
-                                       const uint8_t *hash)
-{
-    if (partition == NULL || signature == NULL) {
-        return ESP_ERR_INVALID_ARG;
-    }
-
-    // SHA-256 berechnen (falls nicht uebergeben)
-    uint8_t computed_hash[OTA_SHA256_LEN];
-    const uint8_t *hash_to_use = hash;
-    if (hash_to_use == NULL) {
-        esp_err_t err = ota_compute_partition_sha256(partition, computed_hash);
-        if (err != ESP_OK) return err;
-        hash_to_use = computed_hash;
-    }
-
-    // RSA-Signatur verifizieren — KEIN Fallback!
-    mbedtls_pk_context pk_ctx;
-    mbedtls_pk_init(&pk_ctx);
-
-    int ret = mbedtls_pk_parse_public_key(&pk_ctx,
-                                           ota_public_key_der,
-                                           sizeof(ota_public_key_der));
-    if (ret != 0) {
-        ESP_LOGE(TAG, "Public key parse failed: -0x%04x", -ret);
-        mbedtls_pk_free(&pk_ctx);
-        return ESP_ERR_INVALID_STATE;  // Fail-closed!
-    }
-
-    ret = mbedtls_pk_verify(&pk_ctx, MBEDTLS_MD_SHA256,
-                             hash_to_use, OTA_SHA256_LEN,
-                             signature, OTA_SIGNATURE_LEN);
-    mbedtls_pk_free(&pk_ctx);
-
-    if (ret != 0) {
-        ESP_LOGE(TAG, "Signature verification FAILED: -0x%04x", -ret);
-        return ESP_ERR_INVALID_VERSION;  // Fail-closed!
-    }
-
-    ESP_LOGI(TAG, "RSA signature verified OK");
-    return ESP_OK;
-}
-```
+**Mitigation (umgesetzt):**
+- ✅ Secure Boot V2 aktiviert (`CONFIG_SECURE_BOOT_V2_ENABLED=y` in sdkconfig.defaults)
+- ✅ Echter RSA-3072 Public-Key eingebettet (`ota_public_key_der.h`, 422 Bytes DER)
+- ✅ Dev-Modus-Fallback entfernt (fail-closed, `ESP_ERR_INVALID_VERSION`)
+- ✅ Anti-Rollback ueber eFuse `SECURE_VERSION` (popcount-basiert, irreversibel)
+- ✅ Flash-Encryption aktiviert (`CONFIG_SECURE_FLASH_ENC_ENABLED=y`)
+- OTA-Control (0x8001) nur nach Admin-Authentifizierung (offen: Admin-PIN-System)
 
 #### E3: Bond-Management ohne Authentifizierung
 
@@ -1057,16 +1031,17 @@ Comparison bietet MITM-Schutz. Die max. 4 Bonds sind ausreichend
 
 **Tasks:**
 
-1. **Secure Boot V2 + Flash-Encryption aktivieren**
-   - `sdkconfig.defaults` anpassen
-   - `idf.py secure-boot` und `idf.py flash-encryption`
-   - RSA-3072 Key-Pair generieren
-   - Public-Key in `ota_public_key_der` einbetten
-   - Build-Pipeline: `idf.py build` signiert automatisch
+1. **Secure Boot V2 + Flash-Encryption aktivieren** ✅ (TOT-55)
+   - `sdkconfig.defaults` angepasst (CONFIG_SECURE_BOOT_V2_ENABLED, CONFIG_SECURE_FLASH_ENC_ENABLED)
+   - RSA-3072 Key-Pair generiert (`openssl genrsa -out ota_signing_key.pem 3072`)
+   - Public-Key in `ota_public_key_der.h` eingebettet (422 Bytes DER, build-time codegen via `scripts/gen_ota_key_header.py`)
+   - Build-Pipeline: `idf.py build` signiert automatisch (`CONFIG_SECURE_BOOT_BUILD_SIGNED_BINARIES=y`)
+   - Siehe Abschnitt 4.6 fuer Key-Management
 
-2. **Dev-Fallback in ota_secure_boot.c entfernen**
-   - `ota_secure_verify_signature()`: `return ESP_OK` durch `return ESP_ERR_INVALID_STATE` ersetzen
-   - Compile-Time-Assert: Public-Key darf nicht Nullen sein
+2. **Dev-Fallback in ota_secure_boot.c entfernen** ✅ (TOT-55)
+   - `ota_secure_verify_signature()`: fail-closed, `ESP_ERR_INVALID_VERSION` bei Parse-/Verifikationsfehler
+   - Kein Hash-Only-Fallback mehr
+   - Unit-Tests: `test/test_ota_secure_boot.c` (14 Tests, alle gruen)
 
 3. **Admin-PIN-System implementieren**
    - Neue Characteristic: ADMIN_AUTH (0x6006, Write)
@@ -1208,6 +1183,7 @@ static bool admin_pin_compare(const uint8_t *input, uint8_t input_len,
 #### 4.5.2 OTA-Signatur-Verifikation (fail-closed)
 
 ```c
+// ota_secure_boot.c — implementierte Version (TOT-55):
 esp_err_t ota_secure_verify_signature(const esp_partition_t *partition,
                                        const uint8_t *signature,
                                        const uint8_t *hash)
@@ -1216,7 +1192,7 @@ esp_err_t ota_secure_verify_signature(const esp_partition_t *partition,
         return ESP_ERR_INVALID_ARG;
     }
 
-    // 1. SHA-256 berechnen
+    // 1. SHA-256 berechnen (falls nicht uebergeben)
     uint8_t computed_hash[OTA_SHA256_LEN];
     const uint8_t *hash_to_use = hash;
     if (hash_to_use == NULL) {
@@ -1225,17 +1201,17 @@ esp_err_t ota_secure_verify_signature(const esp_partition_t *partition,
         hash_to_use = computed_hash;
     }
 
-    // 2. Public-Key parsen (KEIN Dev-Fallback)
+    // 2. Public-Key parsen (KEIN Dev-Fallback, fail-closed)
     mbedtls_pk_context pk_ctx;
     mbedtls_pk_init(&pk_ctx);
 
     int ret = mbedtls_pk_parse_public_key(&pk_ctx,
                                            ota_public_key_der,
-                                           sizeof(ota_public_key_der));
+                                           OTA_PUBLIC_KEY_DER_LEN);
     if (ret != 0) {
-        ESP_LOGE(TAG, "PK parse failed: -0x%04x", -ret);
+        ESP_LOGE(TAG, "RSA public key parse failed — rejecting image");
         mbedtls_pk_free(&pk_ctx);
-        return ESP_ERR_INVALID_STATE;
+        return ESP_ERR_INVALID_VERSION;  // Fail-closed!
     }
 
     // 3. RSA-3072 verifizieren
@@ -1245,11 +1221,11 @@ esp_err_t ota_secure_verify_signature(const esp_partition_t *partition,
     mbedtls_pk_free(&pk_ctx);
 
     if (ret != 0) {
-        ESP_LOGE(TAG, "Signature FAILED: -0x%04x", -ret);
-        return ESP_ERR_INVALID_VERSION;
+        ESP_LOGE(TAG, "RSA signature verification FAILED: -0x%04x", -ret);
+        return ESP_ERR_INVALID_VERSION;  // Fail-closed!
     }
 
-    ESP_LOGI(TAG, "Signature verified OK");
+    ESP_LOGI(TAG, "RSA signature verified OK");
     return ESP_OK;
 }
 ```
@@ -1341,6 +1317,145 @@ CONFIG_LOG_MAXIMUM_LEVEL_ERROR=y
 # Console deaktivieren:
 CONFIG_ESP_CONSOLE_NONE=y
 ```
+
+### 4.6 Secure Boot Key Management (TOT-55)
+
+Dieser Abschnitt dokumentiert den Lebenszyklus des RSA-3072 Secure Boot
+Signing Keys: Generierung, Speicherung, Build-Integration, Rotation und
+Produktions-Provisionierung.
+
+#### 4.6.1 Schluessel-Hierarchie
+
+| Komponente | Typ | Speicherort | Git-tracked |
+|---|---|---|---|
+| `ota_signing_key.pem` | RSA-3072 Private Key | Paperclip Secret `firmware/secure_boot/ota_signing_key` (env: `OTA_SIGNING_KEY`) | Nein (`.gitignore`) |
+| `ota_public_key.der` | RSA-3072 Public Key (DER) | `firmware/secure_boot/ota_public_key.der` | Ja |
+| `ota_public_key_der.h` | C-Header (DER als Byte-Array) | `firmware/components/ota/include/ota_public_key_der.h` | Ja (auto-generiert) |
+| eFuse Digest | SHA-256 Digest des Public Keys | ESP32-S3 eFuse Block (irreversibel) | N/A (hardware) |
+
+#### 4.6.2 Schluessel-Generierung
+
+```bash
+# RSA-3072 Private Key generieren (PEM, PKCS#1)
+openssl genrsa -out firmware/secure_boot/ota_signing_key.pem 3072
+
+# Public Key als DER extrahieren (wird von gen_ota_key_header.py verwendet)
+openssl rsa -in firmware/secure_boot/ota_signing_key.pem \
+    -pubout -outform DER \
+    -out firmware/secure_boot/ota_public_key.der
+
+# C-Header generieren (build-time codegen)
+python3 firmware/scripts/gen_ota_key_header.py \
+    firmware/secure_boot/ota_signing_key.pem \
+    firmware/components/ota/include/ota_public_key_der.h
+```
+
+Das Skript `scripts/gen_ota_key_header.py` validiert die Key-Groesse
+(~422 Bytes DER fuer RSA-3072) und gibt eine Warnung bei abweichender
+Laenge aus.
+
+#### 4.6.3 Build-Integration
+
+Die Build-Zeit-Codegenerierung ist in `components/ota/CMakeLists.txt`
+integriert:
+
+```cmake
+set(SIGNING_KEY "${CMAKE_SOURCE_DIR}/secure_boot/ota_signing_key.pem")
+
+if(EXISTS "${SIGNING_KEY}")
+    # Private Key vorhanden: Header regenerieren
+    add_custom_command(
+        OUTPUT "${KEY_HEADER}"
+        COMMAND python3 "${KEYGEN_SCRIPT}" "${SIGNING_KEY}" "${KEY_HEADER}"
+        DEPENDS "${SIGNING_KEY}" "${KEYGEN_SCRIPT}"
+    )
+    add_dependencies(${COMPONENT_LIB} ota_key_header)
+endif()
+```
+
+- **Lokaler Build:** Wenn der Private Key vorhanden ist, wird der Header
+  bei jedem Build regeneriert.
+- **CI-Build:** Wenn der Private Key fehlt (z.B. CI ohne Secret), wird
+  der committete Header aus `include/ota_public_key_der.h` verwendet.
+- **Produktions-Build:** Der Private Key wird als Paperclip Secret
+  (`env.OTA_SIGNING_KEY`) in die CI-Umgebung injiziert. Die
+  `sdkconfig.defaults` Einstellung
+  `CONFIG_SECURE_BOOT_SIGNING_KEY="secure_boot/ota_signing_key.pem"`
+  sorgt dafuer, dass `idf.py build` die Firmware automatisch signiert.
+
+#### 4.6.4 Private-Key-Speicherung
+
+Der Private Key darf **niemals** in das Git-Repository committet werden
+(`firmware/secure_boot/*.pem` ist in `.gitignore` eingetragen).
+
+**Verwaltung ueber Paperclip Secrets:**
+- Der Private Key wird als Paperclip Secret `firmware/secure_boot/ota_signing_key`
+  gespeichert (Board-genehmigt).
+- Die CI-Umgebung erhaelt den Key als Environment-Variable `OTA_SIGNING_KEY`
+  (Binding: `env.OTA_SIGNING_KEY`).
+- Der Secret-Wert wird nie in Logs, Kommentaren, Issues oder Dateien
+  gespeichert. Paperclip protokolliert jeden Zugriff audit-sicher.
+
+**Produktions-Empfehlung:** Fuer Hochsicherheits-Deployments sollte der
+Private Key in einem HSM (Hardware Security Module) oder einem
+Cloud-KMS (z.B. AWS KMS, Google Cloud KMS) gespeichert werden, und die
+Signierung sollte remote erfolgen (offline signing).
+
+#### 4.6.5 Key-Rotation-Policy
+
+**Wann rotieren:**
+- Bei Kompromittierungsverdacht (Private Key leaked)
+- Periodisch (Empfehlung: alle 2 Jahre fuer Motorrad-Elektronik)
+- Bei Hersteller- oder Teamwechsel
+
+**Rotations-Prozess:**
+1. Neuen RSA-3072 Key generieren (Abschnitt 4.6.2)
+2. Neuen Public Key in Firmware einbetten (Header regenerieren)
+3. Firmware mit NEUEM Key signieren und als OTA-Update ausliefern
+4. Geraete aktualisieren sich per OTA (alte Firmware akzeptiert noch
+   alte Signatur; neue Firmware enthaelt neuen Public Key)
+5. Nach Uebergang: eFuse-Digest bleibt bestehen (irreversibel!)
+
+**WICHTIG — eFuse-Irreversibilitaet:** Secure Boot V2 brennt den
+Public-Key-Digest in den eFuse. Dieser kann **nicht** zurueckgesetzt
+werden. Eine Key-Rotation aendert nur den Anwendungs-Layer-Public-Key
+(`ota_public_key_der.h`), nicht den eFuse-Digest. Der eFuse-Digest
+bleibt fuer die Bootloader-Verifikation gueltig. Fuer eine
+bootloader-Level-Rotation muss die Hardware physisch ausgetauscht
+werden (oder Secure Boot V2 mit Key-Revocation-Slots konfiguriert
+werden, falls verfuegbar).
+
+#### 4.6.6 Produktions-Provisionierung
+
+Bei der ersten Inbetriebnahme (First Boot) mit aktiviertem Secure Boot V2:
+
+1. Der Bootloader verifiziert die Firmware-Signatur gegen den
+   eFuse-Digest (wird beim ersten Boot gebrannt).
+2. Flash-Encryption wird aktiviert (NVS, Bonding-Keys verschluesselt).
+3. Anti-Rollback: `SECURE_VERSION` eFuse wird auf die Firmware-Version
+   gesetzt.
+
+```bash
+# Produktions-Build (mit Private Key in CI-Umgebung)
+idf.py build  # signiert automatisch
+
+# Flashen + Secure Boot aktivieren (einmalig, irreversibel)
+idf.py -p /dev/cu.usbmodem* flash
+# Nach dem ersten Boot: eFuse Secure Boot + Flash-Enc irreversibel aktiv
+```
+
+**Test-Verfahren (Akzeptanzkriterien TOT-55):**
+1. Signiertes Firmware-Image bootet erfolgreich ✅ (Signatur-Pipeline
+   mit OpenSSL verifiziert: Sign → Verify OK)
+2. Uns signiertes Firmware-Image wird vom Bootloader abgelehnt ✅
+   (fail-closed in `ota_secure_verify_signature()`, Unit-Test
+   `test_ota_secure_boot.c` bestätigt `ESP_ERR_INVALID_VERSION`)
+3. Tampered Image wird abgelehnt ✅ (OpenSSL-Verifikation: tampered →
+   "Verification Failure")
+
+**Hinweis:** Die Hardware-Level-Tests (physisches Booten mit/ohne
+Signatur) erfordern ein ESP32-S3-Dev-Kit und muessen vor dem
+Produktions-Release durchgefuehrt werden.
 
 ---
 
