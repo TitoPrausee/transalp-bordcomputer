@@ -10,7 +10,7 @@ set(KEYGEN_SCRIPT "${CMAKE_SOURCE_DIR}/scripts/gen_ota_key_header.py")
 idf_component_register(
     SRCS "ota_update.c" "ota_secure_boot.c"
     INCLUDE_DIRS "include"
-    REQUIRES utils app_update efuse spi_flash mbedtls esp_http_client
+    REQUIRES utils app_update efuse spi_flash mbedtls esp_http_client nvs_flash
 )
 
 if(EXISTS "${SIGNING_KEY}")
