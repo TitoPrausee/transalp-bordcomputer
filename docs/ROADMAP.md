@@ -1,9 +1,9 @@
 # Projekt-Roadmap: Transalp Bordcomputer
 
-> Zuletzt aktualisiert: 16.10.2026 (Sprint 0.4.0)
-> Status: Weiterentwicklungs-Sprint — 2 Agenten (Wolfgang: Engineer, Klaus: CTO)
-> **Phasen 0–6 ABGESCHLOSSEN ✅ — Projekt RELEASE-READY**
-> **Sprint 0.4.0: CI/CD-Hardening + Feature-Evaluierung + Doku-Konsolidierung**
+> Zuletzt aktualisiert: 20.10.2026 (Sprint 5 — Release Readiness)
+> Status: Produktifizierung abgeschlossen — Firmware release-ready, physisches Produkt in Vorbereitung
+> **Phasen 0–6 ABGESCHLOSSEN ✅ — Sprint 0.4.0 ABGESCHLOSSEN ✅ — CarPlay-Initiative (Sprint 1–5) ABGESCHLOSSEN ✅**
+> **Sprint 5: Release Readiness — CI grün, 588 Tests bestanden, Companion-App & PCB benötigen Board-Aktion**
 
 ## Projektziel
 Vollständiger Open-Source Bordcomputer für die Honda Transalp 600 (PD06).
@@ -603,3 +603,101 @@ Klaus: CTO) unter Koordination durch Horst (CEO).
 | Phase 4 Fortschritt | 100% ✅ (11/11 done) |
 | Phase 5 Fortschritt | 100% ✅ (5/5 done) |
 | Phase 6 Fortschritt | 100% ✅ (5/5 done) |
+
+## CarPlay-Integration & Produktifizierung (TOT-16)
+
+> Initiative: 20.10.2026 · Status: Sprint 1–5 ABGESCHLOSSEN ✅ · 6-Agenten-Team
+> Team: Horst (CEO), Klaus (CTO), Wolfgang (Engineer), Greta, Felix 2, Felix
+> Parent-Issue: TOT-16 — TRANSALP Bordcomputer: CarPlay-Integration, Lenker-Controller und Produktifizierung
+
+Nach Abschluss der Phasen 0–6 und Sprint 0.4.0 startete die Produktifizierungs-
+Initiative unter TOT-16. Ziel: CarPlay-Integration über BLE-Bridge, Lenker-Controller-
+Anbindung, produktionsfähige OTA-Sicherheit (Secure Boot V2, RSA-3072), PCB-
+Fertigungsvorbereitung, Companion-App-Hardening und vollständige Integrationstests.
+Über 5 Sprints wurden 29 Issues abgearbeitet (alle done).
+
+### Sprint 1 — Konzept & Kernkomponenten (ABGESCHLOSSEN — 5/5)
+
+| Issue | Titel | Assignee | Status |
+|---|---|---|---|
+| TOT-17 | CarPlay-Integration: Konzept & BLE-Bridge Firmware | Klaus | done ✅ |
+| TOT-18 | Lenker-Controller: Firmware-Komponente + Hardware-Konzept | Wolfgang | done ✅ |
+| TOT-19 | Firmware-Simulator: Mock-Schicht + CI-Integration | — | done ✅ |
+| TOT-20 | Companion-App: CarPlay-Status + Controller-Support | Felix 2 | done ✅ |
+| TOT-21 | BOM und Produktkatalog: PD06 Kit-Zusammensetzung | Horst | done ✅ |
+
+### Sprint 2 — Integration & Production Readiness (ABGESCHLOSSEN — 4/4)
+
+| Issue | Titel | Assignee | Status |
+|---|---|---|---|
+| TOT-29 | System Integration & Architecture Review | Klaus | done ✅ |
+| TOT-30 | PCB Manufacturing Prep & Hardware Assembly Guide | Wolfgang | done ✅ |
+| TOT-31 | Companion App Production Hardening | Felix 2 | done ✅ |
+| TOT-32 | Integration Test Suite & Field Test Plan | Greta | done ✅ |
+
+Gerber-Package (rev-A, 4-Layer, 80×50 mm, ENIG) unter `hardware/gerber/` erstellt
+(Konzept-Level: Board-Outline + Keep-out-Zonen; echtes Routing folgt mit KiCad-Schematic).
+
+### Sprint 3 — OTA-Security & BLE-Konsolidierung (ABGESCHLOSSEN — 8/8)
+
+| Issue | Titel | Assignee | Status |
+|---|---|---|---|
+| TOT-33 | Wire BLE OTA delivery + control path to OTA state machine | Klaus | done ✅ |
+| TOT-34 | Enable production OTA security: RSA-3072, Secure Boot V2, eFuse anti-rollback | Klaus | done ✅ |
+| TOT-35 | Reconcile companion-app / firmware BLE characteristic divergences | Klaus | done ✅ |
+| TOT-36 | Wire Lenker-Controller to CarPlay bridge media control | Klaus | done ✅ |
+| TOT-37 | Fix simulator BLE formats to match firmware spec | Greta | done ✅ |
+| TOT-38 | Bridge or consolidate dual event systems (event_bus + app_event_loop) | Klaus | done ✅ |
+| TOT-39 | Add OTA unit + integration tests | Greta | done ✅ |
+| TOT-40 | TOT-35 app-side: remove divergent BLE characteristics | Felix 2 | done ✅ |
+
+### Sprint 4 — ESP-IDF-Kompatibilität & Code-Hardening (ABGESCHLOSSEN — 8/8)
+
+| Issue | Titel | Assignee | Status |
+|---|---|---|---|
+| TOT-41 | Fix pre-existing firmware compilation errors | Klaus | done ✅ |
+| TOT-42 | Fix ESP-IDF API compatibility in OTA component | Klaus | done ✅ |
+| TOT-43 | Fix host-test mock gaps (4/10 suites fail to build) | Klaus | done ✅ |
+| TOT-44 | Verify and fix GATT dual-role connection handling | Klaus | done ✅ |
+| TOT-45 | Implement proper CCCD descriptor discovery for CarPlay client | Greta | done ✅ |
+| TOT-46 | Deduplicate board_config.h (4× repeated blocks) | Wolfgang | done ✅ |
+| TOT-47 | Create firmware/README.md with build and flash instructions | Felix 2 | done ✅ |
+| TOT-48 | Add event-loop drop counter and overflow metrics | Greta | done ✅ |
+
+### Sprint 5 — Release Readiness (ABGESCHLOSSEN — 4/4)
+
+| Issue | Titel | Assignee | Status |
+|---|---|---|---|
+| TOT-49 | Fix cppcheck: uninitialized variable `h` in ota_update.c:907 | Klaus | done ✅ |
+| TOT-50 | End-to-end integration test: full data flow in simulator | Greta | done ✅ |
+| TOT-51 | Companion app: app-store readiness review | Felix 2 | done ✅ |
+| TOT-52 | Release readiness summary & ROADMAP update | Horst | done ✅ |
+
+**Sprint 5 Ergebnisse:**
+
+- **CI-Status:** Alle Workflows grün ✅ (Firmware CI, Docs CI, CodeQL, Semgrep, Trivy).
+  Firmware CI run #39492073595 — cppcheck, Unit Tests, ESP-IDF Build v5.2/v5.3/v5.4 alle success.
+  Commit `4267cf70` (cppcheck-Fix: `nvs_handle_t h` initialisiert).
+- **Test-Abdeckung:** 588 Tests, alle bestanden:
+  - Simulator (pytest): 182 Tests
+  - Firmware Unit (Unity+GCC): 202 Tests, 13/13 Suites
+  - Firmware Integration (Unity+GCC): 72 Tests, 6/6 Suites
+  - Companion App (Jest): 132 Tests, 5/5 Suites
+- **Companion-App-Review (TOT-51):** 5 kritische Blocker für Store-Einreichung
+  identifiziert (Bundle-ID, App-Icon, eas.json, Screenshots, OTA-Beschreibung).
+- **Release-Readiness-Summary:** Vollständige Zusammenfassung als Kommentar auf TOT-16
+  gepostet — Firmware release-ready, physisches Produkt benötigt Board-Aktionen.
+
+### Metriken — CarPlay-Initiative
+
+| Metrik | Wert |
+|---|---|
+| Issues gesamt (TOT-17–52) | 29 (+ TOT-16 Parent = 30) |
+| Issues done | 29 ✅ |
+| Issues offen | 0 |
+| Sprints | 5 (alle abgeschlossen) |
+| CI-Workflows | 7 (alle grün) |
+| Tests | 588 (alle bestanden) |
+| Firmware C/H-Zeilen | 15.500+ (10 Komponenten + main + test-suite) |
+| Companion-App | 5.965+ Zeilen TS/TSX |
+| Agenten | 6 (Horst, Klaus, Wolfgang, Greta, Felix 2, Felix) |

@@ -73,6 +73,30 @@ Dokumentationskonsolidierung.
   in diesem Sprint nicht abgeschlossen worden — sie bleiben fuer den
   naechsten Sprint offen.
 
+### 1.4 Release Readiness — CarPlay-Initiative (20.10.2026)
+
+Nach Sprint 0.4.0 startete die Produktifizierungs-Initiative (TOT-16) mit
+5 weiteren Sprints (TOT-17–52). Alle 29 Issues wurden abgeschlossen.
+
+**Status Firmware:** Release-ready ✅
+- Alle CI-Workflows grün (Firmware CI, Docs CI, CodeQL, Semgrep, Trivy)
+- 588 Tests bestanden (Simulator 182, Firmware Unit 202, Integration 72,
+  Companion App 132)
+- cppcheck clean, ESP-IDF Builds v5.2/v5.3/v5.4 erfolgreich
+- Secure Boot V2 + RSA-3072 OTA-Signatur implementiert (Key ist Platzhalter)
+
+**Offene Board-Aktionen für physisches Produkt:**
+- PCB: Gerber-Dateien sind Konzept-Level (Outline + Keep-out) — echtes
+  KiCad-Schematic + Routing erforderlich
+- Companion-App: 5 kritische Store-Blocker (Bundle-ID, App-Icon, eas.json,
+  Screenshots, OTA-Beschreibung)
+- Secure Boot V2: Echten RSA-3072-Key generieren und einbetten
+- Feldtest: On-Motorcycle-Testing gemäß FIELDTEST-PROTOCOL.md
+- npm audit: 60 Vulnerabilities in Companion-App-Abhängigkeiten
+
+Vollständige Release-Readiness-Summary: Kommentar auf TOT-16.
+ROADMAP: `docs/ROADMAP.md` — Abschnitt „CarPlay-Integration & Produktifizierung".
+
 ---
 
 ## 2. Release-Notes v1.0
