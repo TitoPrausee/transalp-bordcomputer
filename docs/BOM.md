@@ -979,12 +979,12 @@ Lieferanten gemappt werden — empfohlene reale Quellen je Kategorie:
 | Pseudonym                  | Reale Empfehlung (Beispiel)                                  |
 |----------------------------|--------------------------------------------------------------|
 | B2B-Distributor US #1/#2   | Mouser, Digi-Key                                            |
-| Elektronik-Distributor DE #1 | Conrad, Voelkner, BerryBase, Reichelt                     |
-| China-Marktplatz           | AliExpress, LCSC                                            |
-| Online-Marktplatz          | Amazon, eBay                                                |
+| Elektronik-Distributor DE #1 | Conrad, Voelkner, BerryBase                               |
+| China-Marktplatz           | LCSC                                                        |
+| Online-Marktplatz          | Generic online marketplace                                  |
 | Spezial-Distributor        | Spezialisierte Motorrad-Elektronik-Haendler                |
 | Distributor EU             | Mouser EU, Farnell                                          |
-| Distributor CN             | LCSC, AliExpress                                            |
+| Distributor CN             | LCSC                                                        |
 | Display-Modul-Hersteller  | Waveshare, BuyDisplay (dealextreme)                          |
 
 ### 8.2 MPN-Referenztabelle (Kernbauteile)
