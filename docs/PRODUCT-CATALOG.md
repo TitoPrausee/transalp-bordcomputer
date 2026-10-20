@@ -51,7 +51,7 @@ Lenker-Controller. Inklusive 3D-gedrucktem Gehaeuse (IP65) und komplettem Kabelb
 
 ## 2. CarPlay-Upgrade-Kit
 
-**Apple CarPlay und Android Auto am Motorrad.** Fuer Kunden, die bereits
+**CarPlay und Android Auto am Motorrad.** Fuer Kunden, die bereits
 einen Bordcomputer haben oder nur CarPlay nachruesten wollen. Das 5 Zoll
 Display koppelt sich wireless ueber Bluetooth + WiFi ans iPhone oder
 Android-Smartphone. Navigation, Musik und Telefon direkt am Lenker.

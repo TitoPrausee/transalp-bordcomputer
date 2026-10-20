@@ -1491,7 +1491,7 @@ Die Standard-Belegung des Controllers:
 | Joystick Left/Right | Menue links/rechts | Vor/Zurueck |
 | Joystick Select (Druck) | Menue bestaetigen | Play/Pause |
 | Taste Back | Zurueck | Home |
-| Taste Home | Hauptmenue | Siri / Google Assistant |
+| Taste Home | Hauptmenue | Siri / Android-Sprachassistent |
 | Vol + / Vol - | Bordcomputer Lauter/Leiser | Musik Lauter/Leiser |
 | Media Next / Prev | --- | Naechster/Voriger Track |
 
@@ -2029,7 +2029,7 @@ Dieses Dokument basiert auf den folgenden Projektdokumenten:
 - `docs/BOM.md` -- Bill of Materials (inkl. CarPlay-Display und Lenker-Controller, Abschnitt 1.11)
 - `docs/ARCHITECTURE.md` -- System-Architektur
 - `docs/PRODUCT-CATALOG.md` -- Produktkatalog mit 5 Produktvarianten
-- `docs/SHOPPING-LIST.md` -- Einkaufsliste mit AliExpress-Links fuer CarPlay-Displays
+- `docs/SHOPPING-LIST.md` -- Einkaufsliste mit Marktplatz-Links fuer CarPlay-Displays
 - `docs/USER-MANUAL.md` -- Benutzerhandbuch und Installationsanleitung
 - `docs/research/04-pd06-technische-daten.md` -- PD06 technische Daten
 - `docs/research/02-hardware-deep-dive.md` -- Hardware-Details

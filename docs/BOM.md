@@ -149,20 +149,20 @@ fallen die Preise typischerweise um 20-40%.
 
 ### 1.11 CarPlay-Display und Lenker-Controller
 
-Diese Komponenten erweitern den Bordcomputer um Apple CarPlay
+Diese Komponenten erweitern den Bordcomputer um CarPlay
 (externes 5" Display) und einen Lenker-Controller zur Bedienung
 von Display und CarPlay. Sie sind optional und werden im
 CarPlay-Upgrade-Kit bzw. Lenker-Controller-Kit angeboten.
 
 | # | Bauteil | Spezifikation | Menge | Einzelpreis (EUR) | Gesamtpreis (EUR) | Bezugsquelle | Lieferzeit | Alternativen |
 |---|---|---|---|---|---|---|---|---|
-| 68 | CarPlay-Display EKIY 5" | 5" IPS, 854x480, IPX7, BT5.0, Wireless CarPlay + Android Auto, 12V | 1 | 90,00 | 90,00 | AliExpress (aliexpress.us/item/3256806507243787) | 7-14 Tage | Jiuyin 5" (65 EUR), KEMIMOTO 5" (120 EUR) |
-| 69 | CarPlay-Display Jiuyin 5" (Budget) | 5" IPS, IPX7, BT, GPS, Wireless CarPlay | 1 | 65,00 | 65,00 | AliExpress (aliexpress.com/item/1005007959877330) | 7-14 Tage | EKIY 5" (90 EUR) |
-| 70 | CarPlay-Display KEMIMOTO 5" (Premium) | 5", 700 nits, IP67, Auto-Brightness, Handschuh-Touch | 1 | 120,00 | 120,00 | Amazon (amazon.de) | 2-4 Tage | Chigee AIO-5 EVO (370 EUR) |
+| 68 | CarPlay-Display EKIY 5" | 5" IPS, 854x480, IPX7, BT5.0, Wireless CarPlay + Android Auto, 12V | 1 | 90,00 | 90,00 | China-Marktplatz (Suchlink) | 7-14 Tage | Jiuyin 5" (65 EUR), KEMIMOTO 5" (120 EUR) |
+| 69 | CarPlay-Display Jiuyin 5" (Budget) | 5" IPS, IPX7, BT, GPS, Wireless CarPlay | 1 | 65,00 | 65,00 | China-Marktplatz (Suchlink) | 7-14 Tage | EKIY 5" (90 EUR) |
+| 70 | CarPlay-Display KEMIMOTO 5" (Premium) | 5", 700 nits, IP67, Auto-Brightness, Handschuh-Touch | 1 | 120,00 | 120,00 | Online-Marktplatz | 2-4 Tage | Chigee AIO-5 EVO (370 EUR) |
 | 71 | Lenker-Controller SilverFox C2 | CNC-Alu, IP67, Joystick+Switch, M12-Stecker, BLE+Kabel, 22mm, Made in Finland | 1 | 235,00 | 235,00 | SilverFox (silverfoxcontrollers.com) | 1-2 Wochen | Chigee CGRC (90 EUR), Custom PCB (25 EUR) |
 | 72 | Lenker-Controller Chigee CGRC Multi (Wireless) | BLE 5.0, CR2032, 6 Tasten+Joystick, 30-35mm Montage | 1 | 90,00 | 90,00 | SportsBikeShop (sportsbikeshop.co.uk) | 5-10 Tage | SilverFox C2 (235 EUR) |
-| 73 | Custom Controller PCB | ATmega328P/RP2040, I2C, 6 Tasten+Joystick, 22mm Montage | 1 | 25,00 | 25,00 | JLCPCB + AliExpress | 5-14 Tage | SilverFox C2 (235 EUR) |
-| 74 | Lenker-Halterung 22mm | Aluminium, fuer 5" Display, schwingungsgeedaempft | 1 | 15,00 | 15,00 | AliExpress | 7-14 Tage | 3D-Druck ASA (5 EUR) |
+| 73 | Custom Controller PCB | ATmega328P/RP2040, I2C, 6 Tasten+Joystick, 22mm Montage | 1 | 25,00 | 25,00 | JLCPCB + China-Marktplatz | 5-14 Tage | SilverFox C2 (235 EUR) |
+| 74 | Lenker-Halterung 22mm | Aluminium, fuer 5" Display, schwingungsgeedaempft | 1 | 15,00 | 15,00 | China-Marktplatz | 7-14 Tage | 3D-Druck ASA (5 EUR) |
 | 75 | M12-Kabel 4-polig | Wasserdicht, IP67, 1,5m, fuer SilverFox C2 | 1 | 12,00 | 12,00 | Elektronik-Distributor DE #1 | 2-5 Tage | JST-SM 4-polig (1,50 EUR) |
 
 **Auswahlkriterien:**
@@ -922,9 +922,9 @@ Silica-Gel (Feuchtigkeitsschutz, MSL-Klassifizierung beachten).
 | PCB-Fertigung | JLCPCB | PCBWay | JLCPCB guenstigster Anbieter mit Bestueckung |
 | Spezial-Mechanik (AMP Superseal, Oeldruck) | Spezial-Distributor | Online-Marktplatz | Spezial-Distributor hat groessere Auswahl |
 | Werkzeug / Verbrauchsmaterial | Online-Marktplatz | Baumarkt | Online-Marktplatz fuer Bequemlichkeit, Baumarkt fuer Sofortbedarf |
-| CarPlay-Display | AliExpress | Amazon | EKIY/Jiuyin ueber AliExpress, KEMIMOTO ueber Amazon |
+| CarPlay-Display | China-Marktplatz | Online-Marktplatz | EKIY/Jiuyin ueber China-Marktplatz, KEMIMOTO ueber Online-Marktplatz |
 | Lenker-Controller | SilverFox (silverfoxcontrollers.com) | SportsBikeShop | SilverFox C2 direkt, Chigee CGRC ueber SportsBikeShop |
-| Custom Controller PCB | JLCPCB | AliExpress | PCB bei JLCPCB, Bauteile bei AliExpress |
+| Custom Controller PCB | JLCPCB | China-Marktplatz | PCB bei JLCPCB, Bauteile bei China-Marktplatz |
 
 ---
 
@@ -944,9 +944,9 @@ Silica-Gel (Feuchtigkeitsschutz, MSL-Klassifizierung beachten).
 - JLCPCB PCB-Fertigung: 4-Layer ab 8 USD / 5 Stueck. Stand 2026.
 - Display-Modul-Hersteller 3.5" IPS Display: 480x320, SPI, Online-Marktplatz / Display-Modul-Hersteller.
   Stand Oktober 2026.
-- CarPlay-Display EKIY 5 Zoll: AliExpress (aliexpress.us/item/3256806507243787), ca. 90 EUR. Stand Oktober 2026.
-- CarPlay-Display Jiuyin 5 Zoll: AliExpress (aliexpress.com/item/1005007959877330), ca. 65 EUR. Stand Oktober 2026.
-- CarPlay-Display KEMIMOTO 5 Zoll: Amazon (amazon.de), ca. 120 EUR. Stand Oktober 2026.
+- CarPlay-Display EKIY 5 Zoll: China-Marktplatz (Suchlink), ca. 90 EUR. Stand Oktober 2026.
+- CarPlay-Display Jiuyin 5 Zoll: China-Marktplatz (Suchlink), ca. 65 EUR. Stand Oktober 2026.
+- CarPlay-Display KEMIMOTO 5 Zoll: Online-Marktplatz, ca. 120 EUR. Stand Oktober 2026.
 - CarPlay-Display Chigee AIO-5 EVO: Chigee (chigee.com), ca. 370 EUR. Stand Oktober 2026.
 - Lenker-Controller SilverFox C2: SilverFox (silverfoxcontrollers.com), ca. 235 EUR. Stand Oktober 2026.
 - Lenker-Controller Chigee CGRC Multi: SportsBikeShop (sportsbikeshop.co.uk), ca. 90 EUR. Stand Oktober 2026.
@@ -956,4 +956,4 @@ Silica-Gel (Feuchtigkeitsschutz, MSL-Klassifizierung beachten).
 - docs/PCB-LAYOUT.md: PCB-relevante Bauteile und Kosten
 - docs/CASE-DESIGN.md: Gehaeuse-Materialien und Mechanik
 - docs/PRODUCT-CATALOG.md: Produktkatalog mit 5 Produktvarianten
-- docs/SHOPPING-LIST.md: Einkaufsliste mit AliExpress-Links
+- docs/SHOPPING-LIST.md: Einkaufsliste mit China-Marktplatz-Links

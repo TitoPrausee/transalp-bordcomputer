@@ -1,7 +1,7 @@
 # CarPlay-Integration: BLE-Bridge Firmware
 
 > CarPlay-Integration fuer den Transalp Bordcomputer ueber ein externes
-> 5 Zoll CarPlay-Display (EKIY/Jiuyin, AliExpress, ca. 65-90 EUR).
+> 5 Zoll CarPlay-Display (EKIY/Jiuyin, Online-Marktplatz, ca. 65-90 EUR).
 > Das Bordcomputer-TFT bleibt fuer Fahrzeugdaten, das CarPlay-Display
 > wird als sekundaere Anzeige daneben montiert.
 >
@@ -41,7 +41,7 @@ gleichzeitig als:
   Navigations-Status und Musik-Metadaten.
 
 Das Bordcomputer-TFT zeigt weiterhin Fahrzeugdaten an. Das CarPlay-Display
-wird als sekundaere Anzeige daneben montiert und zeigt Apple CarPlay
+wird als sekundaere Anzeige daneben montiert und zeigt CarPlay
 (Karten, Musik, Telefon) sowie die vom Bordcomputer gepushte Telemetrie.
 
 ---
@@ -55,7 +55,7 @@ wird als sekundaere Anzeige daneben montiert und zeigt Apple CarPlay
   |                   |    Service 0x9100 (Client)   |                   |
   +-------------------+                             +-------------------+
   |  carplay_bridge   |                             |  CarPlay-App      |
-  |  - Telemetry TX   |  --> RPM, Speed, Gear, ...  |  (Apple Maps,     |
+  |  - Telemetry TX   |  --> RPM, Speed, Gear, ...  |  (Karten-App,     |
   |  - Nav/Media RX   |  <-- Nav-Status, Musik      |   Spotify, ...)   |
   |  - NVS Pairing    |                             |                   |
   |  - Reconnect      |                             |                   |
@@ -87,8 +87,8 @@ von Peripheral + Central Role moeglich.
 | Eigenschaft       | Wert                                      |
 |-------------------|-------------------------------------------|
 | Display           | 5 Zoll TFT, 800x480                       |
-| CarPlay           | Apple CarPlay (wireless via BLE + WiFi)   |
-| Hersteller         | EKIY / Jiuyin (AliExpress)                |
+| CarPlay           | CarPlay (wireless via BLE + WiFi)   |
+| Hersteller         | EKIY / Jiuyin (Online-Marktplatz)                |
 | Preis              | ca. 65-90 EUR                             |
 | Anbindung          | BLE 5.0 (GATT Server + Client)            |
 | Stromversorgung    | 12V DC (Motorrad-Bordnetz)                |
