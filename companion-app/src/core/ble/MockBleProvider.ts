@@ -20,12 +20,9 @@ import type {
   DtcEntry,
   SelfTestResult,
   WeatherCurrent,
-  SystemStatus,
-  TaskInfo,
-  OtaStatus,
-  CarPlayStatus,
+  OtaVerifyResult,
 } from './gatt-uuids';
-import { ManeuverType, NavStatus, SelfTestMode, CarPlayApp, CarPlayControl } from './gatt-uuids';
+import { ManeuverType, NavStatus, SelfTestMode, OtaVerifyStatus } from './gatt-uuids';
 import {
   ConnectionState,
   canTransition,
@@ -113,23 +110,6 @@ export class MockBleProvider implements BleProvider {
     rainProbability: 20,
   };
 
-  private carplay: CarPlayStatus = {
-    connected: true,
-    activeApp: CarPlayApp.Music,
-    artist: 'Iron Maiden',
-    title: 'The Trooper',
-    album: 'Piece of Mind',
-  };
-
-  private carplayTrackIndex = 0;
-  private readonly carplayPlaylist: Array<{ artist: string; title: string; album: string }> = [
-    { artist: 'Iron Maiden', title: 'The Trooper', album: 'Piece of Mind' },
-    { artist: 'Motley Crue', title: 'Kickstart My Heart', album: 'Dr. Feelgood' },
-    { artist: 'Metallica', title: 'For Whom the Bell Tolls', album: 'Ride the Lightning' },
-    { artist: 'Black Sabbath', title: 'Paranoid', album: 'Paranoid' },
-    { artist: 'Judas Priest', title: 'Breaking the Law', album: 'British Steel' },
-  ];
-
   // --- Lifecycle ---
 
   async init(): Promise<void> {
@@ -186,7 +166,6 @@ export class MockBleProvider implements BleProvider {
                 this.startRssiMonitoring();
                 this.startHeartbeat();
                 this.startNavUpdates();
-                this.startCarPlayStream();
 
                 // Initial snapshot senden
                 this.emitTelemetry();
@@ -262,52 +241,14 @@ export class MockBleProvider implements BleProvider {
     await this.delay(50);
   }
 
-  async readSystemStatus(): Promise<SystemStatus | null> {
-    return {
-      uptime: Math.floor((Date.now() - this.bootTime) / 1000),
-      heapFree: 145000 + Math.floor(Math.random() * 20000),
-      heapTotal: 320000,
-      batteryPct: 75 + Math.floor(Math.random() * 20),
-      cpuTemp: 42 + Math.round(Math.random() * 8),
-      taskCount: 12,
-      bleConnections: 1,
-      wifiRssi: -55 - Math.floor(Math.random() * 15),
-    };
-  }
-
-  async readTaskInfo(): Promise<TaskInfo[]> {
-    return [
-      { name: 'main', priority: 5, stackFree: 8192, state: 0 },
-      { name: 'ble_srv', priority: 7, stackFree: 4096, state: 0 },
-      { name: 'sensors', priority: 8, stackFree: 3072, state: 0 },
-      { name: 'display', priority: 6, stackFree: 6144, state: 0 },
-      { name: 'logger', priority: 4, stackFree: 5120, state: 0 },
-      { name: 'gps', priority: 7, stackFree: 3584, state: 0 },
-      { name: 'ota', priority: 3, stackFree: 2048, state: 2 },
-      { name: 'watchdog', priority: 9, stackFree: 1024, state: 0 },
-    ];
-  }
-
-  async readOtaStatus(): Promise<OtaStatus | null> {
-    return {
-      state: 0,
-      progress: 0,
-      firmwareVersion: '1.2.0',
-      errorCode: 0,
-      imageHash: '',
-    };
-  }
-
   async startOta(_firmwareSize: number): Promise<void> {
     this.otaProgress = 0;
     this.otaActive = true;
     this.emit('onOtaStatus', {
       state: 1,
       progress: 0,
-      firmwareVersion: '1.2.0',
       errorCode: 0,
-      imageHash: '',
-    } as OtaStatus);
+    });
   }
 
   async writeOtaData(_data: Uint8Array): Promise<void> {
@@ -315,10 +256,8 @@ export class MockBleProvider implements BleProvider {
     this.emit('onOtaStatus', {
       state: 1,
       progress: this.otaProgress,
-      firmwareVersion: '1.2.0',
       errorCode: 0,
-      imageHash: '',
-    } as OtaStatus);
+    });
   }
 
   async cancelOta(): Promise<void> {
@@ -330,10 +269,38 @@ export class MockBleProvider implements BleProvider {
     this.emit('onOtaStatus', {
       state: 3,
       progress: 100,
-      firmwareVersion: '1.3.0',
       errorCode: 0,
-      imageHash: 'a1b2c3d4',
-    } as OtaStatus);
+    });
+  }
+
+  async commitOta(expectedSha256?: Uint8Array): Promise<void> {
+    // Simulate firmware behavior: on failed commit, emit verify result on 0x8003.
+    // On success, firmware reboots before notify can be delivered (spec §9.3).
+    if (expectedSha256 && expectedSha256.length > 0) {
+      // Simulate hash mismatch for testing
+      const mockHash = new Uint8Array(32);
+      for (let i = 0; i < 32; i++) mockHash[i] = i;
+      let mismatch = false;
+      for (let i = 0; i < 32; i++) {
+        if (expectedSha256[i] !== mockHash[i]) { mismatch = true; break; }
+      }
+      if (mismatch) {
+        const result: OtaVerifyResult = {
+          status: OtaVerifyStatus.HashMismatch,
+          sha256: Array.from(mockHash).map((b) => b.toString(16).padStart(2, '0')).join(''),
+          size: 0,
+          version: 0,
+        };
+        this.emit('onOtaVerifyResult', result);
+        return;
+      }
+    }
+    // Success: firmware would reboot
+    this.emit('onOtaStatus', {
+      state: 3,
+      progress: 100,
+      errorCode: 0,
+    });
   }
 
   async exportConfig(): Promise<string> {
@@ -341,53 +308,6 @@ export class MockBleProvider implements BleProvider {
   }
 
   async importConfig(_configJson: string): Promise<void> {
-    await this.delay(50);
-  }
-
-  // --- CarPlay ---
-
-  async readCarPlayStatus(): Promise<CarPlayStatus | null> {
-    return { ...this.carplay };
-  }
-
-  async sendCarPlayControl(cmd: CarPlayControl): Promise<void> {
-    switch (cmd) {
-      case CarPlayControl.NextTrack:
-        this.carplayTrackIndex = (this.carplayTrackIndex + 1) % this.carplayPlaylist.length;
-        break;
-      case CarPlayControl.PrevTrack:
-        this.carplayTrackIndex =
-          (this.carplayTrackIndex - 1 + this.carplayPlaylist.length) % this.carplayPlaylist.length;
-        break;
-      case CarPlayControl.Pair:
-        this.carplay = { ...this.carplay, connected: true };
-        break;
-      case CarPlayControl.Unpair:
-        this.carplay = {
-          connected: false,
-          activeApp: CarPlayApp.None,
-          artist: '',
-          title: '',
-          album: '',
-        };
-        break;
-      case CarPlayControl.PlayPause:
-        // Im Mock keine Aenderung der Metadaten
-        break;
-    }
-
-    if (this.carplay.connected) {
-      const track = this.carplayPlaylist[this.carplayTrackIndex];
-      this.carplay = {
-        ...this.carplay,
-        artist: track.artist,
-        title: track.title,
-        album: track.album,
-        activeApp: CarPlayApp.Music,
-      };
-    }
-
-    this.emit('onCarPlayStatus', { ...this.carplay });
     await this.delay(50);
   }
 
@@ -409,34 +329,6 @@ export class MockBleProvider implements BleProvider {
   }
 
   // --- Simulierte Datenstroeme ---
-
-  private startCarPlayStream(): void {
-    // Sofort initialen Status senden
-    this.emit('onCarPlayStatus', { ...this.carplay });
-
-    // Simuliert Musik-Metadaten-Updates alle 8 Sekunden (naechster Track)
-    this.intervals.push(
-      setInterval(() => {
-        if (this.state !== ConnectionState.Connected && this.state !== ConnectionState.Degrading) {
-          return;
-        }
-        if (!this.carplay.connected) return;
-
-        // 20% Chance fuer naechsten Track
-        if (Math.random() < 0.2) {
-          this.carplayTrackIndex = (this.carplayTrackIndex + 1) % this.carplayPlaylist.length;
-          const track = this.carplayPlaylist[this.carplayTrackIndex];
-          this.carplay = {
-            ...this.carplay,
-            artist: track.artist,
-            title: track.title,
-            album: track.album,
-          };
-          this.emit('onCarPlayStatus', { ...this.carplay });
-        }
-      }, 8000),
-    );
-  }
 
   private startTelemetryStream(): void {
     this.intervals.push(

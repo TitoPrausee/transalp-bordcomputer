@@ -28,7 +28,6 @@ export const SERVICE = {
   config: uuid(0x6000),
   diagnose: uuid(0x7000),
   ota: uuid(0x8000),
-  carplay: uuid(0x9000),
 } as const;
 
 // --- Characteristic-IDs ---
@@ -74,8 +73,6 @@ export const CHAR = {
   dtcList: uuid(0x7001),
   sensorStatus: uuid(0x7002),
   selfTest: uuid(0x7003),
-  systemStatus: uuid(0x7006),
-  taskInfo: uuid(0x7007),
   logExport: uuid(0x7004),
   logExportCtrl: uuid(0x7005),
 
@@ -83,11 +80,6 @@ export const CHAR = {
   otaControl: uuid(0x8001),
   otaData: uuid(0x8002),
   otaVerify: uuid(0x8003),
-  otaStatus: uuid(0x8004),
-
-  // CarPlay Service (0x9000)
-  carplayStatus: uuid(0x9001),
-  carplayControl: uuid(0x9002),
 } as const;
 
 // --- Standard-Services (Bluetooth SIG) ---
@@ -222,22 +214,14 @@ export interface SystemStatus {
 }
 
 // --- Task-Info (fuer Diagnose) ---
+// REMOVED: 0x7007 taskInfo is not implemented in firmware (spec §8.4, §10).
 
-export interface TaskInfo {
-  name: string; // 16 Bytes UTF-8
-  priority: number; // (uint8)
-  stackFree: number; // Bytes (uint16)
-  state: number; // (uint8: 0=running,1=blocked,2=suspended,3=deleted)
-}
-
-// --- OTA-Status ---
+// --- OTA-Status (via 0x8001 control notify, 3 bytes) ---
 
 export interface OtaStatus {
   state: number; // 0=idle,1=uploading,2=verifying,3=done,4=failed
   progress: number; // 0-100
-  firmwareVersion: string; // major.minor.patch
   errorCode: number; // 0=ok
-  imageHash: string; // SHA256 hex
 }
 
 // --- Self-Test-Modus ---
@@ -253,49 +237,29 @@ export enum OtaCommand {
   Start = 0,
   Cancel = 1,
   Verify = 2,
+  Commit = 3,
 }
 
 // ============================================================
-// CarPlay-Status (0x9001)
+// OTA Verify Result (0x8003, 41 bytes)
 // ============================================================
-// Byte  Offset  Field
-// 0    0       connected (uint8: 0=disconnected, 1=connected)
-// 1    1       activeApp (uint8: 0=none, 1=navigation, 2=music, 3=phone, 4=podcasts)
-// 2    3       artistLen (uint8) -> artist (UTF-8, max 64 Bytes)
-// 3+64  3       artist (64 Bytes, null-terminiert)
-// 67+64 67      title (64 Bytes, null-terminiert)
-// 131+64 131    album (64 Bytes, null-terminiert)
+// u8 status + u8[32] sha256 + u32 size + u32 version
+// status: 0=unknown, 1=verifying, 2=ok, 3=hash_mismatch, 4=error
 // ============================================================
 
-/** Aktive CarPlay-App-Kategorie. */
-export enum CarPlayApp {
-  None = 0,
-  Navigation = 1,
-  Music = 2,
-  Phone = 3,
-  Podcasts = 4,
+export enum OtaVerifyStatus {
+  Unknown = 0,
+  Verifying = 1,
+  Ok = 2,
+  HashMismatch = 3,
+  Error = 4,
 }
 
-export interface CarPlayStatus {
-  connected: boolean;
-  activeApp: CarPlayApp;
-  artist: string;
-  title: string;
-  album: string;
-}
-
-// ============================================================
-// CarPlay-Control (0x9002, Write 1 Byte)
-// ============================================================
-// 0=pair, 1=unpair, 2=next_track, 3=prev_track, 4=play_pause
-// ============================================================
-
-export enum CarPlayControl {
-  Pair = 0,
-  Unpair = 1,
-  NextTrack = 2,
-  PrevTrack = 3,
-  PlayPause = 4,
+export interface OtaVerifyResult {
+  status: OtaVerifyStatus;
+  sha256: string; // 32-byte SHA256 as hex string
+  size: number; // u32 LE
+  version: number; // u32 LE
 }
 
 // ============================================================

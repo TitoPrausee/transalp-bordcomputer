@@ -28,32 +28,28 @@ import type {
   DtcEntry,
   SelfTestResult,
   WeatherCurrent,
-  SystemStatus,
-  TaskInfo,
   OtaStatus,
-  CarPlayStatus,
+  OtaVerifyResult,
 } from '../core/ble/gatt-uuids';
-import { SelfTestMode, OtaCommand, CarPlayControl } from '../core/ble/gatt-uuids';
+import { SelfTestMode, OtaCommand } from '../core/ble/gatt-uuids';
 import { ConnectionState, isConnected } from '../core/ble/connection-state';
 import {
   parseTelemetryLive,
   parseSensorStatus,
   parseDtcList,
   parseSelfTestResult,
-  parseSystemStatus,
-  parseTaskInfo,
   parseOtaStatus,
+  parseOtaVerifyResult,
   parseWeatherCurrent,
   parseNavManeuver,
   parseNavRoute,
   parseNavRoad,
-  parseCarPlayStatus,
   base64ToDataView,
   encodeSelfTestCommand,
   encodeDtcClearCommand,
   encodeOtaCommand,
+  encodeOtaCommitCommand,
   encodeOtaDataChunk,
-  encodeCarPlayControlCommand,
   uint8ArrayToBase64,
 } from '../core/ble/binary-parsers';
 import { SERVICE, CHAR, DEVICE_NAME } from '../core/ble/gatt-uuids';
@@ -108,10 +104,8 @@ export class BleManager {
       onDtcList: (entries) => this.dispatch('onDtcList', entries),
       onSelfTestResult: (result) => this.dispatch('onSelfTestResult', result),
       onWeatherCurrent: (data) => this.dispatch('onWeatherCurrent', data),
-      onSystemStatus: (data) => this.dispatch('onSystemStatus', data),
-      onTaskInfo: (tasks) => this.dispatch('onTaskInfo', tasks),
       onOtaStatus: (status) => this.dispatch('onOtaStatus', status),
-      onCarPlayStatus: (status) => this.dispatch('onCarPlayStatus', status),
+      onOtaVerifyResult: (result) => this.dispatch('onOtaVerifyResult', result),
       onRssi: (rssi) => this.dispatch('onRssi', rssi),
       onMtu: (mtu) => this.dispatch('onMtu', mtu),
       onError: (error) => this.dispatch('onError', error),
@@ -176,33 +170,6 @@ export class BleManager {
     } catch (e) {
       this.emitError(BleErrorCode.ReadFailed, `DTC-Lesen fehlgeschlagen: ${this.errMsg(e)}`, true);
       return [];
-    }
-  }
-
-  async readSystemStatus(): Promise<SystemStatus | null> {
-    try {
-      return await this.provider.readSystemStatus();
-    } catch (e) {
-      this.emitError(BleErrorCode.ReadFailed, `System-Status-Lesen fehlgeschlagen: ${this.errMsg(e)}`, true);
-      return null;
-    }
-  }
-
-  async readTaskInfo(): Promise<TaskInfo[]> {
-    try {
-      return await this.provider.readTaskInfo();
-    } catch (e) {
-      this.emitError(BleErrorCode.ReadFailed, `Task-Info-Lesen fehlgeschlagen: ${this.errMsg(e)}`, true);
-      return [];
-    }
-  }
-
-  async readOtaStatus(): Promise<OtaStatus | null> {
-    try {
-      return await this.provider.readOtaStatus();
-    } catch (e) {
-      this.emitError(BleErrorCode.ReadFailed, `OTA-Status-Lesen fehlgeschlagen: ${this.errMsg(e)}`, true);
-      return null;
     }
   }
 
@@ -288,6 +255,14 @@ export class BleManager {
     }
   }
 
+  async commitOta(expectedSha256?: Uint8Array): Promise<void> {
+    try {
+      await this.provider.commitOta(expectedSha256);
+    } catch (e) {
+      this.emitError(BleErrorCode.OtaFailed, `OTA-Commit fehlgeschlagen: ${this.errMsg(e)}`, true);
+    }
+  }
+
   // --- Config Export/Import ---
 
   async exportConfig(): Promise<string> {
@@ -305,29 +280,6 @@ export class BleManager {
     } catch (e) {
       this.emitError(BleErrorCode.WriteFailed, `Config-Import fehlgeschlagen: ${this.errMsg(e)}`, true);
     }
-  }
-
-  // --- CarPlay ---
-
-  async readCarPlayStatus(): Promise<CarPlayStatus | null> {
-    try {
-      return await this.provider.readCarPlayStatus();
-    } catch (e) {
-      this.emitError(BleErrorCode.ReadFailed, `CarPlay-Status-Lesen fehlgeschlagen: ${this.errMsg(e)}`, true);
-      return null;
-    }
-  }
-
-  async sendCarPlayControl(cmd: CarPlayControl): Promise<void> {
-    try {
-      await this.provider.sendCarPlayControl(cmd);
-    } catch (e) {
-      this.emitError(BleErrorCode.WriteFailed, `CarPlay-Control fehlgeschlagen: ${this.errMsg(e)}`, true);
-    }
-  }
-
-  encodeCarPlayCmd(cmd: CarPlayControl): string {
-    return uint8ArrayToBase64(encodeCarPlayControlCommand(cmd));
   }
 
   // --- Status ---

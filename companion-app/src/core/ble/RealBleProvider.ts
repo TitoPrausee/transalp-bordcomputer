@@ -35,12 +35,8 @@ import type {
   DtcEntry,
   SelfTestResult,
   WeatherCurrent,
-  SystemStatus,
-  TaskInfo,
-  OtaStatus,
-  CarPlayStatus,
 } from './gatt-uuids';
-import { SelfTestMode, OtaCommand, CarPlayControl } from './gatt-uuids';
+import { SelfTestMode, OtaCommand } from './gatt-uuids';
 import {
   base64ToDataView,
   dataViewToBase64,
@@ -51,16 +47,14 @@ import {
   parseNavRoute,
   parseNavRoad,
   parseWeatherCurrent,
-  parseSystemStatus,
-  parseTaskInfo,
-  parseOtaStatus,
   parseSelfTestResult,
-  parseCarPlayStatus,
+  parseOtaStatus,
+  parseOtaVerifyResult,
   encodeSelfTestCommand,
   encodeDtcClearCommand,
   encodeOtaCommand,
+  encodeOtaCommitCommand,
   encodeOtaDataChunk,
-  encodeCarPlayControlCommand,
 } from './binary-parsers';
 
 // --- Timing-Konstanten ---
@@ -239,10 +233,8 @@ export class RealBleProvider implements BleProvider {
       { uuid: CHAR.dtcList, service: SERVICE.diagnose, onValue: (dv) => this.callbacks.onDtcList?.(parseDtcList(dv)) },
       { uuid: CHAR.selfTest, service: SERVICE.diagnose, onValue: (dv) => this.callbacks.onSelfTestResult?.(parseSelfTestResult(dv)) },
       { uuid: CHAR.wxCurrent, service: SERVICE.weather, onValue: (dv) => this.callbacks.onWeatherCurrent?.(parseWeatherCurrent(dv)) },
-      { uuid: CHAR.systemStatus, service: SERVICE.diagnose, onValue: (dv) => this.callbacks.onSystemStatus?.(parseSystemStatus(dv)) },
-      { uuid: CHAR.taskInfo, service: SERVICE.diagnose, onValue: (dv) => this.callbacks.onTaskInfo?.(parseTaskInfo(dv)) },
-      { uuid: CHAR.otaStatus, service: SERVICE.ota, onValue: (dv) => this.callbacks.onOtaStatus?.(parseOtaStatus(dv)) },
-      { uuid: CHAR.carplayStatus, service: SERVICE.carplay, onValue: (dv) => this.callbacks.onCarPlayStatus?.(parseCarPlayStatus(dv)) },
+      { uuid: CHAR.otaControl, service: SERVICE.ota, onValue: (dv) => this.callbacks.onOtaStatus?.(parseOtaStatus(dv)) },
+      { uuid: CHAR.otaVerify, service: SERVICE.ota, onValue: (dv) => this.callbacks.onOtaVerifyResult?.(parseOtaVerifyResult(dv)) },
     ];
 
     for (const h of handlers) {
@@ -487,60 +479,6 @@ export class RealBleProvider implements BleProvider {
     }
   }
 
-  async readSystemStatus(): Promise<SystemStatus | null> {
-    if (!this.connectedDevice) return null;
-    try {
-      const char = await this.withTimeout(
-        this.plx.readCharacteristicForDevice(
-          this.connectedDevice.id, SERVICE.diagnose, CHAR.systemStatus
-        ),
-        READ_TIMEOUT_MS,
-        'System status read timeout',
-      );
-      if (!char?.value) return null;
-      return parseSystemStatus(base64ToDataView(char.value));
-    } catch (e) {
-      this.emitReadError('System status', e);
-      return null;
-    }
-  }
-
-  async readTaskInfo(): Promise<TaskInfo[]> {
-    if (!this.connectedDevice) return [];
-    try {
-      const char = await this.withTimeout(
-        this.plx.readCharacteristicForDevice(
-          this.connectedDevice.id, SERVICE.diagnose, CHAR.taskInfo
-        ),
-        READ_TIMEOUT_MS,
-        'Task info read timeout',
-      );
-      if (!char?.value) return [];
-      return parseTaskInfo(base64ToDataView(char.value));
-    } catch (e) {
-      this.emitReadError('Task info', e);
-      return [];
-    }
-  }
-
-  async readOtaStatus(): Promise<OtaStatus | null> {
-    if (!this.connectedDevice) return null;
-    try {
-      const char = await this.withTimeout(
-        this.plx.readCharacteristicForDevice(
-          this.connectedDevice.id, SERVICE.ota, CHAR.otaStatus
-        ),
-        READ_TIMEOUT_MS,
-        'OTA status read timeout',
-      );
-      if (!char?.value) return null;
-      return parseOtaStatus(base64ToDataView(char.value));
-    } catch (e) {
-      this.emitReadError('OTA status', e);
-      return null;
-    }
-  }
-
   async startOta(_firmwareSize: number): Promise<void> {
     if (!this.connectedDevice) return;
     try {
@@ -609,49 +547,29 @@ export class RealBleProvider implements BleProvider {
     }
   }
 
+  async commitOta(expectedSha256?: Uint8Array): Promise<void> {
+    if (!this.connectedDevice) return;
+    try {
+      const cmd = encodeOtaCommitCommand(expectedSha256);
+      await this.withTimeout(
+        this.plx.writeCharacteristicWithResponseForDevice(
+          this.connectedDevice.id, SERVICE.ota, CHAR.otaControl,
+          dataViewToBase64(new DataView(cmd.buffer))
+        ),
+        WRITE_TIMEOUT_MS,
+        'OTA commit timeout',
+      );
+    } catch (e) {
+      this.emitWriteError('OTA commit', e);
+    }
+  }
+
   async exportConfig(): Promise<string> {
     return this.readConfig();
   }
 
   async importConfig(configJson: string): Promise<void> {
     return this.writeConfig(configJson);
-  }
-
-  // --- CarPlay ---
-
-  async readCarPlayStatus(): Promise<CarPlayStatus | null> {
-    if (!this.connectedDevice) return null;
-    try {
-      const char = await this.withTimeout(
-        this.plx.readCharacteristicForDevice(
-          this.connectedDevice.id, SERVICE.carplay, CHAR.carplayStatus
-        ),
-        READ_TIMEOUT_MS,
-        'CarPlay status read timeout',
-      );
-      if (!char?.value) return null;
-      return parseCarPlayStatus(base64ToDataView(char.value));
-    } catch (e) {
-      this.emitReadError('CarPlay status', e);
-      return null;
-    }
-  }
-
-  async sendCarPlayControl(cmd: CarPlayControl): Promise<void> {
-    if (!this.connectedDevice) return;
-    try {
-      const data = encodeCarPlayControlCommand(cmd);
-      await this.withTimeout(
-        this.plx.writeCharacteristicWithResponseForDevice(
-          this.connectedDevice.id, SERVICE.carplay, CHAR.carplayControl,
-          dataViewToBase64(new DataView(data.buffer))
-        ),
-        WRITE_TIMEOUT_MS,
-        'CarPlay control timeout',
-      );
-    } catch (e) {
-      this.emitWriteError('CarPlay control', e);
-    }
   }
 
   subscribe(callbacks: BleEventCallbacks): Subscription {

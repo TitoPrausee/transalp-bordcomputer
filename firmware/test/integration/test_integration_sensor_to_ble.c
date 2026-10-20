@@ -12,287 +12,440 @@
  *   sensor_task -> sensor_data_queue -> ble_on_sensor_update()
  *   -> ble_notify_telemetry_live() -> GATT notify -> Companion App
  *
- * The companion-app binary-parsers.ts expects:
- *   Byte 0:   speed (uint8, km/h)
- *   Byte 1-2: rpm (uint16, U/min)
- *   Byte 3:   gear (int8, -1=neutral)
- *   Byte 4:   coolantTemp (int8, C)
- *   Byte 5:   ambientTemp (int8, C)
- *   Byte 6:   fuel (uint8, %)
- *   Byte 7:   voltage (uint8, tenths of V)
- *   ...
+ * The wire format is regenerated from docs/BLE-INTERFACE-SPEC.md §4.1
+ * and matches the firmware struct telemetry_live_t in
+ * firmware/components/ble/ble_callbacks.c:57 (__attribute__((packed))).
  *
- * Firmware-side packing (mock_ble.py set_telemetry_data):
- *   struct.pack("<HHBBBhhBxxxxx", rpm, speed, temp, fuel, gear,
- *               roll, pitch, flags)
+ *   Offset  Size  Type   Field            Unit
+ *   0       1     u8     speed_kmh        km/h         0-255
+ *   1       2     u16 LE rpm              U/min        0-65535
+ *   3       1     i8     gear             gear #       -1=neutral, 1-6
+ *   4       1     i8     coolant_temp_c   Celsius      coolant
+ *   5       1     i8     ambient_temp_c   Celsius      ambient
+ *   6       1     u8     fuel_percent     %            0-100
+ *   7       1     u8     voltage_tenth    0.1 V        e.g. 124 = 12.4 V
+ *   8       4     i32 LE latitude_e7      deg * 1e-7   WGS84
+ *   12      4     i32 LE longitude_e7     deg * 1e-7   WGS84
+ *   16      2     i16 LE altitude_m       m
+ *   18      2     u16 LE heading_tenth    0.1 deg      0-3599
+ *   20      1     u8     satellites       count
+ *   21      1     u8     hdop_tenth       0.1          HDOP
+ *
+ * _Static_assert(sizeof(telemetry_live_t) == 22) enforces this in firmware.
  *
  * Test coverage:
- *   - Round-trip packing/unpacking of typical sensor values
- *   - Boundary values (RPM=0, RPM=8000, temp=120C)
- *   - Crash flag propagation
- *   - Gear neutral vs in-gear encoding
- *   - Payload size is exactly 22 bytes
+ *   - Payload size is exactly 22 bytes (sizeof + field offsets)
+ *   - Round-trip packing/unpacking of the spec §12 "typical ride" vector
+ *   - Boundary values (RPM=0 idle, RPM=8000 redline, speed=180)
+ *   - Gear neutral (-1) vs in-gear encoding (firmware maps gear 0 -> -1)
+ *   - GPS fields (lat/lon/alt/heading/sats/hdop) round-trip
+ *   - GPS-invalid path zeroes all GPS fields (firmware build_telemetry_live)
+ *   - Little-endian byte order of multi-byte fields (rpm/lat/lon)
  */
 
 #include "unity.h"
 #include <string.h>
 #include <stdint.h>
+#include <stddef.h>
 
 /* ============================================================
- * Telemetry payload format (matches firmware ble.c + companion-app
- * binary-parsers.ts)
- * ============================================================
- *
- * The firmware packs live telemetry into 22 bytes:
- *   Offset  Size  Field
- *   0-1     u16   rpm
- *   2-3     u16   speed (km/h, raw int)
- *   4       u8    coolant_temp (C, raw int)
- *   5       u8    fuel (litres * 10)
- *   6       u8    gear
- *   7-8     i16   roll (deg * 10)
- *   9-10    i16   pitch (deg * 10)
- *   11      u8    flags (bit 0 = crash_detected)
- *   12-21   pad   reserved (zeros)
+ * Firmware wire-format struct (mirror of telemetry_live_t in
+ * ble_callbacks.c). Packed so the host layout matches the wire
+ * layout byte-for-byte.
  * ============================================================ */
 
 #define TLM_PAYLOAD_SIZE 22
-#define TLM_FLAG_CRASH   0x01
+
+#pragma pack(push, 1)
+typedef struct {
+    uint8_t  speed_kmh;
+    uint16_t rpm;
+    int8_t   gear;
+    int8_t   coolant_temp_c;
+    int8_t   ambient_temp_c;
+    uint8_t  fuel_percent;
+    uint8_t  voltage_tenth;
+    int32_t  latitude_e7;
+    int32_t  longitude_e7;
+    int16_t  altitude_m;
+    uint16_t heading_tenth;
+    uint8_t  satellites;
+    uint8_t  hdop_tenth;
+} telemetry_live_t;
+#pragma pack(pop)
+
+/* Compile-time layout contract: size + field offsets match spec §4.1. */
+_Static_assert(sizeof(telemetry_live_t) == TLM_PAYLOAD_SIZE,
+               "telemetry_live_t packed size must be 22 bytes");
+_Static_assert(offsetof(telemetry_live_t, speed_kmh)      == 0,
+               "speed_kmh must be at offset 0");
+_Static_assert(offsetof(telemetry_live_t, rpm)             == 1,
+               "rpm must be at offset 1");
+_Static_assert(offsetof(telemetry_live_t, gear)            == 3,
+               "gear must be at offset 3");
+_Static_assert(offsetof(telemetry_live_t, coolant_temp_c)  == 4,
+               "coolant_temp_c must be at offset 4");
+_Static_assert(offsetof(telemetry_live_t, ambient_temp_c)  == 5,
+               "ambient_temp_c must be at offset 5");
+_Static_assert(offsetof(telemetry_live_t, fuel_percent)    == 6,
+               "fuel_percent must be at offset 6");
+_Static_assert(offsetof(telemetry_live_t, voltage_tenth)   == 7,
+               "voltage_tenth must be at offset 7");
+_Static_assert(offsetof(telemetry_live_t, latitude_e7)    == 8,
+               "latitude_e7 must be at offset 8");
+_Static_assert(offsetof(telemetry_live_t, longitude_e7)   == 12,
+               "longitude_e7 must be at offset 12");
+_Static_assert(offsetof(telemetry_live_t, altitude_m)      == 16,
+               "altitude_m must be at offset 16");
+_Static_assert(offsetof(telemetry_live_t, heading_tenth)   == 18,
+               "heading_tenth must be at offset 18");
+_Static_assert(offsetof(telemetry_live_t, satellites)     == 20,
+               "satellites must be at offset 20");
+_Static_assert(offsetof(telemetry_live_t, hdop_tenth)     == 21,
+               "hdop_tenth must be at offset 21");
 
 /* ============================================================
  * Pack sensor data into the 22-byte telemetry payload.
- * This mirrors the firmware ble_notify_telemetry_live() packing
- * logic and mock_ble.py MockBle.set_telemetry_data().
+ * Mirrors firmware build_telemetry_live() (ble_callbacks.c:125):
+ *   - gear 0 (firmware sentinel for "no gear reported") -> -1 neutral
+ *   - speed/fuel/voltage rounded with +0.5 (firmware uses (x + 0.5f))
+ *   - gps_valid gates the GPS block; invalid -> all GPS fields zeroed
  * ============================================================ */
-static void pack_telemetry(uint8_t *out, uint16_t rpm, uint16_t speed,
-                           int8_t coolant_temp, uint8_t fuel_tenths,
-                           uint8_t gear, int16_t roll_tenths,
-                           int16_t pitch_tenths, uint8_t flags)
+static void pack_telemetry_live(telemetry_live_t *pkt,
+                                uint8_t speed_kmh, uint16_t rpm, int8_t gear,
+                                int8_t coolant_temp_c, int8_t ambient_temp_c,
+                                uint8_t fuel_percent, uint8_t voltage_tenth,
+                                int32_t latitude_e7, int32_t longitude_e7,
+                                int16_t altitude_m, uint16_t heading_tenth,
+                                uint8_t satellites, uint8_t hdop_tenth,
+                                int gps_valid)
 {
-    memset(out, 0, TLM_PAYLOAD_SIZE);
-    /* rpm (u16 LE) */
-    out[0] = rpm & 0xFF;
-    out[1] = (rpm >> 8) & 0xFF;
-    /* speed (u16 LE) */
-    out[2] = speed & 0xFF;
-    out[3] = (speed >> 8) & 0xFF;
-    /* coolant_temp (u8) */
-    out[4] = (uint8_t)coolant_temp;
-    /* fuel (u8, litres*10) */
-    out[5] = fuel_tenths;
-    /* gear (u8) */
-    out[6] = gear;
-    /* roll (i16 LE) */
-    out[7] = roll_tenths & 0xFF;
-    out[8] = (roll_tenths >> 8) & 0xFF;
-    /* pitch (i16 LE) */
-    out[9] = pitch_tenths & 0xFF;
-    out[10] = (pitch_tenths >> 8) & 0xFF;
-    /* flags */
-    out[11] = flags;
-    /* bytes 12-21 are padding (already zeroed) */
+    memset(pkt, 0, sizeof(*pkt));
+
+    pkt->speed_kmh        = speed_kmh;
+    pkt->rpm              = rpm;
+    pkt->gear             = (gear == 0) ? -1 : gear;  /* 0 -> neutral */
+    pkt->coolant_temp_c   = coolant_temp_c;
+    pkt->ambient_temp_c   = ambient_temp_c;
+    pkt->fuel_percent     = fuel_percent;
+    pkt->voltage_tenth    = voltage_tenth;
+
+    if (gps_valid) {
+        pkt->latitude_e7   = latitude_e7;
+        pkt->longitude_e7  = longitude_e7;
+        pkt->altitude_m    = altitude_m;
+        pkt->heading_tenth = heading_tenth;
+        pkt->satellites    = satellites;
+        pkt->hdop_tenth    = hdop_tenth;
+    } else {
+        pkt->latitude_e7   = 0;
+        pkt->longitude_e7  = 0;
+        pkt->altitude_m    = 0;
+        pkt->heading_tenth = 0;
+        pkt->satellites    = 0;
+        pkt->hdop_tenth    = 0;
+    }
 }
 
 /* ============================================================
- * Unpack telemetry payload (simulates companion-app parseTelemetryLive)
+ * Unpack telemetry payload (simulates companion-app
+ * parseTelemetryLive reading little-endian via DataView).
+ * Reads every field at its spec-defined offset.
  * ============================================================ */
-static void unpack_telemetry(const uint8_t *data,
-                             uint16_t *rpm, uint16_t *speed,
-                             int8_t *coolant_temp, uint8_t *fuel_tenths,
-                             uint8_t *gear, int16_t *roll_tenths,
-                             int16_t *pitch_tenths, uint8_t *flags)
+static void unpack_telemetry_live(const uint8_t *data,
+                                  uint8_t *speed_kmh, uint16_t *rpm,
+                                  int8_t *gear, int8_t *coolant_temp_c,
+                                  int8_t *ambient_temp_c, uint8_t *fuel_percent,
+                                  uint8_t *voltage_tenth, int32_t *latitude_e7,
+                                  int32_t *longitude_e7, int16_t *altitude_m,
+                                  uint16_t *heading_tenth, uint8_t *satellites,
+                                  uint8_t *hdop_tenth)
 {
-    *rpm = (uint16_t)(data[0] | (data[1] << 8));
-    *speed = (uint16_t)(data[2] | (data[3] << 8));
-    *coolant_temp = (int8_t)data[4];
-    *fuel_tenths = data[5];
-    *gear = data[6];
-    *roll_tenths = (int16_t)(data[7] | (data[8] << 8));
-    *pitch_tenths = (int16_t)(data[9] | (data[10] << 8));
-    *flags = data[11];
+    *speed_kmh        = data[0];
+    *rpm              = (uint16_t)(data[1] | (data[2] << 8));
+    *gear             = (int8_t)data[3];
+    *coolant_temp_c   = (int8_t)data[4];
+    *ambient_temp_c   = (int8_t)data[5];
+    *fuel_percent     = data[6];
+    *voltage_tenth    = data[7];
+    *latitude_e7      = (int32_t)((uint32_t)data[8]  | ((uint32_t)data[9]  << 8) |
+                                 ((uint32_t)data[10] << 16) | ((uint32_t)data[11] << 24));
+    *longitude_e7     = (int32_t)((uint32_t)data[12] | ((uint32_t)data[13] << 8) |
+                                 ((uint32_t)data[14] << 16) | ((uint32_t)data[15] << 24));
+    *altitude_m       = (int16_t)((uint16_t)data[16] | ((uint16_t)data[17] << 8));
+    *heading_tenth   = (uint16_t)((uint16_t)data[18] | ((uint16_t)data[19] << 8));
+    *satellites       = data[20];
+    *hdop_tenth       = data[21];
 }
 
 void setUp(void) {}
 void tearDown(void) {}
 
 /* ============================================================
- * Test: Payload size is exactly 22 bytes
+ * Test 1: Payload size is exactly 22 bytes
  * ============================================================ */
 void test_telemetry_payload_size(void)
 {
-    uint8_t payload[TLM_PAYLOAD_SIZE];
-    pack_telemetry(payload, 3000, 80, 90, 120, 3, 50, -20, 0);
-    /* If we got here without overflow, the size is correct */
-    TEST_ASSERT_EQUAL(TLM_PAYLOAD_SIZE, sizeof(payload));
+    telemetry_live_t pkt;
+    pack_telemetry_live(&pkt, 95, 4500, 4, 88, 22, 85, 124,
+                        509353900, 115872400, 245, 2700, 9, 12, 1);
+    TEST_ASSERT_EQUAL(TLM_PAYLOAD_SIZE, sizeof(pkt));
+    TEST_ASSERT_EQUAL(TLM_PAYLOAD_SIZE, (int)sizeof(telemetry_live_t));
 }
 
 /* ============================================================
- * Test: Round-trip of typical riding values
+ * Test 2: Round-trip of the spec §12 "typical ride" vector
+ *   speed=95 rpm=4500 gear=4 coolant=88 ambient=22 fuel=85
+ *   voltage=124 lat=509353900 lon=115872400 alt=245
+ *   heading=2700 sats=9 hdop=12
  * ============================================================ */
 void test_telemetry_roundtrip_typical(void)
 {
-    uint8_t payload[TLM_PAYLOAD_SIZE];
-    pack_telemetry(payload,
-                   4500,   /* rpm */
-                   95,     /* speed km/h */
-                   88,     /* coolant temp C */
-                   85,     /* fuel 8.5L * 10 */
-                   4,      /* gear 4 */
-                   150,    /* roll 15.0 deg * 10 */
-                   -30,    /* pitch -3.0 deg * 10 */
-                   0);     /* no crash */
+    telemetry_live_t pkt;
+    pack_telemetry_live(&pkt,
+                        95, 4500, 4, 88, 22, 85, 124,
+                        509353900, 115872400, 245, 2700, 9, 12, 1);
 
-    uint16_t rpm, speed;
-    int8_t temp;
-    uint8_t fuel, gear, flags;
-    int16_t roll, pitch;
+    const uint8_t *data = (const uint8_t *)&pkt;
 
-    unpack_telemetry(payload, &rpm, &speed, &temp, &fuel, &gear,
-                     &roll, &pitch, &flags);
+    uint8_t speed, fuel, voltage, sats, hdop;
+    uint16_t rpm, heading;
+    int8_t gear, coolant, ambient;
+    int32_t lat, lon;
+    int16_t alt;
 
+    unpack_telemetry_live(data, &speed, &rpm, &gear, &coolant, &ambient,
+                           &fuel, &voltage, &lat, &lon, &alt, &heading,
+                           &sats, &hdop);
+
+    TEST_ASSERT_EQUAL_UINT8(95, speed);
     TEST_ASSERT_EQUAL_UINT16(4500, rpm);
-    TEST_ASSERT_EQUAL_UINT16(95, speed);
-    TEST_ASSERT_EQUAL_INT8(88, temp);
+    TEST_ASSERT_EQUAL_INT8(4, gear);
+    TEST_ASSERT_EQUAL_INT8(88, coolant);
+    TEST_ASSERT_EQUAL_INT8(22, ambient);
     TEST_ASSERT_EQUAL_UINT8(85, fuel);
-    TEST_ASSERT_EQUAL_UINT8(4, gear);
-    TEST_ASSERT_EQUAL_INT16(150, roll);
-    TEST_ASSERT_EQUAL_INT16(-30, pitch);
-    TEST_ASSERT_EQUAL_UINT8(0, flags);
+    TEST_ASSERT_EQUAL_UINT8(124, voltage);
+    TEST_ASSERT_EQUAL_INT32(509353900, lat);
+    TEST_ASSERT_EQUAL_INT32(115872400, lon);
+    TEST_ASSERT_EQUAL_INT16(245, alt);
+    TEST_ASSERT_EQUAL_UINT16(2700, heading);
+    TEST_ASSERT_EQUAL_UINT8(9, sats);
+    TEST_ASSERT_EQUAL_UINT8(12, hdop);
 }
 
 /* ============================================================
- * Test: Boundary values — RPM at redline (8000)
+ * Test 3: Boundary values — redline (spec §12 redline vector)
+ *   speed=180 rpm=8000 gear=6 coolant=95 ambient=30 fuel=50
+ *   voltage=130 heading=900 sats=9 hdop=10
  * ============================================================ */
 void test_telemetry_rpm_redline(void)
 {
-    uint8_t payload[TLM_PAYLOAD_SIZE];
-    pack_telemetry(payload, 8000, 180, 95, 50, 6, 0, 0, 0);
+    telemetry_live_t pkt;
+    pack_telemetry_live(&pkt,
+                        180, 8000, 6, 95, 30, 50, 130,
+                        509353900, 115872400, 245, 900, 9, 10, 1);
 
-    uint16_t rpm, speed;
-    int8_t temp;
-    uint8_t fuel, gear, flags;
-    int16_t roll, pitch;
+    const uint8_t *data = (const uint8_t *)&pkt;
 
-    unpack_telemetry(payload, &rpm, &speed, &temp, &fuel, &gear,
-                     &roll, &pitch, &flags);
+    uint8_t speed, fuel, voltage, sats, hdop;
+    uint16_t rpm, heading;
+    int8_t gear, coolant, ambient;
+    int32_t lat, lon;
+    int16_t alt;
 
+    unpack_telemetry_live(data, &speed, &rpm, &gear, &coolant, &ambient,
+                           &fuel, &voltage, &lat, &lon, &alt, &heading,
+                           &sats, &hdop);
+
+    TEST_ASSERT_EQUAL_UINT8(180, speed);
     TEST_ASSERT_EQUAL_UINT16(8000, rpm);
-    TEST_ASSERT_EQUAL_UINT16(180, speed);
-    TEST_ASSERT_EQUAL_UINT8(6, gear);
+    TEST_ASSERT_EQUAL_INT8(6, gear);
+    TEST_ASSERT_EQUAL_INT8(95, coolant);
+    TEST_ASSERT_EQUAL_INT8(30, ambient);
+    TEST_ASSERT_EQUAL_UINT8(50, fuel);
+    TEST_ASSERT_EQUAL_UINT8(130, voltage);
+    TEST_ASSERT_EQUAL_UINT16(900, heading);
 }
 
 /* ============================================================
- * Test: RPM=0 (engine off / idle stop)
+ * Test 4: Idle / engine-off (spec §12 idle vector)
+ *   speed=0 rpm=1200 gear=-1 coolant=70 ambient=18 fuel=150
+ *   GPS invalid -> GPS fields zeroed.
  * ============================================================ */
-void test_telemetry_rpm_zero(void)
+void test_telemetry_idle_neutral(void)
 {
-    uint8_t payload[TLM_PAYLOAD_SIZE];
-    pack_telemetry(payload, 0, 0, 25, 170, 0, 0, 0, 0);
+    telemetry_live_t pkt;
+    pack_telemetry_live(&pkt,
+                        0, 1200, -1, 70, 18, 150, 122,
+                        0, 0, 0, 0, 4, 25, 0);
 
-    uint16_t rpm, speed;
-    int8_t temp;
-    uint8_t fuel, gear, flags;
-    int16_t roll, pitch;
+    const uint8_t *data = (const uint8_t *)&pkt;
 
-    unpack_telemetry(payload, &rpm, &speed, &temp, &fuel, &gear,
-                     &roll, &pitch, &flags);
+    uint8_t speed, fuel, voltage, sats, hdop;
+    uint16_t rpm, heading;
+    int8_t gear, coolant, ambient;
+    int32_t lat, lon;
+    int16_t alt;
 
-    TEST_ASSERT_EQUAL_UINT16(0, rpm);
-    TEST_ASSERT_EQUAL_UINT16(0, speed);
-    TEST_ASSERT_EQUAL_UINT8(0, gear);  /* neutral */
+    unpack_telemetry_live(data, &speed, &rpm, &gear, &coolant, &ambient,
+                           &fuel, &voltage, &lat, &lon, &alt, &heading,
+                           &sats, &hdop);
+
+    TEST_ASSERT_EQUAL_UINT8(0, speed);
+    TEST_ASSERT_EQUAL_UINT16(1200, rpm);
+    TEST_ASSERT_EQUAL_INT8(-1, gear);
+    TEST_ASSERT_EQUAL_INT8(70, coolant);
+    TEST_ASSERT_EQUAL_INT8(18, ambient);
+    /* GPS invalid: all GPS-derived fields must be zero. */
+    TEST_ASSERT_EQUAL_INT32(0, lat);
+    TEST_ASSERT_EQUAL_INT32(0, lon);
+    TEST_ASSERT_EQUAL_INT16(0, alt);
+    TEST_ASSERT_EQUAL_UINT16(0, heading);
+    TEST_ASSERT_EQUAL_UINT8(0, sats);
+    TEST_ASSERT_EQUAL_UINT8(0, hdop);
 }
 
 /* ============================================================
- * Test: Crash flag propagation
+ * Test 5: GPS fields round-trip (lat/lon as i32 E7, signed alt,
+ * heading, sats, hdop).
  * ============================================================ */
-void test_telemetry_crash_flag(void)
+void test_telemetry_gps_fields_roundtrip(void)
 {
-    uint8_t payload[TLM_PAYLOAD_SIZE];
-    pack_telemetry(payload, 0, 0, 90, 100, 0, 450, 300, TLM_FLAG_CRASH);
+    telemetry_live_t pkt;
+    /* Southern-hemisphere / negative-altitude exercise for signed fields. */
+    pack_telemetry_live(&pkt,
+                        60, 3000, 3, 80, 15, 70, 121,
+                        -339243900, 1511858200, -15, 1780, 7, 8, 1);
 
-    uint16_t rpm, speed;
-    int8_t temp;
-    uint8_t fuel, gear, flags;
-    int16_t roll, pitch;
+    const uint8_t *data = (const uint8_t *)&pkt;
 
-    unpack_telemetry(payload, &rpm, &speed, &temp, &fuel, &gear,
-                     &roll, &pitch, &flags);
+    uint8_t speed, fuel, voltage, sats, hdop;
+    uint16_t rpm, heading;
+    int8_t gear, coolant, ambient;
+    int32_t lat, lon;
+    int16_t alt;
 
-    TEST_ASSERT_EQUAL_UINT8(TLM_FLAG_CRASH, flags);
-    TEST_ASSERT_TRUE(flags & TLM_FLAG_CRASH);
-    /* Extreme roll/pitch should accompany crash */
-    TEST_ASSERT_EQUAL_INT16(450, roll);
-    TEST_ASSERT_EQUAL_INT16(300, pitch);
+    unpack_telemetry_live(data, &speed, &rpm, &gear, &coolant, &ambient,
+                           &fuel, &voltage, &lat, &lon, &alt, &heading,
+                           &sats, &hdop);
+
+    TEST_ASSERT_EQUAL_INT32(-339243900, lat);
+    TEST_ASSERT_EQUAL_INT32(1511858200, lon);
+    TEST_ASSERT_EQUAL_INT16(-15, alt);
+    TEST_ASSERT_EQUAL_UINT16(1780, heading);
+    TEST_ASSERT_EQUAL_UINT8(7, sats);
+    TEST_ASSERT_EQUAL_UINT8(8, hdop);
 }
 
 /* ============================================================
- * Test: Overtemperature value (120C critical threshold)
+ * Test 6: GPS-invalid path zeroes the GPS block even when the
+ * caller passes non-zero GPS values (matches firmware: g->valid
+ * false -> lat/lon/alt/heading/sats/hdop = 0).
  * ============================================================ */
-void test_telemetry_overtemp(void)
+void test_telemetry_gps_invalid_zeroes_block(void)
 {
-    uint8_t payload[TLM_PAYLOAD_SIZE];
-    pack_telemetry(payload, 5000, 60, 120, 30, 3, 10, -5, 0);
+    telemetry_live_t pkt;
+    pack_telemetry_live(&pkt,
+                        0, 0, 0, 25, 18, 100, 122,
+                        509353900, 115872400, 245, 2700, 9, 12, 0);
 
-    uint16_t rpm, speed;
-    int8_t temp;
-    uint8_t fuel, gear, flags;
-    int16_t roll, pitch;
+    const uint8_t *data = (const uint8_t *)&pkt;
 
-    unpack_telemetry(payload, &rpm, &speed, &temp, &fuel, &gear,
-                     &roll, &pitch, &flags);
+    uint8_t speed, fuel, voltage, sats, hdop;
+    uint16_t rpm, heading;
+    int8_t gear, coolant, ambient;
+    int32_t lat, lon;
+    int16_t alt;
 
-    TEST_ASSERT_EQUAL_INT8(120, temp);
+    unpack_telemetry_live(data, &speed, &rpm, &gear, &coolant, &ambient,
+                           &fuel, &voltage, &lat, &lon, &alt, &heading,
+                           &sats, &hdop);
+
+    TEST_ASSERT_EQUAL_INT32(0, lat);
+    TEST_ASSERT_EQUAL_INT32(0, lon);
+    TEST_ASSERT_EQUAL_INT16(0, alt);
+    TEST_ASSERT_EQUAL_UINT16(0, heading);
+    TEST_ASSERT_EQUAL_UINT8(0, sats);
+    TEST_ASSERT_EQUAL_UINT8(0, hdop);
 }
 
 /* ============================================================
- * Test: Low fuel reserve (3.0L = 30 tenths)
+ * Test 7: Little-endian byte order — rpm low byte at offset 1,
+ * high byte at offset 2 (NimBLE wire order, spec §2). Uses
+ * rpm=0x1234 to make byte order unambiguous.
  * ============================================================ */
-void test_telemetry_low_fuel(void)
+void test_telemetry_little_endian_rpm(void)
 {
-    uint8_t payload[TLM_PAYLOAD_SIZE];
-    pack_telemetry(payload, 3000, 50, 85, 30, 2, 0, 0, 0);
+    telemetry_live_t pkt;
+    pack_telemetry_live(&pkt, 0, 0x1234, 0, 0, 0, 0, 0,
+                        0, 0, 0, 0, 0, 0, 0);
 
-    uint16_t rpm, speed;
-    int8_t temp;
-    uint8_t fuel, gear, flags;
-    int16_t roll, pitch;
+    const uint8_t *data = (const uint8_t *)&pkt;
 
-    unpack_telemetry(payload, &rpm, &speed, &temp, &fuel, &gear,
-                     &roll, &pitch, &flags);
+    /* speed at offset 0, rpm little-endian at offsets 1-2. */
+    TEST_ASSERT_EQUAL_UINT8(0, data[0]);
+    TEST_ASSERT_EQUAL_UINT8(0x34, data[1]);  /* low byte first */
+    TEST_ASSERT_EQUAL_UINT8(0x12, data[2]);  /* high byte second */
 
-    TEST_ASSERT_EQUAL_UINT8(30, fuel);  /* 3.0L * 10 */
+    /* latitude_e7 little-endian at offsets 8-11. */
+    pkt.latitude_e7 = 0x40302010;
+    TEST_ASSERT_EQUAL_UINT8(0x10, data[8]);
+    TEST_ASSERT_EQUAL_UINT8(0x20, data[9]);
+    TEST_ASSERT_EQUAL_UINT8(0x30, data[10]);
+    TEST_ASSERT_EQUAL_UINT8(0x40, data[11]);
 }
 
 /* ============================================================
- * Test: Neutral gear encoding (gear=0)
+ * Test 8: Gear neutral encoding — firmware maps an incoming
+ * gear==0 (sensor "no gear reported") to -1 on the wire.
+ * A real engaged gear passes through unchanged.
  * ============================================================ */
-void test_telemetry_neutral_gear(void)
+void test_telemetry_gear_neutral_encoding(void)
 {
-    uint8_t payload[TLM_PAYLOAD_SIZE];
-    pack_telemetry(payload, 1200, 0, 70, 150, 0, 0, 0, 0);
+    telemetry_live_t pkt;
+    const uint8_t *data;
 
-    uint16_t rpm, speed;
-    int8_t temp;
-    uint8_t fuel, gear, flags;
-    int16_t roll, pitch;
+    /* gear 0 -> wire -1 (neutral). */
+    pack_telemetry_live(&pkt, 0, 1200, 0, 70, 18, 100, 122,
+                        0, 0, 0, 0, 4, 25, 0);
+    data = (const uint8_t *)&pkt;
+    TEST_ASSERT_EQUAL_INT8(-1, (int8_t)data[3]);
 
-    unpack_telemetry(payload, &rpm, &speed, &temp, &fuel, &gear,
-                     &roll, &pitch, &flags);
+    /* engaged gear 1 passes through. */
+    pack_telemetry_live(&pkt, 10, 1500, 1, 70, 18, 100, 122,
+                        0, 0, 0, 0, 4, 25, 1);
+    data = (const uint8_t *)&pkt;
+    TEST_ASSERT_EQUAL_INT8(1, (int8_t)data[3]);
 
-    TEST_ASSERT_EQUAL_UINT8(0, gear);  /* 0 = neutral */
+    /* top gear 6 passes through. */
+    pack_telemetry_live(&pkt, 180, 8000, 6, 95, 30, 50, 130,
+                        0, 0, 0, 0, 9, 10, 1);
+    data = (const uint8_t *)&pkt;
+    TEST_ASSERT_EQUAL_INT8(6, (int8_t)data[3]);
 }
 
 /* ============================================================
- * Test: Padding bytes are zero
+ * Test 9: Wire layout is contiguous with no padding — every
+ * byte 0..21 is a real field and the struct packs to 22 bytes
+ * with no compiler-inserted gaps. This is the build-time guard
+ * the firmware enforces via _Static_assert; here we additionally
+ * check field offsets at runtime.
  * ============================================================ */
-void test_telemetry_padding_zero(void)
+void test_telemetry_no_padding_gaps(void)
 {
-    uint8_t payload[TLM_PAYLOAD_SIZE];
-    pack_telemetry(payload, 3000, 80, 90, 120, 3, 50, -20, 0);
-
-    for (int i = 12; i < TLM_PAYLOAD_SIZE; i++) {
-        TEST_ASSERT_EQUAL_UINT8(0, payload[i]);
-    }
+    TEST_ASSERT_EQUAL(0,  (int)offsetof(telemetry_live_t, speed_kmh));
+    TEST_ASSERT_EQUAL(1,  (int)offsetof(telemetry_live_t, rpm));
+    TEST_ASSERT_EQUAL(3,  (int)offsetof(telemetry_live_t, gear));
+    TEST_ASSERT_EQUAL(4,  (int)offsetof(telemetry_live_t, coolant_temp_c));
+    TEST_ASSERT_EQUAL(5,  (int)offsetof(telemetry_live_t, ambient_temp_c));
+    TEST_ASSERT_EQUAL(6,  (int)offsetof(telemetry_live_t, fuel_percent));
+    TEST_ASSERT_EQUAL(7,  (int)offsetof(telemetry_live_t, voltage_tenth));
+    TEST_ASSERT_EQUAL(8,  (int)offsetof(telemetry_live_t, latitude_e7));
+    TEST_ASSERT_EQUAL(12, (int)offsetof(telemetry_live_t, longitude_e7));
+    TEST_ASSERT_EQUAL(16, (int)offsetof(telemetry_live_t, altitude_m));
+    TEST_ASSERT_EQUAL(18, (int)offsetof(telemetry_live_t, heading_tenth));
+    TEST_ASSERT_EQUAL(20, (int)offsetof(telemetry_live_t, satellites));
+    TEST_ASSERT_EQUAL(21, (int)offsetof(telemetry_live_t, hdop_tenth));
 }
 
 /* ============================================================
@@ -305,12 +458,12 @@ int main(void)
     RUN_TEST(test_telemetry_payload_size);
     RUN_TEST(test_telemetry_roundtrip_typical);
     RUN_TEST(test_telemetry_rpm_redline);
-    RUN_TEST(test_telemetry_rpm_zero);
-    RUN_TEST(test_telemetry_crash_flag);
-    RUN_TEST(test_telemetry_overtemp);
-    RUN_TEST(test_telemetry_low_fuel);
-    RUN_TEST(test_telemetry_neutral_gear);
-    RUN_TEST(test_telemetry_padding_zero);
+    RUN_TEST(test_telemetry_idle_neutral);
+    RUN_TEST(test_telemetry_gps_fields_roundtrip);
+    RUN_TEST(test_telemetry_gps_invalid_zeroes_block);
+    RUN_TEST(test_telemetry_little_endian_rpm);
+    RUN_TEST(test_telemetry_gear_neutral_encoding);
+    RUN_TEST(test_telemetry_no_padding_gaps);
 
     return UNITY_END();
 }

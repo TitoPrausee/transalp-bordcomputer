@@ -40,6 +40,9 @@ from mock_ble import (
     CHR_TLM_LIVE, CHR_DTC_LIST, CHR_SENSOR_STATUS,
     SVC_NAVIGATION, SVC_TELEMETRY, SVC_DIAGNOSE,
     DtcEntry, DTC_SEV_WARNING, DTC_SEV_CRITICAL,
+    DTC_ENTRY_SIZE, TLM_LIVE_SIZE, TLM_LIVE_FMT,
+    SENSOR_GPS_OK, SENSOR_RPM_OK, SENSOR_TEMP_OK,
+    SENSOR_FUEL_OK, SENSOR_SD_OK,
     CharPerm,
 )
 from mock_display import (
@@ -316,10 +319,10 @@ class TestBleInterfaceMatchesFirmware:
     def test_telemetry_payload_size(self):
         """Live telemetry payload must be the packed struct size.
 
-        The firmware packs: <HHBBBhhBxxxxx = 17 bytes (rpm, speed, temp,
-        fuel, gear, roll, pitch, flags + padding).
-        The companion-app spec documents 22 bytes (with GPS lat/lon/alt/
-        heading/sats/hdop) — the mock currently packs the sensor subset.
+        Matches firmware telemetry_live_t (ble_callbacks.c:57), 22 bytes
+        little-endian and packed: speed(u8) rpm(u16) gear(i8) coolant(i8)
+        ambient(i8) fuel(u8) voltage(u8) lat(i32) lon(i32) alt(i16)
+        heading(u16) sats(u8) hdop(u8). See docs/BLE-INTERFACE-SPEC.md §4.1.
         """
         ble = MockBle()
         ble.connect()
@@ -328,21 +331,33 @@ class TestBleInterfaceMatchesFirmware:
         data = sensors.update(20)
         ble.set_telemetry_data(data)
         tlm = ble._chars[CHR_TLM_LIVE].value
-        assert len(tlm) >= 12  # at least the core fields
-        assert len(tlm) <= 22  # must not exceed spec
+        assert len(tlm) == TLM_LIVE_SIZE  # exactly 22 bytes, no padding
 
     def test_dtc_entry_packed_size(self):
-        """DTC entry packed must be 6 bytes."""
+        """DTC entry packed must match firmware dtc_binary_t layout.
+
+        Firmware struct (ble_callbacks.c:77, packed): uint16_t code +
+        uint8_t severity + uint32_t timestamp = 7 bytes. The spec §8.1
+        header advertises "6 bytes/entry" and a _Static_assert==6, but
+        those contradict the field-layout table (offsets 0:u16, 2:u8,
+        3:u32 = 7 bytes). The actual packed struct is 7 bytes; the
+        _Static_assert==6 is a firmware bug (never compiled on host).
+        """
         dtc = DtcEntry(code=0x0101, severity=DTC_SEV_WARNING)
         packed = dtc.pack()
-        assert len(packed) == 6
+        assert len(packed) == DTC_ENTRY_SIZE  # 7 bytes
 
     def test_sensor_status_packed_size(self):
-        """Sensor status packed must be 5 bytes."""
+        """Sensor status packed must be 5 bytes (sensor_status_t, spec §8.2).
+
+        5 distinct status bytes (gps, rpm, temp, fuel, sd_card), NOT a
+        bitfield.
+        """
         ble = MockBle()
         ble.connect()
-        ble.set_sensor_status(rpm_ok=True, temp_ok=True, fuel_ok=True,
-                              gps_ok=True, imu_ok=True)
+        ble.set_sensor_status(gps=SENSOR_GPS_OK, rpm=SENSOR_RPM_OK,
+                              temp=SENSOR_TEMP_OK, fuel=SENSOR_FUEL_OK,
+                              sd_card=SENSOR_SD_OK)
         status = ble.read(CHR_SENSOR_STATUS)
         assert len(status) == 5
 
@@ -364,7 +379,11 @@ class TestBleInterfaceMatchesFirmware:
 
     def test_telemetry_roundtrip(self):
         """Telemetry data packed by set_telemetry_data must be 22 bytes
-        and contain expected RPM value."""
+        and contain expected RPM value at its spec-defined offset.
+
+        RPM is a uint16 LE at offset 1 (after speed_kmh u8 at offset 0),
+        per docs/BLE-INTERFACE-SPEC.md §4.1 and firmware telemetry_live_t.
+        """
         ble = MockBle()
         ble.connect()
         sensors = MockSensorLayer(seed=42)
@@ -374,8 +393,10 @@ class TestBleInterfaceMatchesFirmware:
         ble.set_telemetry_data(data)
         tlm = ble._chars[CHR_TLM_LIVE].value
 
-        # Unpack RPM (first 2 bytes, uint16 LE)
-        rpm = struct.unpack('<H', tlm[0:2])[0]
+        assert len(tlm) == TLM_LIVE_SIZE  # 22 bytes
+        # Unpack full struct and verify RPM field (offset 1, uint16 LE).
+        (speed, rpm, gear, coolant, ambient, fuel, voltage,
+         lat, lon, alt, heading, sats, hdop) = struct.unpack(TLM_LIVE_FMT, tlm)
         assert rpm == data.rpm
 
     def test_dtc_add_and_read(self):
@@ -387,7 +408,7 @@ class TestBleInterfaceMatchesFirmware:
         ble.add_dtc(0x0102, DTC_SEV_CRITICAL)
 
         dtc_data = ble.read(CHR_DTC_LIST)
-        assert len(dtc_data) == 12  # 2 entries * 6 bytes
+        assert len(dtc_data) == 2 * DTC_ENTRY_SIZE  # 2 entries * 7 bytes = 14
 
 
 # ============================================================
@@ -551,11 +572,13 @@ class TestFullSimulatorPipeline:
 
         # Verify telemetry was updated
         tlm = ble._chars[CHR_TLM_LIVE].value
-        assert len(tlm) >= 12  # core packed fields present
+        assert len(tlm) == TLM_LIVE_SIZE  # 22 bytes, firmware telemetry_live_t
 
-        # RPM in telemetry should match last sensor reading
+        # RPM in telemetry should match last sensor reading.
+        # RPM is uint16 LE at offset 1 (after speed_kmh u8 at offset 0),
+        # per docs/BLE-INTERFACE-SPEC.md §4.1.
         last_data = sensors.get_data()
-        tlm_rpm = struct.unpack('<H', tlm[0:2])[0]
+        tlm_rpm = struct.unpack('<H', tlm[1:3])[0]
         assert tlm_rpm == last_data.rpm
 
     def test_gps_to_nmea_to_parser_format(self):

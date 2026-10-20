@@ -11,6 +11,12 @@
  *
  * Verwendet FreeRTOS EventGroups fuer einfache State-Flags.
  * Fuer Datenuebergabe siehe Queues in den jeweiligen Modulen.
+ *
+ * Bridge: event_bus_set() forwards every set of bits to a
+ * registered bridge callback (if any).  The app_event_loop
+ * registers a forwarder during init that maps overlapping
+ * EVT_* bits to APP_EVENT_* dispatches, so subscribers on
+ * the payload event loop see bit-flag events too.
  */
 
 /* Event-Bits */
@@ -39,6 +45,14 @@ void event_bus_init(void);
 void event_bus_set(uint32_t bits);
 void event_bus_clear(uint32_t bits);
 bool event_bus_wait(uint32_t bits, uint32_t timeout_ms);
+
+/*
+ * Bridge callback — invoked from event_bus_set() with the raw
+ * bits after the EventGroup has been updated.  Pass NULL to
+ * unregister.  The callback runs in the caller's task context.
+ */
+typedef void (*event_bus_bridge_cb_t)(uint32_t bits);
+void event_bus_set_bridge_cb(event_bus_bridge_cb_t cb);
 
 /* Globale Event-Group Handle */
 extern EventGroupHandle_t g_event_group;

@@ -120,7 +120,7 @@ sensor-status (0x7002), and self-test (0x7003).
 
 ## 4. High-Severity Issues
 
-### H1. Dual event systems, unbridged
+### H1. Dual event systems, unbridged — RESOLVED (TOT-38)
 
 Two overlapping event mechanisms:
 - `components/utils/event_bus.c` — FreeRTOS EventGroups, 19 bit-flags, no payload.
@@ -136,6 +136,16 @@ second layer.
 **Risk:** silent event loss, dead subscribers, race conditions where a state
 change is observed by one system but not the other. **Fix:** bridge or
 consolidate onto one system. (Follow-up FU-1.)
+
+**Resolution (TOT-38):** A bridge callback was added to `event_bus.c`.
+`event_bus_set()` now forwards set bits to a registered forwarder. The
+`app_event_loop` registers a mapping table (`app_event_bridge_init()`)
+that dispatches the corresponding `APP_EVENT_*` for all 18 overlapping
+event bits. Subscribers in `main.c` that previously called
+`event_bus_set()` from within app_event callbacks were cleaned up to
+prevent infinite loops. New `APP_EVENT_CARPLAY_CONNECTED/DISCONNECTED`
+types added to cover all event_bus bits. 22 host tests pass (12 event_bus
++ 10 bridge integration).
 
 ### H2. No OTA tests
 
@@ -221,7 +231,7 @@ recommended.
 | R2 | `app_event_loop.c:66-72` | Mutex released during callback to avoid deadlock — correct, but a subscriber could observe stale state if it re-enters dispatch. Single-loop task serialises callbacks, so no re-entrancy within the loop. | Low |
 | R3 | CarPlay dual-role conn-handle (H4) | Server-notify and client-notify on same handle; if disconnect races a notify, `ble_gap_event` ordering must be trusted. NimBLE serialises GAP events per-connection, so likely OK, but no explicit guard. | Medium |
 | R4 | OTA NVS resume state (`ota_save/load_resume_state`) | HTTP range-resume persists write offset to NVS. If power loss occurs between `esp_ota_write` and `ota_save_resume_state`, resume offset may be stale → partial-image + hash mismatch → rollback triggers (safe, but wasteful). | Low |
-| R5 | `event_bus` EventGroups vs `app_event_loop` (H1) | State observed by one system but not the other is the core race risk of the unbridged dual systems. | High (see H1) |
+| R5 | `event_bus` EventGroups vs `app_event_loop` (H1) | State observed by one system but not the other was the core race risk of the unbridged dual systems. **Resolved** in TOT-38: bridge callback forwards all overlapping EVT_* bits to APP_EVENT_* dispatches. | Resolved |
 
 ---
 

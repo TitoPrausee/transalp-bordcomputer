@@ -59,6 +59,11 @@ typedef enum {
     APP_EVENT_CTRL_VOL_DOWN   = APP_EVENT_CONTROLLER_BASE + 8,
     APP_EVENT_CTRL_MEDIA_NEXT = APP_EVENT_CONTROLLER_BASE + 9,
     APP_EVENT_CTRL_MEDIA_PREV = APP_EVENT_CONTROLLER_BASE + 10,
+
+    /* ---- CarPlay bridge events ---- */
+    APP_EVENT_CARPLAY_CONNECTED,     /* CarPlay display connected      */
+    APP_EVENT_CARPLAY_DISCONNECTED,   /* CarPlay display disconnected   */
+
     APP_EVENT_MAX,
 } app_event_type_t;
 
@@ -139,5 +144,16 @@ void app_event_dispatch_simple(app_event_type_t type);
  * Check whether the event loop task is running.
  */
 bool app_event_loop_is_running(void);
+
+/*
+ * Register the event-bus bridge forwarder.  After this call,
+ * every event_bus_set(EVT_*) that has a mapping in the bridge
+ * table also dispatches the corresponding APP_EVENT_* through
+ * the subscriber event loop, so subscribers see both bit-flag
+ * and payload events regardless of which API the producer used.
+ *
+ * Call once after event_bus_init() and app_event_loop_init().
+ */
+void app_event_bridge_init(void);
 
 #endif /* _APP_EVENT_LOOP_H_ */

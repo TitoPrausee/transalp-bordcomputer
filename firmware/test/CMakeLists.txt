@@ -44,6 +44,7 @@ if(NOT IDF_PATH)
     set(TEST_SOURCES
         test_nmea_parser.c
         test_event_loop.c
+        test_event_bridge.c
         test_dtc.c
         test_filters.c
         test_config.c
@@ -91,6 +92,7 @@ idf_component_register(
     SRCS
         "test_nmea_parser.c"
         "test_event_loop.c"
+        "test_event_bridge.c"
         "test_dtc.c"
         "test_filters.c"
         "test_config.c"

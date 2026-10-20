@@ -14,13 +14,11 @@ import type {
   DtcEntry,
   SelfTestResult,
   WeatherCurrent,
-  SystemStatus,
-  TaskInfo,
   OtaStatus,
-  CarPlayStatus,
+  OtaVerifyResult,
 } from './gatt-uuids';
 import { ConnectionState } from './connection-state';
-import { SelfTestMode, CarPlayControl } from './gatt-uuids';
+import { SelfTestMode } from './gatt-uuids';
 
 export type Subscription = () => void;
 
@@ -57,10 +55,8 @@ export interface BleEventCallbacks {
   onDtcList?: (entries: DtcEntry[]) => void;
   onSelfTestResult?: (result: SelfTestResult) => void;
   onWeatherCurrent?: (data: WeatherCurrent) => void;
-  onSystemStatus?: (data: SystemStatus) => void;
-  onTaskInfo?: (tasks: TaskInfo[]) => void;
   onOtaStatus?: (status: OtaStatus) => void;
-  onCarPlayStatus?: (status: CarPlayStatus) => void;
+  onOtaVerifyResult?: (result: OtaVerifyResult) => void;
   onRssi?: (rssi: number) => void;
   onMtu?: (mtu: number) => void;
   onError?: (error: BleError) => void;
@@ -103,21 +99,13 @@ export interface BleProvider {
   /** Liest die DTC-Liste (0x7001). */
   readDtcList(): Promise<DtcEntry[]>;
   clearDtc(code?: number): Promise<void>;
-  readSystemStatus(): Promise<SystemStatus | null>;
-  readTaskInfo(): Promise<TaskInfo[]>;
-  readOtaStatus(): Promise<OtaStatus | null>;
   startOta(firmwareSize: number): Promise<void>;
   writeOtaData(data: Uint8Array): Promise<void>;
   cancelOta(): Promise<void>;
   verifyOta(): Promise<void>;
+  commitOta(expectedSha256?: Uint8Array): Promise<void>;
   exportConfig(): Promise<string>;
   importConfig(configJson: string): Promise<void>;
-
-  /** Liest die CarPlay-Status-Characteristic (0x9001). */
-  readCarPlayStatus(): Promise<CarPlayStatus | null>;
-
-  /** Sendet ein CarPlay-Control-Kommando (0x9002). */
-  sendCarPlayControl(cmd: CarPlayControl): Promise<void>;
 
   /** Registriert Event-Callbacks. Gibt eine unsubscribe-Funktion zurueck. */
   subscribe(callbacks: BleEventCallbacks): Subscription;

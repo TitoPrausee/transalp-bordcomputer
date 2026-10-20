@@ -172,6 +172,57 @@ void test_event_bus_null_handle_safe(void)
 }
 
 /* ============================================================
+ * Bridge callback tests
+ * ============================================================ */
+
+static uint32_t s_bridge_received_bits = 0;
+static int s_bridge_call_count = 0;
+
+static void test_bridge_cb(uint32_t bits)
+{
+    s_bridge_received_bits |= bits;
+    s_bridge_call_count++;
+}
+
+void test_bridge_callback_invoked_on_set(void)
+{
+    s_bridge_received_bits = 0;
+    s_bridge_call_count = 0;
+
+    event_bus_set_bridge_cb(test_bridge_cb);
+    event_bus_set(EVT_BLE_CONNECTED | EVT_OTA_START);
+
+    TEST_ASSERT_EQUAL(1, s_bridge_call_count);
+    TEST_ASSERT_EQUAL_UINT32(EVT_BLE_CONNECTED | EVT_OTA_START,
+                             s_bridge_received_bits);
+
+    /* Clean up */
+    event_bus_set_bridge_cb(NULL);
+}
+
+void test_bridge_callback_cleared(void)
+{
+    s_bridge_call_count = 0;
+
+    event_bus_set_bridge_cb(test_bridge_cb);
+    event_bus_set_bridge_cb(NULL);
+    event_bus_set(EVT_GPS_FIX);
+
+    TEST_ASSERT_EQUAL(0, s_bridge_call_count);
+}
+
+void test_bridge_callback_null_by_default(void)
+{
+    /* No bridge registered — event_bus_set must not crash */
+    event_bus_set_bridge_cb(NULL);
+    event_bus_set(EVT_SHUTDOWN);
+
+    /* Verify the bit was still set in the event group */
+    bool result = event_bus_wait(EVT_SHUTDOWN, 100);
+    TEST_ASSERT_TRUE(result);
+}
+
+/* ============================================================
  * Test Runner
  * ============================================================ */
 int main(void)
@@ -187,6 +238,9 @@ int main(void)
     RUN_TEST(test_event_bits_are_unique);
     RUN_TEST(test_event_bits_are_powers_of_two);
     RUN_TEST(test_event_bus_null_handle_safe);
+    RUN_TEST(test_bridge_callback_invoked_on_set);
+    RUN_TEST(test_bridge_callback_cleared);
+    RUN_TEST(test_bridge_callback_null_by_default);
 
     return UNITY_END();
 }

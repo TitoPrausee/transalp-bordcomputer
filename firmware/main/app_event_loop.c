@@ -9,6 +9,7 @@
 
 #include "app_event_loop.h"
 #include "board_config.h"
+#include "event_bus.h"
 #include "esp_log.h"
 #include "esp_timer.h"
 #include <string.h>
@@ -212,4 +213,63 @@ void app_event_dispatch_simple(app_event_type_t type)
 bool app_event_loop_is_running(void)
 {
     return s_running;
+}
+
+/* ============================================================
+ * Event-Bus Bridge
+ *
+ * Maps overlapping EVT_* bit-flags to APP_EVENT_* dispatches
+ * so that subscribers on the payload event loop see events
+ * fired through the simple bit-flag API.  This closes gap H1
+ * from the architecture review: producers that call
+ * event_bus_set(EVT_BLE_CONNECTED) now also trigger every
+ * subscriber registered for APP_EVENT_BLE_CONNECTED.
+ *
+ * The forwarder is registered with event_bus via
+ * event_bus_set_bridge_cb() and runs in the caller's task
+ * context (same as event_bus_set itself).
+ * ============================================================ */
+
+typedef struct {
+    uint32_t          evt_bit;
+    app_event_type_t  app_type;
+} bridge_map_entry_t;
+
+static const bridge_map_entry_t s_bridge_map[] = {
+    { EVT_GPS_FIX,              APP_EVENT_GPS_FIX_ACQUIRED },
+    { EVT_GPS_LOST_FIX,         APP_EVENT_GPS_FIX_LOST },
+    { EVT_CRASH_DETECTED,       APP_EVENT_CRASH_DETECTED },
+    { EVT_BATTERY_LOW,          APP_EVENT_BATTERY_LOW },
+    { EVT_BATTERY_CRITICAL,     APP_EVENT_BATTERY_CRITICAL },
+    { EVT_SDCARD_MOUNTED,       APP_EVENT_SDCARD_MOUNTED },
+    { EVT_SDCARD_ERROR,         APP_EVENT_SDCARD_ERROR },
+    { EVT_BLE_CONNECTED,        APP_EVENT_BLE_CONNECTED },
+    { EVT_BLE_DISCONNECTED,     APP_EVENT_BLE_DISCONNECTED },
+    { EVT_DISPLAY_READY,        APP_EVENT_DISPLAY_READY },
+    { EVT_SHUTDOWN,             APP_EVENT_SHUTDOWN },
+    { EVT_OTA_START,            APP_EVENT_OTA_START },
+    { EVT_OTA_DONE,             APP_EVENT_OTA_DONE },
+    { EVT_OVERTEMPERATURE,      APP_EVENT_OVERTEMPERATURE },
+    { EVT_FUEL_LOW,             APP_EVENT_LOW_FUEL },
+    { EVT_RPM_TIMEOUT,          APP_EVENT_RPM_TIMEOUT },
+    { EVT_CARPLAY_CONNECTED,    APP_EVENT_CARPLAY_CONNECTED },
+    { EVT_CARPLAY_DISCONNECTED, APP_EVENT_CARPLAY_DISCONNECTED },
+};
+
+#define BRIDGE_MAP_LEN  (sizeof(s_bridge_map) / sizeof(s_bridge_map[0]))
+
+static void app_event_bridge_forwarder(uint32_t bits)
+{
+    for (int i = 0; i < (int)BRIDGE_MAP_LEN; i++) {
+        if (bits & s_bridge_map[i].evt_bit) {
+            app_event_dispatch_simple(s_bridge_map[i].app_type);
+        }
+    }
+}
+
+void app_event_bridge_init(void)
+{
+    event_bus_set_bridge_cb(app_event_bridge_forwarder);
+    ESP_LOGI(TAG, "Event-bus bridge initialised (%d mappings)",
+             (int)BRIDGE_MAP_LEN);
 }

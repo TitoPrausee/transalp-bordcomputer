@@ -71,6 +71,26 @@ static inline BaseType_t xTaskCreate(
     return pdTRUE;
 }
 
+static inline BaseType_t xTaskCreatePinnedToCore(
+    void (*task_func)(void *),
+    const char *name,
+    uint32_t stack_depth,
+    void *params,
+    uint32_t prio,
+    TaskHandle_t *handle,
+    BaseType_t core_id)
+{
+    (void)task_func; (void)name; (void)stack_depth;
+    (void)params; (void)prio; (void)core_id;
+    if (handle) *handle = (TaskHandle_t)1;
+    return pdTRUE;
+}
+
+static inline BaseType_t xPortGetCoreID(void)
+{
+    return 0;
+}
+
 /* ---- Tick count (monotonic clock) ---- */
 static inline TickType_t xTaskGetTickCount(void)
 {
@@ -254,6 +274,14 @@ static inline BaseType_t xSemaphoreGive(SemaphoreHandle_t h)
     pthread_mutex_t *m = (pthread_mutex_t *)h;
     if (!m) return pdFALSE;
     return (pthread_mutex_unlock(m) == 0) ? pdTRUE : pdFALSE;
+}
+
+static inline void vSemaphoreDelete(SemaphoreHandle_t h)
+{
+    pthread_mutex_t *m = (pthread_mutex_t *)h;
+    if (!m) return;
+    pthread_mutex_destroy(m);
+    free(m);
 }
 
 /* ---- esp_timer mock ---- */

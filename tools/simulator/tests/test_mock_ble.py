@@ -196,32 +196,37 @@ class TestDtcManagement:
 
 
 class TestSensorStatus:
-    """Test des Sensor-Status."""
+    """Test des Sensor-Status (sensor_status_t, spec §8.2: 5 distinct bytes)."""
 
     def test_set_sensor_status(self):
-        """Sensor-Status kann gesetzt werden."""
+        """Sensor-Status als 5 distinct Bytes (gps, rpm, temp, fuel, sd_card)."""
         ble = MockBle()
         ble.connect()
-        ble.set_sensor_status(rpm_ok=True, temp_ok=True, fuel_ok=True,
-                              gps_ok=True, imu_ok=True)
+        ble.set_sensor_status(gps=SENSOR_GPS_OK, rpm=SENSOR_RPM_OK,
+                              temp=SENSOR_TEMP_OK, fuel=SENSOR_FUEL_OK,
+                              sd_card=SENSOR_SD_OK)
         data = ble.read(CHR_SENSOR_STATUS)
         assert len(data) == 5
-        status_byte = data[0]
-        assert status_byte == 0x1F  # alle 5 Bits gesetzt
+        # Each byte is a distinct status value, NOT a bitfield.
+        assert data[0] == SENSOR_GPS_OK      # gps ok
+        assert data[1] == SENSOR_RPM_OK      # rpm ok
+        assert data[2] == SENSOR_TEMP_OK     # temp ok
+        assert data[3] == SENSOR_FUEL_OK     # fuel ok
+        assert data[4] == SENSOR_SD_OK       # sd_card ok
 
     def test_sensor_status_partial(self):
-        """Sensor-Status mit einigen Ausfällen."""
+        """Sensor-Status mit einigen Ausfällen (distinct bytes, kein Bitfield)."""
         ble = MockBle()
         ble.connect()
-        ble.set_sensor_status(rpm_ok=True, temp_ok=False, fuel_ok=True,
-                              gps_ok=False, imu_ok=True)
+        ble.set_sensor_status(gps=SENSOR_GPS_NO_FIX, rpm=SENSOR_RPM_OK,
+                              temp=SENSOR_TEMP_ERROR, fuel=SENSOR_FUEL_OK,
+                              sd_card=SENSOR_SD_NOT_PRESENT)
         data = ble.read(CHR_SENSOR_STATUS)
-        status_byte = data[0]
-        assert status_byte & 0x01  # rpm ok
-        assert not (status_byte & 0x02)  # temp fail
-        assert status_byte & 0x04  # fuel ok
-        assert not (status_byte & 0x08)  # gps fail
-        assert status_byte & 0x10  # imu ok
+        assert data[0] == SENSOR_GPS_NO_FIX     # gps no_fix
+        assert data[1] == SENSOR_RPM_OK         # rpm ok
+        assert data[2] == SENSOR_TEMP_ERROR     # temp error
+        assert data[3] == SENSOR_FUEL_OK         # fuel ok
+        assert data[4] == SENSOR_SD_NOT_PRESENT  # sd_card not_present
 
 
 class TestTelemetryPacking:

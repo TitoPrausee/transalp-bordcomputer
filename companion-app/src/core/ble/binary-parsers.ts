@@ -14,15 +14,14 @@ import type {
   DtcEntry,
   SelfTestResult,
   SystemStatus,
-  TaskInfo,
   OtaStatus,
+  OtaVerifyResult,
   WeatherCurrent,
   NavManeuver,
   NavRoute,
   NavRoad,
-  CarPlayStatus,
 } from './gatt-uuids';
-import { ManeuverType, SelfTestMode, OtaCommand, CarPlayApp } from './gatt-uuids';
+import { ManeuverType, SelfTestMode, OtaCommand, OtaVerifyStatus } from './gatt-uuids';
 
 // ============================================================
 // Hilfsfunktionen: DataView Little-Endian Reader
@@ -322,81 +321,25 @@ export function encodeSystemStatus(data: SystemStatus): Uint8Array {
 }
 
 // ============================================================
-// Task-Info (Variable Laenge, 20 Bytes pro Task)
-// ============================================================
-// 0-15:  name (16 Bytes UTF-8, null-terminiert)
-// 16:    priority (uint8)
-// 17-18: stackFree (uint16, Bytes)
-// 19:    state (uint8)
+// Task-Info — REMOVED
+// 0x7007 taskInfo is not implemented in firmware (spec §8.4, §10).
 // ============================================================
 
-const TASK_ENTRY_SIZE = 20;
-
-export function parseTaskInfo(dv: DataView): TaskInfo[] {
-  const count = Math.floor(dv.byteLength / TASK_ENTRY_SIZE);
-  const tasks: TaskInfo[] = [];
-
-  for (let i = 0; i < count; i++) {
-    const offset = i * TASK_ENTRY_SIZE;
-    const name = readUtf8(dv, offset, 16);
-    const priority = readUint8(dv, offset + 16);
-    const stackFree = readUint16(dv, offset + 17);
-    const state = readUint8(dv, offset + 19);
-    tasks.push({ name, priority, stackFree, state });
-  }
-
-  return tasks;
-}
-
-export function encodeTaskInfo(tasks: TaskInfo[]): Uint8Array {
-  const buf = new ArrayBuffer(tasks.length * TASK_ENTRY_SIZE);
-  const dv = new DataView(buf);
-
-  for (let i = 0; i < tasks.length; i++) {
-    const offset = i * TASK_ENTRY_SIZE;
-    const task = tasks[i];
-
-    // Name schreiben (max 16 Bytes, null-padding)
-    const nameBytes = new TextEncoder().encode(task.name);
-    for (let j = 0; j < 16; j++) {
-      writeUint8(dv, offset + j, j < nameBytes.length ? nameBytes[j] : 0);
-    }
-
-    writeUint8(dv, offset + 16, task.priority);
-    writeUint16(dv, offset + 17, task.stackFree);
-    writeUint8(dv, offset + 19, task.state);
-  }
-
-  return new Uint8Array(buf);
-}
-
 // ============================================================
-// OTA-Status (0x8003, ~36 Bytes)
+// OTA-Status (0x8001 control notify, 3 bytes)
 // ============================================================
-// 0:    state (uint8: 0=idle,1=uploading,2=verifying,3=done,4=failed)
-// 1:    progress (uint8: 0-100)
-// 2:    errorCode (uint8)
-// 3-6:  firmwareVersion als 4 Bytes: major.minor.patch (3 Bytes + reserved)
-// 7-38: imageHash als 32 Bytes SHA256 (Hex-codiert)
+// 0: state (uint8: 0=idle,1=uploading,2=verifying,3=done,4=failed)
+// 1: progress (uint8: 0-100)
+// 2: errorCode (uint8)
+// Readers must tolerate a 3-byte notify (spec §9.1).
 // ============================================================
 
 export function parseOtaStatus(dv: DataView): OtaStatus {
-  const state = readUint8(dv, 0);
-  const progress = readUint8(dv, 1);
-  const errorCode = readUint8(dv, 2);
-
-  const major = readUint8(dv, 3);
-  const minor = readUint8(dv, 4);
-  const patch = readUint8(dv, 5);
-  const firmwareVersion = `${major}.${minor}.${patch}`;
-
-  // SHA256 Hash (32 Bytes ab Offset 7)
-  let hashHex = '';
-  for (let i = 7; i < Math.min(dv.byteLength, 7 + 32); i++) {
-    hashHex += dv.getUint8(i).toString(16).padStart(2, '0');
-  }
-
-  return { state, progress, firmwareVersion, errorCode, imageHash: hashHex };
+  return {
+    state: readUint8(dv, 0),
+    progress: readUint8(dv, 1),
+    errorCode: readUint8(dv, 2),
+  };
 }
 
 export function encodeOtaCommand(cmd: OtaCommand): Uint8Array {
@@ -406,9 +349,49 @@ export function encodeOtaCommand(cmd: OtaCommand): Uint8Array {
   return new Uint8Array(buf);
 }
 
+export function encodeOtaCommitCommand(expectedSha256?: Uint8Array): Uint8Array {
+  if (!expectedSha256 || expectedSha256.length === 0) {
+    const buf = new ArrayBuffer(1);
+    const dv = new DataView(buf);
+    writeUint8(dv, 0, OtaCommand.Commit);
+    return new Uint8Array(buf);
+  }
+  const buf = new ArrayBuffer(1 + 32);
+  const dv = new DataView(buf);
+  writeUint8(dv, 0, OtaCommand.Commit);
+  const hashLen = Math.min(expectedSha256.length, 32);
+  for (let i = 0; i < 32; i++) {
+    writeUint8(dv, 1 + i, i < hashLen ? expectedSha256[i] : 0);
+  }
+  return new Uint8Array(buf);
+}
+
 export function encodeOtaDataChunk(data: Uint8Array): Uint8Array {
   // Chunks werden als raw binary gesendet (no framing)
   return data;
+}
+
+// ============================================================
+// OTA Verify Result (0x8003 notify, 41 bytes)
+// ============================================================
+// 0:     status (uint8: 0=unknown, 1=verifying, 2=ok, 3=hash_mismatch, 4=error)
+// 1-32:  sha256 (32 bytes)
+// 33-36: size (uint32 LE)
+// 37-40: version (uint32 LE)
+// ============================================================
+
+export function parseOtaVerifyResult(dv: DataView): OtaVerifyResult {
+  const status = readUint8(dv, 0) as OtaVerifyStatus;
+
+  let sha256 = '';
+  for (let i = 1; i < Math.min(dv.byteLength, 1 + 32); i++) {
+    sha256 += dv.getUint8(i).toString(16).padStart(2, '0');
+  }
+
+  const size = dv.byteLength >= 37 ? readUint32(dv, 33) : 0;
+  const version = dv.byteLength >= 41 ? readUint32(dv, 37) : 0;
+
+  return { status, sha256, size, version };
 }
 
 // ============================================================
@@ -525,62 +508,7 @@ export function decodeConfigJson(data: Uint8Array): string {
 }
 
 // ============================================================
-// CarPlay-Status (0x9001, variabel, min 2 + 3x64 = 194 Bytes)
+// CarPlay — REMOVED
+// Service 0x9000 is the CarPlay-display bridge, NOT app-facing (spec §11).
+// The app must NOT touch service 0x9000.
 // ============================================================
-// 0:     connected (uint8: 0=disconnected, 1=connected)
-// 1:     activeApp (uint8: 0=none, 1=navigation, 2=music, 3=phone, 4=podcasts)
-// 2-65:  artist (64 Bytes UTF-8, null-terminiert)
-// 66-129: title (64 Bytes UTF-8, null-terminiert)
-// 130-193: album (64 Bytes UTF-8, null-terminiert)
-// ============================================================
-
-const CARPLAY_FIELD_SIZE = 64;
-const CARPLAY_MIN_SIZE = 2 + CARPLAY_FIELD_SIZE * 3;
-
-export function parseCarPlayStatus(dv: DataView): CarPlayStatus {
-  const connected = readUint8(dv, 0) === 1;
-  const activeApp = readUint8(dv, 1) as CarPlayApp;
-
-  // Wenn nicht genug Bytes, leere Strings zurueckgeben
-  if (dv.byteLength < CARPLAY_MIN_SIZE) {
-    return { connected, activeApp, artist: '', title: '', album: '' };
-  }
-
-  const artist = readUtf8(dv, 2, CARPLAY_FIELD_SIZE);
-  const title = readUtf8(dv, 2 + CARPLAY_FIELD_SIZE, CARPLAY_FIELD_SIZE);
-  const album = readUtf8(dv, 2 + CARPLAY_FIELD_SIZE * 2, CARPLAY_FIELD_SIZE);
-
-  return { connected, activeApp, artist, title, album };
-}
-
-export function encodeCarPlayStatus(data: CarPlayStatus): Uint8Array {
-  const buf = new ArrayBuffer(CARPLAY_MIN_SIZE);
-  const dv = new DataView(buf);
-
-  writeUint8(dv, 0, data.connected ? 1 : 0);
-  writeUint8(dv, 1, data.activeApp);
-
-  const writeField = (offset: number, text: string) => {
-    const nameBytes = new TextEncoder().encode(text);
-    for (let i = 0; i < CARPLAY_FIELD_SIZE; i++) {
-      writeUint8(dv, offset + i, i < nameBytes.length ? nameBytes[i] : 0);
-    }
-  };
-
-  writeField(2, data.artist);
-  writeField(2 + CARPLAY_FIELD_SIZE, data.title);
-  writeField(2 + CARPLAY_FIELD_SIZE * 2, data.album);
-
-  return new Uint8Array(buf);
-}
-
-// ============================================================
-// CarPlay-Control Command (0x9002, Write 1 Byte)
-// ============================================================
-
-export function encodeCarPlayControlCommand(cmd: number): Uint8Array {
-  const buf = new ArrayBuffer(1);
-  const dv = new DataView(buf);
-  writeUint8(dv, 0, cmd);
-  return new Uint8Array(buf);
-}

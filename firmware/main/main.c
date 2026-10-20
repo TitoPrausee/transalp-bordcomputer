@@ -270,22 +270,22 @@ static void on_sensor_update(const app_event_t *ev, void *ctx)
     }
 }
 
-/* SD card error -> DTC + event bus */
+/* SD card error -> DTC (event_bus bit is set by sd_card/storage;
+ * the bridge forwards it to this subscriber automatically) */
 static void on_sdcard_error(const app_event_t *ev, void *ctx)
 {
     (void)ctx;
     (void)ev;
     dtc_register(DTC_C0104, DTC_SEV_WARN);
-    event_bus_set(EVT_SDCARD_ERROR);
 }
 
-/* Battery low -> DTC + event bus + power state hint */
+/* Battery low -> DTC (event_bus bit set by power_manager;
+ * bridge forwards to this subscriber) */
 static void on_battery_low(const app_event_t *ev, void *ctx)
 {
     (void)ctx;
     (void)ev;
     dtc_register(DTC_P0401, DTC_SEV_WARN);
-    event_bus_set(EVT_BATTERY_LOW);
 }
 
 static void on_battery_critical(const app_event_t *ev, void *ctx)
@@ -293,26 +293,58 @@ static void on_battery_critical(const app_event_t *ev, void *ctx)
     (void)ctx;
     (void)ev;
     dtc_register(DTC_P0402, DTC_SEV_CRITICAL);
-    event_bus_set(EVT_BATTERY_CRITICAL);
 }
 
-/* Crash -> DTC + event bus */
+/* Crash -> DTC (event_bus bit set by IMU;
+ * bridge forwards to this subscriber) */
 static void on_crash(const app_event_t *ev, void *ctx)
 {
     (void)ctx;
     (void)ev;
     dtc_register(DTC_S0402, DTC_SEV_WARN);
-    event_bus_set(EVT_CRASH_DETECTED);
 }
 
-/* Shutdown -> event bus + deep sleep */
+/* Shutdown -> deep sleep (event_bus bit set by power_manager;
+ * bridge forwards to this subscriber) */
 static void on_shutdown(const app_event_t *ev, void *ctx)
 {
     (void)ctx;
     (void)ev;
     ESP_LOGW(TAG, "Shutdown event received, entering deep sleep");
-    event_bus_set(EVT_SHUTDOWN);
     power_enter_deep_sleep(0);
+}
+
+/* BLE connected/disconnected — bridged from event_bus bits set
+ * by ble_service.c.  Previously these events were invisible to
+ * the subscriber loop; the bridge now makes them available. */
+static void on_ble_connected(const app_event_t *ev, void *ctx)
+{
+    (void)ctx;
+    (void)ev;
+    ESP_LOGI(TAG, "BLE peer connected (bridged event)");
+}
+
+static void on_ble_disconnected(const app_event_t *ev, void *ctx)
+{
+    (void)ctx;
+    (void)ev;
+    ESP_LOGI(TAG, "BLE peer disconnected (bridged event)");
+}
+
+/* CarPlay connected/disconnected — bridged from event_bus bits
+ * set by carplay_bridge.c. */
+static void on_carplay_connected(const app_event_t *ev, void *ctx)
+{
+    (void)ctx;
+    (void)ev;
+    ESP_LOGI(TAG, "CarPlay display connected (bridged event)");
+}
+
+static void on_carplay_disconnected(const app_event_t *ev, void *ctx)
+{
+    (void)ctx;
+    (void)ev;
+    ESP_LOGI(TAG, "CarPlay display disconnected (bridged event)");
 }
 
 /* ============================================================
@@ -346,6 +378,18 @@ static void register_subscribers(void)
                         on_crash, NULL);
     app_event_subscribe((1U << APP_EVENT_SHUTDOWN),
                         on_shutdown, NULL);
+
+    /* BLE + CarPlay subscribers — these events arrive via the
+     * event_bus bridge (producers set EVT_* bits, the bridge
+     * forwards them as APP_EVENT_* dispatches). */
+    app_event_subscribe((1U << APP_EVENT_BLE_CONNECTED),
+                        on_ble_connected, NULL);
+    app_event_subscribe((1U << APP_EVENT_BLE_DISCONNECTED),
+                        on_ble_disconnected, NULL);
+    app_event_subscribe((1U << APP_EVENT_CARPLAY_CONNECTED),
+                        on_carplay_connected, NULL);
+    app_event_subscribe((1U << APP_EVENT_CARPLAY_DISCONNECTED),
+                        on_carplay_disconnected, NULL);
 
     ESP_LOGI(TAG, "Event subscribers registered");
 }
@@ -551,6 +595,7 @@ void app_main(void)
     /* 2. Event bus + Event loop (before anything else) */
     event_bus_init();
     app_event_loop_init();
+    app_event_bridge_init();
     register_subscribers();
 
     /* 3. Power management (supply voltage first) */
