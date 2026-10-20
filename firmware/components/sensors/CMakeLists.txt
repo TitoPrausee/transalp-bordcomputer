@@ -1,6 +1,6 @@
 idf_component_register(
     SRCS "sensors.c" "rpm.c" "temperature.c" "fuel_level.c" "gear_indicator.c" "imu.c"
     INCLUDE_DIRS "include"
-    REQUIRES utils diagnostics gps
+    REQUIRES utils diagnostics gps esp_adc driver
     PRIV_REQUIRES main esp_timer
 )

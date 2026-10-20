@@ -70,14 +70,13 @@ static void init_adc(void)
     adc_oneshot_config_channel(g_adc1_handle,
                                (adc_channel_t)BATT_ADC_CHANNEL, &chan_cfg);
 
-    /* Kalibrierung (line fitting mit eFuse Vref) */
-    adc_cali_line_fitting_config_t cali_cfg = {
+    /* Kalibrierung (curve fitting for ESP32-S3) */
+    adc_cali_curve_fitting_config_t cali_cfg = {
         .unit_id = ADC_UNIT_1,
         .atten = ADC_ATTEN_DB_11,
         .bitwidth = ADC_BITWIDTH_12,
-        .default_vref = 1100,  /* Fallback falls eFuse nicht gebrannt */
     };
-    ret = adc_cali_create_scheme_line_fitting(&cali_cfg, &g_adc_cali_handle);
+    ret = adc_cali_create_scheme_curve_fitting(&cali_cfg, &g_adc_cali_handle);
     if (ret != ESP_OK) {
         ESP_LOGW(TAG, "ADC calibration failed: %s (using raw values)",
                  esp_err_to_name(ret));

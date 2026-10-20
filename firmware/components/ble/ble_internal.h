@@ -98,7 +98,7 @@ struct ble_gatt_access_ctxt;
 int ble_gatt_access_cb(uint16_t conn_handle, uint16_t attr_handle,
                       struct ble_gatt_access_ctxt *ctxt, void *arg);
 int ble_handle_read(uint16_t attr_handle, struct ble_gatt_access_ctxt *ctxt);
-int ble_handle_write(uint16_t attr_handle, struct ble_gatt_access_ctxt *ctxt);
+int ble_handle_write(uint16_t conn_handle, uint16_t attr_handle, struct ble_gatt_access_ctxt *ctxt);
 
 /* ============================================================
  * Write-command queue (defined in ble_callbacks.c)
