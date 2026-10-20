@@ -26,9 +26,12 @@
  *                     0xe0,0xa9, 0xe5,0x0e, 0x24,0xdc, 0xca,0x9e}
  * but ble_uuid128_t.value is little-endian, so we reverse:
  *   value[0]=0x9e ... value[15]=0x6e
+ *
+ * NOTE: Named GATT_UUID128 (not BLE_UUID128) to avoid collision
+ * with NimBLE's own BLE_UUID128 macro in ble_uuid.h.
  * ============================================================ */
 
-#define BLE_UUID128(id16) \
+#define GATT_UUID128(id16) \
     { \
         .u = { .type = BLE_UUID_TYPE_128 }, \
         .value = { \

@@ -73,7 +73,7 @@ static uint32_t ota_efuse_read_secure_version(void)
 {
     uint32_t raw = 0;
     esp_err_t err = esp_efuse_read_field_blob(
-        ESP_EFUSE_SECURE_VERSION, &raw, ESP_EFUSE_SECURE_VERSION_BIT_CNT);
+        ESP_EFUSE_SECURE_VERSION, &raw, sizeof(raw) * 8);
     if (err != ESP_OK) {
         ESP_LOGE(TAG, "Failed to read SECURE_VERSION eFuse: %s",
                  esp_err_to_name(err));
@@ -111,9 +111,9 @@ static esp_err_t ota_compute_partition_sha256(const esp_partition_t *partition,
 
     mbedtls_sha256_context ctx;
     mbedtls_sha256_init(&ctx);
-    int ret = mbedtls_sha256_starts_ret(&ctx, 0);
+    int ret = mbedtls_sha256_starts(&ctx, 0);
     if (ret != 0) {
-        ESP_LOGE(TAG, "mbedtls_sha256_starts_ret: -0x%04x", -ret);
+        ESP_LOGE(TAG, "mbedtls_sha256_starts: -0x%04x", -ret);
         mbedtls_sha256_free(&ctx);
         return ESP_FAIL;
     }
@@ -140,9 +140,9 @@ static esp_err_t ota_compute_partition_sha256(const esp_partition_t *partition,
             return err;
         }
 
-        ret = mbedtls_sha256_update_ret(&ctx, buf, to_read);
+        ret = mbedtls_sha256_update(&ctx, buf, to_read);
         if (ret != 0) {
-            ESP_LOGE(TAG, "mbedtls_sha256_update_ret: -0x%04x", -ret);
+            ESP_LOGE(TAG, "mbedtls_sha256_update: -0x%04x", -ret);
             free(buf);
             mbedtls_sha256_free(&ctx);
             return ESP_FAIL;
@@ -154,11 +154,11 @@ static esp_err_t ota_compute_partition_sha256(const esp_partition_t *partition,
 
     free(buf);
 
-    ret = mbedtls_sha256_finish_ret(&ctx, hash_out);
+    ret = mbedtls_sha256_finish(&ctx, hash_out);
     mbedtls_sha256_free(&ctx);
 
     if (ret != 0) {
-        ESP_LOGE(TAG, "mbedtls_sha256_finish_ret: -0x%04x", -ret);
+        ESP_LOGE(TAG, "mbedtls_sha256_finish: -0x%04x", -ret);
         return ESP_FAIL;
     }
 

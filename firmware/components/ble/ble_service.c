@@ -71,55 +71,55 @@ static bool s_cccd_sensor_status = false;
  * ============================================================ */
 
 /* Service UUIDs */
-static ble_uuid128_t svc_nav_uuid     = BLE_UUID128(SVC_NAVIGATION);
-static ble_uuid128_t svc_media_uuid   = BLE_UUID128(SVC_MEDIA);
-static ble_uuid128_t svc_phone_uuid    = BLE_UUID128(SVC_PHONE);
-static ble_uuid128_t svc_weather_uuid  = BLE_UUID128(SVC_WEATHER);
-static ble_uuid128_t svc_telemetry_uuid = BLE_UUID128(SVC_TELEMETRY);
-static ble_uuid128_t svc_config_uuid   = BLE_UUID128(SVC_CONFIG);
-static ble_uuid128_t svc_diag_uuid     = BLE_UUID128(SVC_DIAGNOSE);
-static ble_uuid128_t svc_ota_uuid      = BLE_UUID128(SVC_OTA);
+static ble_uuid128_t svc_nav_uuid     = GATT_UUID128(SVC_NAVIGATION);
+static ble_uuid128_t svc_media_uuid   = GATT_UUID128(SVC_MEDIA);
+static ble_uuid128_t svc_phone_uuid    = GATT_UUID128(SVC_PHONE);
+static ble_uuid128_t svc_weather_uuid  = GATT_UUID128(SVC_WEATHER);
+static ble_uuid128_t svc_telemetry_uuid = GATT_UUID128(SVC_TELEMETRY);
+static ble_uuid128_t svc_config_uuid   = GATT_UUID128(SVC_CONFIG);
+static ble_uuid128_t svc_diag_uuid     = GATT_UUID128(SVC_DIAGNOSE);
+static ble_uuid128_t svc_ota_uuid      = GATT_UUID128(SVC_OTA);
 
 /* Characteristic UUIDs */
-static ble_uuid128_t chr_nav_maneuver   = BLE_UUID128(CHR_NAV_MANEUVER);
-static ble_uuid128_t chr_nav_route      = BLE_UUID128(CHR_NAV_ROUTE);
-static ble_uuid128_t chr_nav_road        = BLE_UUID128(CHR_NAV_ROAD);
-static ble_uuid128_t chr_nav_status     = BLE_UUID128(CHR_NAV_STATUS);
-static ble_uuid128_t chr_nav_cmd         = BLE_UUID128(CHR_NAV_CMD);
+static ble_uuid128_t chr_nav_maneuver   = GATT_UUID128(CHR_NAV_MANEUVER);
+static ble_uuid128_t chr_nav_route      = GATT_UUID128(CHR_NAV_ROUTE);
+static ble_uuid128_t chr_nav_road        = GATT_UUID128(CHR_NAV_ROAD);
+static ble_uuid128_t chr_nav_status     = GATT_UUID128(CHR_NAV_STATUS);
+static ble_uuid128_t chr_nav_cmd         = GATT_UUID128(CHR_NAV_CMD);
 
-static ble_uuid128_t chr_media_nowplaying = BLE_UUID128(CHR_MEDIA_NOWPLAYING);
-static ble_uuid128_t chr_media_control   = BLE_UUID128(CHR_MEDIA_CONTROL);
-static ble_uuid128_t chr_media_volume    = BLE_UUID128(CHR_MEDIA_VOLUME);
+static ble_uuid128_t chr_media_nowplaying = GATT_UUID128(CHR_MEDIA_NOWPLAYING);
+static ble_uuid128_t chr_media_control   = GATT_UUID128(CHR_MEDIA_CONTROL);
+static ble_uuid128_t chr_media_volume    = GATT_UUID128(CHR_MEDIA_VOLUME);
 
-static ble_uuid128_t chr_phone_incoming  = BLE_UUID128(CHR_PHONE_INCOMING);
-static ble_uuid128_t chr_phone_status    = BLE_UUID128(CHR_PHONE_STATUS);
-static ble_uuid128_t chr_phone_control   = BLE_UUID128(CHR_PHONE_CONTROL);
-static ble_uuid128_t chr_phone_notif     = BLE_UUID128(CHR_PHONE_NOTIF);
+static ble_uuid128_t chr_phone_incoming  = GATT_UUID128(CHR_PHONE_INCOMING);
+static ble_uuid128_t chr_phone_status    = GATT_UUID128(CHR_PHONE_STATUS);
+static ble_uuid128_t chr_phone_control   = GATT_UUID128(CHR_PHONE_CONTROL);
+static ble_uuid128_t chr_phone_notif     = GATT_UUID128(CHR_PHONE_NOTIF);
 
-static ble_uuid128_t chr_wx_current      = BLE_UUID128(CHR_WX_CURRENT);
-static ble_uuid128_t chr_wx_forecast     = BLE_UUID128(CHR_WX_FORECAST);
-static ble_uuid128_t chr_wx_alert        = BLE_UUID128(CHR_WX_ALERT);
+static ble_uuid128_t chr_wx_current      = GATT_UUID128(CHR_WX_CURRENT);
+static ble_uuid128_t chr_wx_forecast     = GATT_UUID128(CHR_WX_FORECAST);
+static ble_uuid128_t chr_wx_alert        = GATT_UUID128(CHR_WX_ALERT);
 
-static ble_uuid128_t chr_tlm_live        = BLE_UUID128(CHR_TLM_LIVE);
-static ble_uuid128_t chr_tlm_snapshot    = BLE_UUID128(CHR_TLM_SNAPSHOT);
-static ble_uuid128_t chr_track_export    = BLE_UUID128(CHR_TRACK_EXPORT);
-static ble_uuid128_t chr_track_export_ctrl = BLE_UUID128(CHR_TRACK_EXPORT_CTRL);
+static ble_uuid128_t chr_tlm_live        = GATT_UUID128(CHR_TLM_LIVE);
+static ble_uuid128_t chr_tlm_snapshot    = GATT_UUID128(CHR_TLM_SNAPSHOT);
+static ble_uuid128_t chr_track_export    = GATT_UUID128(CHR_TRACK_EXPORT);
+static ble_uuid128_t chr_track_export_ctrl = GATT_UUID128(CHR_TRACK_EXPORT_CTRL);
 
-static ble_uuid128_t chr_config_read     = BLE_UUID128(CHR_CONFIG_READ);
-static ble_uuid128_t chr_config_write    = BLE_UUID128(CHR_CONFIG_WRITE);
-static ble_uuid128_t chr_config_export   = BLE_UUID128(CHR_CONFIG_EXPORT);
-static ble_uuid128_t chr_config_import   = BLE_UUID128(CHR_CONFIG_IMPORT);
-static ble_uuid128_t chr_bond_mgmt       = BLE_UUID128(CHR_BOND_MGMT);
+static ble_uuid128_t chr_config_read     = GATT_UUID128(CHR_CONFIG_READ);
+static ble_uuid128_t chr_config_write    = GATT_UUID128(CHR_CONFIG_WRITE);
+static ble_uuid128_t chr_config_export   = GATT_UUID128(CHR_CONFIG_EXPORT);
+static ble_uuid128_t chr_config_import   = GATT_UUID128(CHR_CONFIG_IMPORT);
+static ble_uuid128_t chr_bond_mgmt       = GATT_UUID128(CHR_BOND_MGMT);
 
-static ble_uuid128_t chr_dtc_list        = BLE_UUID128(CHR_DTC_LIST);
-static ble_uuid128_t chr_sensor_status   = BLE_UUID128(CHR_SENSOR_STATUS);
-static ble_uuid128_t chr_self_test       = BLE_UUID128(CHR_SELF_TEST);
-static ble_uuid128_t chr_log_export      = BLE_UUID128(CHR_LOG_EXPORT);
-static ble_uuid128_t chr_log_export_ctrl = BLE_UUID128(CHR_LOG_EXPORT_CTRL);
+static ble_uuid128_t chr_dtc_list        = GATT_UUID128(CHR_DTC_LIST);
+static ble_uuid128_t chr_sensor_status   = GATT_UUID128(CHR_SENSOR_STATUS);
+static ble_uuid128_t chr_self_test       = GATT_UUID128(CHR_SELF_TEST);
+static ble_uuid128_t chr_log_export      = GATT_UUID128(CHR_LOG_EXPORT);
+static ble_uuid128_t chr_log_export_ctrl = GATT_UUID128(CHR_LOG_EXPORT_CTRL);
 
-static ble_uuid128_t chr_ota_control     = BLE_UUID128(CHR_OTA_CONTROL);
-static ble_uuid128_t chr_ota_data       = BLE_UUID128(CHR_OTA_DATA);
-static ble_uuid128_t chr_ota_verify      = BLE_UUID128(CHR_OTA_VERIFY);
+static ble_uuid128_t chr_ota_control     = GATT_UUID128(CHR_OTA_CONTROL);
+static ble_uuid128_t chr_ota_data       = GATT_UUID128(CHR_OTA_DATA);
+static ble_uuid128_t chr_ota_verify      = GATT_UUID128(CHR_OTA_VERIFY);
 
 /* ============================================================
  * GATT Service Table
