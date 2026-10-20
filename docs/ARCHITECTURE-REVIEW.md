@@ -170,6 +170,12 @@ component. (Follow-up FU-9.)
 these likely fail in CI too (or CI has additional handling). Coverage is
 therefore narrower than the test count suggests. (Follow-up FU-12.)
 
+**→ Resolved (TOT-43):** All 4 mock gaps fixed: `_capture_freeze_frame` mocks
+added to `test_dtc.c`/`test_dtc_extended.c`, NVS mock errors resolved in
+`test_config.c`, `ble_internal.h` include path fixed in `test_ble_callbacks.c`,
+`mocks/esp_sleep.h` created for `test_power_manager.c`. All 19 unit test suites
+now build on host GCC. FU-12 closed.
+
 ### H4. Single GATT connection shared for CarPlay dual-role — RESOLVED (TOT-44)
 
 `carplay_bridge.c:141` uses `carplay_client_get_conn_handle()` for server-side
@@ -208,7 +214,7 @@ when discovery yields no CCCD, preserving backward compatibility.
 
 ## 5. Medium-Severity Issues
 
-### M1. `board_config.h` duplicated blocks
+### M1. `board_config.h` duplicated blocks — RESOLVED (TOT-46)
 
 `firmware/main/board_config.h` — "Sensor-Konstanten", "RPM Pulse Counter",
 "Coolant Temp", "Fuel Level" sections are each repeated **4 times** verbatim
@@ -222,11 +228,11 @@ doc. Build/flash instructions live in `docs/FIRMWARE-GUIDE.md` and
 `docs/DEVELOPER-QUICKSTART.md`. A short firmware-local README would help
 onboarding.
 
-### M3. Pressure sensor declared but unimplemented
+### M3. Pressure sensor declared but unimplemented — DOCUMENTED
 
-`board_config.h:41` references BMP280; `sensors.h:30` notes pressure "nicht
-implementiert". Weather service (0x4000) advertises data the firmware cannot
-source. Document as not-implemented or remove.
+`board_config.h:43` documents BMP280 as NOT IMPLEMENTED. `sensors.h:30`
+notes `pressure_hpa` stays 0. Weather service (0x4000) is documented as
+unavailable. Acceptable for current release — no action needed.
 
 ### M4. No SBOM / managed components
 
@@ -234,18 +240,17 @@ Everything vendored — simplifies offline builds but yields no component-regist
 SBOM. Acceptable for a solo firmware, but flag for supply-chain review if
 third-party dependencies are added.
 
-### M5. Event-loop subscriber drop under load
+### M5. Event-loop subscriber drop under load — RESOLVED (TOT-48)
 
-`app_event_loop.c:201-204` drops events if the 32-deep queue is full (non-blocking
-dispatch). Under burst load (e.g. sensor + GPS + controller simultaneous), events
-can be silently lost. Consider a drop counter / overflow metric for diagnostics.
+Drop counter and overflow metrics implemented in `app_event_loop.c`.
+`s_dropped_events` tracks dropped events, rate-limited warnings via
+`APP_EVENT_DROP_WARN_INTERVAL_MS`. FU-12 closed.
 
-### M6. No integration-test report or tech-debt register existed
+### M6. No integration-test report or tech-debt register existed — RESOLVED
 
-Prior to TOT-29, no `INTEGRATION-TEST-REPORT.md` or `TECH-DEBT.md` existed.
-`docs/RELEASE-NOTES.md` feature-maturity is the closest proxy. This review
-establishes the integration report; a standing tech-debt register is
-recommended.
+`docs/INTEGRATION-TEST-REPORT.md` created in TOT-29. This architecture review
+serves as the initial tech-debt register. Status of all FU items is tracked
+in this document.
 
 ---
 
