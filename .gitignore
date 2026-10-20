@@ -24,3 +24,4 @@ hardware/case/*.stl.tmp
 # OS
 .DS_Store
 .env
+firmware/test_results/

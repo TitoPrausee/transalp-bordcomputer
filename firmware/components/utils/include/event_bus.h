@@ -31,6 +31,8 @@
 #define EVT_OVERTEMPERATURE     (1 << 14)
 #define EVT_FUEL_LOW            (1 << 15)
 #define EVT_RPM_TIMEOUT         (1 << 16)
+#define EVT_CARPLAY_CONNECTED   (1 << 17)
+#define EVT_CARPLAY_DISCONNECTED (1 << 18)
 
 /* API */
 void event_bus_init(void);

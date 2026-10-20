@@ -34,6 +34,7 @@ if(NOT IDF_PATH)
         ${CMAKE_CURRENT_SOURCE_DIR}/../components/display/include
         ${CMAKE_CURRENT_SOURCE_DIR}/../components/ota/include
         ${CMAKE_CURRENT_SOURCE_DIR}/../components/hid_controller/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/../components/carplay_bridge/include
         ${CMAKE_CURRENT_SOURCE_DIR}/../main
         ${CMAKE_CURRENT_SOURCE_DIR}/mocks
         ${UNITY_DIR}/src
@@ -50,6 +51,7 @@ if(NOT IDF_PATH)
         test_ble_callbacks.c
         test_power_manager.c
         test_controller.c
+        test_carplay_bridge.c
     )
 
     # Compiler flags
@@ -96,6 +98,7 @@ idf_component_register(
         "test_ble_callbacks.c"
         "test_power_manager.c"
         "test_controller.c"
+        "test_carplay_bridge.c"
     INCLUDE_DIRS
         "."
         "mocks"
@@ -104,4 +107,5 @@ idf_component_register(
         gps
         utils
         diagnostics
+        carplay_bridge
 )

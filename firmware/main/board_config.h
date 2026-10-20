@@ -262,6 +262,10 @@
 #define TASK_STACK_DIAG      4096
 #define TASK_PRIO_DIAG       2
 
+/* CarPlay-Bridge Task (Core 0, Telemetry-Push + Client-Reconnect) */
+#define TASK_STACK_CARPLAY   4096
+#define TASK_PRIO_CARPLAY    3
+
 /* ============================================================
  * Lenker-Controller (HID Controller)
  * ============================================================

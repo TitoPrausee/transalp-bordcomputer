@@ -28,6 +28,7 @@ import { useAppStore } from '../core/state/store';
 import { useBleManager } from '../hooks/useBleManager';
 import { bg, fg, accent, fontSize } from '../core/theme/colors';
 import type { BordcomputerConfig } from '../core/state/config';
+import { CarPlayControl, ControllerType } from '../core/ble/gatt-uuids';
 
 // --- Slider Component ---
 
@@ -234,12 +235,38 @@ export function SettingsScreen() {
     verifyOta,
     exportConfig,
     importConfig,
+    sendCarPlayControl,
   } = useBleManager();
 
   const [applying, setApplying] = useState(false);
   const [otaUploading, setOtaUploading] = useState(false);
   const [otaProgress, setOtaProgress] = useState(0);
   const [units, setUnits] = useState<'metric' | 'imperial'>('metric');
+
+  const handleCarPlayPair = async () => {
+    await sendCarPlayControl(CarPlayControl.Pair);
+    updateConfig({ carplayPaired: true });
+    Alert.alert('CarPlay', 'Pairing-Befehl gesendet.');
+  };
+
+  const handleCarPlayUnpair = async () => {
+    Alert.alert(
+      'CarPlay trennen',
+      'CarPlay-Display-Verbindung trennen?',
+      [
+        { text: 'Abbrechen', style: 'cancel' },
+        {
+          text: 'Trennen',
+          style: 'destructive',
+          onPress: async () => {
+            await sendCarPlayControl(CarPlayControl.Unpair);
+            updateConfig({ carplayPaired: false });
+            Alert.alert('Erledigt', 'CarPlay getrennt.');
+          },
+        },
+      ],
+    );
+  };
 
   // OTA-Status laden
   useEffect(() => {
@@ -594,6 +621,101 @@ export function SettingsScreen() {
           </View>
         </Card>
 
+        {/* CarPlay-Display-Pairing */}
+        <Card>
+          <Text style={styles.sectionTitle}>CARPLAY-DISPLAY</Text>
+
+          <View style={styles.row}>
+            <Text style={styles.label}>CarPlay aktiviert</Text>
+            <Switch
+              value={config.carplayEnabled}
+              onValueChange={(v) => updateConfig({ carplayEnabled: v })}
+              trackColor={{ false: bg.raised, true: accent.blue }}
+            />
+          </View>
+          <View style={styles.row}>
+            <Text style={styles.label}>Display-Name</Text>
+            <Text style={styles.value}>{config.carplayDisplayName || 'Transalp-BC'}</Text>
+          </View>
+          <View style={styles.row}>
+            <Text style={styles.label}>Gepaart</Text>
+            <Text
+              style={[
+                styles.value,
+                { color: config.carplayPaired ? accent.green : fg.tertiary },
+              ]}
+            >
+              {config.carplayPaired ? 'Ja' : 'Nein'}
+            </Text>
+          </View>
+
+          <View style={styles.backupRow}>
+            <TouchableOpacity
+              style={[styles.backupBtn, { borderColor: accent.green }]}
+              onPress={handleCarPlayPair}
+              disabled={!config.carplayEnabled}
+            >
+              <Text style={[styles.backupBtnText, { color: accent.green }]}>
+                KOPPELN
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.backupBtn, { borderColor: accent.red }]}
+              onPress={handleCarPlayUnpair}
+              disabled={!config.carplayPaired}
+            >
+              <Text style={[styles.backupBtnText, { color: accent.red }]}>
+                TRENNEN
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </Card>
+
+        {/* Controller-Typ */}
+        <Card>
+          <Text style={styles.sectionTitle}>CONTROLLER-TYP</Text>
+
+          <View style={controllerTypeStyles.container}>
+            {(
+              [
+                ControllerType.None,
+                ControllerType.HondaOem,
+                ControllerType.GenericBle,
+                ControllerType.Keyboard,
+              ] as ControllerType[]
+            ).map((t) => {
+              const labels: Record<ControllerType, string> = {
+                [ControllerType.None]: 'Kein',
+                [ControllerType.HondaOem]: 'Honda OEM',
+                [ControllerType.GenericBle]: 'Generic BLE',
+                [ControllerType.Keyboard]: 'Tastatur',
+              };
+              return (
+                <TouchableOpacity
+                  key={t}
+                  style={[
+                    controllerTypeStyles.option,
+                    config.controllerType === t && controllerTypeStyles.optionActive,
+                  ]}
+                  onPress={() => updateConfig({ controllerType: t })}
+                >
+                  <Text
+                    style={[
+                      controllerTypeStyles.text,
+                      config.controllerType === t && controllerTypeStyles.textActive,
+                    ]}
+                  >
+                    {labels[t]}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+          <Text style={styles.subLabel}>
+            Tastatur-Modus fuer Debugging ueber den Controller-Tab verfuegbar.
+          </Text>
+        </Card>
+
         {/* Apply */}
         <TouchableOpacity
           style={[styles.applyBtn, applying && styles.applyBtnDisabled]}
@@ -748,5 +870,32 @@ const styles = StyleSheet.create({
     fontSize: fontSize.body,
     fontWeight: 'bold',
     color: '#FFFFFF',
+  },
+});
+
+const controllerTypeStyles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginVertical: 4,
+  },
+  option: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 8,
+    backgroundColor: bg.raised,
+  },
+  optionActive: {
+    backgroundColor: accent.blue,
+  },
+  text: {
+    fontSize: fontSize.label,
+    color: fg.secondary,
+    fontWeight: '500',
+  },
+  textActive: {
+    color: '#FFFFFF',
+    fontWeight: 'bold',
   },
 });

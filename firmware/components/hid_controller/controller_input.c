@@ -1,13 +1,13 @@
 /*
- * controller_input.c — GPIO/ADC/I2C Input-Reading with debouncing.
+ * controller_input.c — GPIO/I2C/BLE Input-Reading with debouncing.
  *
  * Transports:
- *   GPIO:  Interrupt-based, active-LOW with pull-up. 6 buttons on
+ *   GPIO:  Interrupt-based, active-LOW with pull-up. Buttons on
  *          dedicated GPIO pins. ISR dispatches to a FreeRTOS queue,
  *          a processing task applies debounce and calls the mapping.
  *   I2C:   Custom PCB (ATmega328P/RP2040) as I2C slave. A task polls
- *          the slave at 100 ms intervals, reads a 2-byte button mask,
- *          and translates bits to controller_button_t values.
+ *          the slave at CTRL_I2C_POLL_MS intervals, reads a 2-byte
+ *          button mask, and translates bits to controller_button_t.
  *   BLE:   NimBLE GATT client. Subscribes to the controller
  *          characteristic; incoming notifications are processed in
  *          the NimBLE host task context.
@@ -34,11 +34,15 @@
 #include <string.h>
 
 #ifndef TEST_HOST
+#include "hid_controller_internal.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/queue.h"
 #include "driver/gpio.h"
 #include "board_config.h"
+
+/* I2C bus handle owned by the sensors component (sensors.h). */
+extern i2c_master_bus_handle_t g_i2c_bus;
 #endif
 
 static const char *TAG = "ctrl_input";
@@ -49,52 +53,47 @@ static const char *TAG = "ctrl_input";
 
 button_debounce_t g_btn_debounce[CTRL_MAX_BUTTONS];
 
-/* ============================================================
- * GPIO button table (only used on target, not in host tests)
- * ============================================================ */
-
 #ifndef TEST_HOST
+
+/* ============================================================
+ * GPIO button table
+ *
+ * PINMAP.md says all GPIOs are assigned. For the Lenker-Controller
+ * we repurpose the existing button pins (GPIO6=MENU, GPIO7=SELECT,
+ * GPIO3=BACK, GPIO0=BOOT) for direct-wired mode. The remaining
+ * buttons (NAV_DOWN/LEFT/RIGHT, VOL, MEDIA) go through the I2C
+ * custom PCB or BLE wireless path.
+ *
+ * Pin numbers come from board_config.h (CTRL_BTN_*_PIN).
+ * ============================================================ */
 
 typedef struct {
     controller_button_t  button;
     int                  gpio_pin;
 } gpio_button_map_t;
 
-/*
- * GPIO pin assignments for controller buttons.
- *
- * PINMAP.md says all GPIOs are assigned. For the Lenker-Controller
- * we use a PCF8574 I2C port expander on the existing I2C bus
- * (GPIO8=SDA, GPIO9=SCL) for the wired option. This avoids
- * conflicting with existing pin assignments.
- *
- * For direct GPIO mode (prototype/DevKit), we repurpose the
- * existing button pins (GPIO6=MENU, GPIO7=SELECT, GPIO3=BACK,
- * GPIO0=BOOT) and add 2 more via the I2C expander.
- *
- * The actual pin numbers come from board_config.h.
- */
 static const gpio_button_map_t s_gpio_buttons[] = {
-    { CTRL_BTN_BACK,      BTN_BACK_PIN   },  /* GPIO3 */
-    { CTRL_BTN_SELECT,    BTN_SELECT_PIN },  /* GPIO7 */
-    { CTRL_BTN_HOME,      BTN_MENU_PIN   },  /* GPIO6 (repurposed) */
-    { CTRL_BTN_NAV_UP,    BOOT_BTN_PIN   },  /* GPIO0 (repurposed) */
+    { CTRL_BTN_BACK,    CTRL_BTN_BACK_PIN    },  /* GPIO3  */
+    { CTRL_BTN_SELECT,  CTRL_BTN_SELECT_PIN  },  /* GPIO7  */
+    { CTRL_BTN_HOME,    CTRL_BTN_HOME_PIN     },  /* GPIO6  */
+    { CTRL_BTN_NAV_UP,  CTRL_BTN_NAV_UP_PIN   },  /* GPIO0  */
 };
 
 #define GPIO_BTN_COUNT  (sizeof(s_gpio_buttons) / sizeof(s_gpio_buttons[0]))
 
 /* ISR queue: button GPIO -> processing task */
-static QueueHandle_t s_gpio_queue = NULL;
-static TaskHandle_t  s_gpio_task  = NULL;
-static bool          s_gpio_running = false;
+static QueueHandle_t s_gpio_queue  = NULL;
+static TaskHandle_t   s_gpio_task   = NULL;
+static bool           s_gpio_running = false;
 
-/* I2C poll task handle */
-static TaskHandle_t  s_i2c_task    = NULL;
-static bool          s_i2c_running  = false;
+/* I2C device handle (custom PCB controller on the sensors I2C bus) */
+static i2c_master_dev_handle_t s_i2c_dev = NULL;
+static TaskHandle_t            s_i2c_task = NULL;
+static bool                    s_i2c_running = false;
 
 /* BLE task handle */
-static TaskHandle_t  s_ble_task    = NULL;
-static bool          s_ble_running  = false;
+static TaskHandle_t s_ble_task    = NULL;
+static bool         s_ble_running  = false;
 
 /* ============================================================
  * GPIO ISR handler
@@ -145,9 +144,8 @@ static void gpio_input_task(void *arg)
  * I2C poll task: read button mask from ATmega328P/RP2040 slave
  * ============================================================ */
 
-#define I2C_CONTROLLER_ADDR   0x42   /* Custom PCB I2C address */
-#define I2C_POLL_INTERVAL_MS  100    /* Poll every 100 ms */
-#define I2C_REG_BUTTON_MASK  0x00   /* Register: 2-byte button bitmask */
+/* Register: 2-byte button bitmask */
+#define I2C_REG_BUTTON_MASK  0x00
 
 /* Button bit positions in the I2C button mask */
 #define I2C_BIT_NAV_UP       (1 << 0)
@@ -163,7 +161,7 @@ static void gpio_input_task(void *arg)
 #define I2C_BIT_MEDIA_PREV   (1 << 10)
 
 static const struct {
-    uint16_t             mask;
+    uint16_t            mask;
     controller_button_t btn;
 } s_i2c_btn_map[] = {
     { I2C_BIT_NAV_UP,     CTRL_BTN_NAV_UP     },
@@ -171,7 +169,7 @@ static const struct {
     { I2C_BIT_NAV_LEFT,   CTRL_BTN_NAV_LEFT   },
     { I2C_BIT_NAV_RIGHT,  CTRL_BTN_NAV_RIGHT  },
     { I2C_BIT_SELECT,     CTRL_BTN_SELECT     },
-    { I2C_BIT_NAV_RIGHT,  CTRL_BTN_BACK       },
+    { I2C_BIT_BACK,       CTRL_BTN_BACK       },
     { I2C_BIT_HOME,       CTRL_BTN_HOME       },
     { I2C_BIT_VOL_UP,     CTRL_BTN_VOL_UP     },
     { I2C_BIT_VOL_DOWN,   CTRL_BTN_VOL_DOWN   },
@@ -187,7 +185,7 @@ static void i2c_poll_task(void *arg)
 {
     (void)arg;
     ESP_LOGI(TAG, "I2C controller poll task started (addr=0x%02X, poll=%dms)",
-             I2C_CONTROLLER_ADDR, I2C_POLL_INTERVAL_MS);
+             CTRL_I2C_ADDR, CTRL_I2C_POLL_MS);
 
     while (s_i2c_running) {
         /* Read 2-byte button mask from I2C slave */
@@ -202,14 +200,14 @@ static void i2c_poll_task(void *arg)
 
         if (ret != ESP_OK) {
             ESP_LOGW(TAG, "I2C controller read failed: %s", esp_err_to_name(ret));
-            vTaskDelay(pdMS_TO_TICKS(I2C_POLL_INTERVAL_MS));
+            vTaskDelay(pdMS_TO_TICKS(CTRL_I2C_POLL_MS));
             continue;
         }
 
         uint16_t mask = (uint16_t)(buf[0] | (buf[1] << 8));
 
         /* Detect new presses (bits that are set now but weren't before) */
-        uint16_t new_presses = mask & ~s_i2c_prev_mask;
+        uint16_t new_presses  = mask & ~s_i2c_prev_mask;
         uint16_t new_releases = ~mask & s_i2c_prev_mask;
         s_i2c_prev_mask = mask;
 
@@ -223,43 +221,25 @@ static void i2c_poll_task(void *arg)
             }
         }
 
-        vTaskDelay(pdMS_TO_TICKS(I2C_POLL_INTERVAL_MS));
+        vTaskDelay(pdMS_TO_TICKS(CTRL_I2C_POLL_MS));
     }
 
     vTaskDelete(NULL);
 }
 
 /* ============================================================
- * BLE input task: NimBLE GATT client
+ * BLE notification handler (called from NimBLE host task)
  * ============================================================ */
 
-/*
- * BLE GATT client for wireless controllers (Chigee CGRC Multi).
- *
- * Connection flow:
- *   1. Scan for controller advertisement (service UUID)
- *   2. Connect and discover controller service
- *   3. Subscribe to controller characteristic (notifications)
- *   4. Incoming notifications contain a 1-byte button mask
- *
- * The actual NimBLE client API is large; this implementation
- * provides the task skeleton and the notification handler. Full
- * BLE GATT client setup is deferred to the ble component integration.
- */
-
-#define BLE_CONTROLLER_SERVICE_UUID  0xFFE0
-#define BLE_CONTROLLER_CHAR_UUID     0xFFE1
-#define BLE_SCAN_TIMEOUT_MS          10000
-
-/* Button bit positions in the BLE notification byte */
+/* Button bit positions in the BLE notification byte(s) */
 #define BLE_BIT_NAV_UP       (1 << 0)
 #define BLE_BIT_NAV_DOWN     (1 << 1)
 #define BLE_BIT_NAV_LEFT     (1 << 2)
-#define BLE_BIT_NAV_RIGHT   (1 << 3)
-#define BLE_BIT_SELECT      (1 << 4)
-#define BLE_BIT_BACK       (1 << 5)
-#define BLE_BIT_HOME       (1 << 6)
-#define BLE_BIT_VOL_UP     (1 << 7)
+#define BLE_BIT_NAV_RIGHT    (1 << 3)
+#define BLE_BIT_SELECT       (1 << 4)
+#define BLE_BIT_BACK         (1 << 5)
+#define BLE_BIT_HOME         (1 << 6)
+#define BLE_BIT_VOL_UP       (1 << 7)
 
 /* For 2-byte BLE notifications (volume down + media) */
 #define BLE_BIT_VOL_DOWN    (1 << 0)  /* byte[1], bit 0 */
@@ -271,17 +251,17 @@ static const struct {
     uint8_t             bit;
     controller_button_t btn;
 } s_ble_btn_map[] = {
-    { 0, BLE_BIT_NAV_UP,     CTRL_BTN_NAV_UP     },
-    { 0, BLE_BIT_NAV_DOWN,   CTRL_BTN_NAV_DOWN   },
-    { 0, BLE_BIT_NAV_LEFT,   CTRL_BTN_NAV_LEFT   },
-    { 0, BLE_BIT_NAV_RIGHT,  CTRL_BTN_NAV_RIGHT  },
-    { 0, BLE_BIT_SELECT,     CTRL_BTN_SELECT     },
-    { 0, BLE_BIT_BACK,       CTRL_BTN_BACK       },
-    { 0, BLE_BIT_HOME,       CTRL_BTN_HOME       },
-    { 0, BLE_BIT_VOL_UP,     CTRL_BTN_VOL_UP     },
-    { 1, BLE_BIT_VOL_DOWN,   CTRL_BTN_VOL_DOWN   },
-    { 1, BLE_BIT_MEDIA_NEXT, CTRL_BTN_MEDIA_NEXT },
-    { 1, BLE_BIT_MEDIA_PREV, CTRL_BTN_MEDIA_PREV },
+    { 0, BLE_BIT_NAV_UP,      CTRL_BTN_NAV_UP     },
+    { 0, BLE_BIT_NAV_DOWN,    CTRL_BTN_NAV_DOWN   },
+    { 0, BLE_BIT_NAV_LEFT,    CTRL_BTN_NAV_LEFT   },
+    { 0, BLE_BIT_NAV_RIGHT,   CTRL_BTN_NAV_RIGHT  },
+    { 0, BLE_BIT_SELECT,      CTRL_BTN_SELECT     },
+    { 0, BLE_BIT_BACK,        CTRL_BTN_BACK       },
+    { 0, BLE_BIT_HOME,        CTRL_BTN_HOME       },
+    { 0, BLE_BIT_VOL_UP,      CTRL_BTN_VOL_UP     },
+    { 1, BLE_BIT_VOL_DOWN,    CTRL_BTN_VOL_DOWN   },
+    { 1, BLE_BIT_MEDIA_NEXT,  CTRL_BTN_MEDIA_NEXT },
+    { 1, BLE_BIT_MEDIA_PREV,  CTRL_BTN_MEDIA_PREV },
 };
 
 #define BLE_BTN_COUNT  (sizeof(s_ble_btn_map) / sizeof(s_ble_btn_map[0]))
@@ -301,7 +281,7 @@ void hid_controller_ble_notify_handler(const uint8_t *data, uint8_t len)
     if (len >= 2) cur[1] = data[1];
 
     for (int i = 0; i < (int)BLE_BTN_COUNT; i++) {
-        uint8_t cur_bit = (cur[s_ble_btn_map[i].byte_idx] & s_ble_btn_map[i].bit) ? 1 : 0;
+        uint8_t cur_bit  = (cur[s_ble_btn_map[i].byte_idx]  & s_ble_btn_map[i].bit) ? 1 : 0;
         uint8_t prev_bit = (s_ble_prev[s_ble_btn_map[i].byte_idx] & s_ble_btn_map[i].bit) ? 1 : 0;
 
         if (cur_bit && !prev_bit) {
@@ -316,6 +296,10 @@ void hid_controller_ble_notify_handler(const uint8_t *data, uint8_t len)
     s_ble_prev[1] = cur[1];
 }
 
+/* ============================================================
+ * BLE input task (NimBLE GATT client skeleton)
+ * ============================================================ */
+
 static void ble_input_task(void *arg)
 {
     (void)arg;
@@ -324,18 +308,127 @@ static void ble_input_task(void *arg)
     while (s_ble_running) {
         /*
          * BLE GATT client connection management:
-         * 1. If not connected, scan for controller
+         * 1. If not connected, scan for controller (CTRL_BLE_SVC_UUID)
          * 2. On connect, discover service + subscribe to char
+         *    (CTRL_BLE_CHAR_UUID)
          * 3. Notifications arrive via hid_controller_ble_notify_handler()
          *
-         * This is a simplified skeleton. Full implementation requires
-         * NimBLE GATT client API calls (ble_gap_connect, ble_gattc_disc_all_svcs,
-         * ble_gattc_write for CCCD subscription).
+         * Full implementation requires NimBLE GATT client API calls
+         * (ble_gap_connect, ble_gattc_disc_all_svcs, ble_gattc_write
+         * for CCCD subscription). Deferred to ble component integration.
          */
         vTaskDelay(pdMS_TO_TICKS(1000));
     }
 
     vTaskDelete(NULL);
+}
+
+/* ============================================================
+ * Transport start/stop functions
+ * ============================================================ */
+
+esp_err_t controller_input_start_gpio(void)
+{
+    s_gpio_queue = xQueueCreate(8, sizeof(controller_button_t));
+    if (s_gpio_queue == NULL) {
+        ESP_LOGE(TAG, "Failed to create GPIO queue");
+        return ESP_ERR_NO_MEM;
+    }
+
+    /* Configure GPIO pins (active-LOW with pull-up) */
+    for (int i = 0; i < (int)GPIO_BTN_COUNT; i++) {
+        gpio_config_t io_conf = {
+            .pin_bit_mask = (1ULL << s_gpio_buttons[i].gpio_pin),
+            .mode = GPIO_MODE_INPUT,
+            .pull_up_en = GPIO_PULLUP_ENABLE,
+            .pull_down_en = GPIO_PULLDOWN_DISABLE,
+            .intr_type = GPIO_INTR_NEGEDGE,  /* active-LOW */
+        };
+        esp_err_t gret = gpio_config(&io_conf);
+        if (gret != ESP_OK) {
+            ESP_LOGW(TAG, "gpio_config pin %d failed: %s",
+                     s_gpio_buttons[i].gpio_pin, esp_err_to_name(gret));
+        }
+    }
+
+    /* Install ISR service if not already installed */
+    gpio_install_isr_service(0);
+
+    /* Attach ISR handlers */
+    for (int i = 0; i < (int)GPIO_BTN_COUNT; i++) {
+        gpio_isr_handler_add(s_gpio_buttons[i].gpio_pin, gpio_isr_handler,
+                             (void *)(intptr_t)s_gpio_buttons[i].button);
+    }
+
+    s_gpio_running = true;
+    xTaskCreatePinnedToCore(gpio_input_task, "ctrl_gpio",
+                            TASK_STACK_CONTROLLER, NULL,
+                            TASK_PRIO_CONTROLLER, &s_gpio_task, TASK_CORE_UI);
+    ESP_LOGI(TAG, "GPIO controller source started (%d buttons)", (int)GPIO_BTN_COUNT);
+    return ESP_OK;
+}
+
+esp_err_t controller_input_start_i2c(void)
+{
+    /* Add the controller as a device on the sensors I2C bus */
+    i2c_device_config_t dev_cfg = {
+        .dev_addr_length = I2C_ADDR_BIT_LEN_7,
+        .device_address  = CTRL_I2C_ADDR,
+        .scl_speed_hz    = I2C_MASTER_FREQ_HZ,
+    };
+
+    esp_err_t ret = i2c_master_bus_add_device(g_i2c_bus, &dev_cfg, &s_i2c_dev);
+    if (ret != ESP_OK) {
+        ESP_LOGW(TAG, "I2C controller device add failed: %s", esp_err_to_name(ret));
+        return ret;
+    }
+
+    s_i2c_running = true;
+    s_i2c_prev_mask = 0;
+    xTaskCreatePinnedToCore(i2c_poll_task, "ctrl_i2c",
+                            TASK_STACK_CONTROLLER, NULL,
+                            TASK_PRIO_CONTROLLER, &s_i2c_task, TASK_CORE_UI);
+    ESP_LOGI(TAG, "I2C controller source started (addr=0x%02X)", CTRL_I2C_ADDR);
+    return ESP_OK;
+}
+
+esp_err_t controller_input_start_ble(void)
+{
+    s_ble_running = true;
+    s_ble_prev[0] = 0;
+    s_ble_prev[1] = 0;
+    xTaskCreatePinnedToCore(ble_input_task, "ctrl_ble",
+                            TASK_STACK_BLE, NULL,
+                            TASK_PRIO_BLE, &s_ble_task, TASK_CORE_UI);
+    ESP_LOGI(TAG, "BLE controller source started");
+    return ESP_OK;
+}
+
+void controller_input_stop_gpio(void)
+{
+    if (s_gpio_running) {
+        s_gpio_running = false;
+        if (s_gpio_task) vTaskDelete(s_gpio_task);
+        s_gpio_task = NULL;
+    }
+}
+
+void controller_input_stop_i2c(void)
+{
+    if (s_i2c_running) {
+        s_i2c_running = false;
+        if (s_i2c_task) vTaskDelete(s_i2c_task);
+        s_i2c_task = NULL;
+    }
+}
+
+void controller_input_stop_ble(void)
+{
+    if (s_ble_running) {
+        s_ble_running = false;
+        if (s_ble_task) vTaskDelete(s_ble_task);
+        s_ble_task = NULL;
+    }
 }
 
 #endif /* !TEST_HOST */

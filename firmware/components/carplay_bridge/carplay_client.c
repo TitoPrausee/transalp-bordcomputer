@@ -1,0 +1,365 @@
+/*
+ * carplay_client.c — GATT-Client fuer CarPlay-Display
+ *
+ * Der Bordcomputer verbindet sich als GATT-Client (Central) mit dem
+ * gekoppelten CarPlay-Display, entdeckt dessen Service 0x9100 und
+ * abonniert die Notify-Characteristics fuer Navigations-Status und
+ * Musik-Metadaten. Auf derselben Verbindung dient der Bordcomputer
+ * gleichzeitig als GATT-Server (Telemetrie-Service 0x9000).
+ *
+ * Aufbau (NimBLE Client API):
+ *   1. ble_gap_connect zur gespeicherten Display-Adresse
+ *   2. BLE_GAP_EVENT_CONNECT  -> disc_all_chrs ueber den vollen Handle-Bereich
+ *   3. chr_disc_cb             -> Ziel-UUIDs matchen, CCCD schreiben
+ *   4. BLE_GAP_EVENT_NOTIFY_RX -> Daten an carplay_client_on_notify
+ *   5. BLE_GAP_EVENT_DISCONNECT-> Backoff-Reconnect ueber carplay_client_poll
+ *
+ * Siehe docs/CARPLAY-INTEGRATION.md Abschnitt GATT-Client.
+ */
+
+#include "carplay_internal.h"
+#include "carplay_uuids.h"
+
+#include <string.h>
+
+#include "esp_log.h"
+#include "esp_timer.h"
+
+#include "nimble/nimble_port.h"
+#include "host/ble_hs.h"
+
+#include "freertos/FreeRTOS.h"
+#include "freertos/semphr.h"
+
+static const char *TAG = "carplay_cli";
+
+/* ============================================================
+ * Client state
+ * ============================================================ */
+
+static carplay_client_state_t s_state = CP_CLIENT_IDLE;
+static uint16_t s_conn_handle = BLE_HS_CONN_HANDLE_NONE;
+static SemaphoreHandle_t s_state_mutex = NULL;
+
+/* Paired peer for (re)connect */
+static carplay_peer_t s_peer;
+static bool s_peer_valid = false;
+
+/* Discovered characteristic value handles (peer-side 0x9100 service) */
+static uint16_t s_h_nav_status = 0;
+static uint16_t s_h_media_now  = 0;
+
+/* Reconnect backoff */
+static int64_t s_reconnect_at_us = 0;
+static uint8_t s_backoff_step = 0;
+#define CP_RECONNECT_BASE_MS   1000
+#define CP_RECONNECT_MAX_MS    30000
+
+/* Target UUIDs for discovery matching (peer display service 0x9100) */
+static ble_uuid128_t cp_uuid_nav_status = CARPLAY_UUID128(CHR_CP_NAV_STATUS);
+static ble_uuid128_t cp_uuid_media_now  = CARPLAY_UUID128(CHR_CP_MEDIA_NOW);
+
+/* ============================================================
+ * State helpers
+ * ============================================================ */
+
+static void cp_set_state(carplay_client_state_t st)
+{
+    xSemaphoreTake(s_state_mutex, portMAX_DELAY);
+    s_state = st;
+    xSemaphoreGive(s_state_mutex);
+}
+
+carplay_client_state_t carplay_client_get_state(void)
+{
+    carplay_client_state_t st;
+    xSemaphoreTake(s_state_mutex, portMAX_DELAY);
+    st = s_state;
+    xSemaphoreGive(s_state_mutex);
+    return st;
+}
+
+uint16_t carplay_client_get_conn_handle(void)
+{
+    uint16_t h;
+    xSemaphoreTake(s_state_mutex, portMAX_DELAY);
+    h = s_conn_handle;
+    xSemaphoreGive(s_state_mutex);
+    return h;
+}
+
+/* ============================================================
+ * CCCD subscription: enable notifications on a characteristic.
+ *
+ * Writes 0x0001 (LE) to the characteristic's CCCD descriptor, which
+ * is conventionally located at (val_handle + 1) in standard GATT
+ * layouts (documented simplification — see CARPLAY-INTEGRATION.md).
+ * ============================================================ */
+
+static void cp_subscribe(uint16_t conn, uint16_t chr_val_handle)
+{
+    static const uint8_t cccd_notify_le[2] = { 0x01, 0x00 };
+    uint16_t cccd_handle = (uint16_t)(chr_val_handle + 1);
+
+    int rc = ble_gattc_write_flat(conn, cccd_handle,
+                                  cccd_notify_le, sizeof(cccd_notify_le),
+                                  NULL, NULL);
+    if (rc != 0) {
+        ESP_LOGW(TAG, "CCCD write (handle=%u) rc=%d", cccd_handle, rc);
+    }
+}
+
+/* ============================================================
+ * Characteristic discovery callback
+ *
+ * Called once per discovered characteristic. status != 0 signals
+ * completion (BLE_HS_EDONE) or an error; in that case chr is NULL
+ * and we finalize the subscription phase.
+ * ============================================================ */
+
+static int cp_chr_disc_cb(uint16_t conn_handle,
+                          const struct ble_gatt_error *error,
+                          const struct ble_gatt_chr *chr, void *arg)
+{
+    (void)arg;
+    (void)conn_handle;
+
+    if (error == NULL) {
+        return 0;
+    }
+
+    /* Non-zero status => discovery complete or failed */
+    if (error->status != 0) {
+        uint16_t conn = carplay_client_get_conn_handle();
+        if (conn == BLE_HS_CONN_HANDLE_NONE) {
+            return 0;
+        }
+
+        /* Subscribe to whichever target characteristics we found */
+        if (s_h_nav_status != 0) {
+            cp_subscribe(conn, s_h_nav_status);
+        }
+        if (s_h_media_now != 0) {
+            cp_subscribe(conn, s_h_media_now);
+        }
+
+        cp_set_state(CP_CLIENT_CONNECTED);
+        carplay_client_on_connected();
+        ESP_LOGI(TAG, "Discovery done (nav=%u media=%u)",
+                 s_h_nav_status, s_h_media_now);
+        return 0;
+    }
+
+    if (chr == NULL) {
+        return 0;
+    }
+
+    /* Match target UUIDs */
+    if (ble_uuid_cmp(&cp_uuid_nav_status.u, (const ble_uuid_t *)&chr->uuid) == 0) {
+        s_h_nav_status = chr->val_handle;
+    } else if (ble_uuid_cmp(&cp_uuid_media_now.u, (const ble_uuid_t *)&chr->uuid) == 0) {
+        s_h_media_now = chr->val_handle;
+    }
+
+    return 0;
+}
+
+/* ============================================================
+ * GAP event handler (CarPlay client connection)
+ * ============================================================ */
+
+int carplay_client_gap_event(struct ble_gap_event *event, void *arg)
+{
+    (void)arg;
+
+    switch (event->type) {
+    case BLE_GAP_EVENT_CONNECT:
+        if (event->connect.status == 0) {
+            xSemaphoreTake(s_state_mutex, portMAX_DELAY);
+            s_conn_handle = event->connect.conn_handle;
+            xSemaphoreGive(s_state_mutex);
+
+            cp_set_state(CP_CLIENT_DISCOVERING);
+            ESP_LOGI(TAG, "Connected to CarPlay display: handle=%d",
+                     s_conn_handle);
+
+            /* Discover all characteristics, match by UUID */
+            int rc = ble_gattc_disc_all_chrs(s_conn_handle,
+                                             1, 0xFFFF,
+                                             cp_chr_disc_cb, NULL);
+            if (rc != 0) {
+                ESP_LOGW(TAG, "disc_all_chrs rc=%d", rc);
+                ble_gap_terminate(s_conn_handle,
+                                  BLE_ERR_REM_USER_CONN_TERM);
+            }
+        } else {
+            ESP_LOGW(TAG, "CarPlay connect failed: status=%d",
+                     event->connect.status);
+            cp_set_state(CP_CLIENT_RECONNECTING);
+            s_reconnect_at_us = esp_timer_get_time() +
+                                (int64_t)CP_RECONNECT_BASE_MS * 1000;
+        }
+        break;
+
+    case BLE_GAP_EVENT_DISCONNECT:
+        xSemaphoreTake(s_state_mutex, portMAX_DELAY);
+        s_conn_handle = BLE_HS_CONN_HANDLE_NONE;
+        xSemaphoreGive(s_state_mutex);
+
+        s_h_nav_status = 0;
+        s_h_media_now = 0;
+        s_backoff_step = 0;
+
+        carplay_client_on_disconnected();
+
+        if (s_peer_valid) {
+            cp_set_state(CP_CLIENT_RECONNECTING);
+            s_reconnect_at_us = esp_timer_get_time() +
+                                (int64_t)CP_RECONNECT_BASE_MS * 1000;
+            ESP_LOGI(TAG, "Disconnected (reason=%d), will reconnect",
+                     event->disconnect.reason);
+        } else {
+            cp_set_state(CP_CLIENT_IDLE);
+        }
+        break;
+
+    case BLE_GAP_EVENT_NOTIFY_RX: {
+        /* Incoming notification from the CarPlay display */
+        uint16_t conn = carplay_client_get_conn_handle();
+        if (conn == BLE_HS_CONN_HANDLE_NONE) {
+            break;
+        }
+
+        uint8_t buf[128];
+        uint16_t len = 0;
+        int rc = ble_hs_mbuf_to_flat(event->notify_rx.om,
+                                     buf, sizeof(buf), &len);
+        if (rc == 0 && len > 0) {
+            carplay_client_on_notify(event->notify_rx.attr_handle, buf, len);
+        }
+        break;
+    }
+
+    case BLE_GAP_EVENT_CONN_UPDATE:
+        ESP_LOGI(TAG, "Conn params updated");
+        break;
+
+    default:
+        break;
+    }
+
+    return 0;
+}
+
+/* ============================================================
+ * Initiate a connection to the paired CarPlay display
+ * ============================================================ */
+
+static void cp_connect(const carplay_peer_t *peer)
+{
+    if (peer == NULL || !peer->valid) {
+        return;
+    }
+
+    uint8_t own_addr_type;
+    int rc = ble_hs_id_infer_auto(0, &own_addr_type);
+    if (rc != 0) {
+        ESP_LOGW(TAG, "id_infer_auto rc=%d", rc);
+        return;
+    }
+
+    ble_addr_t addr;
+    addr.type = peer->addr_type;
+    memcpy(addr.val, peer->addr, CARPLAY_PEER_ADDR_LEN);
+
+    struct ble_gap_conn_params params = {
+        .itvl_min = 12,   /* 15 ms */
+        .itvl_max = 24,   /* 30 ms */
+        .latency = 0,
+        .supervision_timeout = 400,  /* 4 s */
+    };
+
+    rc = ble_gap_connect(own_addr_type, &addr, 30000 /* 30 s */,
+                         &params, carplay_client_gap_event, NULL);
+    if (rc != 0) {
+        ESP_LOGW(TAG, "ble_gap_connect rc=%d", rc);
+        cp_set_state(CP_CLIENT_RECONNECTING);
+        s_reconnect_at_us = esp_timer_get_time() +
+                            (int64_t)CP_RECONNECT_BASE_MS * 1000;
+    } else {
+        cp_set_state(CP_CLIENT_CONNECTING);
+        ESP_LOGI(TAG, "Connecting to CarPlay display...");
+    }
+}
+
+/* ============================================================
+ * Public client API
+ * ============================================================ */
+
+void carplay_client_init(void)
+{
+    s_state_mutex = xSemaphoreCreateMutex();
+    s_conn_handle = BLE_HS_CONN_HANDLE_NONE;
+    s_state = CP_CLIENT_IDLE;
+    s_peer_valid = false;
+    s_h_nav_status = 0;
+    s_h_media_now = 0;
+    s_backoff_step = 0;
+}
+
+void carplay_client_start(const carplay_peer_t *peer)
+{
+    if (peer == NULL || !peer->valid) {
+        return;
+    }
+
+    memcpy(&s_peer, peer, sizeof(s_peer));
+    s_peer_valid = true;
+    s_backoff_step = 0;
+
+    cp_connect(&s_peer);
+}
+
+void carplay_client_stop(void)
+{
+    s_peer_valid = false;
+    cp_set_state(CP_CLIENT_IDLE);
+
+    uint16_t conn = carplay_client_get_conn_handle();
+    if (conn != BLE_HS_CONN_HANDLE_NONE) {
+        ble_gap_terminate(conn, BLE_ERR_REM_USER_CONN_TERM);
+        xSemaphoreTake(s_state_mutex, portMAX_DELAY);
+        s_conn_handle = BLE_HS_CONN_HANDLE_NONE;
+        xSemaphoreGive(s_state_mutex);
+    }
+}
+
+/*
+ * Reconnect poller — called from carplay_bridge_task.
+ * Implements exponential backoff (1s, 2s, 4s, 8s, max 30s).
+ */
+void carplay_client_poll(void)
+{
+    if (carplay_client_get_state() != CP_CLIENT_RECONNECTING) {
+        return;
+    }
+    if (!s_peer_valid) {
+        return;
+    }
+
+    int64_t now = esp_timer_get_time();
+    if (now < s_reconnect_at_us) {
+        return;
+    }
+
+    /* Backoff: 1s, 2s, 4s, 8s, 16s, capped at 30s */
+    uint32_t delay_ms = CP_RECONNECT_BASE_MS << s_backoff_step;
+    if (delay_ms > CP_RECONNECT_MAX_MS) {
+        delay_ms = CP_RECONNECT_MAX_MS;
+    }
+    if (s_backoff_step < 5) {
+        s_backoff_step++;
+    }
+
+    cp_connect(&s_peer);
+}

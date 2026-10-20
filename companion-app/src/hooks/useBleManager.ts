@@ -38,6 +38,7 @@ export function useBleManager() {
   const setSystemStatus = useAppStore((s) => s.setSystemStatus);
   const setTaskInfo = useAppStore((s) => s.setTaskInfo);
   const setOtaStatus = useAppStore((s) => s.setOtaStatus);
+  const setCarPlayStatus = useAppStore((s) => s.setCarPlayStatus);
 
   // Provider initialisieren — Mock in Development, Real in Produktion
   useEffect(() => {
@@ -65,6 +66,7 @@ export function useBleManager() {
         onSystemStatus: (data) => setSystemStatus(data),
         onTaskInfo: (tasks) => setTaskInfo(tasks),
         onOtaStatus: (status) => setOtaStatus(status),
+        onCarPlayStatus: (status) => setCarPlayStatus(status),
         onRssi: (rssi) => setBleRssi(rssi),
         onMtu: (mtu) => setBleMtu(mtu),
       });
@@ -94,6 +96,7 @@ export function useBleManager() {
     setSystemStatus,
     setTaskInfo,
     setOtaStatus,
+    setCarPlayStatus,
   ]);
 
   const reconnect = useCallback(async () => {
@@ -196,6 +199,21 @@ export function useBleManager() {
     }
   }, []);
 
+  const readCarPlayStatus = useCallback(async () => {
+    if (providerRef.current) {
+      const status = await providerRef.current.readCarPlayStatus();
+      if (status) setCarPlayStatus(status);
+      return status;
+    }
+    return null;
+  }, [setCarPlayStatus]);
+
+  const sendCarPlayControl = useCallback(async (cmd: CarPlayControl) => {
+    if (providerRef.current) {
+      await providerRef.current.sendCarPlayControl(cmd);
+    }
+  }, []);
+
   return {
     reconnect,
     disconnect,
@@ -212,5 +230,7 @@ export function useBleManager() {
     verifyOta,
     exportConfig,
     importConfig,
+    readCarPlayStatus,
+    sendCarPlayControl,
   };
 }

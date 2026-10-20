@@ -46,7 +46,9 @@
 #include "sensors.h"
 #include "gps.h"
 #include "ble.h"
+#include "carplay_bridge.h"
 #include "diagnostics.h"
+#include "hid_controller.h"
 #include "ota_update.h"
 
 static const char *TAG = "main";
@@ -67,6 +69,7 @@ static TaskHandle_t s_task_power      = NULL;
 static TaskHandle_t s_task_logger     = NULL;
 static TaskHandle_t s_task_ota        = NULL;
 static TaskHandle_t s_task_diagnostics = NULL;
+static TaskHandle_t s_task_carplay    = NULL;
 
 /* ============================================================
  * Watchdog
@@ -186,7 +189,24 @@ static bool init_step_ble(void)
 {
     ESP_LOGI(TAG, "Init: BLE (NimBLE + GATT server)");
     ble_init();
+    carplay_bridge_init();
     ESP_LOGI(TAG, "  BLE advertising started");
+    return true;
+}
+
+static bool init_step_controller(void)
+{
+    ESP_LOGI(TAG, "Init: Lenker-Controller (HID: GPIO + I2C + BLE)");
+    hid_controller_init();
+    uint8_t sources = (1 << CONTROLLER_SRC_GPIO)
+                    | (1 << CONTROLLER_SRC_I2C)
+                    | (1 << CONTROLLER_SRC_BLE);
+    esp_err_t ret = hid_controller_start(sources);
+    if (ret != ESP_OK) {
+        ESP_LOGW(TAG, "  Controller start returned %s", esp_err_to_name(ret));
+        return false;
+    }
+    ESP_LOGI(TAG, "  HID controller started (GPIO + I2C + BLE)");
     return true;
 }
 
@@ -475,6 +495,10 @@ static void create_tasks(void)
         TASK_STACK_OTA, NULL, TASK_PRIO_OTA,
         &s_task_ota, TASK_CORE_UI);
 
+    xTaskCreatePinnedToCore(carplay_bridge_task, "carplay",
+        TASK_STACK_CARPLAY, NULL, TASK_PRIO_CARPLAY,
+        &s_task_carplay, TASK_CORE_UI);
+
     /* Watchdog subscription for long-running tasks */
     ESP_LOGI(TAG, "Subscribing tasks to watchdog...");
     wdt_subscribe(s_task_sensor,      "sensor");
@@ -485,6 +509,7 @@ static void create_tasks(void)
     wdt_subscribe(s_task_power,       "power");
     wdt_subscribe(s_task_logger,      "logger");
     wdt_subscribe(s_task_ota,         "ota");
+    wdt_subscribe(s_task_carplay,     "carplay");
 
     ESP_LOGI(TAG, "All tasks created and WDT-subscribed");
 }
@@ -546,10 +571,13 @@ void app_main(void)
     /* 8. BLE */
     init_step_ble();
 
-    /* 9. Diagnostics (DTC + self-test + console) */
+    /* 9. Lenker-Controller (needs sensors I2C bus + BLE stack) */
+    init_step_controller();
+
+    /* 10. Diagnostics (DTC + self-test + console) */
     init_step_diagnostics();
 
-    /* 10. OTA (boot-state check, rollback) */
+    /* 11. OTA (boot-state check, rollback) */
     init_step_ota();
 
     /* Create all FreeRTOS tasks */

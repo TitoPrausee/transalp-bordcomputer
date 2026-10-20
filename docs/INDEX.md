@@ -36,6 +36,7 @@ Nicht sicher, wo Sie anfangen sollen? Waehlen Sie Ihr Ziel:
 |---|---|---|
 | DEVELOPER-QUICKSTART | Von 0 zu laufendem Build in unter 30 Minuten. ESP-IDF-Setup, Repo-Klonen, Firmware-Build, Companion-App-Build, Mockups, Tests, Debugging. | [docs/DEVELOPER-QUICKSTART.md](DEVELOPER-QUICKSTART.md) |
 | FIRMWARE-GUIDE | Firmware-Engineering-Guide: Build-System, 10 Komponenten, FreeRTOS Tasks, Debugging, OTA-Update-Architektur und Code-Struktur. | [docs/FIRMWARE-GUIDE.md](FIRMWARE-GUIDE.md) |
+| CARPLAY-INTEGRATION | CarPlay BLE-Bridge: GATT Service 0x9000 (Telemetrie), GATT Client 0x9100 (Nav/Media), Pairing, Event-Bus, NimBLE Central Role. | [docs/CARPLAY-INTEGRATION.md](CARPLAY-INTEGRATION.md) |
 | API-REFERENCE | BLE GATT Interface-Referenz: 8 Services, 33 Characteristics, UUIDs, Datenformate, OTA-Protokoll. Die vollstaendige BLE-Schnittstellendefinition. | [docs/API-REFERENCE.md](API-REFERENCE.md) |
 | WIDGET-CATALOG | E-Paper Widget-Katalog: 18 Widgets, 6 Screen-Layouts, Rendering-Pipeline und Entwicklungs-Guide fuer eigene Widgets. | [docs/WIDGET-CATALOG.md](WIDGET-CATALOG.md) |
 

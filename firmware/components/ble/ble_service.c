@@ -14,6 +14,7 @@
 #include "ble.h"
 #include "ble_internal.h"
 #include "gatt_uuids.h"
+#include "carplay_bridge.h"
 
 #include <string.h>
 
@@ -595,6 +596,9 @@ void ble_init(void)
         ESP_LOGE(TAG, "gatts_add_svcs rc=%d", rc);
         return;
     }
+
+    /* Register CarPlay-Bridge GATT service (0x9000) before host start */
+    carplay_bridge_register_gatt();
 
     /* Set sync and reset callbacks */
     ble_hs_cfg.sync_cb = ble_on_sync;

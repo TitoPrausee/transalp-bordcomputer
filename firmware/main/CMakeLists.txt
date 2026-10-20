@@ -7,6 +7,7 @@ idf_component_register(
         sensors
         storage
         ble
+        carplay_bridge
         power
         diagnostics
         ota
