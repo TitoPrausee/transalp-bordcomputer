@@ -38,6 +38,7 @@
 #include "diagnostics.h"
 #include "event_bus.h"
 #include "ota_update.h"
+#include "storage.h"
 
 static const char *TAG = "ble_cb";
 
@@ -587,14 +588,62 @@ void ble_on_gps_update(void *data, uint16_t len)
 
 static void process_config_write(const uint8_t *data, uint16_t len)
 {
-    ESP_LOGI(TAG, "Config write: %d bytes", len);
-    /* TODO: Parse JSON config chunk and apply via storage component */
+    if (data == NULL || len == 0) {
+        ESP_LOGW(TAG, "Config write: empty payload");
+        return;
+    }
+
+    /* Ensure null-terminated JSON string */
+    char *json_buf = malloc(len + 1);
+    if (json_buf == NULL) {
+        ESP_LOGE(TAG, "Config write: out of memory (%d bytes)", len + 1);
+        return;
+    }
+    memcpy(json_buf, data, len);
+    json_buf[len] = '\0';
+
+    ESP_LOGI(TAG, "Config write: %d bytes JSON", len);
+    int rc = config_import_json(json_buf);
+    if (rc != 0) {
+        ESP_LOGW(TAG, "Config write: JSON import failed (rc=%d)", rc);
+    } else {
+        ESP_LOGI(TAG, "Config write: applied successfully");
+    }
+
+    free(json_buf);
 }
 
 static void process_config_import(const uint8_t *data, uint16_t len)
 {
-    ESP_LOGI(TAG, "Config import: %d bytes", len);
-    /* TODO: Binary config import via storage component */
+    if (data == NULL || len < sizeof(device_config_t)) {
+        ESP_LOGW(TAG, "Config import: payload too small (%d < %d)",
+                 len, (int)sizeof(device_config_t));
+        return;
+    }
+
+    ESP_LOGI(TAG, "Config import: %d bytes binary", len);
+
+    device_config_t imported;
+    memcpy(&imported, data, sizeof(device_config_t));
+
+    /* Validate version before applying */
+    if (imported.version > CONFIG_VERSION) {
+        ESP_LOGW(TAG, "Config import: version %d > current %d, migrating",
+                 imported.version, CONFIG_VERSION);
+        config_migrate(imported.version);
+    }
+
+    /* Apply imported config and persist */
+    device_config_t *cfg = config_get();
+    memcpy(cfg, &imported, sizeof(device_config_t));
+    cfg->version = CONFIG_VERSION;
+
+    esp_err_t err = config_save_all();
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "Config import: save failed (%s)", esp_err_to_name(err));
+    } else {
+        ESP_LOGI(TAG, "Config import: applied and persisted");
+    }
 }
 
 static void process_bond_delete(const uint8_t *data, uint16_t len)
