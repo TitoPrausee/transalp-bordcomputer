@@ -280,7 +280,7 @@ int ble_gatt_access_cb(uint16_t conn_handle, uint16_t attr_handle,
 
     /* Handle write operations */
     if (ctxt->op == BLE_GATT_ACCESS_OP_WRITE_CHR) {
-        return ble_handle_write(attr_handle, ctxt);
+        return ble_handle_write(conn_handle, attr_handle, ctxt);
     }
 
     return BLE_ATT_ERR_UNLIKELY;
@@ -415,7 +415,7 @@ int ble_handle_read(uint16_t attr_handle, struct ble_gatt_access_ctxt *ctxt)
  * Write handler — dispatches to command queue
  * ============================================================ */
 
-int ble_handle_write(uint16_t attr_handle, struct ble_gatt_access_ctxt *ctxt)
+int ble_handle_write(uint16_t conn_handle, uint16_t attr_handle, struct ble_gatt_access_ctxt *ctxt)
 {
     uint16_t len = OS_MBUF_PKTLEN(ctxt->om);
     if (len > 244) {

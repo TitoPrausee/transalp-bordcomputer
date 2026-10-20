@@ -18,7 +18,6 @@
 #include "board_config.h"
 #include "esp_log.h"
 #include "esp_timer.h"
-#include "esp_rom/esp_rom_sys.h"
 #include "driver/gpio.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -61,7 +60,7 @@ static void onewire_set_output(void)
 
 static void onewire_delay_us(uint32_t us)
 {
-    esp_rom_delay_us(us);
+    ets_delay_us(us);
 }
 
 static bool onewire_reset(void)
