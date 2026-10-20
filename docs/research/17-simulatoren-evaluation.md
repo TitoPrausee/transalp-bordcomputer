@@ -85,8 +85,8 @@ Kommerzielle Motorrad-Simulatoren gliedern sich in zwei Lager: (a) **Fahrer-Trai
 - **Kosten:** Enterprise (sechs-stellig+).
 - **Fit fuer Projekt:** **Nein.**
 
-#### Bosch MSC (Motorcycle Stability Control) — nicht verifizierbar
-- Produkt ist Branchenbekannt, aber die Bosch-Mobility-Seiten lieferten bei der Recherche 403/404. **Konnte nicht web-verifiziert werden.** Selbst wenn verfuegbar: Test-Bench fuer MSC haette nur Relevanz, wenn das Bordcomputer-Projekt die ABS/MSC-ECU des Motorrads anbinden wuerde — beim rein mechanischen PD06 nicht der Fall.
+#### Motorcycle SC (major supplier) (Motorcycle Stability Control) — nicht verifizierbar
+- Produkt ist Branchenbekannt, aber die Supplier-Mobility-Seiten lieferten bei der Recherche 403/404. **Konnte nicht web-verifiziert werden.** Selbst wenn verfuegbar: Test-Bench fuer MSC haette nur Relevanz, wenn das Bordcomputer-Projekt die ABS/MSC-ECU des Motorrads anbinden wuerde — beim rein mechanischen PD06 nicht der Fall.
 
 ### 2.3 Empfehlung Bereich 1
 
@@ -250,7 +250,7 @@ Die App (`companion-app/`) verwendet **`react-native-ble-plx` ^3.2.0**. Es exist
 
 ### 5.3 Explizit NICHT empfohlen
 
-- **Kommerzielle Motorrad-Simulatoren** (Honda SMARTrainer, AVL/FAAC/CAE/Virage/Bosch MSC): kein Fit fuer ein rein mechanisches PD06-Zubehoerprojekt ohne Motorrad-ECU; Budget sechs- bis siebenstellig; keine Embedded/App-Schnittstelle.
+- **Kommerzielle Motorrad-Simulatoren** (Honda SMARTrainer, AVL/FAAC/CAE/Virage/Motorcycle SC (major supplier)): kein Fit fuer ein rein mechanisches PD06-Zubehoerprojekt ohne Motorrad-ECU; Budget sechs- bis siebenstellig; keine Embedded/App-Schnittstelle.
 - **CARLA** aktuell: kein Motorrad-Actor, GPU-Overkill.
 - **Externes `jest-mock-ble`-Paket:** ueberfluessig; `BleProvider`-Abstraktion im Bestand ist die bessere Loesung.
 
@@ -300,4 +300,4 @@ Bestaetigt: Simulator lauffaehig, Sensor-Modell plausibel (Leerlauf-RPM, kalter 
 - Honda SMARTrainer: https://global.honda/safety/ , https://en.wikipedia.org/wiki/Motorcycle_training
 - AVL: https://www.avl.com/en/about-avl
 
-Nicht verifizierbar: Bluetility, gattacker, btlejack, sniffle, Bosch MSC (Seiten 403/404), ELM327/python-OBD/obd-sim.
+Nicht verifizierbar: Bluetility, gattacker, btlejack, sniffle, Motorcycle SC (major supplier) (Seiten 403/404), ELM327/python-OBD/obd-sim.

@@ -995,8 +995,8 @@ Bestellgrundlage fuer Pick&Place bei JLCPCB/LCSC-Assembly.
 | Bauteil                  | Hersteller   | MPN                        | Footprint      | BOM-Preis |
 |--------------------------|--------------|----------------------------|----------------|-----------|
 | ESP32-S3-WROOM-1         | Espressif    | ESP32-S3-WROOM-1-N8R2*     | Module         | 5,40 EUR  |
-| IMU                      | Bosch        | BMI270                     | LGA-14         | 5,00 EUR  |
-| Barometer                | Bosch        | BMP390 (BMP388 obsolete)   | LGA-10         | 3,50 EUR  |
+| IMU                      | OEM          | BMI270                     | LGA-14         | 5,00 EUR  |
+| Barometer                | OEM          | BMP390 (BMP388 obsolete)   | LGA-10         | 3,50 EUR  |
 | GPS-Modul                | u-blox        | NEO-M9N-00B               | Module         | 24,60 EUR |
 | Buck-Regler              | Monolithic Power | MP1584EN                | SOIC-8 / Modul | 1,50 EUR  |
 | LDO 3,3V                 | Holtek       | HT7333-3.3                | SOT-89         | 0,50 EUR  |

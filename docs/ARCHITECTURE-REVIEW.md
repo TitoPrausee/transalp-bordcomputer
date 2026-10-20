@@ -152,8 +152,7 @@ that dispatches the corresponding `APP_EVENT_*` for all 18 overlapping
 event bits. Subscribers in `main.c` that previously called
 `event_bus_set()` from within app_event callbacks were cleaned up to
 prevent infinite loops. New `APP_EVENT_CARPLAY_CONNECTED/DISCONNECTED`
-types added to cover all event_bus bits. 22 host tests pass (12 event_bus
-+ 10 bridge integration).
+types added to cover all event_bus bits. 22 host tests pass (12 event_bus and 10 bridge integration).
 
 ### H2. No OTA tests
 
