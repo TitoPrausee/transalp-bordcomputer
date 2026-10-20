@@ -46,7 +46,7 @@ Two BLE roles coexist on one NimBLE stack (max 2 connections):
 
 ## 3. Critical Gaps (release blockers)
 
-### C1. BLE OTA path is non-functional (TODO)
+### C1. BLE OTA path is non-functional (TODO) — RESOLVED (TOT-33)
 
 `firmware/components/ble/ble_callbacks.c:695` — `process_ota_data()`:
 ```c
@@ -64,7 +64,7 @@ event-bus bit-flags and never drives the OTA state machine.
 **Impact:** OTA-over-BLE does not work. **Fix:** wire both callbacks to the OTA
 component API. (Follow-up FU-5/FU-6.)
 
-### C2. OTA signature verification disabled
+### C2. OTA signature verification disabled — RESOLVED (TOT-34)
 
 `firmware/components/ota/ota_secure_boot.c:63` — `ota_public_key_der` is an
 all-zero placeholder. `ota_secure_verify_signature()` detects it and returns
@@ -77,7 +77,7 @@ Anti-rollback uses a RAM variable (`s_efuse_version_counter`), not eFuse
 signature would be accepted in the current build. **Release blocker.**
 (Follow-up FU-7/FU-8.)
 
-### C3. Companion-app / firmware BLE contract divergence
+### C3. Companion-app / firmware BLE contract divergence — RESOLVED (TOT-35/TOT-40)
 
 The app (`companion-app/src/core/ble/gatt-uuids.ts`) declares 4 characteristics
 the firmware does not implement, and collides on the CarPlay service:
@@ -94,7 +94,7 @@ the firmware does not implement, and collides on the CarPlay service:
 **Impact:** TOT-31 app integration is blocked until reconciled. See
 `docs/BLE-INTERFACE-SPEC.md` §10–11. (Follow-up FU-10.)
 
-### C4. Controller → CarPlay bridge not wired
+### C4. Controller → CarPlay bridge not wired — RESOLVED (TOT-36)
 
 Lenker-Controller media buttons dispatch `APP_EVENT_CTRL_MEDIA_NEXT/PREV` on the
 payload event loop, but `carplay_bridge` subscribed to **no** `APP_EVENT_CTRL_*`.
@@ -111,7 +111,7 @@ GATT service discovery. Mapping is unit-tested in `test_carplay_media.c`.
 
 **Impact:** core UX feature non-functional. (Follow-up FU-4.)
 
-### C5. Simulator speaks a different telemetry format
+### C5. Simulator speaks a different telemetry format — RESOLVED (TOT-37)
 
 `tools/simulator/mock_ble.py set_telemetry_data()` packs
 `<HHBBBhhBxxxxx` (rpm, speed, temp, fuel, gear, roll, pitch, flags) — different
@@ -154,7 +154,7 @@ event bits. Subscribers in `main.c` that previously called
 prevent infinite loops. New `APP_EVENT_CARPLAY_CONNECTED/DISCONNECTED`
 types added to cover all event_bus bits. 22 host tests pass (12 event_bus and 10 bridge integration).
 
-### H2. No OTA tests
+### H2. No OTA tests — RESOLVED (TOT-39)
 
 No `test_ota*.c`. The state machine, NVS resume, CRC, SHA-256, rollback, and
 secure-boot paths are entirely untested. The host-test build infrastructure
