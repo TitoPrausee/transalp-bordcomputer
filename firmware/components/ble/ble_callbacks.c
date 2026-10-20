@@ -80,8 +80,8 @@ typedef struct __attribute__((packed)) {
     uint32_t timestamp;
 } dtc_binary_t;
 
-_Static_assert(sizeof(dtc_binary_t) == 6,
-               "DTC entry must be 6 bytes");
+_Static_assert(sizeof(dtc_binary_t) == 7,
+               "DTC entry must be 7 bytes");
 
 /* Sensor status (5 bytes) */
 typedef struct __attribute__((packed)) {
@@ -212,17 +212,8 @@ static uint16_t build_dtc_list(dtc_binary_t *out, uint8_t max_entries)
 
     for (uint8_t i = 0; i < count; i++) {
         out[i].code = (uint16_t)entries[i].code;
-        /* Map DTC codes to severity */
-        if (entries[i].code == DTC_BATTERY_CRITICAL ||
-            entries[i].code == DTC_OVERTEMPERATURE) {
-            out[i].severity = DTC_SEV_CRITICAL;
-        } else if (entries[i].code == DTC_BATTERY_LOW ||
-                   entries[i].code == DTC_SD_WRITE_FAILED) {
-            out[i].severity = DTC_SEV_WARNING;
-        } else {
-            out[i].severity = DTC_SEV_INFO;
-        }
-        out[i].timestamp = entries[i].timestamp_ms / 1000;
+        out[i].severity = (uint8_t)entries[i].severity;
+        out[i].timestamp = (uint32_t)(entries[i].last_occurrence_ms / 1000);
     }
 
     return count * sizeof(dtc_binary_t);
@@ -245,7 +236,7 @@ static void ble_notify(uint16_t attr_handle, const void *data, uint16_t len)
         return;
     }
 
-    int rc = ble_gattc_notify(conn, attr_handle, om);
+    int rc = ble_gattc_notify_custom(conn, attr_handle, om);
     if (rc != 0) {
         ESP_LOGW(TAG, "notify rc=%d handle=%d", rc, attr_handle);
     }
