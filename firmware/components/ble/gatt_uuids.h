@@ -170,10 +170,10 @@ enum nav_status_val {
  * DTC severity (CHR_DTC_LIST byte 2)
  * ============================================================ */
 
-enum dtc_severity {
-    DTC_SEV_INFO     = 0,
-    DTC_SEV_WARNING  = 1,
-    DTC_SEV_CRITICAL = 2,
+enum dtc_severity_wire {
+    DTC_WIRE_SEV_INFO     = 0,
+    DTC_WIRE_SEV_WARNING  = 1,
+    DTC_WIRE_SEV_CRITICAL = 2,
 };
 
 #endif /* _GATT_UUIDS_H_ */
