@@ -1,15 +1,18 @@
 {
   "expo": {
-    "name": "Transalp Companion",
-    "slug": "transalp-companion",
-    "version": "0.1.0",
+    "name": "Transalp Bordcomputer",
+    "slug": "transalp-bordcomputer",
+    "version": "1.0.0",
     "orientation": "portrait",
-    "scheme": "transalp-companion",
+    "scheme": "transalp-bordcomputer",
     "userInterfaceStyle": "dark",
     "splash": {
-      "backgroundColor": "#000000"
+      "backgroundColor": "#000000",
+      "resizeMode": "contain"
     },
+    "icon": "./assets/icon.png",
     "ios": {
+      "bundleIdentifier": "com.titoprausee.transalp-bordcomputer",
       "supportsTablet": true,
       "infoPlist": {
         "NSBluetoothAlwaysUsageDescription": "Die App benoetigt Bluetooth, um sich mit dem Bordcomputer zu verbinden.",
@@ -18,6 +21,11 @@
       }
     },
     "android": {
+      "package": "com.titoprausee.transalpbordcomputer",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0a0a0c"
+      },
       "permissions": [
         "BLUETOOTH",
         "BLUETOOTH_ADMIN",
@@ -26,6 +34,17 @@
         "ACCESS_FINE_LOCATION",
         "ACCESS_COARSE_LOCATION"
       ]
+    },
+    "extra": {
+      "eas": {
+        "projectId": "transalp-bordcomputer"
+      }
+    },
+    "updates": {
+      "url": "https://u.expo.dev/transalp-bordcomputer"
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
     }
   }
 }
