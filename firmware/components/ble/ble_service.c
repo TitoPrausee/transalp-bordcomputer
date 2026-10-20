@@ -424,8 +424,8 @@ ble_gap_event_handler(struct ble_gap_event *event, void *arg)
             xSemaphoreTake(s_conn_mutex, portMAX_DELAY);
             s_conn_handle = event->connect.conn_handle;
             if (peer_known) {
-                memcpy(s_peer_addr, desc.peer_id_addr, 6);
-                s_peer_addr_type = desc.peer_id_addr_type;
+                memcpy(s_peer_addr, desc.peer_id_addr.val, 6);
+                s_peer_addr_type = desc.peer_id_addr.type;
             } else {
                 memset(s_peer_addr, 0, sizeof(s_peer_addr));
                 s_peer_addr_type = 0;
@@ -438,10 +438,10 @@ ble_gap_event_handler(struct ble_gap_event *event, void *arg)
                 ESP_LOGI(TAG, "Companion-app connected: handle=%d "
                          "peer=%02X:%02X:%02X:%02X:%02X:%02X type=%d",
                          s_conn_handle,
-                         desc.peer_id_addr[5], desc.peer_id_addr[4],
-                         desc.peer_id_addr[3], desc.peer_id_addr[2],
-                         desc.peer_id_addr[1], desc.peer_id_addr[0],
-                         desc.peer_id_addr_type);
+                         desc.peer_id_addr.val[5], desc.peer_id_addr.val[4],
+                         desc.peer_id_addr.val[3], desc.peer_id_addr.val[2],
+                         desc.peer_id_addr.val[1], desc.peer_id_addr.val[0],
+                         desc.peer_id_addr.type);
             } else {
                 ESP_LOGI(TAG, "Companion-app connected: handle=%d "
                          "(peer addr unavailable)", s_conn_handle);
@@ -603,8 +603,8 @@ bool ble_conn_is_valid(uint16_t conn_handle)
         return false;
     }
 
-    return memcmp(desc.peer_id_addr, expected_addr, 6) == 0 &&
-           desc.peer_id_addr_type == expected_type;
+    return memcmp(desc.peer_id_addr.val, expected_addr, 6) == 0 &&
+           desc.peer_id_addr.type == expected_type;
 }
 
 /* ============================================================

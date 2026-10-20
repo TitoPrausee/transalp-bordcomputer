@@ -138,8 +138,8 @@ bool carplay_client_conn_is_valid(uint16_t conn_handle)
         return false;
     }
 
-    return memcmp(desc.peer_id_addr, expected_addr, 6) == 0 &&
-           desc.peer_id_addr_type == expected_addr_type;
+    return memcmp(desc.peer_id_addr.val, expected_addr, 6) == 0 &&
+           desc.peer_id_addr.type == expected_addr_type;
 }
 
 /* ============================================================
@@ -343,10 +343,10 @@ int carplay_client_gap_event(struct ble_gap_event *event, void *arg)
                 ESP_LOGI(TAG, "CarPlay display connected: handle=%d "
                          "peer=%02X:%02X:%02X:%02X:%02X:%02X type=%d",
                          s_conn_handle,
-                         desc.peer_id_addr[5], desc.peer_id_addr[4],
-                         desc.peer_id_addr[3], desc.peer_id_addr[2],
-                         desc.peer_id_addr[1], desc.peer_id_addr[0],
-                         desc.peer_id_addr_type);
+                         desc.peer_id_addr.val[5], desc.peer_id_addr.val[4],
+                         desc.peer_id_addr.val[3], desc.peer_id_addr.val[2],
+                         desc.peer_id_addr.val[1], desc.peer_id_addr.val[0],
+                         desc.peer_id_addr.type);
             } else {
                 ESP_LOGI(TAG, "CarPlay display connected: handle=%d",
                          s_conn_handle);

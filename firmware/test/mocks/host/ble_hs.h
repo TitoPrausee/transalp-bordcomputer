@@ -41,6 +41,16 @@ struct ble_gatt_access_ctxt {
 #define BLE_UUID_TYPE_128  128
 
 /*
+ * BLE device address — matches NimBLE's struct ble_addr used in
+ * ESP-IDF v5.x.  The .val field holds the 6-byte address and .type
+ * holds the address type (public, random, etc.).
+ */
+struct ble_addr {
+    uint8_t type;
+    uint8_t val[6];
+};
+
+/*
  * GAP connection descriptor — used by ble_gap_conn_find() to look up
  * the peer address for a given connection handle.  The host test mock
  * provides a global mock variable so tests can simulate connected /
@@ -48,8 +58,7 @@ struct ble_gatt_access_ctxt {
  */
 struct ble_gap_conn_desc {
     uint16_t conn_handle;
-    uint8_t  peer_id_addr_type;
-    uint8_t  peer_id_addr[6];
+    struct ble_addr peer_id_addr;
 };
 
 /*
