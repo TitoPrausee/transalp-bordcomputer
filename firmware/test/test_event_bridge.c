@@ -275,6 +275,91 @@ void test_bridge_unmapped_event_no_dispatch(void)
 }
 
 /* ============================================================
+ * Drop-counter / overflow-metrics tests (TOT-48)
+ *
+ * The host mock does not run the event-loop task, so dispatched
+ * events accumulate in the queue until it fills.  This makes it
+ * straightforward to induce drops and assert the counters.
+ * ============================================================ */
+
+void test_drop_counter_increments_on_full_queue(void)
+{
+    app_event_loop_stats_t st;
+
+    /* Fill the queue to capacity (loop task does not run in the mock). */
+    for (int i = 0; i < APP_EVENT_QUEUE_LEN; i++) {
+        app_event_dispatch_simple(APP_EVENT_SENSOR_UPDATE);
+    }
+
+    /* Next dispatch must be dropped. */
+    app_event_dispatch_simple(APP_EVENT_GPS_UPDATE);
+
+    app_event_loop_get_stats(&st);
+    TEST_ASSERT_EQUAL_UINT32(APP_EVENT_QUEUE_LEN, st.dispatched_events);
+    TEST_ASSERT_EQUAL_UINT32(1, st.dropped_events);
+    TEST_ASSERT_EQUAL_UINT32(APP_EVENT_GPS_UPDATE, st.last_drop_type);
+    TEST_ASSERT_EQUAL_UINT32(APP_EVENT_QUEUE_LEN, st.queue_depth);
+}
+
+void test_no_drops_when_queue_has_space(void)
+{
+    app_event_loop_stats_t st;
+
+    for (int i = 0; i < 5; i++) {
+        app_event_dispatch_simple(APP_EVENT_SENSOR_UPDATE);
+    }
+
+    app_event_loop_get_stats(&st);
+    TEST_ASSERT_EQUAL_UINT32(5, st.dispatched_events);
+    TEST_ASSERT_EQUAL_UINT32(0, st.dropped_events);
+    TEST_ASSERT_EQUAL_UINT32(0, st.last_drop_type);
+}
+
+void test_drop_warning_is_rate_limited(void)
+{
+    app_event_loop_stats_t st;
+
+    /* Fill the queue, then burst many drops within one rate-limit window. */
+    for (int i = 0; i < APP_EVENT_QUEUE_LEN; i++) {
+        app_event_dispatch_simple(APP_EVENT_SENSOR_UPDATE);
+    }
+    for (int i = 0; i < 20; i++) {
+        app_event_dispatch_simple(APP_EVENT_SENSOR_UPDATE);
+    }
+
+    app_event_loop_get_stats(&st);
+    TEST_ASSERT_EQUAL_UINT32(20, st.dropped_events);
+    /* All 20 drops happen within a single ~1ms window, so only one
+     * rate-limited warning should have been emitted. */
+    TEST_ASSERT_EQUAL_UINT32(1, st.drop_warn_count);
+}
+
+void test_drop_counter_reset(void)
+{
+    app_event_loop_stats_t st;
+
+    /* Induce at least one drop. */
+    for (int i = 0; i < APP_EVENT_QUEUE_LEN; i++) {
+        app_event_dispatch_simple(APP_EVENT_SENSOR_UPDATE);
+    }
+    app_event_dispatch_simple(APP_EVENT_GPS_UPDATE);
+
+    app_event_loop_get_stats(&st);
+    TEST_ASSERT_EQUAL_UINT32(1, st.dropped_events);
+    TEST_ASSERT(st.dispatched_events > 0);
+
+    app_event_loop_reset_stats();
+
+    app_event_loop_get_stats(&st);
+    TEST_ASSERT_EQUAL_UINT32(0, st.dropped_events);
+    TEST_ASSERT_EQUAL_UINT32(0, st.dispatched_events);
+    TEST_ASSERT_EQUAL_UINT32(0, st.drop_warn_count);
+    TEST_ASSERT_EQUAL_UINT32(0, st.last_drop_type);
+    /* queue_depth is a config value, not reset. */
+    TEST_ASSERT_EQUAL_UINT32(APP_EVENT_QUEUE_LEN, st.queue_depth);
+}
+
+/* ============================================================
  * Test Runner
  * ============================================================ */
 int main(void)
@@ -291,6 +376,11 @@ int main(void)
     RUN_TEST(test_bridge_carplay_connected);
     RUN_TEST(test_bridge_multiple_bits);
     RUN_TEST(test_bridge_unmapped_event_no_dispatch);
+
+    RUN_TEST(test_drop_counter_increments_on_full_queue);
+    RUN_TEST(test_no_drops_when_queue_has_space);
+    RUN_TEST(test_drop_warning_is_rate_limited);
+    RUN_TEST(test_drop_counter_reset);
 
     return UNITY_END();
 }

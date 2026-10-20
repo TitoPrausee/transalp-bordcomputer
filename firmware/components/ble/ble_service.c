@@ -50,7 +50,7 @@ static const char *TAG = "ble_svc";
 #define BLE_CONN_INTERVAL_MAX   24   /* 30 ms */
 #define BLE_CONN_LATENCY        0
 #define BLE_CONN_TIMEOUT        400  /* 4 s (400 * 10 ms) */
-#define BLE_MAX_CONNECTIONS     1
+#define BLE_MAX_CONNECTIONS     2  /* 1 companion-app (peripheral) + 1 CarPlay (central) */
 
 /* ============================================================
  * Connection state
@@ -59,6 +59,16 @@ static const char *TAG = "ble_svc";
 static uint16_t s_conn_handle = BLE_HS_CONN_HANDLE_NONE;
 static bool s_initialized = false;
 static SemaphoreHandle_t s_conn_mutex = NULL;
+
+/* Peer address of the active companion-app connection.  Stored when a
+ * peripheral-role connection comes up and used by ble_conn_is_valid()
+ * to guard against conn-handle reuse races (H4).  When the companion
+ * app disconnects, the handle is freed and NimBLE may reuse the same
+ * numeric handle for the CarPlay central connection.  Comparing the
+ * peer address prevents server-side notifies from being sent to the
+ * wrong connection. */
+static uint8_t s_peer_addr[6] = {0};
+static uint8_t s_peer_addr_type = 0;
 
 /* CCCD subscription tracking */
 static bool s_cccd_telemetry = false;
@@ -407,12 +417,40 @@ ble_gap_event_handler(struct ble_gap_event *event, void *arg)
     switch (event->type) {
     case BLE_GAP_EVENT_CONNECT:
         if (event->connect.status == 0) {
+            struct ble_gap_conn_desc desc;
+            bool peer_known = (ble_gap_conn_find(event->connect.conn_handle,
+                                                &desc) == 0);
+
             xSemaphoreTake(s_conn_mutex, portMAX_DELAY);
             s_conn_handle = event->connect.conn_handle;
+            if (peer_known) {
+                memcpy(s_peer_addr, desc.peer_id_addr, 6);
+                s_peer_addr_type = desc.peer_id_addr_type;
+            } else {
+                memset(s_peer_addr, 0, sizeof(s_peer_addr));
+                s_peer_addr_type = 0;
+            }
             xSemaphoreGive(s_conn_mutex);
 
             event_bus_set(EVT_BLE_CONNECTED);
-            ESP_LOGI(TAG, "Connected: handle=%d", s_conn_handle);
+
+            if (peer_known) {
+                ESP_LOGI(TAG, "Companion-app connected: handle=%d "
+                         "peer=%02X:%02X:%02X:%02X:%02X:%02X type=%d",
+                         s_conn_handle,
+                         desc.peer_id_addr[5], desc.peer_id_addr[4],
+                         desc.peer_id_addr[3], desc.peer_id_addr[2],
+                         desc.peer_id_addr[1], desc.peer_id_addr[0],
+                         desc.peer_id_addr_type);
+            } else {
+                ESP_LOGI(TAG, "Companion-app connected: handle=%d "
+                         "(peer addr unavailable)", s_conn_handle);
+            }
+
+            /* Stop advertising so a second peripheral connection cannot
+             * overwrite s_conn_handle.  The second NimBLE slot is reserved
+             * for the CarPlay central connection (carplay_client.c). */
+            ble_gap_adv_stop();
 
             /* Request larger MTU for chunked transfers */
             ble_att_set_preferred_mtu(BLE_MTU_SIZE);
@@ -433,14 +471,23 @@ ble_gap_event_handler(struct ble_gap_event *event, void *arg)
                 ESP_LOGW(TAG, "update_params rc=%d", rc);
             }
         } else {
-            ESP_LOGW(TAG, "Connect failed: status=%d",
+            ESP_LOGW(TAG, "Companion-app connect failed: status=%d",
                      event->connect.status);
         }
         break;
 
-    case BLE_GAP_EVENT_DISCONNECT:
+    case BLE_GAP_EVENT_DISCONNECT: {
+        uint16_t old_handle;
+        uint8_t old_addr[6];
+        uint8_t old_addr_type;
+
         xSemaphoreTake(s_conn_mutex, portMAX_DELAY);
+        old_handle = s_conn_handle;
+        memcpy(old_addr, s_peer_addr, 6);
+        old_addr_type = s_peer_addr_type;
         s_conn_handle = BLE_HS_CONN_HANDLE_NONE;
+        memset(s_peer_addr, 0, sizeof(s_peer_addr));
+        s_peer_addr_type = 0;
         xSemaphoreGive(s_conn_mutex);
 
         /* Reset CCCD subscriptions */
@@ -450,12 +497,16 @@ ble_gap_event_handler(struct ble_gap_event *event, void *arg)
         s_cccd_sensor_status = false;
 
         event_bus_set(EVT_BLE_DISCONNECTED);
-        ESP_LOGI(TAG, "Disconnected: reason=%d",
-                 event->disconnect.reason);
+        ESP_LOGI(TAG, "Companion-app disconnected: handle=%d reason=%d "
+                 "peer=%02X:%02X:%02X:%02X:%02X:%02X",
+                 old_handle, event->disconnect.reason,
+                 old_addr[5], old_addr[4], old_addr[3],
+                 old_addr[2], old_addr[1], old_addr[0]);
 
         /* Auto-reconnect: restart advertising */
         ble_start_advertising();
         break;
+    }
 
     case BLE_GAP_EVENT_MTU:
         ESP_LOGI(TAG, "MTU: conn=%d mtu=%d",
@@ -518,6 +569,42 @@ uint16_t ble_get_conn_handle(void)
     handle = s_conn_handle;
     xSemaphoreGive(s_conn_mutex);
     return handle;
+}
+
+/* ============================================================
+ * Connection-handle validation (H4 race-fix)
+ *
+ * Returns true iff conn_handle is still the active companion-app
+ * connection AND the peer address matches the one stored at connect
+ * time.  This guards the notify/indicate TOCTOU window: after reading
+ * s_conn_handle, the connection could drop and NimBLE could reuse the
+ * same numeric handle for the CarPlay central link.  Comparing the
+ * peer address via ble_gap_conn_find() prevents server-side notifies
+ * from being sent to the wrong connection.
+ * ============================================================ */
+
+bool ble_conn_is_valid(uint16_t conn_handle)
+{
+    uint8_t expected_addr[6];
+    uint8_t expected_type;
+
+    xSemaphoreTake(s_conn_mutex, portMAX_DELAY);
+    if (s_conn_handle == BLE_HS_CONN_HANDLE_NONE ||
+        s_conn_handle != conn_handle) {
+        xSemaphoreGive(s_conn_mutex);
+        return false;
+    }
+    memcpy(expected_addr, s_peer_addr, 6);
+    expected_type = s_peer_addr_type;
+    xSemaphoreGive(s_conn_mutex);
+
+    struct ble_gap_conn_desc desc;
+    if (ble_gap_conn_find(conn_handle, &desc) != 0) {
+        return false;
+    }
+
+    return memcmp(desc.peer_id_addr, expected_addr, 6) == 0 &&
+           desc.peer_id_addr_type == expected_type;
 }
 
 /* ============================================================

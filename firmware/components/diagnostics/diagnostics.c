@@ -29,7 +29,8 @@
  *   info                  System-Info (Version, Uptime, Heap)
  *   sensors               Sensor-Werte live
  *   gps                   GPS-Daten
- *   stats                 Statistiken (Heap, Tasks, Uptime)
+ *   stats                 Statistiken (Heap, Tasks, Uptime, Event-Loop)
+ *   stats reset           Event-Loop Drop-Counter zuruecksetzen
  *   help                  Befehlsuebersicht
  */
 
@@ -39,6 +40,7 @@
 #include "power.h"
 #include "ble.h"
 #include "storage.h"
+#include "app_event_loop.h"
 #include "event_bus.h"
 #include "board_config.h"
 #include "esp_log.h"
@@ -416,6 +418,13 @@ static int cmd_gps(int argc, char **argv)
 
 static int cmd_stats(int argc, char **argv)
 {
+    /* "stats reset" — clear the event-loop drop/dispatch counters. */
+    if (argc >= 2 && strcmp(argv[1], "reset") == 0) {
+        app_event_loop_reset_stats();
+        console_printf("Event-loop statistics reset.\r\n");
+        return 0;
+    }
+
     (void)argc; (void)argv;
 
     console_printf("=== Statistics ===\r\n");
@@ -441,6 +450,20 @@ static int cmd_stats(int argc, char **argv)
     uint8_t n_history = dtc_get_history(entries, DTC_MAX_ENTRIES);
     console_printf("DTCs:           %u active, %u history\r\n",
                    n_active, n_history);
+
+    /* Event-Loop Drop/Overflow-Statistik (M5) */
+    app_event_loop_stats_t el;
+    app_event_loop_get_stats(&el);
+    console_printf("Event Loop:     %lu dispatched, %lu dropped, %lu warns\r\n",
+                   (unsigned long)el.dispatched_events,
+                   (unsigned long)el.dropped_events,
+                   (unsigned long)el.drop_warn_count);
+    if (el.dropped_events > 0) {
+        console_printf("                last drop: type=%lu @ %lu ms  (queue depth=%lu)\r\n",
+                       (unsigned long)el.last_drop_type,
+                       (unsigned long)el.last_drop_time_ms,
+                       (unsigned long)el.queue_depth);
+    }
 
     /* Battery */
     console_printf("Battery:        %.2f V (%u%%)\r\n",
@@ -470,7 +493,8 @@ static int cmd_help(int argc, char **argv)
     console_printf("  info                  System info (version, uptime, heap, battery)\r\n");
     console_printf("  sensors               Live sensor values\r\n");
     console_printf("  gps                   GPS data\r\n");
-    console_printf("  stats                 System statistics (heap, tasks, DTCs)\r\n");
+    console_printf("  stats                 System statistics (heap, tasks, DTCs, event loop)\r\n");
+    console_printf("  stats reset           Reset event-loop drop/dispatch counters\r\n");
     console_printf("  help                  This help\r\n");
     console_printf("\r\n");
 

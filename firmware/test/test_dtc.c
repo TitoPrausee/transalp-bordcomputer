@@ -36,12 +36,20 @@
 #define ESP_LOGW(tag, fmt, ...)  (void)0
 #define ESP_LOGI(tag, fmt, ...)  (void)0
 
-/* xthal_get_ccount is an Xtensa intrinsic; provide a mock */
-static uint32_t s_mock_ccount = 0;
-static inline uint32_t xthal_get_ccount(void) {
-    s_mock_ccount += 240000; /* simulate 1ms per call */
-    return s_mock_ccount;
-}
+/* dtc.c references these extern variables from sensors.h and gps.h */
+QueueHandle_t sensor_data_queue = NULL;
+QueueHandle_t gps_data_queue = NULL;
+
+/* Mock power.h functions referenced by capture_freeze_frame */
+static float s_mock_voltage = 12.6f;
+float power_get_battery_voltage(void) { return s_mock_voltage; }
+uint8_t power_get_battery_percent(void) { return 80; }
+
+/* Mock ble.h function referenced by capture_freeze_frame */
+bool ble_is_connected(void) { return false; }
+
+/* Mock storage.h function referenced by capture_freeze_frame */
+bool sd_card_is_mounted(void) { return false; }
 
 /* Include the actual dtc.c implementation directly */
 #include "../../components/diagnostics/dtc.c"
@@ -89,11 +97,11 @@ void test_dtc_code_enum_values(void)
     TEST_ASSERT_EQUAL(21, (int)DTC_S0502);  /* GPS-Fix verloren */
 
     /* Communication codes */
-    TEST_ASSERT_EQUAL(28, (int)DTC_C0101);  /* SD-Karte nicht mountbar */
-    TEST_ASSERT_EQUAL(33, (int)DTC_C0201);  /* BLE-Advertising */
+    TEST_ASSERT_EQUAL(25, (int)DTC_C0101);  /* SD-Karte nicht mountable */
+    TEST_ASSERT_EQUAL(29, (int)DTC_C0201);  /* BLE-Advertising */
 
     /* Body codes */
-    TEST_ASSERT_EQUAL(39, (int)DTC_B0101);  /* Display-Controller */
+    TEST_ASSERT_EQUAL(36, (int)DTC_B0101);  /* Display-Controller */
 }
 
 /* ============================================================

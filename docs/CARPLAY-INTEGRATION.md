@@ -154,10 +154,14 @@ fuer Nav-Status und Musik-Metadaten und merkt sich deren Value-Handles.
 
 ### CCCD-Abonnement
 
-Nach Abschluss der Discovery schreibt der Client 0x0001 (LE) in die
-CCCD-Deskriptoren der gefundenen Characteristics, um Notifications
-zu aktivieren. Die CCCD wird konventionell bei `val_handle + 1`
-erwartet.
+Nach Abschluss der Characteristic-Discovery startet der Client eine
+`ble_gattc_disc_all_dscs`-Suche, um die CCCD-Deskriptoren (UUID 0x2902)
+der gefundenen Notify-Characteristics dynamisch zu finden. Erst danach
+schreibt er 0x0001 (LE) in die jeweiligen CCCD-Handles, um
+Notifications zu aktivieren. Wird fuer eine Characteristic kein CCCD
+gefunden (z. B. bei aelterer Display-Firmware oder fehlerhafter
+Discovery), faellt der Client auf das konventionelle `val_handle + 1`
+zurueck (Backward-Kompatibilitaet mit EKIY/Jiuyin).
 
 ### Notify-Empfang
 

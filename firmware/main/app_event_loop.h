@@ -145,6 +145,44 @@ void app_event_dispatch_simple(app_event_type_t type);
  */
 bool app_event_loop_is_running(void);
 
+/* ============================================================
+ * Event-Loop Statistics
+ *
+ * app_event_dispatch() enqueues events non-blocking (zero tick
+ * timeout).  When producers burst faster than the loop task can
+ * drain, the queue fills up and events are silently dropped.
+ * The counters below make those drops observable and resettable
+ * through the diagnostics console ("stats" / "stats reset").
+ *
+ * Note: the counters are updated from the dispatch path, which
+ * may run from any task.  Updates follow the same unsynchronised
+ * increment convention used by the other stats counters in this
+ * codebase (storage/logger/gps).  Tearing is acceptable for a
+ * diagnostics counter; only ever read through get_stats().
+ * ============================================================ */
+
+typedef struct {
+    uint32_t dropped_events;     /* Events dropped because the queue was full */
+    uint32_t dispatched_events;  /* Events successfully enqueued              */
+    uint32_t drop_warn_count;   /* Rate-limited drop warnings emitted         */
+    uint32_t last_drop_type;    /* Event type of the most recent drop         */
+    uint32_t last_drop_time_ms; /* Timestamp (ms) of the most recent drop     */
+    uint32_t queue_depth;       /* Configured event queue depth              */
+} app_event_loop_stats_t;
+
+/*
+ * Snapshot the current event-loop statistics into *out.
+ * Safe to call from any task.
+ */
+void app_event_loop_get_stats(app_event_loop_stats_t *out);
+
+/*
+ * Reset the event-loop drop/dispatch counters to zero.
+ * Exposed so operators can clear counters after a known incident
+ * via the diagnostics "stats reset" command.
+ */
+void app_event_loop_reset_stats(void);
+
 /*
  * Register the event-bus bridge forwarder.  After this call,
  * every event_bus_set(EVT_*) that has a mapping in the bridge

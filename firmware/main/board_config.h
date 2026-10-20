@@ -38,7 +38,15 @@
 
 #define MPU6050_I2C_ADDR    0x68    /* AD0=LOW */
 #define MPU6050_INT_PIN     2       /* IRQ: Bewegung/Crash */
+
+/*
+ * BMP280 pressure sensor — NOT IMPLEMENTED (M3).
+ * No driver, no I2C reads; sensors.h pressure_hpa stays 0.
+ * Address kept here for a future implementation.
+ */
+#if 0
 #define BMP280_I2C_ADDR     0x76    /* oder 0x77, je nach Modul */
+#endif
 
 /* ============================================================
  * SPI (Display + SD shared Bus)
@@ -160,6 +168,15 @@
 /* Event-Loop (Core 0) */
 #define TASK_STACK_EVENT_LOOP  4096
 #define TASK_PRIO_EVENT_LOOP   3
+
+/*
+ * Event-Loop queue depth.  Override here if the diagnostics
+ * "stats" command reports non-zero dropped_events under load
+ * (e.g. sensor + GPS + controller bursts).  Each slot costs
+ * sizeof(app_event_t) (~136 bytes) of static queue storage.
+ * Default 32; raise to 64 if drops are observed.
+ */
+/* #define APP_EVENT_QUEUE_LEN  64 */
 
 /* OTA-Task (Core 0, laeuft nur bei Update) */
 #define TASK_STACK_OTA       8192

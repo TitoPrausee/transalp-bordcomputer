@@ -88,6 +88,12 @@ bool ble_cccd_sensor_status_enabled(void);
 /* Get current connection handle (thread-safe) */
 uint16_t ble_get_conn_handle(void);
 
+/* Validate that conn_handle is still the companion-app connection
+ * (guards against conn-handle reuse race — H4).  Returns true iff the
+ * handle matches the tracked companion-app connection AND the peer
+ * address still matches. */
+bool ble_conn_is_valid(uint16_t conn_handle);
+
 /* ============================================================
  * GATT access callback and read/write handlers
  * (defined in ble_callbacks.c)

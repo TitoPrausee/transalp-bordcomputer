@@ -107,6 +107,7 @@ jobs:
           INCLUDES="$INCLUDES -Icomponents/power/include"
           INCLUDES="$INCLUDES -Icomponents/storage/include"
           INCLUDES="$INCLUDES -Icomponents/ble/include"
+          INCLUDES="$INCLUDES -Icomponents/ble"
           INCLUDES="$INCLUDES -Icomponents/display/include"
           INCLUDES="$INCLUDES -Icomponents/ota/include"
           INCLUDES="$INCLUDES -Icomponents/hid_controller/include"

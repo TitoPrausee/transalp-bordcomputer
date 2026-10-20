@@ -170,7 +170,7 @@ component. (Follow-up FU-9.)
 these likely fail in CI too (or CI has additional handling). Coverage is
 therefore narrower than the test count suggests. (Follow-up FU-12.)
 
-### H4. Single GATT connection shared for CarPlay dual-role
+### H4. Single GATT connection shared for CarPlay dual-role — RESOLVED (TOT-44)
 
 `carplay_bridge.c:141` uses `carplay_client_get_conn_handle()` for server-side
 notifies — the Bordcomputer acts as both server and client on the **same**
@@ -179,11 +179,30 @@ connections; `ble_service.c:53` sets `BLE_MAX_CONNECTIONS=1`. Verify the
 companion-app link and the CarPlay link don't conflict; if both are needed
 simultaneously, raise the limit. **Race risk** on conn-handle reuse.
 
+**→ Resolved (TOT-44):** Verified that companion-app (peripheral/server) and
+CarPlay-display (central/client) links **do** coexist simultaneously — the
+rider uses the phone for config/diagnostics while CarPlay shows telemetry on
+the display. The NimBLE stack already allows 2 connections
+(`CONFIG_BT_NIMBLE_MAX_CONNECTIONS=2` in `sdkconfig.defaults:20`); the dead
+`BLE_MAX_CONNECTIONS=1` macro in `ble_service.c` was updated to 2 to match
+reality. The conn-handle reuse race was fixed by adding peer-address
+validation (`ble_conn_is_valid()` / `carplay_client_conn_is_valid()`) before
+every notify/indicate call — if a connection drops and NimBLE reuses the
+handle for the other role, the peer-address mismatch is detected and the
+notify is skipped. Advertising is now stopped on companion-app connect to
+prevent a second peripheral connection from overwriting the tracked handle.
+Connection logging now distinguishes "Companion-app" vs "CarPlay display"
+with full peer addresses. 4 new host tests cover the validation guard.
+
 ### H5. CarPlay client CCCD subscription is a simplification
 
 `carplay_client.c:102` writes `0x0001` to CCCD at `val_handle+1` (hardcoded +1
 offset) rather than discovering the CCCD descriptor handle. Works for the
 target EKIY/Jiuyin display but is fragile across display firmware revisions.
+**→ Resolved (TOT-45):** `carplay_client.c` now runs `ble_gattc_disc_all_dscs`
+after characteristic discovery and resolves the CCCD descriptor handle
+dynamically (UUID 0x2902) per notify target. Falls back to `val_handle + 1`
+when discovery yields no CCCD, preserving backward compatibility.
 
 ---
 
@@ -236,7 +255,7 @@ recommended.
 |---|---|---|---|
 | R1 | `ble_callbacks.c` `s_sensor_cache`/`s_gps_cache` | Protected by `s_data_mutex`; `build_telemetry_live` takes it with `portMAX_DELAY`. Writer (`ble_on_sensor_update`) and reader (notify) both lock. **OK** if all paths lock. Verify no unguarded cache access in snapshot read (0x5002). | Low |
 | R2 | `app_event_loop.c:66-72` | Mutex released during callback to avoid deadlock — correct, but a subscriber could observe stale state if it re-enters dispatch. Single-loop task serialises callbacks, so no re-entrancy within the loop. | Low |
-| R3 | CarPlay dual-role conn-handle (H4) | Server-notify and client-notify on same handle; if disconnect races a notify, `ble_gap_event` ordering must be trusted. NimBLE serialises GAP events per-connection, so likely OK, but no explicit guard. | Medium |
+| R3 | CarPlay dual-role conn-handle (H4) | Server-notify and client-notify on same handle; if disconnect races a notify, `ble_gap_event` ordering must be trusted. NimBLE serialises GAP events per-connection, so likely OK, but no explicit guard. **Resolved** in TOT-44: `ble_conn_is_valid()` / `carplay_client_conn_is_valid()` validate peer address via `ble_gap_conn_find()` before every notify/indicate; stale or reused handles are detected and skipped. | Resolved |
 | R4 | OTA NVS resume state (`ota_save/load_resume_state`) | HTTP range-resume persists write offset to NVS. If power loss occurs between `esp_ota_write` and `ota_save_resume_state`, resume offset may be stale → partial-image + hash mismatch → rollback triggers (safe, but wasteful). | Low |
 | R5 | `event_bus` EventGroups vs `app_event_loop` (H1) | State observed by one system but not the other was the core race risk of the unbridged dual systems. **Resolved** in TOT-38: bridge callback forwards all overlapping EVT_* bits to APP_EVENT_* dispatches. | Resolved |
 

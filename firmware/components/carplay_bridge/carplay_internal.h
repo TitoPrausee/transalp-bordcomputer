@@ -163,6 +163,12 @@ carplay_client_state_t carplay_client_get_state(void);
  * if not connected). Used by the server-side notify path. */
 uint16_t carplay_client_get_conn_handle(void);
 
+/* Validate that conn_handle is still the CarPlay-display connection
+ * (guards against conn-handle reuse race — H4).  Returns true iff the
+ * handle matches the tracked CarPlay connection AND the peer address
+ * still matches. */
+bool carplay_client_conn_is_valid(uint16_t conn_handle);
+
 /*
  * Forward a media-control command byte (carplay_media_cmd) to the peer
  * display's CHR_CP_MEDIA_CTRL (0x9104).  No-op when not connected or the

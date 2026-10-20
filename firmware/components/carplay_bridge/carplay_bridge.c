@@ -145,6 +145,15 @@ static void carplay_notify(uint16_t attr_handle,
         return;
     }
 
+    /* Validate the handle is still the CarPlay connection before
+     * sending.  This closes the conn-handle reuse TOCTOU (H4): if the
+     * CarPlay link dropped and NimBLE reused the handle for a
+     * companion-app peripheral connection, we skip the notify instead
+     * of pushing CarPlay telemetry to the companion app. */
+    if (!carplay_client_conn_is_valid(conn)) {
+        return;
+    }
+
     struct os_mbuf *om = ble_hs_mbuf_from_flat(data, len);
     if (om == NULL) {
         ESP_LOGW(TAG, "mbuf alloc failed for notify");

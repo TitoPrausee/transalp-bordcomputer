@@ -230,6 +230,16 @@ static void ble_notify(uint16_t attr_handle, const void *data, uint16_t len)
         return;
     }
 
+    /* Validate the handle is still the companion-app connection before
+     * sending.  This closes the conn-handle reuse TOCTOU (H4): if the
+     * companion app disconnected and NimBLE reused the handle for the
+     * CarPlay central link, ble_conn_is_valid() returns false and we
+     * skip the notify instead of sending companion-app data to the
+     * CarPlay display. */
+    if (!ble_conn_is_valid(conn)) {
+        return;
+    }
+
     struct os_mbuf *om = ble_hs_mbuf_from_flat(data, len);
     if (om == NULL) {
         ESP_LOGW(TAG, "mbuf alloc failed for notify");
@@ -237,7 +247,7 @@ static void ble_notify(uint16_t attr_handle, const void *data, uint16_t len)
     }
 
     int rc = ble_gattc_notify_custom(conn, attr_handle, om);
-    if (rc != 0) {
+    if (rc != 0 && rc != BLE_HS_ENOTCONN) {
         ESP_LOGW(TAG, "notify rc=%d handle=%d", rc, attr_handle);
     }
 }
@@ -249,6 +259,10 @@ static void ble_indicate(uint16_t attr_handle, const void *data, uint16_t len)
         return;
     }
 
+    if (!ble_conn_is_valid(conn)) {
+        return;
+    }
+
     struct os_mbuf *om = ble_hs_mbuf_from_flat(data, len);
     if (om == NULL) {
         ESP_LOGW(TAG, "mbuf alloc failed for indicate");
@@ -256,7 +270,7 @@ static void ble_indicate(uint16_t attr_handle, const void *data, uint16_t len)
     }
 
     int rc = ble_gattc_indicate_custom(conn, attr_handle, om);
-    if (rc != 0) {
+    if (rc != 0 && rc != BLE_HS_ENOTCONN) {
         ESP_LOGW(TAG, "indicate rc=%d handle=%d", rc, attr_handle);
     }
 }

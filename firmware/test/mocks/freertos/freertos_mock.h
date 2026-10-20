@@ -73,6 +73,8 @@ static inline BaseType_t xTaskCreate(
 
 static inline void vTaskDelay(TickType_t ticks) { (void)ticks; }
 
+static inline void vTaskDelete(TaskHandle_t handle) { (void)handle; }
+
 static inline BaseType_t xTaskCreatePinnedToCore(
     void (*task_func)(void *),
     const char *name,
@@ -99,6 +101,12 @@ static inline TickType_t xTaskGetTickCount(void)
     struct timespec ts;
     clock_gettime(CLOCK_MONOTONIC, &ts);
     return (TickType_t)(ts.tv_sec * 1000 + ts.tv_nsec / 1000000);
+}
+
+static inline void vTaskDelayUntil(TickType_t *prev_wake, TickType_t inc)
+{
+    (void)inc;
+    if (prev_wake) *prev_wake = xTaskGetTickCount();
 }
 
 /* ---- Queue (ring buffer with mutex) ---- */

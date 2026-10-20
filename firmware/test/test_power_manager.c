@@ -32,106 +32,31 @@
  * ============================================================ */
 #ifdef TEST_HOST
 
+/* Host-side logging no-op. Routing the format args through a helper
+ * (rather than (void)0) keeps variables that are only referenced in log
+ * calls marked as used, avoiding -Wunused-variable noise that the
+ * mocked-out logging would otherwise produce in the source under test. */
+static inline void _log_noop(const char *tag, const char *fmt, ...) {
+    (void)tag; (void)fmt;
+}
+
 #undef ESP_LOGE
 #undef ESP_LOGW
 #undef ESP_LOGI
-#define ESP_LOGE(tag, fmt, ...)  (void)0
-#define ESP_LOGW(tag, fmt, ...)  (void)0
-#define ESP_LOGI(tag, fmt, ...)  (void)0
+#define ESP_LOGE(tag, fmt, ...)  _log_noop(tag, fmt, ##__VA_ARGS__)
+#define ESP_LOGW(tag, fmt, ...)  _log_noop(tag, fmt, ##__VA_ARGS__)
+#define ESP_LOGI(tag, fmt, ...)  _log_noop(tag, fmt, ##__VA_ARGS__)
 
-/* Mock esp_timer.h (already in freertos_mock, but ensure available) */
-#ifndef esp_timer_get_time
-static inline int64_t esp_timer_get_time(void) {
-    struct timespec ts;
-    clock_gettime(CLOCK_MONOTONIC, &ts);
-    return (int64_t)(ts.tv_sec * 1000000LL + ts.tv_nsec / 1000LL);
-}
-#endif
+/* power_manager.c includes esp_sleep.h, driver/rtc_io.h, driver/ledc.h,
+ * driver/gpio.h, driver/uart.h and soc/uart_struct.h. These are now
+ * provided as shared mocks under test/mocks so they resolve on host
+ * without redefining the types/functions inline here. esp_timer_get_time
+ * and vTaskDelayUntil are provided by freertos_mock.h. battery_status_t
+ * and the BATTERY_STATUS_* values come from power.h (included above). */
 
-/* Mock esp_sleep.h */
-typedef int esp_sleep_wakeup_cause_t;
-#define ESP_SLEEP_WAKEUP_UNDEFINED  0
-#define ESP_SLEEP_WAKEUP_TIMER      1
-#define ESP_SLEEP_WAKEUP_GPIO       2
-#define ESP_SLEEP_WAKEUP_UART       3
-#define ESP_SLEEP_WAKEUP_TOUCHPAD   4
-#define ESP_SLEEP_WAKEUP_ULP        5
-static inline esp_sleep_wakeup_cause_t esp_sleep_get_wakeup_cause(void) {
-    return ESP_SLEEP_WAKEUP_UNDEFINED;
-}
-static inline void esp_sleep_enable_timer_wakeup(uint64_t t) { (void)t; }
-static inline void esp_sleep_enable_ext0_wakeup(int pin, int level) { (void)pin; (void)level; }
-static inline void esp_sleep_enable_uart_wakeup(int uart_num) { (void)uart_num; }
-static inline void esp_deep_sleep_start(void) { /* no-op in tests */ }
-
-/* Mock driver/rtc_io.h */
-typedef int gpio_num_t;
-#define GPIO_NUM_5  5
-#define GPIO_NUM_6  6
-static inline bool rtc_gpio_is_valid_gpio(int pin) { (void)pin; return false; }
-static inline void rtc_gpio_isolate(int pin) { (void)pin; }
-
-/* Mock driver/ledc.h */
-typedef int ledc_timer_t;
-typedef int ledc_channel_t;
-typedef int ledc_mode_t;
-typedef int ledc_timer_bit_t;
-typedef int ledc_intr_type_t;
-typedef int ledc_clk_cfg_t;
-#define LEDC_TIMER_1          1
-#define LEDC_LOW_SPEED_MODE   0
-#define LEDC_CHANNEL_1        1
-#define LEDC_TIMER_10_BIT     10
-#define LEDC_AUTO_CLK         0
-#define LEDC_INTR_DISABLE     0
-typedef struct {
-    int speed_mode;
-    int timer_num;
-    int duty_resolution;
-    int freq_hz;
-    int clk_cfg;
-} ledc_timer_config_t;
-typedef struct {
-    int speed_mode;
-    int channel;
-    int timer_sel;
-    int intr_type;
-    int gpio_num;
-    uint32_t duty;
-    int hpoint;
-} ledc_channel_config_t;
-static inline esp_err_t ledc_timer_config(const ledc_timer_config_t *c) { (void)c; return ESP_OK; }
-static inline esp_err_t ledc_channel_config(const ledc_channel_config_t *c) { (void)c; return ESP_OK; }
-static inline esp_err_t ledc_set_duty(int mode, int ch, uint32_t duty) { (void)mode; (void)ch; (void)duty; return ESP_OK; }
-static inline esp_err_t ledc_update_duty(int mode, int ch) { (void)mode; (void)ch; return ESP_OK; }
-
-/* Mock driver/gpio.h */
-typedef struct {
-    uint64_t pin_bit_mask;
-    int mode;
-    int pull_up_en;
-    int pull_down_en;
-    int intr_type;
-} gpio_config_t;
-#define GPIO_MODE_OUTPUT 2
-#define GPIO_PULLUP_DISABLE 0
-#define GPIO_PULLDOWN_DISABLE 0
-#define GPIO_INTR_DISABLE 0
-static inline esp_err_t gpio_config(const gpio_config_t *cfg) { (void)cfg; return ESP_OK; }
-static inline esp_err_t gpio_set_level(int pin, int level) { (void)pin; (void)level; return ESP_OK; }
-
-/* Mock driver/uart.h */
-#define GPS_UART_NUM 1
-
-/* Mock board_config.h */
-#define GPS_POWER_EN_PIN  5
-#define BOOST_EN_PIN      6
-
-/* Mock power.c functions (referenced by power_manager.c) */
+/* Mock power.c functions referenced by power_manager.c */
 void power_adc_init(uint8_t filter_size) { (void)filter_size; }
 
-/* Forward-declare the types and functions we need to mock */
-typedef int battery_status_t;
 static battery_status_t s_mock_battery_status = 0;  /* BATTERY_STATUS_NORMAL */
 static float s_mock_voltage = 12.6f;
 static uint8_t s_mock_battery_pct = 85;
@@ -148,12 +73,18 @@ uint16_t power_get_discharge_cycles(void) { return 0; }
 float power_get_battery_voltage(void) { return s_mock_voltage; }
 uint8_t power_get_battery_percent(void) { return s_mock_battery_pct; }
 
-/* The mock battery_status enum values must match power.h */
-#define BATTERY_STATUS_NORMAL    0
-#define BATTERY_STATUS_CHARGING  1
-#define BATTERY_STATUS_LOW       2
-#define BATTERY_STATUS_CRITICAL  3
-#define BATTERY_STATUS_OVERVOLT  4
+/* power_task() calls this power.c helper; stub it so the test links
+ * even though power_task itself is never executed by the unit tests. */
+battery_status_t power_measure_and_update(float vwarn_low, float vwarn_crit,
+                                          float vwarn_over, float vgen_thresh)
+{
+    (void)vwarn_low; (void)vwarn_crit; (void)vwarn_over; (void)vgen_thresh;
+    return s_mock_battery_status;
+}
+
+/* event_bus_set() is referenced from transition_state / power_task;
+ * the test does not exercise the event bus, so stub it out. */
+void event_bus_set(uint32_t bits) { (void)bits; }
 
 /* Include the actual power_manager.c implementation directly */
 #include "../../components/power/power_manager.c"
@@ -365,14 +296,14 @@ void test_power_ble_disabled_in_deep_sleep(void)
  * Test: Callback system
  * ============================================================ */
 
-static int s_callback_count = 0;
+static int s_test_callback_count = 0;
 static power_state_t s_callback_old_state = POWER_STATE_ACTIVE;
 static power_state_t s_callback_new_state = POWER_STATE_ACTIVE;
 
 static void test_callback(const power_event_t *event)
 {
     if (event->type == POWER_EVENT_STATE_CHANGED) {
-        s_callback_count++;
+        s_test_callback_count++;
         s_callback_old_state = event->old_state;
         s_callback_new_state = event->new_state;
     }
@@ -381,13 +312,13 @@ static void test_callback(const power_event_t *event)
 void test_power_callback_fires_on_transition(void)
 {
     power_init();
-    s_callback_count = 0;
+    s_test_callback_count = 0;
 
     esp_err_t err = power_register_callback(test_callback);
     TEST_ASSERT_EQUAL(ESP_OK, err);
 
     power_set_state(POWER_STATE_DIMMED);
-    TEST_ASSERT_EQUAL(1, s_callback_count);
+    TEST_ASSERT_EQUAL(1, s_test_callback_count);
     TEST_ASSERT_EQUAL(POWER_STATE_ACTIVE, s_callback_old_state);
     TEST_ASSERT_EQUAL(POWER_STATE_DIMMED, s_callback_new_state);
 

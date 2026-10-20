@@ -4,7 +4,7 @@
  * Testet firmware/components/ble/ble_callbacks.c:
  *   - Telemetry-Live Packet (22 bytes packed, Little-Endian)
  *   - Sensor-Status (5 bytes packed)
- *   - DTC Binary Packing (6 bytes pro Eintrag)
+ *   - DTC Binary Packing (7 bytes pro Eintrag)
  *   - BLE Command Queue (enqueue)
  *   - Static asserts fuer struct sizes
  *
@@ -20,6 +20,8 @@
 #include "ble.h"
 #include "ble_internal.h"
 #include "gatt_uuids.h"
+#include "diagnostics.h"
+#include "ota_update.h"
 
 #include <string.h>
 #include <stdint.h>
@@ -29,83 +31,87 @@
  * ============================================================ */
 #ifdef TEST_HOST
 
+/* Host-side logging no-op. Routing the format args through a helper
+ * (rather than (void)0) keeps variables that are only referenced in log
+ * calls marked as used, avoiding -Wunused-variable noise that the
+ * mocked-out logging would otherwise produce in the source under test. */
+static inline void _log_noop(const char *tag, const char *fmt, ...) {
+    (void)tag; (void)fmt;
+}
+
 #undef ESP_LOGE
 #undef ESP_LOGW
 #undef ESP_LOGI
 #undef ESP_LOGD
-#define ESP_LOGE(tag, fmt, ...)  (void)0
-#define ESP_LOGW(tag, fmt, ...)  (void)0
-#define ESP_LOGI(tag, fmt, ...)  (void)0
-#define ESP_LOGD(tag, fmt, ...)  (void)0
+#define ESP_LOGE(tag, fmt, ...)  _log_noop(tag, fmt, ##__VA_ARGS__)
+#define ESP_LOGW(tag, fmt, ...)  _log_noop(tag, fmt, ##__VA_ARGS__)
+#define ESP_LOGI(tag, fmt, ...)  _log_noop(tag, fmt, ##__VA_ARGS__)
+#define ESP_LOGD(tag, fmt, ...)  _log_noop(tag, fmt, ##__VA_ARGS__)
 
-/* Mock esp_timer.h */
-static inline int64_t esp_timer_get_time(void) {
-    struct timespec ts;
-    clock_gettime(CLOCK_MONOTONIC, &ts);
-    return (int64_t)(ts.tv_sec * 1000000LL + ts.tv_nsec / 1000LL);
-}
-
-/* Mock esp_system.h */
-static inline void esp_restart(void) { /* no-op in tests */ }
-
-/* Mock nvs */
-typedef int nvs_handle_t;
-static inline esp_err_t nvs_open(const char *ns, int mode, nvs_handle_t *h) {
-    (void)ns; (void)mode; *h = 1; return ESP_FAIL;
-}
-static inline void nvs_close(nvs_handle_t h) { (void)h; }
-
-/* Mock ble_hs.h types and functions */
-struct os_mbuf;
-struct ble_gatt_access_ctxt;
-#define BLE_GATT_ACCESS_OP_READ_CHR  1
-#define BLE_GATT_ACCESS_OP_WRITE_CHR  2
-#define BLE_ATT_ERR_UNLIKELY          0x0E
-#define BLE_ATT_ERR_INSUFFICIENT_RES  0x0D
-#define BLE_ATT_ERR_INVALID_ATTR_VALUE_LEN 0x0D
-#define BLE_HS_CONN_HANDLE_NONE       0xFFFF
-#define OS_MBUF_PKTLEN(om)            (0)
-#define BLE_UUID_TYPE_128             128
-
-static inline struct os_mbuf *ble_hs_mbuf_from_flat(const void *data, int len) {
-    (void)data; (void)len; return NULL;
-}
-static inline int ble_gattc_notify(uint16_t conn, uint16_t handle, struct os_mbuf *om) {
-    (void)conn; (void)handle; (void)om; return 0;
-}
-static inline int ble_gattc_indicate(uint16_t conn, uint16_t handle, struct os_mbuf *om) {
-    (void)conn; (void)handle; (void)om; return 0;
-}
-static inline int ble_hs_mbuf_to_flat(struct os_mbuf *om, uint8_t *buf, uint16_t max, uint16_t *len) {
-    (void)om; (void)buf; (void)max; *len = 0; return 0;
-}
-static inline int os_mbuf_append(struct os_mbuf *om, const void *data, int len) {
-    (void)om; (void)data; (void)len; return 0;
-}
+/* esp_timer_get_time, vTaskDelayUntil and the FreeRTOS primitives come
+ * from freertos_mock.h (via esp_idf_mock.h). esp_restart() and the
+ * heap helpers come from the shared esp_system.h mock, which references
+ * g_restart_called — define it here so the test links. NimBLE types
+ * (host/ble_hs.h) and services/gap/ble_svc_gap.h are provided as shared
+ * mocks under test/mocks. nvs_flash.h / nvs.h resolve to the shared
+ * mocks (ble_callbacks.c includes them but does not call any NVS API). */
+int g_restart_called = 0;
 
 /* Mock power.h functions referenced by ble_callbacks.c */
 static float s_mock_voltage = 12.6f;
 float power_get_battery_voltage(void) { return s_mock_voltage; }
 uint8_t power_get_battery_percent(void) { return 80; }
 
-/* Mock diagnostics.h */
-void dtc_init(void) {}
-void dtc_report(int code) { (void)code; }
-void dtc_clear(int code) { (void)code; }
-void dtc_clear_all(void) {}
-uint8_t dtc_get_active(void *out, int max) { (void)out; (void)max; return 0; }
+/* Mock diagnostics.h: ble_callbacks.c calls dtc_get_active(); the other
+ * dtc_* helpers are declared in diagnostics.h but unused here, so they
+ * are left undefined. The signature must match diagnostics.h exactly. */
+uint8_t dtc_get_active(dtc_entry_t *out, int max_count)
+{
+    (void)out; (void)max_count;
+    return 0;
+}
+
+/* Mock selftest (declared in diagnostics.h) */
+bool selftest_run(void) { return true; }
 
 /* ble_service.c stubs */
 uint16_t ble_val_handles[CHR_H_COUNT] = {0};
-bool ble_cccd_telemetry_enabled(void) { return false; }
+bool g_ble_cccd_telemetry = false;
+bool g_ble_cccd_dtc = false;
+bool ble_cccd_telemetry_enabled(void) { return g_ble_cccd_telemetry; }
 bool ble_cccd_gps_enabled(void) { return false; }
-bool ble_cccd_dtc_enabled(void) { return false; }
+bool ble_cccd_dtc_enabled(void) { return g_ble_cccd_dtc; }
 bool ble_cccd_sensor_status_enabled(void) { return false; }
-uint16_t ble_get_conn_handle(void) { return 0xFFFF; }
+
+/* Controllable conn-handle stub.  Default BLE_HS_CONN_HANDLE_NONE so
+ * existing tests that don't care about the notify path are unaffected.
+ * Tests that exercise the notify validation guard set g_ble_conn_handle
+ * to a valid handle (e.g. 1). */
+uint16_t g_ble_conn_handle = 0xFFFF;
+uint16_t ble_get_conn_handle(void) { return g_ble_conn_handle; }
+
+/* ble_conn_is_valid stub — controllable by tests via g_ble_conn_valid.
+ * Default true so existing notify tests pass unchanged.  Tests that
+ * exercise the conn-handle reuse guard set g_ble_conn_valid = false. */
+bool g_ble_conn_valid = true;
+bool ble_conn_is_valid(uint16_t conn_handle) {
+    (void)conn_handle;
+    return g_ble_conn_valid;
+}
 void ble_store_clear(void) {}
 
-/* Mock selftest */
-bool selftest_run(void) { return true; }
+/* OTA + event_bus stubs: ble_callbacks.c calls these but the test does
+ * not exercise OTA or the event bus, so they are no-ops returning the
+ * "idle / success" value. Signatures match ota_update.h / event_bus.h. */
+ota_state_t ota_get_state(void) { return OTA_STATE_IDLE; }
+ota_error_t ota_get_error(void) { return OTA_ERR_NONE; }
+uint8_t ota_get_progress(void) { return 0; }
+esp_err_t ota_update_from_ble(uint32_t total_size) { (void)total_size; return ESP_OK; }
+esp_err_t ota_ble_write_chunk(const ota_chunk_t *chunk) { (void)chunk; return ESP_OK; }
+esp_err_t ota_ble_commit(const uint8_t *expected_hash) { (void)expected_hash; return ESP_OK; }
+esp_err_t ota_ble_get_verify_result(ota_verify_result_t *out) { (void)out; return ESP_OK; }
+esp_err_t ota_abort(void) { return ESP_OK; }
+bool event_bus_wait(uint32_t bits, uint32_t timeout_ms) { (void)bits; (void)timeout_ms; return false; }
 
 #endif /* TEST_HOST */
 
@@ -128,6 +134,15 @@ void setUp(void)
     }
     memset(&s_sensor_cache, 0, sizeof(s_sensor_cache));
     memset(&s_gps_cache, 0, sizeof(s_gps_cache));
+
+    /* Reset mock state for conn-handle validation tests (H4) */
+    g_ble_conn_handle = 0xFFFF;
+    g_ble_conn_valid = true;
+    g_ble_cccd_telemetry = false;
+    g_ble_cccd_dtc = false;
+    g_mock_mbuf_alloc_ok = false;
+    g_mock_notify_call_count = 0;
+    g_mock_indicate_call_count = 0;
 }
 
 void tearDown(void)
@@ -158,7 +173,7 @@ void test_sensor_status_packed_size(void)
 
 void test_dtc_binary_packed_size(void)
 {
-    TEST_ASSERT_EQUAL(6, sizeof(dtc_binary_t));
+    TEST_ASSERT_EQUAL(7, sizeof(dtc_binary_t));
 }
 
 /* ============================================================
@@ -376,6 +391,69 @@ void test_ble_on_gps_update_copies_data(void)
 }
 
 /* ============================================================
+ * Tests: conn-handle validation guard (H4 — conn-handle reuse race)
+ *
+ * ble_notify() and ble_indicate() must validate the connection handle
+ * via ble_conn_is_valid() before sending.  If the companion-app link
+ * dropped and NimBLE reused the handle for the CarPlay central link,
+ * the validation must return false and the notify must be skipped.
+ * ============================================================ */
+
+void test_notify_skipped_when_conn_handle_none(void)
+{
+    g_ble_conn_handle = 0xFFFF;  /* BLE_HS_CONN_HANDLE_NONE */
+    g_ble_cccd_telemetry = true;
+    g_mock_mbuf_alloc_ok = true;
+
+    ble_notify_telemetry_live();
+
+    /* No notify should be sent when there is no connection */
+    TEST_ASSERT_EQUAL(0, g_mock_notify_call_count);
+}
+
+void test_notify_sent_when_conn_valid(void)
+{
+    g_ble_conn_handle = 1;        /* valid handle */
+    g_ble_conn_valid = true;      /* validation passes */
+    g_ble_cccd_telemetry = true;
+    g_mock_mbuf_alloc_ok = true;  /* mbuf alloc succeeds */
+
+    ble_notify_telemetry_live();
+
+    /* Notify should be sent when connection is valid */
+    TEST_ASSERT_EQUAL(1, g_mock_notify_call_count);
+}
+
+void test_notify_skipped_when_conn_handle_reused(void)
+{
+    g_ble_conn_handle = 1;        /* handle is "valid" per stub */
+    g_ble_conn_valid = false;     /* but validation fails (handle reused) */
+    g_ble_cccd_telemetry = true;
+    g_mock_mbuf_alloc_ok = true;  /* mbuf alloc would succeed */
+
+    ble_notify_telemetry_live();
+
+    /* Notify must NOT be sent — conn-handle reuse guard (H4) */
+    TEST_ASSERT_EQUAL(0, g_mock_notify_call_count);
+}
+
+void test_indicate_skipped_when_conn_handle_reused(void)
+{
+    g_ble_conn_handle = 1;
+    g_ble_conn_valid = false;
+    g_mock_mbuf_alloc_ok = true;
+
+    /* Call ble_indicate directly (static, visible because the test
+     * includes ble_callbacks.c).  ble_notify_dtc_list would early-return
+     * because dtc_get_active returns 0 in the mock. */
+    uint8_t dummy = 0;
+    ble_indicate(ble_val_handles[CHR_H_DTC_LIST], &dummy, 1);
+
+    /* Indicate must NOT be sent — conn-handle reuse guard (H4) */
+    TEST_ASSERT_EQUAL(0, g_mock_indicate_call_count);
+}
+
+/* ============================================================
  * Test Runner
  * ============================================================ */
 int main(void)
@@ -402,6 +480,11 @@ int main(void)
     RUN_TEST(test_ble_on_sensor_update_null_rejected);
 
     RUN_TEST(test_ble_on_gps_update_copies_data);
+
+    RUN_TEST(test_notify_skipped_when_conn_handle_none);
+    RUN_TEST(test_notify_sent_when_conn_valid);
+    RUN_TEST(test_notify_skipped_when_conn_handle_reused);
+    RUN_TEST(test_indicate_skipped_when_conn_handle_reused);
 
     return UNITY_END();
 }

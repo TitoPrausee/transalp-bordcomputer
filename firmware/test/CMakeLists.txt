@@ -31,6 +31,7 @@ if(NOT IDF_PATH)
         ${CMAKE_CURRENT_SOURCE_DIR}/../components/power/include
         ${CMAKE_CURRENT_SOURCE_DIR}/../components/storage/include
         ${CMAKE_CURRENT_SOURCE_DIR}/../components/ble/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/../components/ble
         ${CMAKE_CURRENT_SOURCE_DIR}/../components/display/include
         ${CMAKE_CURRENT_SOURCE_DIR}/../components/ota/include
         ${CMAKE_CURRENT_SOURCE_DIR}/../components/hid_controller/include

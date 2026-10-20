@@ -34,13 +34,32 @@ static SemaphoreHandle_t s_sub_mutex = NULL;
 
 /* ============================================================
  * Event queue
+ *
+ * APP_EVENT_QUEUE_LEN is overridable from board_config.h so the
+ * depth can be tuned without editing this source.  If the
+ * diagnostics counters show non-zero dropped_events under load,
+ * increase the queue depth there (e.g. to 64) and rebuild.
  * ============================================================ */
 
+#ifndef APP_EVENT_QUEUE_LEN
 #define APP_EVENT_QUEUE_LEN  32
+#endif
+
+/* Rate-limit window for drop warnings: at most one ESP_LOGW per
+ * interval to avoid log spam under sustained burst load. */
+#define APP_EVENT_DROP_WARN_INTERVAL_MS  1000
 
 static QueueHandle_t s_event_queue = NULL;
 static TaskHandle_t   s_loop_task   = NULL;
 static bool           s_running     = false;
+
+/* Drop/overflow counters (see app_event_loop_stats_t in the header). */
+static uint32_t s_dropped_events      = 0;
+static uint32_t s_dispatched_events   = 0;
+static uint32_t s_drop_warn_count     = 0;
+static uint32_t s_last_drop_type      = 0;
+static uint32_t s_last_drop_time_ms   = 0;
+static uint32_t s_last_drop_warn_time_ms = 0;
 
 /* ============================================================
  * Event-loop task
@@ -96,6 +115,14 @@ void app_event_loop_init(void)
 
     /* Clear subscriber table */
     memset(s_subs, 0, sizeof(s_subs));
+
+    /* Reset statistics counters (fresh init starts clean) */
+    s_dropped_events         = 0;
+    s_dispatched_events       = 0;
+    s_drop_warn_count        = 0;
+    s_last_drop_type         = 0;
+    s_last_drop_time_ms      = 0;
+    s_last_drop_warn_time_ms = 0;
 
     /* Create event queue */
     s_event_queue = xQueueCreate(APP_EVENT_QUEUE_LEN, sizeof(app_event_t));
@@ -201,7 +228,25 @@ void app_event_dispatch(app_event_type_t type,
      * the caller (typically a real-time sensor task). */
     BaseType_t ret = xQueueSend(s_event_queue, &ev, 0);
     if (ret != pdTRUE) {
-        ESP_LOGW(TAG, "Event queue full, dropping event type %d", (int)type);
+        uint32_t now_ms = (uint32_t)(esp_timer_get_time() / 1000);
+        s_dropped_events++;
+        s_last_drop_type    = (uint32_t)type;
+        s_last_drop_time_ms = now_ms;
+
+        /* Rate-limit the warning to one per APP_EVENT_DROP_WARN_INTERVAL_MS
+         * so a sustained burst does not flood the log. */
+        if ((int32_t)(now_ms - s_last_drop_warn_time_ms)
+                >= (int32_t)APP_EVENT_DROP_WARN_INTERVAL_MS) {
+            s_last_drop_warn_time_ms = now_ms;
+            s_drop_warn_count++;
+            ESP_LOGW(TAG,
+                     "Event queue full, dropping event type %d "
+                     "(total drops=%u, queue depth=%d)",
+                     (int)type, (unsigned)s_dropped_events,
+                     (int)APP_EVENT_QUEUE_LEN);
+        }
+    } else {
+        s_dispatched_events++;
     }
 }
 
@@ -213,6 +258,30 @@ void app_event_dispatch_simple(app_event_type_t type)
 bool app_event_loop_is_running(void)
 {
     return s_running;
+}
+
+void app_event_loop_get_stats(app_event_loop_stats_t *out)
+{
+    if (out == NULL) {
+        return;
+    }
+    out->dropped_events     = s_dropped_events;
+    out->dispatched_events   = s_dispatched_events;
+    out->drop_warn_count    = s_drop_warn_count;
+    out->last_drop_type     = s_last_drop_type;
+    out->last_drop_time_ms  = s_last_drop_time_ms;
+    out->queue_depth        = (uint32_t)APP_EVENT_QUEUE_LEN;
+}
+
+void app_event_loop_reset_stats(void)
+{
+    s_dropped_events         = 0;
+    s_dispatched_events       = 0;
+    s_drop_warn_count        = 0;
+    s_last_drop_type         = 0;
+    s_last_drop_time_ms      = 0;
+    s_last_drop_warn_time_ms = 0;
+    ESP_LOGI(TAG, "Event-loop statistics reset");
 }
 
 /* ============================================================

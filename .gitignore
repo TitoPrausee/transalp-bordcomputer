@@ -30,3 +30,6 @@ firmware/test_results/
 firmware/secure_boot/ota_signing_key.pem
 firmware/secure_boot/*.pem
 firmware/test/build-test-host/
+
+# Test output logs
+firmware/test/integration/*.log

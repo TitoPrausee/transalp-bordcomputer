@@ -34,13 +34,6 @@
 #define ESP_LOGW(tag, fmt, ...)  (void)0
 #define ESP_LOGI(tag, fmt, ...)  (void)0
 
-/* xthal_get_ccount is an Xtensa intrinsic; provide a mock */
-static uint32_t s_mock_ccount = 0;
-static inline uint32_t xthal_get_ccount(void) {
-    s_mock_ccount += 240000;
-    return s_mock_ccount;
-}
-
 /* dtc.c references these extern variables from sensors.h and gps.h */
 QueueHandle_t sensor_data_queue = NULL;
 QueueHandle_t gps_data_queue = NULL;
