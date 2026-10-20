@@ -24,69 +24,16 @@
 #include <stdint.h>
 
 /* ============================================================
- * Define the types that config.c expects but are normally in a
- * header that depends on ESP-IDF. For host tests, we define them
- * here so the .c file can compile.
- * ============================================================ */
-
-#define CONFIG_VERSION  3
-
-typedef enum {
-    CFG_KEY_DISPLAY_MODE = 0,
-    CFG_KEY_DISPLAY_THEME,
-    CFG_KEY_DISPLAY_BRIGHTNESS,
-    CFG_KEY_LOG_INTERVAL,
-    CFG_KEY_LOG_FORMAT,
-    CFG_KEY_LOG_AUTOSTART,
-    CFG_KEY_GPS_RATE,
-    CFG_KEY_DEVICE_NAME,
-    CFG_KEY_PAIRING_CODE,
-    CFG_KEY_RPM_REDLINE,
-    CFG_KEY_RPM_SHIFT_LIGHT,
-    CFG_KEY_BATTERY_LOW,
-    CFG_KEY_BATTERY_SHUTDOWN,
-    CFG_KEY_COOLANT_WARN,
-    CFG_KEY_COOLANT_CRIT,
-    CFG_KEY_FUEL_MIN,
-    CFG_KEY_CALIB_IMU,
-    CFG_KEY_CALIB_SEA_LEVEL,
-    CFG_KEY_ANIM_ENABLED,
-} config_key_t;
-
-typedef struct {
-    uint16_t version;
-    int16_t  gyro_offset[3];
-    int16_t  accel_offset[3];
-    uint32_t bmp_sea_level_pa;
-    uint16_t adc_vref_mv;
-    float    fuel_cal_liters[6];
-    uint16_t fuel_cal_adc[6];
-    uint16_t rpm_redline;
-    uint16_t rpm_shift_light;
-    float    battery_low_v;
-    float    battery_shutdown_v;
-    float    oil_pressure_warn;
-    float    oil_pressure_high;
-    float    coolant_temp_warn;
-    float    coolant_temp_crit;
-    float    fuel_min_l;
-    uint8_t  log_interval_s;
-    uint8_t  log_format;
-    uint8_t  log_autostart;
-    uint8_t  gps_rate_hz;
-    uint8_t  display_mode;
-    uint8_t  display_theme;
-    uint8_t  display_brightness;
-    char     device_name[32];
-    uint32_t pairing_code;
-    uint8_t  anim_enabled;
-    uint8_t  rpm_needle_spring;
-} device_config_t;
-
-/* ============================================================
  * Mock ESP-IDF dependencies of config.c
  * ============================================================ */
 #ifdef TEST_HOST
+#include "esp_err.h"
+
+/* Prevent mock NVS headers (test/mocks/nvs.h, nvs_flash.h) from
+ * conflicting with the test-specific mocks below. */
+#define _NVS_FLASH_H_
+#define _NVS_H_
+
 #undef ESP_LOGE
 #undef ESP_LOGW
 #undef ESP_LOGI

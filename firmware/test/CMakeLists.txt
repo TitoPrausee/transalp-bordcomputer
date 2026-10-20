@@ -55,6 +55,7 @@ if(NOT IDF_PATH)
         test_controller.c
         test_carplay_bridge.c
         test_carplay_media.c
+        test_ota.c
     )
 
     # Compiler flags

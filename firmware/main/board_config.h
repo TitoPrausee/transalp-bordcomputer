@@ -62,7 +62,7 @@
  * ============================================================ */
 
 #define BATT_ADC_UNIT       1       /* ADC1 */
-#define BATT_ADC_CHANNEL    ADC1_CH0 /* ADC1_CH0 = GPIO1 */
+#define BATT_ADC_CHANNEL    0       /* ADC1_CH0 = GPIO1 */
 #define BATT_VOLTAGE_DIV    10.0f   /* Spannungsteiler 10:1 (100k/10k) */
 
 /* Coolant Temp: NTC 10k via ADC1_CH6 = GPIO7 */

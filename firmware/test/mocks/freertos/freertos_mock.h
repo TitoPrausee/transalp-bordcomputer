@@ -71,6 +71,8 @@ static inline BaseType_t xTaskCreate(
     return pdTRUE;
 }
 
+static inline void vTaskDelay(TickType_t ticks) { (void)ticks; }
+
 static inline BaseType_t xTaskCreatePinnedToCore(
     void (*task_func)(void *),
     const char *name,

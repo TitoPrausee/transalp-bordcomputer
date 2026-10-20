@@ -176,6 +176,8 @@ static void update_cycle_count(float voltage)
  * ADC-Initialisierung (ESP-IDF v5.x adc_oneshot API)
  * ============================================================ */
 
+static esp_err_t adc_init(void);
+
 /*
  * Oeffentliche Init-Funktion: Initialisiert ADC und Moving-Average Filter.
  * Wird von power_manager.c aufgerufen.
