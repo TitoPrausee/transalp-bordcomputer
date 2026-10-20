@@ -15,8 +15,8 @@ Zwei Modi:
 from __future__ import annotations
 
 import struct
-from dataclasses import dataclass, field
-from typing import Optional, List, Tuple
+from dataclasses import dataclass
+from typing import List, Tuple
 from enum import IntEnum
 
 # ---- Konstanten (aus board_config.h / display.h) ----

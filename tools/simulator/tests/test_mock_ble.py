@@ -16,12 +16,12 @@ Testet:
 import struct
 import pytest
 from mock_ble import (
-    MockBle, GattCharacteristic, CharPerm, DtcEntry,
+    MockBle, DtcEntry,
     chr_uuid, svc_uuid,
     CHR_TLM_LIVE, CHR_TLM_SNAPSHOT, CHR_MEDIA_CONTROL, CHR_MEDIA_VOLUME,
-    CHR_DTC_LIST, CHR_SENSOR_STATUS, CHR_SELF_TEST, CHR_BOND_MGMT,
-    CHR_NAV_MANEUVER, CHR_CONFIG_WRITE,
-    SVC_NAVIGATION, SVC_TELEMETRY, SVC_DIAGNOSE,
+    CHR_DTC_LIST, CHR_SENSOR_STATUS, CHR_SELF_TEST,
+    CHR_CONFIG_WRITE,
+    SVC_TELEMETRY,
     DTC_SEV_WARNING, DTC_SEV_CRITICAL,
 )
 

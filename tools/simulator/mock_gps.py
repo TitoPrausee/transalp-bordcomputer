@@ -19,7 +19,7 @@ from __future__ import annotations
 import math
 import random
 import xml.etree.ElementTree as ET
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import List, Optional, Tuple, Iterator
 from datetime import datetime, timezone, timedelta
 

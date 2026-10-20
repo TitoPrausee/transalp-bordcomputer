@@ -13,9 +13,8 @@ Testet:
 
 import json
 import os
-import pytest
 from simulator import Simulator, SimulatorConfig
-from mock_display import DisplayType, DisplayMode
+from mock_display import DisplayType
 
 
 SAMPLE_TRACK = os.path.join(
@@ -205,7 +204,7 @@ class TestSimulatorStatus:
 
     def test_controller_event_handling(self):
         """Controller-Events werden verarbeitet."""
-        from mock_controller import ControllerButton, ControllerEvent
+        from mock_controller import ControllerButton
         sim = Simulator(SimulatorConfig(seed=42))
         sim.start()
         sim.tick(20)

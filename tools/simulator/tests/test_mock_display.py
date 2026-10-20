@@ -12,12 +12,11 @@ Testet:
   8. Backlight-Steuerung
 """
 
-import pytest
 from mock_display import (
     HeadlessDisplay, DisplayType, DisplayMode,
     TFT_WIDTH, TFT_HEIGHT, EPD_WIDTH, EPD_HEIGHT,
     COLOR_BLACK, COLOR_WHITE, COLOR_ACCENT_RED, COLOR_ACCENT_GREEN,
-    rgb565, rgb565_to_rgb888, Rect,
+    rgb565, rgb565_to_rgb888,
 )
 
 

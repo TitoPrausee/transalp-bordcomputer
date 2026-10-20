@@ -22,16 +22,15 @@ from __future__ import annotations
 import argparse
 import json
 import os
-import sys
 import time
 from dataclasses import dataclass, field
 from typing import Optional, List
 
 from mock_sensors import MockSensorLayer, SensorData, RPM_MAX_VALUE, TEMP_OVERTEMP_C, FUEL_RESERVE_L
 from mock_gps import NmeaGenerator, GpsData
-from mock_display import HeadlessDisplay, DisplayType, DisplayMode, COLOR_BLACK, COLOR_WHITE, COLOR_ACCENT_GREEN, COLOR_ACCENT_RED, COLOR_ACCENT_AMBER, COLOR_ACCENT_BLUE, rgb565
+from mock_display import HeadlessDisplay, DisplayType, DisplayMode, COLOR_WHITE, COLOR_ACCENT_GREEN, COLOR_ACCENT_RED, COLOR_ACCENT_AMBER, COLOR_ACCENT_BLUE
 from mock_ble import MockBle, CHR_TLM_LIVE, CHR_SENSOR_STATUS, CHR_DTC_LIST
-from mock_controller import MockController, ControllerButton, ControllerEvent
+from mock_controller import MockController, ControllerEvent
 
 
 # ---- Simulations-State ----
@@ -441,7 +440,7 @@ def main():
         return
 
     if args.ci_mode:
-        print(f"=== TRANSALP Bordcomputer Simulator (CI Mode) ===")
+        print("=== TRANSALP Bordcomputer Simulator (CI Mode) ===")
         print(f"Track: {track_file or 'none'}")
         print(f"Duration: {args.duration}s")
         print(f"Speed: {args.speed_multiplier}x")

@@ -129,6 +129,5 @@ jobs:
       - name: Run pyflakes
         working-directory: tools/simulator
         run: |
-          # Lint all Python files, ignore import warnings for local modules
-          python -m pyflakes *.py tests/*.py || true
-          echo "Pyflakes check complete (warnings shown above, if any)"
+          python -m pyflakes *.py tests/*.py
+          echo "Pyflakes check passed (no warnings)"

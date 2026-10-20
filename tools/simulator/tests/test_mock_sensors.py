@@ -15,11 +15,10 @@ Testet:
 import pytest
 from mock_sensors import (
     MockSensorLayer, SensorData, SensorCurve,
-    RPM_MAX_VALUE, RPM_REDLINE, RPM_IDLE,
+    RPM_MAX_VALUE, RPM_IDLE,
     TEMP_OVERTEMP_C, TEMP_AMBIENT_C,
-    TANK_CAPACITY_L, FUEL_RESERVE_L,
-    GEAR_NEUTRAL, GEAR_MIN, GEAR_MAX,
-    default_rpm_curve, default_temp_curve, default_fuel_curve,
+    TANK_CAPACITY_L,
+    GEAR_NEUTRAL, GEAR_MAX,
 )
 
 

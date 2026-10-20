@@ -20,7 +20,7 @@ from __future__ import annotations
 
 import math
 import random
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import List, Tuple, Optional, Any
 
 
@@ -382,7 +382,6 @@ class MockSensorLayer:
 
     def _imu_gyro(self, roll: float, pitch: float, delta_ms: float) -> Tuple[float, float, float]:
         """Gyroskop-Raten aus Roll/Pitch-Aenderung ableiten."""
-        dt_s = delta_ms / 1000.0 if delta_ms > 0 else 0.02
         gx = self._rng.uniform(-IMU_GYRO_NOISE, IMU_GYRO_NOISE)
         gy = self._rng.uniform(-IMU_GYRO_NOISE, IMU_GYRO_NOISE)
         gz = self._rng.uniform(-IMU_GYRO_NOISE, IMU_GYRO_NOISE)

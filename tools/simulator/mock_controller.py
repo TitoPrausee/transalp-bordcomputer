@@ -24,8 +24,8 @@ Tastatur-Mapping:
 from __future__ import annotations
 
 import time
-from dataclasses import dataclass, field
-from typing import List, Optional, Callable, Dict
+from dataclasses import dataclass
+from typing import List, Callable, Dict
 from enum import IntEnum
 
 

@@ -11,10 +11,8 @@ Testet:
 """
 
 import time
-import pytest
 from mock_controller import (
     MockController, ControllerButton, ControllerEvent,
-    BUTTON_TO_EVENT, BUTTON_NAMES, KEY_MAP,
     CTRL_DEBOUNCE_MS,
 )
 

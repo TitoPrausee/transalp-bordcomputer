@@ -15,7 +15,7 @@ Testet:
 import pytest
 import os
 from mock_gps import (
-    NmeaGenerator, GpsData, TrackPoint, parse_gpx,
+    NmeaGenerator, TrackPoint, parse_gpx,
     haversine_km, bearing_deg,
 )
 
