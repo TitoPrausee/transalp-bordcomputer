@@ -1,14 +1,16 @@
-# cppcheck suppressions — firmware hardening (TOT-61 / TOT-65)
+# cppcheck suppressions -- firmware hardening (TOT-61 / TOT-65)
 #
-# Whole-program cppcheck analysis now runs in CI against the real
+# Whole-program cppcheck analysis runs in CI against the real
 # `idf.py` build's compile_commands.json (see the `whole-program-cppcheck`
 # job in .github/workflows/firmware-ci.yml). The filtered database
 # (build/compile_commands_project.json, project sources only) provides the
 # cross-TU linkage that per-TU / directory-mode analysis lacks.
 #
-# Suppressions below are scoped to checks that remain false positives even
-# with whole-program analysis. Each was reviewed individually (see the
-# TOT-61 audit report and the TOT-65 triage note).
+# The CI command applies the unusedFunction suppression directly via
+# --suppress=unusedFunction (in scripts/run_whole_program_cppcheck.sh)
+# rather than --suppressions-list, for compatibility with the cppcheck
+# version in the ESP-IDF Docker image. This file documents the rationale
+# and is used by the local/directory-mode analysis commands.
 
 # unusedFunction: cppcheck's own documentation states this check produces
 # false positives unless the whole program is analyzed. Even with the full

@@ -30,13 +30,13 @@ python3 scripts/filter_compile_commands.py \
 
 echo "=== Whole-program cppcheck (--enable=all --check-level=exhaustive) ==="
 echo "Uses real idf.py compile_commands.json with cross-TU linkage."
-echo "Suppressions: analysis/cppcheck-suppressions.txt (unusedFunction only)."
+echo "Suppression: unusedFunction (see analysis/cppcheck-suppressions.txt for rationale)."
 cppcheck \
     --enable=all \
     --check-level=exhaustive \
     --suppress=missingIncludeSystem \
     --suppress=missingInclude \
-    --suppressions-list=analysis/cppcheck-suppressions.txt \
+    --suppress=unusedFunction \
     --project=build/compile_commands_project.json \
     --inline-suppr \
     --error-exitcode=1 \
