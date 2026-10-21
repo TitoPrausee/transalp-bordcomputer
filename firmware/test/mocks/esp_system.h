@@ -19,16 +19,8 @@ static inline uint32_t esp_get_free_heap_size(void) { return 200 * 1024; }
 
 static inline uint32_t esp_get_minimum_free_heap_size(void) { return 100 * 1024; }
 
-/* Mock for esp_fill_random (ESP-IDF esp_system.h).  Fills the buffer with a
- * deterministic, non-zero pattern so host tests can assert that a value was
- * generated (IRK / identity address) and inspect the static-address marker
- * bits.  The real implementation uses the hardware RNG. */
-static inline void esp_fill_random(void *buf, size_t len)
-{
-    uint8_t *p = (uint8_t *)buf;
-    for (size_t i = 0; i < len; i++) {
-        p[i] = (uint8_t)(0xA5 ^ (uint8_t)(i * 31));
-    }
-}
+/* esp_fill_random was moved to esp_random.h in newer ESP-IDF; include it
+ * here so existing code that only includes esp_system.h still works. */
+#include "esp_random.h"
 
 #endif /* _ESP_SYSTEM_H_ */

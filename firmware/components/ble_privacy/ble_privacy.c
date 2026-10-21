@@ -23,6 +23,7 @@
 
 #include "esp_log.h"
 #include "esp_system.h"
+#include "esp_random.h"
 #include "nvs_flash.h"
 #include "nvs.h"
 #include "host/ble_hs.h"
