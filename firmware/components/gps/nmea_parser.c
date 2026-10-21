@@ -178,7 +178,7 @@ static bool parse_time(const char *raw, uint8_t *hour, uint8_t *minute, uint8_t 
     /* strlen(raw) >= 6 is checked above, so raw[0..5] are in bounds. The
      * host-analysis strlen mock returns a constant, which makes clang-analyzer
      * believe raw is shorter and flag raw[2..5] as uninitialized — a false
-     * positive. Suppressed per TOT-58. */
+     * positive. Suppressed per TOT-61. */
     // NOLINTBEGIN(clang-analyzer-core.uninitialized.Assign)
     char buf[7];
     buf[0] = raw[0]; buf[1] = raw[1]; buf[2] = '\0';

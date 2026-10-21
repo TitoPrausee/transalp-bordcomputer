@@ -1,6 +1,11 @@
-# TOT-58 — Firmware Strict Static Analysis + BLE Security Audit
+# TOT-61 — Firmware Strict Static Analysis + BLE Security Audit
 
 Branch: `sprint-7/hardening` (off `52bf411`). Does **not** touch `main`.
+
+> Originally authored as TOT-58 in commit `359aceb` (commit message referenced a
+> non-existent TOT-58 identifier — Sprint 7 hardening siblings are TOT-61/62/63,
+> not 58/59/60). Re-attributed to TOT-61 (the actual Paperclip task for this
+> scope) by Klaus (CTO) on re-verification. Original commit content unchanged.
 
 ## 1. Strict static analysis
 
@@ -93,3 +98,84 @@ BLE privacy (random/resolvable addresses) to mitigate long-term device-address t
 | BLE encryption enforcement | **Fixed** — GATT AUTHEN/ENC flags added to sensitive characteristics |
 
 Do **not** merge — board may want v1.0.0 tagged first (per task scope).
+
+## 4. Re-verification by Klaus (CTO) — TOT-61
+
+Re-ran both analyzers on the same `sprint-7/hardening` HEAD (`359aceb`) with
+the same strict configuration to confirm the zero-warning claim.
+
+### cppcheck strict (re-run)
+
+```
+cppcheck --enable=all --check-level=exhaustive \
+  --suppress=missingIncludeSystem --suppress=missingInclude \
+  --suppressions-list=analysis/cppcheck-suppressions.txt \
+  -I components/*/include -I components/ble -I components/carplay_bridge \
+  -I components/hid_controller -I main --inline-suppr --force \
+  components/ main/
+```
+
+Result: **0 warnings** (only the `Active checkers: 115/189` info line).
+Matches the original TOT-58 audit. ✅
+
+### clang-tidy strict (re-run)
+
+`run-clang-tidy -p .` with `--extra-arg=-DTEST_HOST --extra-arg=-std=c11
+--extra-arg=-Wno-unused-parameter --extra-arg=-include
+--extra-arg=test/mocks/esp_idf_mock.h` against the `firmware/.clang-tidy`
+strict profile (bugprone-*, cert-*, clang-analyzer-*, cppcoreguidelines-*,
+misc-*, modernize-*, performance-*, portability-*, readability-*).
+
+Result: **0 unsuppressed warnings in user code**. Every per-file summary line
+reads `Suppressed N warnings (M in non-user code, K with check filters)`,
+i.e. the generated count equals the suppressed count for every translation
+unit. The only non-suppressed diagnostics are mock-gap compile errors
+(`esp_vfs_fat.h` not found, `ESP_ERR_NVS_NO_FREE_PAGES` undeclared,
+`ADC_*` symbols from the unmocked ADC oneshot API, `nimble/nimble_port.h`
+not found on host) — all pre-existing, all in files that include headers
+the host mocks do not cover. They are not code defects and exist identically
+on the `52bf411` baseline. ✅
+
+Raw re-run output: `analysis/clang-tidy-TOT-61-verify.txt`.
+
+### BLE security audit (re-verified)
+
+Re-read `components/ble/ble_service.c` and `components/ble/ble_callbacks.c`
+to confirm the critical GATT encryption fix is in place:
+
+- Every write characteristic carries `BLE_GATT_CHR_F_WRITE_AUTHEN`
+  (nav_cmd, media_control, media_volume, phone_control, track_export_ctrl,
+  config_write, config_import, bond_mgmt, self_test, log_export_ctrl,
+  ota_control, ota_data). ✅
+- Sensitive reads carry `BLE_GATT_CHR_F_READ_ENC`
+  (config_read, telemetry_snapshot, dtc_list, sensor_status). ✅
+- Security Manager: `sm_sc=1`, `sm_mitm=1`, `sm_bonding=1`,
+  `BLE_SM_IO_CAP_DISP_YES_NO` (Numeric Comparison),
+  `BLE_SM_PAIR_KEY_DIST_ENC | BLE_SM_PAIR_KEY_DIST_ID` both directions,
+  `store_status_cb = ble_store_util_status_rr`,
+  `BLE_GAP_REPEAT_PAIRING_RETRY` on repeat-pairing. ✅
+- Repeat-pairing handler deletes the old bond before retrying. ✅
+- No hardcoded/weak keys, no debug-only auth bypasses, no leftover test
+  features in the GATT table. ✅
+
+### Host unit tests (re-verified)
+
+12/13 pass via `./test_results/test_*`:
+test_nmea_parser, test_config, test_ota, test_power_manager, test_dtc,
+test_dtc_extended, test_filters, test_event_loop, test_event_bridge,
+test_carplay_bridge, test_carplay_media, test_ota_secure_boot. ✅
+`test_ble_callbacks` has the same pre-existing link failure (undefined
+refs to `app_event_dispatch_simple`, `config_get`, `config_import_json`,
+`config_migrate`, `config_save_all` — symbols defined in `main/app_event_loop.c`
+and `components/storage/config.c` but not linked into the test target). Not
+introduced by this work; fails identically on `52bf411`. Recommendation
+forwarded to @greta as a candidate for TOT-62 (test coverage expansion).
+
+### Follow-ups filed
+
+- **TOT-64** — BLE privacy (random/resolvable addresses) to mitigate long-term
+  device-address tracking. Out of scope for this hardening pass; security
+  enhancement, not a defect.
+- **TOT-65** — Whole-program cppcheck `staticFunction` analysis via full
+  `idf.py` build (requires `compile_commands.json` with cross-TU linkage
+  unavailable in host analysis). Tooling/CI enhancement.

@@ -1,11 +1,11 @@
-# cppcheck strict-mode suppressions — TOT-58 firmware hardening
+# cppcheck strict-mode suppressions — TOT-61 firmware hardening
 #
 # These suppressions are scoped to checks that fundamentally require
 # whole-program / linker-level analysis, which is unavailable when analyzing
 # ESP-IDF component firmware without a full `idf.py` build (no ESP-IDF headers
 # in this environment, no compile_commands.json with cross-TU linkage).
 #
-# Every suppressed finding was reviewed individually (see TOT-58 audit report).
+# Every suppressed finding was reviewed individually (see TOT-61 audit report).
 
 # unusedFunction: cppcheck's own documentation states this check produces
 # false positives unless the whole program is analyzed. All findings here are:

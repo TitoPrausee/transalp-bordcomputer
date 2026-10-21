@@ -766,7 +766,7 @@ static uint8_t ota_state_to_spec(ota_state_t s)
 {
     /* Distinct internal OTA states intentionally map to the same CarPlay
      * spec value (e.g. FLASHING+REBOOTING -> "done", ERROR+ROLLBACK ->
-     * "failed"). Suppressed per TOT-58 strict-analysis pass. */
+     * "failed"). Suppressed per TOT-61 strict-analysis pass. */
     // NOLINTBEGIN(bugprone-branch-clone)
     switch (s) {
     case OTA_STATE_IDLE:         return 0;  /* idle */

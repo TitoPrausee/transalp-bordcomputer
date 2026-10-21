@@ -1,4 +1,4 @@
-# clang-tidy strict configuration — TOT-58 firmware hardening
+# clang-tidy strict configuration — TOT-61 firmware hardening
 # Strict checks for embedded C (ESP-IDF). Value-flow/whole-program checks
 # that require a full idf.py build are not enabled here; see the audit report.
 Checks: >

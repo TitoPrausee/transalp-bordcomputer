@@ -589,7 +589,7 @@ static esp_err_t ota_sd_read_file(const char *path)
     /* The fseek(SEEK_SET) above resets the stream to start; the host stdio
      * model used for analysis does not track the position reset, so
      * clang-analyzer reports a spurious EOF/indeterminate-position here.
-     * Suppressed per TOT-58. */
+     * Suppressed per TOT-61. */
     size_t read_len;
     while ((read_len = fread(buf, 1, OTA_CHUNK_SIZE, f)) > 0) {  // NOLINT(clang-analyzer-unix.Stream)
         err = esp_ota_write(s_ota.ota_handle, buf, read_len);

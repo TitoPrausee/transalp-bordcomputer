@@ -329,7 +329,7 @@ int carplay_client_gap_event(struct ble_gap_event *event, void *arg)
 
     /* NimBLE BLE_GAP_EVENT_* values are not modeled in the host-analysis
      * mocks, so clang-tidy collapses the case labels. The real handler
-     * dispatches on all BLE_GAP_EVENT_* cases. Suppressed per TOT-58. */
+     * dispatches on all BLE_GAP_EVENT_* cases. Suppressed per TOT-61. */
     // NOLINTNEXTLINE(readability-trivial-switch)
     switch (event->type) {
     case BLE_GAP_EVENT_CONNECT:
