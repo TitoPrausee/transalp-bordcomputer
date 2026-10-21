@@ -1,27 +1,23 @@
-# cppcheck strict-mode suppressions — TOT-61 firmware hardening
+# cppcheck suppressions — firmware hardening (TOT-61 / TOT-65)
 #
-# These suppressions are scoped to checks that fundamentally require
-# whole-program / linker-level analysis, which is unavailable when analyzing
-# ESP-IDF component firmware without a full `idf.py` build (no ESP-IDF headers
-# in this environment, no compile_commands.json with cross-TU linkage).
+# Whole-program cppcheck analysis now runs in CI against the real
+# `idf.py` build's compile_commands.json (see the `whole-program-cppcheck`
+# job in .github/workflows/firmware-ci.yml). The filtered database
+# (build/compile_commands_project.json, project sources only) provides the
+# cross-TU linkage that per-TU / directory-mode analysis lacks.
 #
-# Every suppressed finding was reviewed individually (see TOT-61 audit report).
+# Suppressions below are scoped to checks that remain false positives even
+# with whole-program analysis. Each was reviewed individually (see the
+# TOT-61 audit report and the TOT-65 triage note).
 
 # unusedFunction: cppcheck's own documentation states this check produces
-# false positives unless the whole program is analyzed. All findings here are:
-#  - public component API declared in components/*/include/*.h and called
-#    cross-translation-unit (cppcheck's per-TU analysis cannot see the caller),
-#  - ESP-IDF entry points (app_main) or FreeRTOS task entry points (*_task)
-#    invoked by the RTOS scheduler via xTaskCreate, never referenced directly,
-#  - callbacks registered with the BLE/host stack via function pointer.
-# None are genuinely dead. This matches the existing firmware-ci suppression.
+# false positives unless the whole program is analyzed. Even with the full
+# idf.py compile_commands.json, the following remain invisible to cppcheck's
+# call-graph:
+#  - ESP-IDF entry points (app_main) invoked by the ESP-IDF startup code,
+#  - FreeRTOS task entry points (*_task) invoked by the RTOS scheduler via
+#    xTaskCreate (function-pointer registration cppcheck cannot trace),
+#  - BLE/host-stack callbacks registered via function pointer.
+# None are genuinely dead. Retained until cppcheck can trace RTOS/ESP-IDF
+# indirect calls (tracked as a long-term tooling follow-up).
 unusedFunction
-
-# staticFunction: every finding is a function declared in a component header
-# (public include/*.h or internal *_internal.h). Making the definition static
-# would conflict with its non-static header declaration (a constraint
-# violation) and break the component API contract. To distinguish the few
-# genuinely TU-local functions that could be made static + removed from their
-# header, a whole-program build (compile_commands.json) is required — tracked
-# as a follow-up once a full idf.py build is available in CI.
-staticFunction
