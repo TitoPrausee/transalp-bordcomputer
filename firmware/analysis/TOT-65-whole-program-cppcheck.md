@@ -77,19 +77,52 @@ linkage as the real `idf.py` database for our sources):
 - **Project mode** (`--project=compile_commands.json`, whole-program):
   **0 `staticFunction` findings.**
 
-The real `idf.py` build's `compile_commands.json` provides even broader
-cross-TU visibility (includes ESP-IDF callers), so the CI whole-program run is
-expected to be equally clean. The CI job will be the authoritative verification
-on push/PR.
+### 5. CI verification (cppcheck 2.13.0, real idf.py compile_commands.json)
+
+The `whole-program-cppcheck` CI job runs inside the `espressif/idf:v5.4`
+Docker container: `idf.py build` produces `build/compile_commands.json`
+(1078 entries), `filter_compile_commands.py` filters to 39 project-source
+entries, and cppcheck 2.13.0 runs `--enable=all --check-level=exhaustive`
+against the filtered database.
+
+**CI run 39583990927: all 6 jobs pass** (ESP-IDF Build v5.2/v5.3/v5.4,
+Unit Tests, Static Analysis, Whole-program cppcheck). ✅
+
+The first CI runs surfaced 6 findings from the real ESP-IDF headers
+(not reproducible with host mocks). Triaged and resolved:
+
+- **2 `variableScope`** (power.c, power_manager.c): cppcheck 2.13.0 reports
+  these on `static const` string arrays inside `if` blocks, even though the
+  scope is already minimal. Not reported by cppcheck 2.22.0 (version-specific
+  false positive). Arrays made `static const` + inline-suppressed.
+- **1 `syntaxError`** (NimBLE `os_mbuf.h`): cppcheck can't parse the NimBLE
+  `os_mbuf.h` macro-heavy header. The build succeeded, so this is a parser
+  limitation. Suppressed via `--suppress=syntaxError:*os_mbuf.h`.
+- **3 `constParameterPointer`** (ESP-IDF `mbedtls/ssl.h`): findings in
+  ESP-IDF's mbedtls header, not our code. Our const-correctness was already
+  verified in TOT-61. Suppressed via `--suppress=constParameterPointer:*ssl.h`.
+
+### 6. Build fixes (pre-existing, found during CI setup)
+
+TOT-64 (`ble_privacy` component) introduced two build issues that were masked
+by `continue-on-error: true` on the `esp-idf-build` job. Fixed as part of
+TOT-65 since the whole-program cppcheck job requires a successful build:
+
+- `ble_privacy/CMakeLists.txt`: removed `esp_log` from `PRIV_REQUIRES` (not a
+  resolvable standalone component in ESP-IDF v5.2-v5.4 Docker images).
+- `ble_privacy.c`: added `#include "esp_random.h"` (ESP-IDF no longer includes
+  it from `esp_system.h`; `esp_fill_random()` was implicitly declared).
+- `test/mocks/esp_random.h`: new mock (mirrors real ESP-IDF structure;
+  `test/mocks/esp_system.h` includes it for backward compat).
 
 ## Acceptance criteria status
 
 | Criterion | Status |
 |-----------|--------|
-| ESP-IDF build produces `compile_commands.json` in CI | Done — `whole-program-cppcheck` job runs `idf.py build` |
-| Whole-program cppcheck runs green on the branch | Verified locally (0 findings); CI job enforces it |
-| `staticFunction` suppression removed | Done — only `unusedFunction` retained with updated rationale |
-| CI step added and passing | Done — blocking `whole-program-cppcheck` job (`--error-exitcode=1`) |
-| Genuinely-dead functions removed; TU-local functions made static | N/A — triage found 0 (all 32 are header-declared public API) |
+| ESP-IDF build produces `compile_commands.json` in CI | ✅ Done — `whole-program-cppcheck` job runs `idf.py build` inside Docker |
+| Whole-program cppcheck runs green on the branch | ✅ CI run 39583990927: all 6 jobs pass, 0 unsuppressed findings |
+| `staticFunction` suppression removed | ✅ Done — only `unusedFunction` retained with updated rationale |
+| CI step added and passing | ✅ Blocking `whole-program-cppcheck` job (`--error-exitcode=1`) — green |
+| Genuinely-dead functions removed; TU-local functions made static | ✅ N/A — triage found 0 (all 32 are header-declared public API) |
 
 Do **not** merge to `main` — board may want v1.0.0 tagged first (per task scope).
