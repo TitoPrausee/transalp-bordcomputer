@@ -13,6 +13,7 @@
 
 #include "ble.h"
 #include "ble_internal.h"
+#include "ble_privacy.h"
 #include "gatt_uuids.h"
 #include "carplay_bridge.h"
 
@@ -371,12 +372,10 @@ ble_start_advertising(void)
     adv_params.conn_mode = BLE_GAP_CONN_MODE_UND;
     adv_params.disc_mode = BLE_GAP_DISC_MODE_GEN;
 
-    uint8_t own_addr_type;
-    rc = ble_hs_id_infer_auto(0, &own_addr_type);
-    if (rc != 0) {
-        ESP_LOGE(TAG, "id_infer_auto rc=%d", rc);
-        return;
-    }
+    /* Use the privacy-aware own address type (RPA) configured by
+     * ble_privacy_init().  Falls back to BLE_OWN_ADDR_PUBLIC if privacy
+     * init failed, so advertising still works (degraded, non-private). */
+    uint8_t own_addr_type = ble_privacy_own_addr_type();
 
     rc = ble_gap_adv_start(own_addr_type, NULL, BLE_HS_FOREVER,
                            &adv_params, ble_gap_event_handler, NULL);
@@ -636,10 +635,12 @@ ble_configure_security(void)
     ble_hs_cfg.sm_bonding = 1;
     ble_hs_cfg.sm_mitm = 1;
     ble_hs_cfg.sm_sc = 1;
-    ble_hs_cfg.sm_our_key_dist = BLE_SM_PAIR_KEY_DIST_ENC |
-                                  BLE_SM_PAIR_KEY_DIST_ID;
-    ble_hs_cfg.sm_their_key_dist = BLE_SM_PAIR_KEY_DIST_ENC |
-                                    BLE_SM_PAIR_KEY_DIST_ID;
+
+    /* Privacy key distribution: our IRK + identity address (ID) and LTK (ENC)
+     * are distributed to bonded peers, and the peer's are requested, so bonded
+     * peers can resolve our RPA and we can resolve theirs.  Centralised in
+     * ble_privacy_configure() so it is unit-tested (TOT-64). */
+    ble_privacy_configure(&ble_hs_cfg);
 
     /* Store bonding keys in NVS */
     ble_hs_cfg.store_status_cb = ble_store_util_status_rr;
@@ -672,6 +673,14 @@ void ble_init(void)
 
     /* Configure security / bonding */
     ble_configure_security();
+
+    /* Initialise BLE privacy: load or generate + persist the static random
+     * identity address in NVS (the device IRK is generated/persisted by
+     * NimBLE itself).  No HCI commands here — the identity address is
+     * registered with the host lazily in ble_privacy_own_addr_type(), inside
+     * the host-controller sync context.  Must run after nimble_port_init().
+     * On failure ble_privacy_own_addr_type() falls back to public. (TOT-64) */
+    ble_privacy_init();
 
     /* Set device name */
     ble_svc_gap_device_name_set(BLE_DEVICE_NAME);

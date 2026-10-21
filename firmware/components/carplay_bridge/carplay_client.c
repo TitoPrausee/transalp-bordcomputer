@@ -20,6 +20,7 @@
 
 #include "carplay_internal.h"
 #include "carplay_uuids.h"
+#include "ble_privacy.h"
 
 #include <string.h>
 
@@ -437,12 +438,10 @@ static void cp_connect(const carplay_peer_t *peer)
         return;
     }
 
-    uint8_t own_addr_type;
-    int rc = ble_hs_id_infer_auto(0, &own_addr_type);
-    if (rc != 0) {
-        ESP_LOGW(TAG, "id_infer_auto rc=%d", rc);
-        return;
-    }
+    uint8_t own_addr_type = ble_privacy_own_addr_type();
+    /* Privacy-aware own address type (RPA) set by ble_privacy_init(); falls
+     * back to public if privacy init failed. Replaces ble_hs_id_infer_auto(0)
+     * which always resolved to the static public address (TOT-64). */
 
     ble_addr_t addr;
     addr.type = peer->addr_type;
@@ -455,7 +454,7 @@ static void cp_connect(const carplay_peer_t *peer)
         .supervision_timeout = 400,  /* 4 s */
     };
 
-    rc = ble_gap_connect(own_addr_type, &addr, 30000 /* 30 s */,
+    int rc = ble_gap_connect(own_addr_type, &addr, 30000 /* 30 s */,
                          &params, carplay_client_gap_event, NULL);
     if (rc != 0) {
         ESP_LOGW(TAG, "ble_gap_connect rc=%d", rc);

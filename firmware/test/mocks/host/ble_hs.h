@@ -184,4 +184,72 @@ static inline int os_mbuf_append(struct os_mbuf *om, const void *data, uint16_t 
     return 0;
 }
 
+/* ============================================================
+ * NimBLE host config + privacy API mocks (TOT-64).
+ *
+ * ble_privacy.c (included directly by test_ble_privacy.c) configures the
+ * security-manager key-distribution knobs on a struct ble_hs_cfg and
+ * registers a static random identity address via ble_hs_id_set_rnd(), then
+ * infers the RPA own address type via ble_hs_id_infer_auto(1).  These minimal
+ * mirrors let the host unit test assert the config-knob and RPA behaviour
+ * without the NimBLE stack.
+ * ============================================================ */
+
+/* Security-manager key-distribution flags (mirror NimBLE). */
+#define BLE_SM_PAIR_KEY_DIST_ENC  0x01
+#define BLE_SM_PAIR_KEY_DIST_ID   0x02
+#define BLE_SM_IO_CAP_DISP_YES_NO 0x04
+
+/* BLE own-address type identifiers (mirror NimBLE host/ble_gap.h). */
+#define BLE_OWN_ADDR_PUBLIC              0
+#define BLE_OWN_ADDR_RANDOM              1
+#define BLE_OWN_ADDR_RPA_PUBLIC_DEFAULT   2
+#define BLE_OWN_ADDR_RPA_RANDOM_DEFAULT   3
+
+/* Minimal mirror of NimBLE's struct ble_hs_cfg — only the fields touched by
+ * ble_privacy_configure() and ble_configure_security().  Field types match the
+ * real NimBLE struct so the same ble_privacy.c compiles against both. */
+struct ble_hs_cfg {
+    uint8_t sm_io_cap;
+    uint8_t sm_bonding;
+    uint8_t sm_mitm;
+    uint8_t sm_sc;
+    uint8_t sm_our_key_dist;
+    uint8_t sm_their_key_dist;
+    void   *sync_cb;
+    void   *reset_cb;
+    void   *store_status_cb;
+};
+
+/* Mock capture for ble_hs_id_set_rnd / ble_hs_id_infer_auto.  Tests reset the
+ * counters in setUp and set g_mock_set_rnd_rc / g_mock_infer_rc to simulate
+ * host acceptance (0) or rejection (non-zero) of the identity address / RPA
+ * inference.  g_mock_infer_addr_type is the own_addr_type the mock "infers"
+ * (default BLE_OWN_ADDR_RPA_RANDOM_DEFAULT). */
+static uint8_t g_mock_last_rnd_addr[6] = {0};
+static int     g_mock_set_rnd_count = 0;
+static int     g_mock_set_rnd_rc = 0;
+static int     g_mock_infer_count = 0;
+static int     g_mock_infer_rc = 0;
+static uint8_t g_mock_infer_addr_type = 3;  /* BLE_OWN_ADDR_RPA_RANDOM_DEFAULT */
+
+static inline int ble_hs_id_set_rnd(const uint8_t *addr)
+{
+    if (addr) {
+        memcpy(g_mock_last_rnd_addr, addr, sizeof(g_mock_last_rnd_addr));
+    }
+    g_mock_set_rnd_count++;
+    return g_mock_set_rnd_rc;
+}
+
+static inline int ble_hs_id_infer_auto(int privacy, uint8_t *out_addr_type)
+{
+    (void)privacy;
+    g_mock_infer_count++;
+    if (out_addr_type) {
+        *out_addr_type = g_mock_infer_addr_type;
+    }
+    return g_mock_infer_rc;
+}
+
 #endif /* _HOST_BLE_HS_H_ */

@@ -91,6 +91,11 @@ Diese Analyse deckt folgende Bereiche ab:
 
 - **BLE-Pairing**: LE Secure Connections (ECDH P-256) mit MITM-Schutz
   und Bonding
+- **BLE-Privacy (RPA)**: Resolvable Private Address statt statischer
+  BLE-Adresse; rotiert alle 900 s (`CONFIG_BT_NIMBLE_RPA_TIMEOUT`). Die
+  Adresse wird aus der Geraete-IRK abgeleitet; gebondete Peers koennen sie
+  nach dem Pairing aufloesen. Verhindert langfristiges Device-Address-
+  Tracking ueber Sessions hinweg. Siehe `docs/BLE-INTERFACE-SPEC.md` §1.1.
 - **OTA-Verifikation**: SHA-256-Checksumme und RSA-3072-Signatur
   (Secure Boot V2)
 - **Dual-Partition-Layout**: Automatischer Rollback beim Boot-Loop
