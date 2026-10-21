@@ -99,6 +99,10 @@ static bool         s_ble_running  = false;
  * GPIO ISR handler
  * ============================================================ */
 
+/* 'arg' is read-only, but ESP-IDF's gpio_isr_t is fixed to `void (*)(void *)`,
+ * so it cannot be declared const without an unsafe function-pointer cast at
+ * registration. Suppressed per TOT-58 strict-analysis pass. */
+// cppcheck-suppress constParameterCallback
 static void IRAM_ATTR gpio_isr_handler(void *arg)
 {
     controller_button_t btn = (controller_button_t)(intptr_t)arg;

@@ -117,19 +117,20 @@ static selftest_status_t test_power(dtc_code_t *out_code)
 static selftest_status_t test_display(dtc_code_t *out_code)
 {
     /* Best-Effort: Pruefe, ob die SPI-Pins als GPIO-Funktion konfiguriert sind.
-     * Ein echter Hardware-Check (Read-Display-ID) erfordert den Display-Treiber. */
-    bool display_cs_ok = (DISPLAY_CS_PIN > 0);
-
-    if (!display_cs_ok) {
-        ESP_LOGW(TAG, "Display: CS pin not configured");
-        dtc_register(DTC_B0101, DTC_SEV_ERROR);
-        *out_code = DTC_B0101;
-        return ST_FAIL;
-    }
-
+     * Ein echter Hardware-Check (Read-Display-ID) erfordert den Display-Treiber.
+     * DISPLAY_CS_PIN ist ein Compile-Time-Konstant aus board_config.h; die
+     * Pruefung erfolgt daher praeprozessorseitig, um einen toten Runtime-Pfad
+     * zu vermeiden. */
+#if DISPLAY_CS_PIN > 0
     ESP_LOGI(TAG, "Display: OK (CS=GPIO%d)", DISPLAY_CS_PIN);
     *out_code = DTC_NONE;
     return ST_PASS;
+#else
+    ESP_LOGW(TAG, "Display: CS pin not configured");
+    dtc_register(DTC_B0101, DTC_SEV_ERROR);
+    *out_code = DTC_B0101;
+    return ST_FAIL;
+#endif
 }
 
 /* ============================================================

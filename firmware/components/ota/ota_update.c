@@ -343,12 +343,6 @@ static esp_err_t ota_clear_resume_state(void)
  * HTTP Download (Update-From-URL)
  * ============================================================ */
 
-typedef struct {
-    char    url[OTA_URL_MAX_LEN];
-    bool    error;
-    bool    using_range;
-} http_dl_ctx_t;
-
 static esp_err_t ota_http_download(const char *url)
 {
     if (url == NULL || strlen(url) == 0 || strlen(url) >= OTA_URL_MAX_LEN) {
@@ -475,11 +469,10 @@ static esp_err_t ota_http_download(const char *url)
         return ESP_ERR_NO_MEM;
     }
 
-    int read_len;
     uint32_t last_save = 0;
 
     while (1) {
-        read_len = esp_http_client_read(client, (char *)buf, OTA_HTTP_BUFFER_SIZE);
+        int read_len = esp_http_client_read(client, (char *)buf, OTA_HTTP_BUFFER_SIZE);
         if (read_len < 0) {
             ESP_LOGE(TAG, "HTTP read error: %d", read_len);
             free(buf);
@@ -593,8 +586,12 @@ static esp_err_t ota_sd_read_file(const char *path)
         return ESP_ERR_NO_MEM;
     }
 
+    /* The fseek(SEEK_SET) above resets the stream to start; the host stdio
+     * model used for analysis does not track the position reset, so
+     * clang-analyzer reports a spurious EOF/indeterminate-position here.
+     * Suppressed per TOT-58. */
     size_t read_len;
-    while ((read_len = fread(buf, 1, OTA_CHUNK_SIZE, f)) > 0) {
+    while ((read_len = fread(buf, 1, OTA_CHUNK_SIZE, f)) > 0) {  // NOLINT(clang-analyzer-unix.Stream)
         err = esp_ota_write(s_ota.ota_handle, buf, read_len);
         if (err != ESP_OK) {
             ESP_LOGE(TAG, "OTA write failed at offset %lu: %s",

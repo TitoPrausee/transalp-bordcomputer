@@ -327,6 +327,10 @@ int carplay_client_gap_event(struct ble_gap_event *event, void *arg)
 {
     (void)arg;
 
+    /* NimBLE BLE_GAP_EVENT_* values are not modeled in the host-analysis
+     * mocks, so clang-tidy collapses the case labels. The real handler
+     * dispatches on all BLE_GAP_EVENT_* cases. Suppressed per TOT-58. */
+    // NOLINTNEXTLINE(readability-trivial-switch)
     switch (event->type) {
     case BLE_GAP_EVENT_CONNECT:
         if (event->connect.status == 0) {
@@ -456,6 +460,8 @@ static void cp_connect(const carplay_peer_t *peer)
     if (rc != 0) {
         ESP_LOGW(TAG, "ble_gap_connect rc=%d", rc);
         cp_set_state(CP_CLIENT_RECONNECTING);
+        /* Backoff schedule is owned by carplay_client_poll(); seed an initial
+         * base delay so the first poll does not fire immediately. */
         s_reconnect_at_us = esp_timer_get_time() +
                             (int64_t)CP_RECONNECT_BASE_MS * 1000;
     } else {
@@ -537,6 +543,12 @@ void carplay_client_poll(void)
     }
 
     cp_connect(&s_peer);
+
+    /* Schedule the next reconnect attempt with exponential backoff. Applied
+     * after cp_connect() so it overrides the fixed base delay seeded on
+     * synchronous connect failure; it is a no-op when cp_connect() transitioned
+     * to CONNECTING, since the state gates the poller. */
+    s_reconnect_at_us = now + (int64_t)delay_ms * 1000;
 }
 
 /* ============================================================

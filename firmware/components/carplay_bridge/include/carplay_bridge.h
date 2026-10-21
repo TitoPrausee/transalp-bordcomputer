@@ -98,7 +98,7 @@ void carplay_bridge_notify_telemetry(void);
  * Aktualisiert den Telemetrie-Cache aus Sensordaten. Wird vom
  * Sensor-/Event-Loop-Task aufgerufen (analog zu ble_on_sensor_update).
  */
-void carplay_bridge_on_sensor_update(void *data, uint16_t len);
+void carplay_bridge_on_sensor_update(const void *data, uint16_t len);
 
 /* ============================================================
  * Inbound data from CarPlay display (read-only access)

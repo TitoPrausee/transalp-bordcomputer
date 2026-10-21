@@ -226,7 +226,7 @@ static int cmd_dtc(int argc, char **argv)
         }
 
         /* DTC-Code anhand String suchen */
-        for (uint16_t i = 0; i < DTC_CODE_MAX; i++) {
+        for (int i = 0; i < DTC_CODE_MAX; i++) {
             if (strcmp(argv[2], dtc_code_to_string((dtc_code_t)i)) == 0) {
                 dtc_clear((dtc_code_t)i);
                 console_printf("DTC %s cleared.\r\n", argv[2]);
@@ -477,29 +477,7 @@ static int cmd_stats(int argc, char **argv)
  * Console: Hilfe
  * ============================================================ */
 
-static int cmd_help(int argc, char **argv)
-{
-    (void)argc; (void)argv;
-
-    console_printf("\r\n=== Diagnostic Console ===\r\n");
-    console_printf("Commands:\r\n");
-    console_printf("  dtc list              Show active DTCs\r\n");
-    console_printf("  dtc history           Show DTC history\r\n");
-    console_printf("  dtc clear <code>      Clear a specific DTC (e.g. P0101)\r\n");
-    console_printf("  dtc clear all         Clear all DTCs\r\n");
-    console_printf("  selftest full         Run full self-test (8 modules)\r\n");
-    console_printf("  selftest quick        Run quick self-test (Power, Display, Sensors)\r\n");
-    console_printf("  selftest result       Show last self-test result\r\n");
-    console_printf("  info                  System info (version, uptime, heap, battery)\r\n");
-    console_printf("  sensors               Live sensor values\r\n");
-    console_printf("  gps                   GPS data\r\n");
-    console_printf("  stats                 System statistics (heap, tasks, DTCs, event loop)\r\n");
-    console_printf("  stats reset           Reset event-loop drop/dispatch counters\r\n");
-    console_printf("  help                  This help\r\n");
-    console_printf("\r\n");
-
-    return 0;
-}
+static int cmd_help(int argc, char **argv);
 
 /* ============================================================
  * Console: Befehls-Tabelle
@@ -522,6 +500,20 @@ static const diag_command_t s_commands[] = {
     { "?",        "Show this help",          cmd_help     },
     { NULL, NULL, NULL },
 };
+
+static int cmd_help(int argc, char **argv)
+{
+    (void)argc; (void)argv;
+
+    console_printf("\r\n=== Diagnostic Console ===\r\n");
+    console_printf("Commands:\r\n");
+    for (int i = 0; s_commands[i].cmd != NULL; i++) {
+        console_printf("  %-12s %s\r\n", s_commands[i].cmd, s_commands[i].help);
+    }
+    console_printf("\r\n");
+
+    return 0;
+}
 
 /* ============================================================
  * Console: Befehl parsen und ausfuehren

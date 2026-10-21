@@ -118,7 +118,7 @@ static char *nmea_field(const char *sentence, int field_index,
 static bool field_to_float(const char *sentence, int idx, float *out)
 {
     char buf[32];
-    char *f = nmea_field(sentence, idx, buf, sizeof(buf));
+    const char *f = nmea_field(sentence, idx, buf, sizeof(buf));
     if (!f || !*f) return false;
     *out = strtof(f, NULL);
     return true;
@@ -130,7 +130,7 @@ static bool field_to_float(const char *sentence, int idx, float *out)
 static bool field_to_int(const char *sentence, int idx, int *out)
 {
     char buf[32];
-    char *f = nmea_field(sentence, idx, buf, sizeof(buf));
+    const char *f = nmea_field(sentence, idx, buf, sizeof(buf));
     if (!f || !*f) return false;
     *out = (int)strtol(f, NULL, 10);
     return true;
@@ -155,16 +155,10 @@ static bool parse_coord(const char *raw, char dir, float *out)
     int deg;
     float minutes;
 
-    /* Breite: ddmm.mmmm (2 Grad-Ziffern) */
-    /* Laenge: dddmm.mmmm (3 Grad-Ziffern) */
-    if (dir == 'N' || dir == 'S') {
-        deg = (int)(value / 100);     /* dd */
-        minutes = value - (deg * 100); /* mm.mmmm */
-    } else {
-        /* E/W: dddmm.mmmm */
-        deg = (int)(value / 100);     /* ddd */
-        minutes = value - (deg * 100); /* mm.mmmm */
-    }
+    /* Breite: ddmm.mmmm (2 Grad-Ziffern), Laenge: dddmm.mmmm (3 Ziffern).
+     * (int)(value / 100) extrahiert die Grad-Anteile fuer beide Formate. */
+    deg = (int)(value / 100);      /* dd bzw. ddd */
+    minutes = value - (deg * 100); /* mm.mmmm */
 
     float decimal = (float)deg + minutes / 60.0f;
 
@@ -181,6 +175,11 @@ static bool parse_time(const char *raw, uint8_t *hour, uint8_t *minute, uint8_t 
 {
     if (!raw || !*raw || strlen(raw) < 6) return false;
 
+    /* strlen(raw) >= 6 is checked above, so raw[0..5] are in bounds. The
+     * host-analysis strlen mock returns a constant, which makes clang-analyzer
+     * believe raw is shorter and flag raw[2..5] as uninitialized — a false
+     * positive. Suppressed per TOT-58. */
+    // NOLINTBEGIN(clang-analyzer-core.uninitialized.Assign)
     char buf[7];
     buf[0] = raw[0]; buf[1] = raw[1]; buf[2] = '\0';
     *hour = (uint8_t)strtol(buf, NULL, 10);
@@ -190,6 +189,7 @@ static bool parse_time(const char *raw, uint8_t *hour, uint8_t *minute, uint8_t 
 
     buf[0] = raw[4]; buf[1] = raw[5]; buf[2] = '\0';
     *second = (uint8_t)strtol(buf, NULL, 10);
+    // NOLINTEND(clang-analyzer-core.uninitialized.Assign)
 
     return true;
 }
@@ -259,7 +259,7 @@ static const char *get_sentence_type(const char *sentence)
  */
 static void parse_gga(const char *sentence, gps_data_t *out)
 {
-    char *f;
+    const char *f;
     float fval;
     int ival;
     char coord_raw[32];
@@ -275,7 +275,7 @@ static void parse_gga(const char *sentence, gps_data_t *out)
         strncpy(coord_raw, f, sizeof(coord_raw) - 1);
         coord_raw[sizeof(coord_raw) - 1] = '\0';
     }
-    char *ns = nmea_field(sentence, 2, field_buf, sizeof(field_buf));
+    const char *ns = nmea_field(sentence, 2, field_buf, sizeof(field_buf));
     if (f && ns) {
         parse_coord(coord_raw, ns[0], &out->lat);
     }
@@ -286,7 +286,7 @@ static void parse_gga(const char *sentence, gps_data_t *out)
         strncpy(coord_raw, f, sizeof(coord_raw) - 1);
         coord_raw[sizeof(coord_raw) - 1] = '\0';
     }
-    char *ew = nmea_field(sentence, 4, field_buf, sizeof(field_buf));
+    const char *ew = nmea_field(sentence, 4, field_buf, sizeof(field_buf));
     if (f && ew) {
         parse_coord(coord_raw, ew[0], &out->lon);
     }
@@ -342,7 +342,7 @@ static void parse_gga(const char *sentence, gps_data_t *out)
  */
 static void parse_rmc(const char *sentence, gps_data_t *out)
 {
-    char *f;
+    const char *f;
     float fval;
     char coord_raw[32];
     char field_buf[32];
@@ -352,7 +352,7 @@ static void parse_rmc(const char *sentence, gps_data_t *out)
     if (f) parse_time(f, &out->hour, &out->minute, &out->second);
 
     /* Status */
-    char *status = nmea_field(sentence, 1, field_buf, sizeof(field_buf));
+    const char *status = nmea_field(sentence, 1, field_buf, sizeof(field_buf));
     bool rmc_active = (status && status[0] == 'A');
 
     /* Breite */
@@ -361,7 +361,7 @@ static void parse_rmc(const char *sentence, gps_data_t *out)
         strncpy(coord_raw, f, sizeof(coord_raw) - 1);
         coord_raw[sizeof(coord_raw) - 1] = '\0';
     }
-    char *ns = nmea_field(sentence, 3, field_buf, sizeof(field_buf));
+    const char *ns = nmea_field(sentence, 3, field_buf, sizeof(field_buf));
     if (f && ns) {
         parse_coord(coord_raw, ns[0], &out->lat);
     }
@@ -372,7 +372,7 @@ static void parse_rmc(const char *sentence, gps_data_t *out)
         strncpy(coord_raw, f, sizeof(coord_raw) - 1);
         coord_raw[sizeof(coord_raw) - 1] = '\0';
     }
-    char *ew = nmea_field(sentence, 5, field_buf, sizeof(field_buf));
+    const char *ew = nmea_field(sentence, 5, field_buf, sizeof(field_buf));
     if (f && ew) {
         parse_coord(coord_raw, ew[0], &out->lon);
     }
@@ -452,6 +452,7 @@ static void parse_vtg(const char *sentence, gps_data_t *out)
  */
 static void parse_gsv(const char *sentence, gps_data_t *out)
 {
+    (void)out;
     int total_sats;
     if (field_to_int(sentence, 2, &total_sats)) {
         /* Nur die Gesamtzahl in Sicht — nicht die im Fix.

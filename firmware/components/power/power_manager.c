@@ -81,8 +81,6 @@ EventGroupHandle_t g_power_event_group = NULL;
 typedef struct {
     uint32_t   magic;
     power_state_t state_before_sleep;
-    uint16_t  charge_cycles;
-    uint16_t  discharge_cycles;
     uint32_t  sleep_count;
     int64_t   sleep_enter_time;
 } rtc_persist_t;
@@ -639,6 +637,7 @@ power_state_t power_get_state(void)
 
 void power_task(void *arg)
 {
+    (void)arg;
     ESP_LOGI(TAG, "Power task started (interval: %lums)",
              (unsigned long)s_config.measure_interval_ms);
 
