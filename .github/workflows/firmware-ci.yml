@@ -85,66 +85,18 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - name: Setup ESP-IDF
+      - name: Setup ESP-IDF, build, and run whole-program cppcheck
         uses: espressif/esp-idf-ci-action@v1
         with:
           esp_idf_version: 'v5.4'
           target: esp32s3
           path: 'firmware'
-
-      - name: Build firmware (generates build/compile_commands.json)
-        working-directory: firmware
-        run: idf.py build
-
-      - name: Install cppcheck
-        run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq cppcheck
-
-      - name: Filter compile_commands.json to project sources
-        working-directory: firmware
-        run: |
-          mkdir -p analysis
-          python3 scripts/filter_compile_commands.py \
-            build/compile_commands.json \
-            build/compile_commands_project.json
-          echo "Project-source entries:"
-          python3 -c "import json;d=json.load(open('build/compile_commands_project.json'));print(len(d),'entries')"
-
-      - name: Run whole-program cppcheck (blocking)
-        working-directory: firmware
-        run: |
-          echo "=== Whole-program cppcheck (--enable=all --check-level=exhaustive) ==="
-          echo "Uses real idf.py compile_commands.json with cross-TU linkage."
-          echo "Suppressions: analysis/cppcheck-suppressions.txt (unusedFunction only)."
-          cppcheck \
-            --enable=all \
-            --check-level=exhaustive \
-            --suppress=missingIncludeSystem \
-            --suppress=missingInclude \
-            --suppressions-list=analysis/cppcheck-suppressions.txt \
-            --project=build/compile_commands_project.json \
-            --inline-suppr \
-            --error-exitcode=1 \
-            --xml \
-            --xml-version=2 \
-            2> analysis/cppcheck-whole-program.xml
-
-          echo "=== Whole-program cppcheck passed (0 findings) ==="
-
-      - name: cppcheck text summary (non-blocking, for log readability)
-        if: always()
-        working-directory: firmware
-        run: |
-          cppcheck \
-            --enable=all \
-            --check-level=exhaustive \
-            --suppress=missingIncludeSystem \
-            --suppress=missingInclude \
-            --suppressions-list=analysis/cppcheck-suppressions.txt \
-            --project=build/compile_commands_project.json \
-            --inline-suppr \
-            2>&1 || true
+          # Runs inside the espressif/idf Docker container so that both the
+          # ESP-IDF headers and the project sources are at the paths recorded
+          # in compile_commands.json. The script builds, installs cppcheck,
+          # filters the compile database to project sources, and runs
+          # --enable=all --check-level=exhaustive (blocking, --error-exitcode=1).
+          command: bash scripts/run_whole_program_cppcheck.sh
 
       - name: Upload cppcheck report
         if: always()
