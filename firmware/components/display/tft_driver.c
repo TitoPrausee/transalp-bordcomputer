@@ -29,9 +29,9 @@ static const char *TAG = "tft";
  * Constants
  * ============================================================ */
 
-#define TFT_BUF_SIZE        ((TFT_WIDTH * TFT_HEIGHT) * 2)   /* 153600 Bytes */
+#define TFT_BUF_SIZE        ((size_t)(TFT_WIDTH * TFT_HEIGHT) * 2)   /* 153600 Bytes */
 #define TFT_BOUNCE_LINES    40
-#define TFT_BOUNCE_SIZE     (TFT_WIDTH * TFT_BOUNCE_LINES * 2)
+#define TFT_BOUNCE_SIZE     ((size_t)(TFT_WIDTH) * TFT_BOUNCE_LINES * 2)
 #define TFT_SPI_FREQ_HZ     40000000   /* 40 MHz */
 #define TFT_BACKLIGHT_GPIO  48         /* LED PWM pin (board-specific) */
 #define TFT_BACKLIGHT_CH    LEDC_CHANNEL_0
@@ -150,23 +150,23 @@ static void tft_init_sequence(void)
     tft_write_cmd_data(ILI9341_MADCTL, &madctl, 1);
 
     /* Frame rate control */
-    uint8_t frmctr1[] = {0x00, 0x06, 0x03};
+    const uint8_t frmctr1[] = {0x00, 0x06, 0x03};
     tft_write_cmd_data(ILI9341_FRMCTR1, frmctr1, 3);
 
     /* Display function control */
-    uint8_t dfunctr[] = {0x0A, 0x82, 0x27, 0x00};
+    const uint8_t dfunctr[] = {0x0A, 0x82, 0x27, 0x00};
     tft_write_cmd_data(ILI9341_DFUNCTR, dfunctr, 4);
 
     /* Power control */
-    uint8_t pwctr1[] = {0x23};          /* GVDD=4.6V */
+    const uint8_t pwctr1[] = {0x23};          /* GVDD=4.6V */
     tft_write_cmd_data(ILI9341_PWCTR1, pwctr1, 1);
-    uint8_t pwctr2[] = {0x10};          /* VGH=2x, VGL=-1x */
+    const uint8_t pwctr2[] = {0x10};          /* VGH=2x, VGL=-1x */
     tft_write_cmd_data(ILI9341_PWCTR2, pwctr2, 1);
 
     /* VCOM voltage */
-    uint8_t vmctr1[] = {0x3E, 0x28};
+    const uint8_t vmctr1[] = {0x3E, 0x28};
     tft_write_cmd_data(ILI9341_VMCTR1, vmctr1, 2);
-    uint8_t vmctr2[] = {0x86};
+    const uint8_t vmctr2[] = {0x86};
     tft_write_cmd_data(ILI9341_VMCTR2, vmctr2, 1);
 
     /* Gamma set: curve 1 */

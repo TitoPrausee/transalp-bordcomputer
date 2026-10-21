@@ -13,6 +13,7 @@
 
 #include "ble.h"
 #include "ble_internal.h"
+#include "ble_privacy.h"
 #include "gatt_uuids.h"
 #include "carplay_bridge.h"
 
@@ -153,7 +154,7 @@ static const struct ble_gatt_chr_def chr_nav[] = {
       .flags = BLE_GATT_CHR_F_READ | BLE_GATT_CHR_F_NOTIFY,
       .val_handle = &ble_val_handles[CHR_H_NAV_STATUS] },
     { .uuid = &chr_nav_cmd.u,        .access_cb = ble_gatt_access_cb,
-      .flags = BLE_GATT_CHR_F_WRITE | BLE_GATT_CHR_F_WRITE_NO_RSP,
+      .flags = BLE_GATT_CHR_F_WRITE | BLE_GATT_CHR_F_WRITE_NO_RSP | BLE_GATT_CHR_F_WRITE_AUTHEN,
       .val_handle = &ble_val_handles[CHR_H_NAV_CMD] },
     { 0 },
 };
@@ -163,10 +164,10 @@ static const struct ble_gatt_chr_def chr_media[] = {
       .flags = BLE_GATT_CHR_F_READ | BLE_GATT_CHR_F_NOTIFY,
       .val_handle = &ble_val_handles[CHR_H_MEDIA_NOWPLAYING] },
     { .uuid = &chr_media_control.u,   .access_cb = ble_gatt_access_cb,
-      .flags = BLE_GATT_CHR_F_WRITE | BLE_GATT_CHR_F_WRITE_NO_RSP,
+      .flags = BLE_GATT_CHR_F_WRITE | BLE_GATT_CHR_F_WRITE_NO_RSP | BLE_GATT_CHR_F_WRITE_AUTHEN,
       .val_handle = &ble_val_handles[CHR_H_MEDIA_CONTROL] },
     { .uuid = &chr_media_volume.u,    .access_cb = ble_gatt_access_cb,
-      .flags = BLE_GATT_CHR_F_READ | BLE_GATT_CHR_F_NOTIFY | BLE_GATT_CHR_F_WRITE,
+      .flags = BLE_GATT_CHR_F_READ | BLE_GATT_CHR_F_NOTIFY | BLE_GATT_CHR_F_WRITE | BLE_GATT_CHR_F_WRITE_AUTHEN,
       .val_handle = &ble_val_handles[CHR_H_MEDIA_VOLUME] },
     { 0 },
 };
@@ -179,7 +180,7 @@ static const struct ble_gatt_chr_def chr_phone[] = {
       .flags = BLE_GATT_CHR_F_READ | BLE_GATT_CHR_F_NOTIFY,
       .val_handle = &ble_val_handles[CHR_H_PHONE_STATUS] },
     { .uuid = &chr_phone_control.u,   .access_cb = ble_gatt_access_cb,
-      .flags = BLE_GATT_CHR_F_WRITE,
+      .flags = BLE_GATT_CHR_F_WRITE | BLE_GATT_CHR_F_WRITE_AUTHEN,
       .val_handle = &ble_val_handles[CHR_H_PHONE_CONTROL] },
     { .uuid = &chr_phone_notif.u,     .access_cb = ble_gatt_access_cb,
       .flags = BLE_GATT_CHR_F_NOTIFY,
@@ -205,61 +206,61 @@ static const struct ble_gatt_chr_def chr_telemetry[] = {
       .flags = BLE_GATT_CHR_F_NOTIFY,
       .val_handle = &ble_val_handles[CHR_H_TLM_LIVE] },
     { .uuid = &chr_tlm_snapshot.u,    .access_cb = ble_gatt_access_cb,
-      .flags = BLE_GATT_CHR_F_READ,
+      .flags = BLE_GATT_CHR_F_READ | BLE_GATT_CHR_F_READ_ENC,
       .val_handle = &ble_val_handles[CHR_H_TLM_SNAPSHOT] },
     { .uuid = &chr_track_export.u,    .access_cb = ble_gatt_access_cb,
       .flags = BLE_GATT_CHR_F_NOTIFY,
       .val_handle = &ble_val_handles[CHR_H_TRACK_EXPORT] },
     { .uuid = &chr_track_export_ctrl.u, .access_cb = ble_gatt_access_cb,
-      .flags = BLE_GATT_CHR_F_WRITE,
+      .flags = BLE_GATT_CHR_F_WRITE | BLE_GATT_CHR_F_WRITE_AUTHEN,
       .val_handle = &ble_val_handles[CHR_H_TRACK_EXPORT_CTRL] },
     { 0 },
 };
 
 static const struct ble_gatt_chr_def chr_config[] = {
     { .uuid = &chr_config_read.u,     .access_cb = ble_gatt_access_cb,
-      .flags = BLE_GATT_CHR_F_READ | BLE_GATT_CHR_F_NOTIFY,
+      .flags = BLE_GATT_CHR_F_READ | BLE_GATT_CHR_F_READ_ENC | BLE_GATT_CHR_F_NOTIFY,
       .val_handle = &ble_val_handles[CHR_H_CONFIG_READ] },
     { .uuid = &chr_config_write.u,    .access_cb = ble_gatt_access_cb,
-      .flags = BLE_GATT_CHR_F_WRITE,
+      .flags = BLE_GATT_CHR_F_WRITE | BLE_GATT_CHR_F_WRITE_AUTHEN,
       .val_handle = &ble_val_handles[CHR_H_CONFIG_WRITE] },
     { .uuid = &chr_config_export.u,   .access_cb = ble_gatt_access_cb,
       .flags = BLE_GATT_CHR_F_NOTIFY,
       .val_handle = &ble_val_handles[CHR_H_CONFIG_EXPORT] },
     { .uuid = &chr_config_import.u,   .access_cb = ble_gatt_access_cb,
-      .flags = BLE_GATT_CHR_F_WRITE,
+      .flags = BLE_GATT_CHR_F_WRITE | BLE_GATT_CHR_F_WRITE_AUTHEN,
       .val_handle = &ble_val_handles[CHR_H_CONFIG_IMPORT] },
     { .uuid = &chr_bond_mgmt.u,       .access_cb = ble_gatt_access_cb,
-      .flags = BLE_GATT_CHR_F_WRITE,
+      .flags = BLE_GATT_CHR_F_WRITE | BLE_GATT_CHR_F_WRITE_AUTHEN,
       .val_handle = &ble_val_handles[CHR_H_BOND_MGMT] },
     { 0 },
 };
 
 static const struct ble_gatt_chr_def chr_diag[] = {
     { .uuid = &chr_dtc_list.u,        .access_cb = ble_gatt_access_cb,
-      .flags = BLE_GATT_CHR_F_READ | BLE_GATT_CHR_F_NOTIFY | BLE_GATT_CHR_F_INDICATE,
+      .flags = BLE_GATT_CHR_F_READ | BLE_GATT_CHR_F_READ_ENC | BLE_GATT_CHR_F_NOTIFY | BLE_GATT_CHR_F_INDICATE,
       .val_handle = &ble_val_handles[CHR_H_DTC_LIST] },
     { .uuid = &chr_sensor_status.u,   .access_cb = ble_gatt_access_cb,
-      .flags = BLE_GATT_CHR_F_READ | BLE_GATT_CHR_F_NOTIFY,
+      .flags = BLE_GATT_CHR_F_READ | BLE_GATT_CHR_F_READ_ENC | BLE_GATT_CHR_F_NOTIFY,
       .val_handle = &ble_val_handles[CHR_H_SENSOR_STATUS] },
     { .uuid = &chr_self_test.u,       .access_cb = ble_gatt_access_cb,
-      .flags = BLE_GATT_CHR_F_WRITE | BLE_GATT_CHR_F_NOTIFY,
+      .flags = BLE_GATT_CHR_F_WRITE | BLE_GATT_CHR_F_NOTIFY | BLE_GATT_CHR_F_WRITE_AUTHEN,
       .val_handle = &ble_val_handles[CHR_H_SELF_TEST] },
     { .uuid = &chr_log_export.u,      .access_cb = ble_gatt_access_cb,
       .flags = BLE_GATT_CHR_F_NOTIFY,
       .val_handle = &ble_val_handles[CHR_H_LOG_EXPORT] },
     { .uuid = &chr_log_export_ctrl.u, .access_cb = ble_gatt_access_cb,
-      .flags = BLE_GATT_CHR_F_WRITE,
+      .flags = BLE_GATT_CHR_F_WRITE | BLE_GATT_CHR_F_WRITE_AUTHEN,
       .val_handle = &ble_val_handles[CHR_H_LOG_EXPORT_CTRL] },
     { 0 },
 };
 
 static const struct ble_gatt_chr_def chr_ota[] = {
     { .uuid = &chr_ota_control.u,    .access_cb = ble_gatt_access_cb,
-      .flags = BLE_GATT_CHR_F_WRITE | BLE_GATT_CHR_F_NOTIFY,
+      .flags = BLE_GATT_CHR_F_WRITE | BLE_GATT_CHR_F_NOTIFY | BLE_GATT_CHR_F_WRITE_AUTHEN,
       .val_handle = &ble_val_handles[CHR_H_OTA_CONTROL] },
     { .uuid = &chr_ota_data.u,        .access_cb = ble_gatt_access_cb,
-      .flags = BLE_GATT_CHR_F_WRITE_NO_RSP,
+      .flags = BLE_GATT_CHR_F_WRITE_NO_RSP | BLE_GATT_CHR_F_WRITE_AUTHEN,
       .val_handle = &ble_val_handles[CHR_H_OTA_DATA] },
     { .uuid = &chr_ota_verify.u,      .access_cb = ble_gatt_access_cb,
       .flags = BLE_GATT_CHR_F_NOTIFY,
@@ -371,12 +372,10 @@ ble_start_advertising(void)
     adv_params.conn_mode = BLE_GAP_CONN_MODE_UND;
     adv_params.disc_mode = BLE_GAP_DISC_MODE_GEN;
 
-    uint8_t own_addr_type;
-    rc = ble_hs_id_infer_auto(0, &own_addr_type);
-    if (rc != 0) {
-        ESP_LOGE(TAG, "id_infer_auto rc=%d", rc);
-        return;
-    }
+    /* Use the privacy-aware own address type (RPA) configured by
+     * ble_privacy_init().  Falls back to BLE_OWN_ADDR_PUBLIC if privacy
+     * init failed, so advertising still works (degraded, non-private). */
+    uint8_t own_addr_type = ble_privacy_own_addr_type();
 
     rc = ble_gap_adv_start(own_addr_type, NULL, BLE_HS_FOREVER,
                            &adv_params, ble_gap_event_handler, NULL);
@@ -414,6 +413,10 @@ ble_gap_event_handler(struct ble_gap_event *event, void *arg)
 {
     (void)arg;
 
+    /* NimBLE BLE_GAP_EVENT_* values are not modeled in the host-analysis
+     * mocks, so clang-tidy collapses the case labels. The real handler
+     * dispatches on all BLE_GAP_EVENT_* cases. Suppressed per TOT-61. */
+    // NOLINTNEXTLINE(readability-trivial-switch)
     switch (event->type) {
     case BLE_GAP_EVENT_CONNECT:
         if (event->connect.status == 0) {
@@ -498,10 +501,10 @@ ble_gap_event_handler(struct ble_gap_event *event, void *arg)
 
         event_bus_set(EVT_BLE_DISCONNECTED);
         ESP_LOGI(TAG, "Companion-app disconnected: handle=%d reason=%d "
-                 "peer=%02X:%02X:%02X:%02X:%02X:%02X",
+                 "peer=%02X:%02X:%02X:%02X:%02X:%02X type=%d",
                  old_handle, event->disconnect.reason,
                  old_addr[5], old_addr[4], old_addr[3],
-                 old_addr[2], old_addr[1], old_addr[0]);
+                 old_addr[2], old_addr[1], old_addr[0], old_addr_type);
 
         /* Auto-reconnect: restart advertising */
         ble_start_advertising();
@@ -632,10 +635,12 @@ ble_configure_security(void)
     ble_hs_cfg.sm_bonding = 1;
     ble_hs_cfg.sm_mitm = 1;
     ble_hs_cfg.sm_sc = 1;
-    ble_hs_cfg.sm_our_key_dist = BLE_SM_PAIR_KEY_DIST_ENC |
-                                  BLE_SM_PAIR_KEY_DIST_ID;
-    ble_hs_cfg.sm_their_key_dist = BLE_SM_PAIR_KEY_DIST_ENC |
-                                    BLE_SM_PAIR_KEY_DIST_ID;
+
+    /* Privacy key distribution: our IRK + identity address (ID) and LTK (ENC)
+     * are distributed to bonded peers, and the peer's are requested, so bonded
+     * peers can resolve our RPA and we can resolve theirs.  Centralised in
+     * ble_privacy_configure() so it is unit-tested (TOT-64). */
+    ble_privacy_configure(&ble_hs_cfg);
 
     /* Store bonding keys in NVS */
     ble_hs_cfg.store_status_cb = ble_store_util_status_rr;
@@ -668,6 +673,14 @@ void ble_init(void)
 
     /* Configure security / bonding */
     ble_configure_security();
+
+    /* Initialise BLE privacy: load or generate + persist the static random
+     * identity address in NVS (the device IRK is generated/persisted by
+     * NimBLE itself).  No HCI commands here — the identity address is
+     * registered with the host lazily in ble_privacy_own_addr_type(), inside
+     * the host-controller sync context.  Must run after nimble_port_init().
+     * On failure ble_privacy_own_addr_type() falls back to public. (TOT-64) */
+    ble_privacy_init();
 
     /* Set device name */
     ble_svc_gap_device_name_set(BLE_DEVICE_NAME);

@@ -30,7 +30,7 @@ typedef enum {
     CTRL_BTN_VOL_DOWN  = 8,
     CTRL_BTN_MEDIA_NEXT  = 9,
     CTRL_BTN_MEDIA_PREV  = 10,
-    CTRL_BTN_COUNT,
+    CTRL_BTN_COUNT       = 11,
 } controller_button_t;
 
 /* ============================================================

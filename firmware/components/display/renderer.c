@@ -25,7 +25,7 @@ static const char *TAG = "renderer";
  * Constants
  * ============================================================ */
 
-#define TFT_FB_SIZE  ((TFT_WIDTH * TFT_HEIGHT) * 2)
+#define TFT_FB_SIZE  ((size_t)(TFT_WIDTH * TFT_HEIGHT) * 2)
 #define EPD_FB_SIZE  ((EPD_WIDTH * EPD_HEIGHT) / 8)
 
 /* ============================================================
@@ -198,11 +198,10 @@ void renderer_draw_pixel(int x, int y, uint16_t color)
     if (x < 0 || x >= max_w || y < 0 || y >= max_h) return;
 
     /* Clip check */
-    if (s_has_clip) {
-        if (x < s_clip.x || x >= s_clip.x + s_clip.w ||
-            y < s_clip.y || y >= s_clip.y + s_clip.h)
-            return;
-    }
+    if (s_has_clip &&
+        (x < s_clip.x || x >= s_clip.x + s_clip.w ||
+         y < s_clip.y || y >= s_clip.y + s_clip.h))
+        return;
 
     if (s_active_display == DISPLAY_TYPE_TFT) {
         tft_draw_pixel((uint16_t)x, (uint16_t)y, color);
@@ -408,7 +407,7 @@ void renderer_init(display_type_t type)
     dirty_reset();
     s_has_clip = false;
     s_anim_count = 0;
-    memset(s_anims, 0, sizeof(s_anims));
+    memset((void *)s_anims, 0, sizeof(s_anims));
     s_initialized = true;
 
     ESP_LOGI(TAG, "Renderer init done, display=%s",

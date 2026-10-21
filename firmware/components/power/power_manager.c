@@ -81,8 +81,6 @@ EventGroupHandle_t g_power_event_group = NULL;
 typedef struct {
     uint32_t   magic;
     power_state_t state_before_sleep;
-    uint16_t  charge_cycles;
-    uint16_t  discharge_cycles;
     uint32_t  sleep_count;
     int64_t   sleep_enter_time;
 } rtc_persist_t;
@@ -561,7 +559,8 @@ void power_init_with_config(const power_config_t *cfg)
     /* Wakeup-Reason loggen */
     wakeup_reason_t wake_reason = power_get_wakeup_reason();
     if (wake_reason != WAKEUP_REASON_BOOT) {
-        const char *reason_str[] = {
+        // cppcheck-suppress variableScope
+        static const char *reason_str[] = {
             "NONE", "RTC_TIMER", "GPIO", "UART", "TOUCH", "ULP", "BOOT"
         };
         ESP_LOGI(TAG, "Wakeup reason: %s", reason_str[wake_reason]);
@@ -639,6 +638,7 @@ power_state_t power_get_state(void)
 
 void power_task(void *arg)
 {
+    (void)arg;
     ESP_LOGI(TAG, "Power task started (interval: %lums)",
              (unsigned long)s_config.measure_interval_ms);
 

@@ -32,6 +32,7 @@ if(NOT IDF_PATH)
         ${CMAKE_CURRENT_SOURCE_DIR}/../components/storage/include
         ${CMAKE_CURRENT_SOURCE_DIR}/../components/ble/include
         ${CMAKE_CURRENT_SOURCE_DIR}/../components/ble
+        ${CMAKE_CURRENT_SOURCE_DIR}/../components/ble_privacy/include
         ${CMAKE_CURRENT_SOURCE_DIR}/../components/display/include
         ${CMAKE_CURRENT_SOURCE_DIR}/../components/ota/include
         ${CMAKE_CURRENT_SOURCE_DIR}/../components/hid_controller/include
@@ -52,12 +53,18 @@ if(NOT IDF_PATH)
         test_config.c
         test_dtc_extended.c
         test_ble_callbacks.c
+        test_ble_privacy.c
         test_power_manager.c
         test_controller.c
         test_carplay_bridge.c
         test_carplay_media.c
         test_ota.c
         test_ota_secure_boot.c
+        test_gear_indicator.c
+        test_fuel_level.c
+        test_rpm.c
+        test_temperature.c
+        test_logger.c
     )
 
     # Compiler flags
@@ -106,6 +113,11 @@ idf_component_register(
         "test_power_manager.c"
         "test_controller.c"
         "test_carplay_bridge.c"
+        "test_gear_indicator.c"
+        "test_fuel_level.c"
+        "test_rpm.c"
+        "test_temperature.c"
+        "test_logger.c"
     INCLUDE_DIRS
         "."
         "mocks"

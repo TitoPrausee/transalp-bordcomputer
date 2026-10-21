@@ -64,9 +64,9 @@ void ble_notify_sensor_status(void);
  * ============================================================ */
 
 /* Called by event_bus when sensor data is updated. */
-void ble_on_sensor_update(void *data, uint16_t len);
+void ble_on_sensor_update(const void *data, uint16_t len);
 
 /* Called by event_bus when GPS data is updated. */
-void ble_on_gps_update(void *data, uint16_t len);
+void ble_on_gps_update(const void *data, uint16_t len);
 
 #endif /* _BLE_H_ */

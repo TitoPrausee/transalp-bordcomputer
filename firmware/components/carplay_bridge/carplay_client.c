@@ -20,6 +20,7 @@
 
 #include "carplay_internal.h"
 #include "carplay_uuids.h"
+#include "ble_privacy.h"
 
 #include <string.h>
 
@@ -327,6 +328,10 @@ int carplay_client_gap_event(struct ble_gap_event *event, void *arg)
 {
     (void)arg;
 
+    /* NimBLE BLE_GAP_EVENT_* values are not modeled in the host-analysis
+     * mocks, so clang-tidy collapses the case labels. The real handler
+     * dispatches on all BLE_GAP_EVENT_* cases. Suppressed per TOT-61. */
+    // NOLINTNEXTLINE(readability-trivial-switch)
     switch (event->type) {
     case BLE_GAP_EVENT_CONNECT:
         if (event->connect.status == 0) {
@@ -433,12 +438,10 @@ static void cp_connect(const carplay_peer_t *peer)
         return;
     }
 
-    uint8_t own_addr_type;
-    int rc = ble_hs_id_infer_auto(0, &own_addr_type);
-    if (rc != 0) {
-        ESP_LOGW(TAG, "id_infer_auto rc=%d", rc);
-        return;
-    }
+    uint8_t own_addr_type = ble_privacy_own_addr_type();
+    /* Privacy-aware own address type (RPA) set by ble_privacy_init(); falls
+     * back to public if privacy init failed. Replaces ble_hs_id_infer_auto(0)
+     * which always resolved to the static public address (TOT-64). */
 
     ble_addr_t addr;
     addr.type = peer->addr_type;
@@ -451,11 +454,13 @@ static void cp_connect(const carplay_peer_t *peer)
         .supervision_timeout = 400,  /* 4 s */
     };
 
-    rc = ble_gap_connect(own_addr_type, &addr, 30000 /* 30 s */,
+    int rc = ble_gap_connect(own_addr_type, &addr, 30000 /* 30 s */,
                          &params, carplay_client_gap_event, NULL);
     if (rc != 0) {
         ESP_LOGW(TAG, "ble_gap_connect rc=%d", rc);
         cp_set_state(CP_CLIENT_RECONNECTING);
+        /* Backoff schedule is owned by carplay_client_poll(); seed an initial
+         * base delay so the first poll does not fire immediately. */
         s_reconnect_at_us = esp_timer_get_time() +
                             (int64_t)CP_RECONNECT_BASE_MS * 1000;
     } else {
@@ -537,6 +542,12 @@ void carplay_client_poll(void)
     }
 
     cp_connect(&s_peer);
+
+    /* Schedule the next reconnect attempt with exponential backoff. Applied
+     * after cp_connect() so it overrides the fixed base delay seeded on
+     * synchronous connect failure; it is a no-op when cp_connect() transitioned
+     * to CONNECTING, since the state gates the poller. */
+    s_reconnect_at_us = now + (int64_t)delay_ms * 1000;
 }
 
 /* ============================================================

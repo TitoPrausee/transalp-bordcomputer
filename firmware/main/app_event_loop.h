@@ -25,8 +25,12 @@
  * Event Types
  * ============================================================ */
 
+/* Controller events use an explicit APP_EVENT_CONTROLLER_BASE + N offset block
+ * so they form a contiguous, range-checkable slice within the enum; the other
+ * enumerators are sequential. The mixed initialization is intentional. */
+// NOLINTBEGIN(cert-int09-c,readability-enum-initial-value)
 typedef enum {
-    APP_EVENT_SENSOR_UPDATE = 0,    /* New sensor data available     */
+    APP_EVENT_SENSOR_UPDATE,         /* New sensor data available     */
     APP_EVENT_GPS_UPDATE,           /* GPS position/speed/course      */
     APP_EVENT_GPS_FIX_ACQUIRED,     /* Transition: no-fix -> fix      */
     APP_EVENT_GPS_FIX_LOST,         /* Transition: fix -> no-fix      */
@@ -66,6 +70,7 @@ typedef enum {
 
     APP_EVENT_MAX,
 } app_event_type_t;
+// NOLINTEND(cert-int09-c,readability-enum-initial-value)
 
 /* ============================================================
  * Event Payload
@@ -120,7 +125,7 @@ esp_err_t app_event_subscribe(uint32_t type_mask,
 /*
  * Unregister a previously registered subscriber.
  */
-void app_event_unsubscribe(app_event_callback_t callback, void *user_ctx);
+void app_event_unsubscribe(app_event_callback_t callback, const void *user_ctx);
 
 /*
  * Dispatch an event. Copies up to data_len bytes (max APP_EVENT_PAYLOAD_SIZE)

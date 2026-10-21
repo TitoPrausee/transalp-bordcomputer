@@ -1,0 +1,6 @@
+main/app_event_loop.h:28:9: warning: initial values in enum '<unnamed>' are not consistent, consider explicit initialization of all, none or only the first enumerator [cert-int09-c,readability-enum-initial-value]
+main/app_event_loop.h:28:9: warning: initial values in enum '<unnamed>' are not consistent, consider explicit initialization of all, none or only the first enumerator [cert-int09-c,readability-enum-initial-value]
+main/app_event_loop.h:28:9: warning: initial values in enum '<unnamed>' are not consistent, consider explicit initialization of all, none or only the first enumerator [cert-int09-c,readability-enum-initial-value]
+main/app_event_loop.h:28:9: warning: initial values in enum '<unnamed>' are not consistent, consider explicit initialization of all, none or only the first enumerator [cert-int09-c,readability-enum-initial-value]
+main/app_event_loop.h:28:9: warning: initial values in enum '<unnamed>' are not consistent, consider explicit initialization of all, none or only the first enumerator [cert-int09-c,readability-enum-initial-value]
+main/app_event_loop.h:28:9: warning: initial values in enum '<unnamed>' are not consistent, consider explicit initialization of all, none or only the first enumerator [cert-int09-c,readability-enum-initial-value]
