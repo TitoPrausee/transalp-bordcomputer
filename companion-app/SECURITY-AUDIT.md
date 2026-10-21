@@ -1,22 +1,24 @@
-# npm Dependency Vulnerability Audit (TOT-56 + TOT-60)
+# npm Dependency Vulnerability Audit (TOT-56 + TOT-60 + TOT-63)
 
 > Companion-App Security Audit — npm dependency remediation
 > Stand: Oktober 2026
-> Issues: TOT-56 (parent: TOT-51, TOT-16), TOT-60 (parent: TOT-57)
+> Issues: TOT-56 (parent: TOT-51, TOT-16), TOT-60 (parent: TOT-57), TOT-63 (parent: TOT-57)
 
 ---
 
 ## 1. Zusammenfassung
 
-| Kategorie | TOT-56 Vorher | TOT-56 Nachher | TOT-60 Nachher | Status |
-|-----------|---------------|----------------|-----------------|--------|
-| Critical  | 1             | 0              | 0               | Behoben (TOT-56) |
-| High      | 28            | 25             | 25              | 3 behoben (TOT-56), 25 akzeptiertes Risiko |
-| Moderate  | 31            | 20             | 0               | 11 behoben (TOT-56), 20 behoben (TOT-60) |
-| **Total** | **60**        | **45**         | **25**          | **35 behoben** |
+| Kategorie | TOT-56 Vorher | TOT-56 Nachher | TOT-60 Nachher | TOT-63 Re-Verify | Status |
+|-----------|---------------|----------------|-----------------|------------------|--------|
+| Critical  | 1             | 0              | 0               | 0                | Behoben (TOT-56) |
+| High      | 28            | 25             | 25              | 25               | 3 behoben (TOT-56), 25 akzeptiertes Risiko (kein Upstream-Fix) |
+| Moderate  | 31            | 20             | 0               | 0                | 11 behoben (TOT-56), 20 behoben (TOT-60) |
+| Low       | 0             | 0              | 0               | 0                | — |
+| **Total** | **60**        | **45**         | **25**          | **25**           | **35 behoben, 25 deferred** |
 
 **TOT-56:** 4 Overrides (tar, @xmldom/xmldom, postcss, uuid) — 15 Vulnerabilities behoben.
 **TOT-60:** 2 Overrides (js-yaml, argparse) — 20 Vulnerabilities behoben (sprintf-js-Kette).
+**TOT-63:** Re-Verifikation (2026-10-21) — keine neuen Upstream-Fixes fuer braces/node-forge verfuegbar; 25 High als Deferred mit Rationale dokumentiert (siehe Abschnitt 2c).
 **Verbleibend:** 25 High (braces + node-forge — kein Upstream-Fix verfuegbar).
 
 ---
@@ -116,6 +118,99 @@ fehl. Dies ist ein **pre-existing Issue aus TOT-56** (nicht durch TOT-60 verursa
 - **Empfehlung:** Bei naechstem Expo SDK Upgrade (53+) pruefen, ob @expo/cli
   mit tar 7.x kompatibel ist. Alternativ `patch-package` evaluieren, um
   `_tar().default.extract` -> `_tar().extract` in @expo/cli zu patchen.
+
+---
+
+## 2c. TOT-63: Re-Verifikation & Deferral (2026-10-21)
+
+TOT-63 (Sprint 7 hardening track) ueberprueft den Stand der npm-Vulnerability-Remediation
+auf Branch `sprint-7/hardening` und prueft, ob zwischenzeitlich Upstream-Fixes fuer die
+verbleibenden 25 High-Advisories verfuegbar geworden sind.
+
+### Audit-Stand (Re-Verifikation)
+
+| Check | Wert |
+|-------|------|
+| `npm audit` Critical | 0 |
+| `npm audit` High | 25 (braces-Kette + node-forge-Kette) |
+| `npm audit` Moderate | 0 |
+| `npm audit` Low | 0 |
+| `npm audit` Total | 25 |
+| Branch | `sprint-7/hardening` @ `29dc3aeb` (companion-app unveraendert seit `a1628e0b`) |
+| Registry-Check-Datum | 2026-10-21 |
+
+Gegenueber dem TOT-60 Endstand (25 High, 0 Moderate, 0 Critical) ergibt sich keine
+Aenderung — es wurden **keine neuen** Vulnerabilities eingefuehrt (Erfuellung der
+Acceptance-Criterion "No new high/critical vulnerabilities introduced").
+
+### npm-Registry-Check: keine Upstream-Fixes verfuegbar
+
+ Fuer beide verbleibenden Root-Advisories wurde die npm-Registry am 2026-10-21
+geprueft. In beiden Faellen ist die neueste veroeffentlichte Version **selbst
+verwundbar** — es existiert keine gepatchte Version, auf die per `overrides`
+gehoben werden koennte:
+
+| Package | Advisory | Verwundbare Versionen | Neueste npm-Version | Fix verfuegbar |
+|---------|----------|------------------------|---------------------|----------------|
+| `braces` | GHSA-vfj7-8cjw-p6xm (Stack-Exhaustion DoS) | `<=3.0.3` | `3.0.3` (2024-05-21) | Nein |
+| `node-forge` | GHSA-86w9-cpqp-85rv (RSA PKCS#1 v1.5 sig verification) | `<=1.4.0` | `1.4.0` (2026-03-24) | Nein |
+
+Da `overrides` zwingend eine **gepatchte Ziel-Version** benoetigen, um ein Advisory
+aufzuloesen, ist ein Override an dieser Stelle **mathematisch wirkungslos**: ein
+Override auf `braces@3.0.3` bzw. `node-forge@1.4.0` laesst die jeweilige Advisory
+bestehen, da genau diese Versionen vom Advisory abgedeckt sind.
+
+### `npm audit fix` (ohne `--force`) ist ein No-Op
+
+`npm audit fix` (non-force) aendert nichts — es kann keine nicht-breaking Fixes
+anbieten. Der einzige von npm vorgeschlagene "Fix" ist `npm audit fix --force`,
+welcher wie in Abschnitt 4.1 dokumentiert **destruktive Major-Downgrades**
+(expo 52->44, react-native 0.87->0.72, jest 30->25) durchfuehren wuerde und die App
+zerstoert. Gemaeess Task-Scope ("Skip or file follow-up for any remediation that
+risks a breaking change or needs a major version migration") verworfen.
+
+### Bestaetigte transitive Ketten (unveraendert)
+
+```
+braces@3.0.3 -> micromatch -> fast-glob -> {globby, del -> tempy,
+  expo-modules-autolinking, @expo/cli, jscodeshift -> @react-native/codegen
+  -> @react-native/babel-plugin-codegen -> @react-native/babel-preset
+  -> babel-preset-expo -> expo}
+
+node-forge@1.4.0 -> {@expo/code-signing-certificates, selfsigned
+  -> @react-native/dev-middleware -> @expo/cli -> expo}
+```
+
+Beide Ketten sind **ausschliesslich Build-Time/Dev-Dependencies** (Expo CLI,
+Metro Bundler, React Native Codegen, EAS Code-Signing). Kein Code aus diesen
+Packages ist im Runtime-Bundle der App enthalten.
+
+### Build- / Test- / Lint-Verifikation (TOT-63)
+
+| Check | Befehl | Ergebnis |
+|-------|--------|----------|
+| TypeScript | `npx tsc --noEmit` | 0 Errors |
+| Lint | `npx eslint .` | 0 Errors |
+| Tests | `npx jest --coverage` | 132 Tests, 5 Suites, alle bestanden |
+| Breaking Changes | — | Keine (keine Code- oder Lock-Aenderung in TOT-63) |
+
+### Deferral-Rationale (25 High)
+
+Die 25 verbleibenden High-Vulnerabilities werden **deferred** mit folgender Begründung:
+
+1. **Kein Upstream-Fix verfuegbar** — die neuesten npm-Versionen (`braces@3.0.3`,
+   `node-forge@1.4.0`) sind selbst verwundbar. Ein Override ist wirkungslos.
+2. **Reiner Build-Time/Dev-Exposure** — alle betroffenen Packages (Expo CLI, Metro,
+   Codegen, Code-Signing) laufen nur in der Entwicklungs-/Build-Umgebung. Keine
+   Runtime-Exposition in der App-Binary.
+3. **Angriffsvektor erfordert kontrollierten Build-Input** — braces DoS braucht
+   kontrollierte tief verschachtelte Glob-Patterns im Build-Prozess;
+   node-forge benoetigt manipulierte Zertifikate im Code-Signing-Pfad.
+4. **`npm audit fix --force` ist destruktiv** — Major-Downgrades von Expo/RN/Jest
+   wuerden die App zerstoeren (Abschnitt 4.1).
+
+Follow-Up: Beim naechsten Expo SDK Upgrade (53+) pruefen, ob die transitive
+braces-/node-forge-Kette aufgeloest wird (Abschnitt 4.2 / 4.3).
 
 ---
 
@@ -261,6 +356,21 @@ Build/Dev-Time-DoS akzeptiert.
 | `expo prebuild` | Pre-existing failure (TOT-56 tar 7.x ESM/CJS interop — siehe Abschnitt 2b) |
 | Breaking Changes | Keine (nur package-lock.json + 2 neue overrides in package.json) |
 
+### TOT-63 Verifikation
+
+| Check | Status |
+|-------|--------|
+| `npm audit` | 25 high (unveraendert zu TOT-60), 0 moderate, 0 critical, 0 low |
+| npm-Registry-Check `braces` | neueste Version `3.0.3` selbst verwundbar — kein Fix |
+| npm-Registry-Check `node-forge` | neueste Version `1.4.0` selbst verwundbar — kein Fix |
+| `npm audit fix` (non-force) | No-Op (kein nicht-breaking Fix verfuegbar) |
+| `npx tsc --noEmit` | 0 Errors |
+| `npx eslint .` | 0 Errors |
+| `npx jest --coverage` | 132 Tests, 5 Suites, alle bestanden |
+| Neue high/critical Vulns | Keine |
+| Breaking Changes | Keine (keine Code-/Lock-Aenderung; ausschliesslich Doku) |
+| Deferred (25 High) | braces (20) + node-forge (5) — siehe Abschnitt 2c / 3 |
+
 ---
 
 ## 6. Geaenderte Dateien
@@ -280,3 +390,11 @@ Build/Dev-Time-DoS akzeptiert.
 | `companion-app/package.json` | `js-yaml` und `argparse` zu `overrides` hinzugefuegt |
 | `companion-app/package-lock.json` | Aktualisiert durch `npm install` (3 packages entfernt: sprintf-js, argparse 1.x, js-yaml 3.x) |
 | `companion-app/SECURITY-AUDIT.md` | Abschnitt 2b, 3.3, 4.3, 5, 6 aktualisiert |
+
+### TOT-63
+
+| Datei | Aenderung |
+|-------|-----------|
+| `companion-app/SECURITY-AUDIT.md` | Abschnitt 2c (Re-Verifikation & Deferral), Abschnitt 1/5/6 aktualisiert |
+| `companion-app/package.json` | Keine Aenderung (kein wirksamer Override moeglich) |
+| `companion-app/package-lock.json` | Keine Aenderung |
