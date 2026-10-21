@@ -384,7 +384,7 @@ battery_status_t power_measure_and_update(float vwarn_low, float vwarn_crit,
 
     /* Status-Aenderungen loggen */
     if (new_status != old_status) {
-        const char *status_str[] = {
+        static const char *status_str[] = {
             "NORMAL", "CHARGING", "LOW", "CRITICAL", "OVERVOLT"
         };
         ESP_LOGI(TAG, "Battery status: %s -> %s (%.2fV, %u%%)",

@@ -559,7 +559,7 @@ void power_init_with_config(const power_config_t *cfg)
     /* Wakeup-Reason loggen */
     wakeup_reason_t wake_reason = power_get_wakeup_reason();
     if (wake_reason != WAKEUP_REASON_BOOT) {
-        const char *reason_str[] = {
+        static const char *reason_str[] = {
             "NONE", "RTC_TIMER", "GPIO", "UART", "TOUCH", "ULP", "BOOT"
         };
         ESP_LOGI(TAG, "Wakeup reason: %s", reason_str[wake_reason]);

@@ -30,13 +30,18 @@ python3 scripts/filter_compile_commands.py \
 
 echo "=== Whole-program cppcheck (--enable=all --check-level=exhaustive) ==="
 echo "Uses real idf.py compile_commands.json with cross-TU linkage."
-echo "Suppression: unusedFunction (see analysis/cppcheck-suppressions.txt for rationale)."
+echo "Suppressions:"
+echo "  unusedFunction        - ESP-IDF entry points, RTOS tasks, BLE callbacks"
+echo "  syntaxError:*/os_mbuf.h - cppcheck can't parse NimBLE's os_mbuf.h macros"
+echo "  constParameterPointer:*/ssl.h - false positives in ESP-IDF mbedtls headers"
 cppcheck \
     --enable=all \
     --check-level=exhaustive \
     --suppress=missingIncludeSystem \
     --suppress=missingInclude \
     --suppress=unusedFunction \
+    --suppress=syntaxError:*os_mbuf.h \
+    --suppress=constParameterPointer:*ssl.h \
     --project=build/compile_commands_project.json \
     --inline-suppr \
     --error-exitcode=1 \
