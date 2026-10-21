@@ -385,6 +385,196 @@ void test_incremental_update(void)
 }
 
 /* ============================================================
+ * Coverage expansion tests (TOT-59)
+ *
+ * These tests close gaps in the NMEA parser coverage:
+ *   - GGA DGPS fix quality (quality=2)
+ *   - GGA HDOP field parsing + valid threshold
+ *   - VTG speed from knots when km/h field absent
+ *   - Different talker prefixes (GN, GL)
+ *   - Boundary coordinates (0,0)
+ *   - Max latitude (9000.0000 N)
+ *   - RMC missing speed field keeps zero
+ *   - Stats accumulation across multiple GGA sentences
+ *   - Checksum with single-char body
+ * ============================================================ */
+
+void test_gga_dgps_fix_quality(void)
+{
+    gps_data_t data;
+    memset(&data, 0, sizeof(data));
+
+    /* quality=2 -> GPS_FIX_DGPS */
+    const char *body = "$GNGGA,142301.0,5056.1234,N,01135.2345,E,2,09,1.2,245.3,M,47.1,M,,";
+    char *sentence = append_checksum(body);
+
+    bool result = nmea_parse(sentence, &data);
+
+    TEST_ASSERT_TRUE(result);
+    TEST_ASSERT_TRUE(data.has_fix);
+    TEST_ASSERT_EQUAL(GPS_FIX_DGPS, data.fix_quality);
+}
+
+void test_gga_hdop_parsing(void)
+{
+    gps_data_t data;
+    memset(&data, 0, sizeof(data));
+
+    /* HDOP = 1.2 in field 7 */
+    const char *body = "$GNGGA,142301.0,5056.1234,N,01135.2345,E,1,09,1.2,245.3,M,47.1,M,,";
+    char *sentence = append_checksum(body);
+
+    nmea_parse(sentence, &data);
+    TEST_ASSERT_FLOAT_WITHIN(0.01f, 1.2f, data.hdop);
+}
+
+void test_gga_hdop_valid_threshold(void)
+{
+    gps_data_t data;
+    memset(&data, 0, sizeof(data));
+
+    /* HDOP = 6.0 (> 5.0 threshold -> valid stays false even with fix) */
+    const char *body = "$GNGGA,142301.0,5056.1234,N,01135.2345,E,1,09,6.0,245.3,M,47.1,M,,";
+    char *sentence = append_checksum(body);
+
+    nmea_parse(sentence, &data);
+    TEST_ASSERT_TRUE(data.has_fix);
+    TEST_ASSERT_FALSE(data.valid);  /* HDOP too high */
+}
+
+void test_vtg_knots_fallback(void)
+{
+    gps_data_t data;
+    memset(&data, 0, sizeof(data));
+
+    /* VTG with only knots speed (field 4), no km/h field 6.
+     * 45.3 knots * 1.852 = 83.8956 km/h */
+    const char *body = "$GNVTG,270.0,T,268.5,M,45.3,N,,K";
+    char *sentence = append_checksum(body);
+
+    bool result = nmea_parse(sentence, &data);
+
+    TEST_ASSERT_TRUE(result);
+    TEST_ASSERT_FLOAT_WITHIN(0.1f, 83.8956f, data.speed_kmh);
+}
+
+void test_talker_prefix_gn(void)
+{
+    gps_data_t data;
+    memset(&data, 0, sizeof(data));
+
+    /* GLONASS talker prefix $GL — should parse the same as $GP */
+    const char *body = "$GLGGA,142301.0,5056.1234,N,01135.2345,E,1,09,1.2,245.3,M,47.1,M,,";
+    char *sentence = append_checksum(body);
+
+    bool result = nmea_parse(sentence, &data);
+
+    TEST_ASSERT_TRUE(result);
+    TEST_ASSERT_TRUE(data.has_fix);
+    TEST_ASSERT_EQUAL_UINT8(9, data.satellites);
+}
+
+void test_talker_prefix_gl(void)
+{
+    gps_data_t data;
+    memset(&data, 0, sizeof(data));
+
+    /* $GN prefix (GNSS combined) */
+    const char *body = "$GNGGA,142301.0,3356.1234,S,15135.2345,W,1,05,1.0,50.0,M,,,";
+    char *sentence = append_checksum(body);
+
+    bool result = nmea_parse(sentence, &data);
+
+    TEST_ASSERT_TRUE(result);
+    TEST_ASSERT_FLOAT_WITHIN(0.001f, -33.93539f, data.lat);
+    TEST_ASSERT_FLOAT_WITHIN(0.001f, -151.58724f, data.lon);
+}
+
+void test_boundary_coordinates_zero(void)
+{
+    gps_data_t data;
+    memset(&data, 0, sizeof(data));
+
+    /* Lat=0000.0000 N, Lon=00000.0000 E -> (0.0, 0.0) */
+    const char *body = "$GNGGA,142301.0,0000.0000,N,00000.0000,E,1,09,1.2,0.0,M,,,";
+    char *sentence = append_checksum(body);
+
+    bool result = nmea_parse(sentence, &data);
+
+    TEST_ASSERT_TRUE(result);
+    TEST_ASSERT_FLOAT_WITHIN(0.001f, 0.0f, data.lat);
+    TEST_ASSERT_FLOAT_WITHIN(0.001f, 0.0f, data.lon);
+}
+
+void test_max_latitude(void)
+{
+    gps_data_t data;
+    memset(&data, 0, sizeof(data));
+
+    /* Lat=9000.0000 N -> 90.0 degrees */
+    const char *body = "$GNGGA,142301.0,9000.0000,N,01135.2345,E,1,09,1.2,245.3,M,,,";
+    char *sentence = append_checksum(body);
+
+    bool result = nmea_parse(sentence, &data);
+
+    TEST_ASSERT_TRUE(result);
+    TEST_ASSERT_FLOAT_WITHIN(0.001f, 90.0f, data.lat);
+}
+
+void test_rmc_missing_speed_keeps_zero(void)
+{
+    gps_data_t data;
+    memset(&data, 0, sizeof(data));
+
+    /* RMC with empty speed field -> speed stays 0 */
+    const char *body = "$GNRMC,142301.0,A,5056.1234,N,01135.2345,E,,270.0,131026,,,A";
+    char *sentence = append_checksum(body);
+
+    bool result = nmea_parse(sentence, &data);
+
+    TEST_ASSERT_TRUE(result);
+    TEST_ASSERT_TRUE(data.has_fix);
+    TEST_ASSERT_FLOAT_WITHIN(0.01f, 0.0f, data.speed_kmh);
+}
+
+void test_multiple_gga_stats_accumulate(void)
+{
+    gps_data_t data;
+    memset(&data, 0, sizeof(data));
+
+    nmea_stats_t before;
+    gps_get_stats(&before);
+
+    /* Parse 3 GGA sentences */
+    for (int i = 0; i < 3; i++) {
+        char *sentence = append_checksum(
+            "$GNGGA,142301.0,5056.1234,N,01135.2345,E,1,09,1.2,245.3,M,47.1,M,,");
+        nmea_parse(sentence, &data);
+    }
+
+    nmea_stats_t after;
+    gps_get_stats(&after);
+
+    TEST_ASSERT_EQUAL(before.gga + 3, after.gga);
+    TEST_ASSERT_EQUAL(before.valid + 3, after.valid);
+}
+
+void test_checksum_single_char(void)
+{
+    gps_data_t data;
+    memset(&data, 0, sizeof(data));
+
+    /* Minimal valid sentence body with a single char before the '*' */
+    const char *body = "$GNGGA";
+    char *sentence = append_checksum(body);
+
+    bool result = nmea_parse(sentence, &data);
+    /* GGA with no data fields — parser should still accept the
+     * checksum (it's valid) but not crash. */
+    TEST_ASSERT_TRUE(result);
+}
+
+/* ============================================================
  * Test Runner
  * ============================================================ */
 int main(void)
@@ -406,6 +596,18 @@ int main(void)
     RUN_TEST(test_gsv_sentence);
     RUN_TEST(test_south_west_coordinates);
     RUN_TEST(test_incremental_update);
+    /* ---- Coverage expansion (TOT-59) ---- */
+    RUN_TEST(test_gga_dgps_fix_quality);
+    RUN_TEST(test_gga_hdop_parsing);
+    RUN_TEST(test_vtg_knots_fallback);
+    RUN_TEST(test_talker_prefix_gn);
+    RUN_TEST(test_talker_prefix_gl);
+    RUN_TEST(test_boundary_coordinates_zero);
+    RUN_TEST(test_gga_hdop_valid_threshold);
+    RUN_TEST(test_rmc_missing_speed_keeps_zero);
+    RUN_TEST(test_multiple_gga_stats_accumulate);
+    RUN_TEST(test_max_latitude);
+    RUN_TEST(test_checksum_single_char);
 
     return UNITY_END();
 }

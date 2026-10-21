@@ -121,7 +121,7 @@ jobs:
           # test_controller is excluded from the generic loop because it
           # links component source files (controller_input.c,
           # controller_mapping.c) and needs the -include mock header flag.
-          TESTS="test_nmea_parser test_event_loop test_event_bridge test_dtc test_filters test_config test_dtc_extended test_ble_callbacks test_power_manager test_controller test_carplay_bridge test_carplay_media test_ota test_ota_secure_boot"
+          TESTS="test_nmea_parser test_event_loop test_event_bridge test_dtc test_filters test_config test_dtc_extended test_ble_callbacks test_power_manager test_controller test_carplay_bridge test_carplay_media test_ota test_ota_secure_boot test_gear_indicator test_fuel_level test_rpm test_temperature test_logger"
           FAIL=0
 
           for t in $TESTS; do
