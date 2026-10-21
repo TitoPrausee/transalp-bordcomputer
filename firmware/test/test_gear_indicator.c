@@ -253,6 +253,58 @@ void test_clutch_in_neutral(void)
 }
 
 /* ============================================================
+ * Negative Toleranz: -4% Abweichung wird noch erkannt
+ * (TOT-62: testet die untere Seite des Toleranzfensters)
+ * ============================================================ */
+void test_gear_recognized_within_negative_tolerance(void)
+{
+    const float speed = 80.0f;
+
+    for (int g = 1; g <= GEAR_COUNT; g++) {
+        float exp_rpm = expected_rpm_for_gear(speed, g);
+        /* -4% deviation — within the 5% tolerance window */
+        uint16_t rpm = (uint16_t)(exp_rpm * 0.96f + 0.5f);
+        uint8_t result = gear_indicator_calc(speed, rpm);
+        TEST_ASSERT_EQUAL_UINT8_MESSAGE(
+            (uint8_t)g, result, "gear not recognized within -4% tolerance");
+    }
+}
+
+/* ============================================================
+ * Ausserhalb Toleranz (negativ): -10% von Gear 1 -> Neutral
+ *
+ * Ein -10% deviation von Gear 1 ist weit genug von allen benachbarten
+ * Gaengen entfernt, dass kein anderer Gang innerhalb 5% liegt.
+ * (TOT-62: negative Seite der Toleranzgrenze)
+ * ============================================================ */
+void test_neutral_when_negative_deviation_exceeds_tolerance(void)
+{
+    const float speed = 80.0f;
+    float exp1 = expected_rpm_for_gear(speed, 1);
+    /* -10% deviation from gear 1 — far from all gears */
+    uint16_t rpm = (uint16_t)(exp1 * 0.90f + 0.5f);
+    uint8_t result = gear_indicator_calc(speed, rpm);
+    TEST_ASSERT_EQUAL_UINT8(0, result);
+}
+
+/* ============================================================
+ * Grenzwert: +4.5% Abweichung -> noch erkannt (klar innerhalb 5%)
+ *
+ * Der exakte 5%-Grenzwert ist durch uint16_t-Rundung und Float-
+ * Praezision fragil (diff kann 0.0501 werden). Wir testen stattdessen
+ * einen Wert, der sicher innerhalb der Toleranz liegt.
+ * ============================================================ */
+void test_gear_just_inside_tolerance_boundary(void)
+{
+    const float speed = 80.0f;
+    float exp_rpm = expected_rpm_for_gear(speed, 6);
+    /* +4.5% — clearly within the 5% tolerance window */
+    uint16_t rpm = (uint16_t)(exp_rpm * 1.045f + 0.5f);
+    uint8_t result = gear_indicator_calc(speed, rpm);
+    TEST_ASSERT_EQUAL_UINT8(6, result);
+}
+
+/* ============================================================
  * Test Runner
  * ============================================================ */
 int main(void)
@@ -271,6 +323,9 @@ int main(void)
     RUN_TEST(test_boundary_min_speed);
     RUN_TEST(test_boundary_min_rpm);
     RUN_TEST(test_clutch_in_neutral);
+    RUN_TEST(test_gear_recognized_within_negative_tolerance);
+    RUN_TEST(test_neutral_when_negative_deviation_exceeds_tolerance);
+    RUN_TEST(test_gear_just_inside_tolerance_boundary);
 
     return UNITY_END();
 }

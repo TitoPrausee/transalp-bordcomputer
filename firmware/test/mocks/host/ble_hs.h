@@ -5,13 +5,25 @@
  * host/ble_hs.h — NimBLE host mock for host-side unit tests.
  *
  * Provides the NimBLE types, macros and functions used by
- * ble_callbacks.c (notifications, indications, mbuf helpers) as
- * no-ops so the GATT handler logic can be compiled and tested on
- * host without the NimBLE stack.
+ * ble_callbacks.c (notifications, indications, mbuf helpers, GATT
+ * access context) as host-side stubs so the GATT handler logic can be
+ * compiled and tested on host without the NimBLE stack.
+ *
+ * The mock exposes test-controllable globals so the GATT read/write
+ * handlers can be exercised end-to-end:
+ *   - g_mock_write_data / g_mock_write_len / g_mock_om_pktlen stage the
+ *     payload of an incoming GATT write (ble_handle_write).
+ *   - g_mock_read_capture / g_mock_read_capture_len capture the bytes
+ *     appended by ble_handle_read() so tests can assert on the response.
+ *   - g_mock_mbuf_alloc_ok gates ble_hs_mbuf_from_flat (notify/indicate).
+ *   - g_mock_mbuf_append_fail forces os_mbuf_append to fail (error path).
+ * All globals default to the original no-op behaviour so pre-existing
+ * tests are unaffected.
  */
 
 #include <stdint.h>
 #include <stddef.h>
+#include <string.h>
 
 /* Opaque mbuf; ble_callbacks.c only passes pointers to it. */
 struct os_mbuf {
@@ -61,13 +73,46 @@ struct ble_gap_conn_desc {
     struct ble_addr peer_id_addr;
 };
 
-/*
- * Mock state for ble_gap_conn_find().  Tests set g_mock_conn_desc and
- * g_mock_conn_find_rc before exercising code that calls ble_gap_conn_find.
- * Default: rc = -1 (not found), so validation fails unless a test sets it.
- */
+/* ============================================================
+ * Test-controllable mock state (declared before the inline
+ * functions that reference them).  All default to the original
+ * no-op behaviour.
+ * ============================================================ */
+
+/* Mock state for ble_gap_conn_find().  Default: rc = -1 (not found),
+ * so validation fails unless a test sets it. */
 static struct ble_gap_conn_desc g_mock_conn_desc = {0};
 static int g_mock_conn_find_rc = -1;
+
+/* Announced length of an incoming GATT write (OS_MBUF_PKTLEN). */
+static uint16_t g_mock_om_pktlen = 0;
+
+/* Staged write payload for ble_hs_mbuf_to_flat().  When non-NULL, the
+ * bytes are copied into the handler's buffer so ble_handle_write()
+ * sees the client-written value. */
+static const uint8_t *g_mock_write_data = NULL;
+static uint16_t g_mock_write_len = 0;
+
+/* Capture buffer for read responses appended via os_mbuf_append(). */
+#define MOCK_READ_CAP_MAX 256
+static uint8_t g_mock_read_capture[MOCK_READ_CAP_MAX];
+static uint16_t g_mock_read_capture_len = 0;
+
+/* Force os_mbuf_append() to fail (read response too large path). */
+static bool g_mock_mbuf_append_fail = false;
+
+/* Mock mbuf instance and allocation control for notify/indicate. */
+static struct os_mbuf g_mock_mbuf = {0};
+static bool g_mock_mbuf_alloc_ok = false;
+
+/* Call counters so tests can assert whether notify/indicate was sent
+ * or skipped by the conn-handle validation guard (H4). */
+static int g_mock_notify_call_count = 0;
+static int g_mock_indicate_call_count = 0;
+
+/* ============================================================
+ * Inline mock functions
+ * ============================================================ */
 
 static inline int ble_gap_conn_find(uint16_t conn_handle,
                                     struct ble_gap_conn_desc *desc)
@@ -79,25 +124,14 @@ static inline int ble_gap_conn_find(uint16_t conn_handle,
     return g_mock_conn_find_rc;
 }
 
-/* Host mock does not model mbuf length. */
-#define OS_MBUF_PKTLEN(om) ((uint16_t)0)
-
-/* Mock mbuf instance and allocation control.  Tests set
- * g_mock_mbuf_alloc_ok = true to let ble_hs_mbuf_from_flat return a
- * non-NULL mbuf so the full notify/indicate path is exercised. */
-static struct os_mbuf g_mock_mbuf = {0};
-static bool g_mock_mbuf_alloc_ok = false;
+/* OS_MBUF_PKTLEN reports the staged write length (default 0). */
+#define OS_MBUF_PKTLEN(om) ((void)(om), g_mock_om_pktlen)
 
 static inline struct os_mbuf *ble_hs_mbuf_from_flat(const void *data, uint16_t len)
 {
     (void)data; (void)len;
     return g_mock_mbuf_alloc_ok ? &g_mock_mbuf : NULL;
 }
-
-/* Call counters so tests can assert whether notify/indicate was sent
- * or skipped by the conn-handle validation guard (H4). */
-static int g_mock_notify_call_count = 0;
-static int g_mock_indicate_call_count = 0;
 
 static inline int ble_gattc_notify_custom(uint16_t conn_handle,
                                           uint16_t attr_handle,
@@ -117,17 +151,36 @@ static inline int ble_gattc_indicate_custom(uint16_t conn_handle,
     return 0;
 }
 
+/* ble_handle_write() flattens the incoming mbuf into a stack buffer.
+ * The mock copies the staged write payload so the handler sees the
+ * bytes the client "sent". */
 static inline int ble_hs_mbuf_to_flat(struct os_mbuf *om, uint8_t *buf,
-                                      uint16_t maxlen, uint16_t *len)
+                                       uint16_t maxlen, uint16_t *len)
 {
-    (void)om; (void)buf; (void)maxlen;
-    if (len) { *len = 0; }
+    (void)om;
+    uint16_t n = g_mock_write_len;
+    if (n > maxlen) { n = maxlen; }
+    if (n > 0 && g_mock_write_data != NULL) {
+        memcpy(buf, g_mock_write_data, n);
+    }
+    if (len) { *len = n; }
     return 0;
 }
 
+/* ble_handle_read() appends the response to the context mbuf.  The mock
+ * captures the appended bytes so tests can assert on the exact response. */
 static inline int os_mbuf_append(struct os_mbuf *om, const void *data, uint16_t len)
 {
-    (void)om; (void)data; (void)len;
+    (void)om;
+    if (g_mock_mbuf_append_fail) {
+        return 1;
+    }
+    if (len > 0 && data != NULL) {
+        uint16_t avail = (uint16_t)(MOCK_READ_CAP_MAX - g_mock_read_capture_len);
+        uint16_t n = (len > avail) ? avail : len;
+        memcpy(&g_mock_read_capture[g_mock_read_capture_len], data, n);
+        g_mock_read_capture_len = (uint16_t)(g_mock_read_capture_len + n);
+    }
     return 0;
 }
 

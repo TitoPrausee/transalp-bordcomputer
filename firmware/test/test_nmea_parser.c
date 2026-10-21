@@ -575,6 +575,170 @@ void test_checksum_single_char(void)
 }
 
 /* ============================================================
+ * Coverage expansion (TOT-62): malformed/empty-field edge cases
+ * ============================================================ */
+
+void test_checksum_lowercase_hex_accepted(void)
+{
+    gps_data_t data;
+    memset(&data, 0, sizeof(data));
+
+    /* strtol(base=16) accepts lowercase — build a sentence whose
+     * checksum has a-f digits and verify it is accepted. */
+    const char *body = "$GNGGA,142301.0,5056.1234,N,01135.2345,E,1,09,1.2,245.3,M,,,";
+    uint8_t calc = test_checksum(body);
+    char lower[256];
+    snprintf(lower, sizeof(lower), "%s*%02x", body, calc);
+
+    bool result = nmea_parse(lower, &data);
+    TEST_ASSERT_TRUE(result);
+}
+
+void test_checksum_no_hex_digits_rejected(void)
+{
+    gps_data_t data;
+    memset(&data, 0, sizeof(data));
+
+    /* Sentence with '*' but no hex digits after it */
+    const char *sentence = "$GNGGA,142301.0*";
+    bool result = nmea_parse(sentence, &data);
+    TEST_ASSERT_FALSE(result);
+}
+
+void test_rmc_empty_date_keeps_zero(void)
+{
+    gps_data_t data;
+    memset(&data, 0, sizeof(data));
+
+    /* RMC with empty date field (consecutive commas) */
+    const char *body = "$GNRMC,142301.0,A,5056.1234,N,01135.2345,E,45.3,270.0,,,";
+    char *sentence = append_checksum(body);
+
+    bool result = nmea_parse(sentence, &data);
+
+    TEST_ASSERT_TRUE(result);
+    TEST_ASSERT_EQUAL_UINT8(0, data.day);
+    TEST_ASSERT_EQUAL_UINT8(0, data.month);
+    TEST_ASSERT_EQUAL_UINT16(0, data.year);
+}
+
+void test_rmc_empty_coordinates_kept_zero(void)
+{
+    gps_data_t data;
+    memset(&data, 0, sizeof(data));
+
+    /* RMC active but with empty coordinate fields */
+    const char *body = "$GNRMC,142301.0,A,,,,,45.3,270.0,131026,,,A";
+    char *sentence = append_checksum(body);
+
+    bool result = nmea_parse(sentence, &data);
+
+    TEST_ASSERT_TRUE(result);
+    TEST_ASSERT_TRUE(data.has_fix);
+    TEST_ASSERT_FLOAT_WITHIN(0.001f, 0.0f, data.lat);
+    TEST_ASSERT_FLOAT_WITHIN(0.001f, 0.0f, data.lon);
+}
+
+void test_gga_empty_fix_quality_no_fix(void)
+{
+    gps_data_t data;
+    memset(&data, 0, sizeof(data));
+
+    /* GGA with empty fix-quality field (field 5 empty) */
+    const char *body = "$GNGGA,142301.0,5056.1234,N,01135.2345,E,,09,1.2,245.3,M,,,";
+    char *sentence = append_checksum(body);
+
+    bool result = nmea_parse(sentence, &data);
+
+    TEST_ASSERT_TRUE(result);
+    TEST_ASSERT_FALSE(data.has_fix);  /* empty quality -> no fix */
+}
+
+void test_vtg_empty_course_keeps_zero(void)
+{
+    gps_data_t data;
+    memset(&data, 0, sizeof(data));
+
+    /* VTG with empty course field, only speed */
+    const char *body = "$GNVTG,,T,,M,45.3,N,83.9,K";
+    char *sentence = append_checksum(body);
+
+    bool result = nmea_parse(sentence, &data);
+
+    TEST_ASSERT_TRUE(result);
+    TEST_ASSERT_FLOAT_WITHIN(0.01f, 0.0f, data.course_deg);
+    TEST_ASSERT_FLOAT_WITHIN(0.1f, 83.9f, data.speed_kmh);
+}
+
+void test_gga_hdop_boundary_5_0_invalid(void)
+{
+    gps_data_t data;
+    memset(&data, 0, sizeof(data));
+
+    /* HDOP exactly 5.0 — valid check is hdop < 5.0, so 5.0 → invalid */
+    const char *body = "$GNGGA,142301.0,5056.1234,N,01135.2345,E,1,09,5.0,245.3,M,,,";
+    char *sentence = append_checksum(body);
+
+    nmea_parse(sentence, &data);
+    TEST_ASSERT_TRUE(data.has_fix);
+    TEST_ASSERT_FALSE(data.valid);  /* exactly 5.0 is NOT < 5.0 */
+}
+
+void test_gga_hdop_just_below_5_valid(void)
+{
+    gps_data_t data;
+    memset(&data, 0, sizeof(data));
+
+    /* HDOP 4.99 — just below threshold → valid */
+    const char *body = "$GNGGA,142301.0,5056.1234,N,01135.2345,E,1,09,4.99,245.3,M,,,";
+    char *sentence = append_checksum(body);
+
+    nmea_parse(sentence, &data);
+    TEST_ASSERT_TRUE(data.has_fix);
+    TEST_ASSERT_TRUE(data.valid);
+}
+
+void test_rmc_time_parsing(void)
+{
+    gps_data_t data;
+    memset(&data, 0, sizeof(data));
+
+    /* RMC with time 093015.5 = 09:30:15 */
+    const char *body = "$GNRMC,093015.5,A,5056.1234,N,01135.2345,E,45.3,270.0,131026,,,A";
+    char *sentence = append_checksum(body);
+
+    nmea_parse(sentence, &data);
+    TEST_ASSERT_EQUAL_UINT8(9, data.hour);
+    TEST_ASSERT_EQUAL_UINT8(30, data.minute);
+    TEST_ASSERT_EQUAL_UINT8(15, data.second);
+}
+
+void test_sentence_no_star_rejected(void)
+{
+    gps_data_t data;
+    memset(&data, 0, sizeof(data));
+
+    /* Valid-looking sentence but no '*' delimiter for checksum */
+    const char *sentence = "$GNGGA,142301.0,5056.1234,N,01135.2345,E,1,09,1.2,245.3";
+    bool result = nmea_parse(sentence, &data);
+    TEST_ASSERT_FALSE(result);
+}
+
+void test_short_talker_prefix_rejected(void)
+{
+    gps_data_t data;
+    memset(&data, 0, sizeof(data));
+
+    /* Only '$G' before type — get_sentence_type needs $ + 2 talker chars */
+    const char *body = "$GGGA,142301.0";
+    char *sentence = append_checksum(body);
+
+    bool result = nmea_parse(sentence, &data);
+    /* strlen(type) < 3 check in get_sentence_type */
+    TEST_ASSERT_FALSE(result);
+}
+
+/* ============================================================
  * Test Runner
  * ============================================================ */
 int main(void)
@@ -608,6 +772,19 @@ int main(void)
     RUN_TEST(test_multiple_gga_stats_accumulate);
     RUN_TEST(test_max_latitude);
     RUN_TEST(test_checksum_single_char);
+
+    /* ---- Coverage expansion (TOT-62): malformed/empty-field edges ---- */
+    RUN_TEST(test_checksum_lowercase_hex_accepted);
+    RUN_TEST(test_checksum_no_hex_digits_rejected);
+    RUN_TEST(test_rmc_empty_date_keeps_zero);
+    RUN_TEST(test_rmc_empty_coordinates_kept_zero);
+    RUN_TEST(test_gga_empty_fix_quality_no_fix);
+    RUN_TEST(test_vtg_empty_course_keeps_zero);
+    RUN_TEST(test_gga_hdop_boundary_5_0_invalid);
+    RUN_TEST(test_gga_hdop_just_below_5_valid);
+    RUN_TEST(test_rmc_time_parsing);
+    RUN_TEST(test_sentence_no_star_rejected);
+    RUN_TEST(test_short_talker_prefix_rejected);
 
     return UNITY_END();
 }

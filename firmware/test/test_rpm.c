@@ -237,6 +237,26 @@ void test_init_resets_smoothing_buffer(void)
 }
 
 /* ============================================================
+ * Nicht initialisiert: s_pcnt_unit == NULL -> 0
+ * (TOT-62: testet den Init-Guard in rpm_read)
+ * ============================================================ */
+void test_read_not_initialized_returns_zero(void)
+{
+    /* Simulate uninitialized state by clearing the PCNT unit handle.
+     * s_pcnt_unit is static in the included rpm.c, so accessible here. */
+    pcnt_unit_handle_t saved = s_pcnt_unit;
+    s_pcnt_unit = NULL;
+
+    g_mock_pcnt_count = 10;  /* would normally be 6000 rpm */
+    uint16_t result = rpm_read();
+
+    TEST_ASSERT_EQUAL_UINT16(0, result);
+
+    /* Restore for subsequent tests */
+    s_pcnt_unit = saved;
+}
+
+/* ============================================================
  * Test Runner
  * ============================================================ */
 int main(void)
@@ -257,6 +277,7 @@ int main(void)
     RUN_TEST(test_smoothing_window_size_5);
     RUN_TEST(test_smoothing_reduces_single_spike);
     RUN_TEST(test_init_resets_smoothing_buffer);
+    RUN_TEST(test_read_not_initialized_returns_zero);
 
     return UNITY_END();
 }

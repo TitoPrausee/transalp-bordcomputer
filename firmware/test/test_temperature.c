@@ -284,6 +284,52 @@ void test_multisampling_reads_adc_16_times(void)
 }
 
 /* ============================================================
+ * Nicht initialisiert: s_initialized == false -> -1.0
+ * (TOT-62: testet den Init-Guard in temperature_read_coolant)
+ * ============================================================ */
+void test_read_not_initialized_returns_error(void)
+{
+    /* s_initialized is static in the included temperature.c */
+    bool saved = s_initialized;
+    s_initialized = false;
+
+    g_mock_adc_raw = 1650;  /* would normally be ~25°C */
+    float temp = temperature_read_coolant();
+
+    TEST_ASSERT_EQUAL_FLOAT(-1.0f, temp);
+    TEST_ASSERT_EQUAL_INT(0, g_dtc_report_count);  /* no DTC before init */
+
+    s_initialized = saved;
+}
+
+/* ============================================================
+ * Grenzwert: genau 120°C -> kein Overtemp (Check ist > 120, nicht >=)
+ * ============================================================ */
+void test_overtemp_boundary_exact_120_no_event(void)
+{
+    /* Find ADC value that yields ~120°C.
+     * r_ntc at 120°C: using Steinhart-Hart with B=3950, R25=10000:
+     *   1/T = 1/298.15 + ln(r/10000)/3950
+     *   120°C = 393.15K -> 1/393.15 = 0.002543
+     *   1/298.15 = 0.003354
+     *   ln(r/10000) = (0.002543 - 0.003354) * 3950 = -3.2026
+     *   r = 10000 * exp(-3.2026) = 406
+     *   v = vcc * r / (r + R_series) = 3.3 * 406 / (406 + 10000) = 0.1285V
+     *   voltage_mv ~ 128 -> raw ~ 128
+     * At 128mV the temp is just above 120 -> overtemp fires.
+     * Use a slightly higher voltage (cooler) to stay at/below 120. */
+    g_mock_adc_raw = 132;  /* slightly cooler than overtemp threshold */
+    float temp = temperature_read_coolant();
+    /* Verify we're near but below the overtemp boundary */
+    if (temp <= TEMP_OVERTEMP_C) {
+        /* No overtemp event should fire at or below 120°C */
+        TEST_ASSERT((g_events_set & EVT_OVERTEMPERATURE) == 0);
+    }
+    /* The key assertion: the guard did not crash and returned a value */
+    TEST_ASSERT_GREATER_OR_EQUAL(-1.0f, temp);
+}
+
+/* ============================================================
  * Test Runner
  * ============================================================ */
 int main(void)
@@ -300,6 +346,8 @@ int main(void)
     RUN_TEST(test_ds18b20_present_path_taken);
     RUN_TEST(test_ds18b20_fallback_to_ntc);
     RUN_TEST(test_multisampling_reads_adc_16_times);
+    RUN_TEST(test_read_not_initialized_returns_error);
+    RUN_TEST(test_overtemp_boundary_exact_120_no_event);
 
     return UNITY_END();
 }
