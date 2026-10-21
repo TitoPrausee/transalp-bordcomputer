@@ -559,6 +559,7 @@ void power_init_with_config(const power_config_t *cfg)
     /* Wakeup-Reason loggen */
     wakeup_reason_t wake_reason = power_get_wakeup_reason();
     if (wake_reason != WAKEUP_REASON_BOOT) {
+        // cppcheck-suppress variableScope
         static const char *reason_str[] = {
             "NONE", "RTC_TIMER", "GPIO", "UART", "TOUCH", "ULP", "BOOT"
         };
