@@ -1,0 +1,599 @@
+Checking components/ble/ble.c ...
+1/39 files checked 0% done
+Checking components/ble/ble_callbacks.c ...
+components/ble/ble_callbacks.c:131:20: style: Variable 's' can be declared as pointer to const [constVariablePointer]
+    sensor_data_t *s = &s_sensor_cache;
+                   ^
+components/ble/ble_callbacks.c:132:20: style: Variable 'g' can be declared as pointer to const [constVariablePointer]
+    gps_data_t    *g = &s_gps_cache;
+                   ^
+components/ble/ble_callbacks.c:365:24: style: Variable 's' can be declared as pointer to const [constVariablePointer]
+        sensor_data_t *s = &s_sensor_cache;
+                       ^
+components/ble/ble_callbacks.c:366:24: style: Variable 'g' can be declared as pointer to const [constVariablePointer]
+        gps_data_t    *g = &s_gps_cache;
+                       ^
+components/ble/ble_callbacks.c:564:33: style: Parameter 'data' can be declared as pointer to const [constParameterPointer]
+void ble_on_sensor_update(void *data, uint16_t len)
+                                ^
+components/ble/ble_callbacks.c:575:30: style: Parameter 'data' can be declared as pointer to const [constParameterPointer]
+void ble_on_gps_update(void *data, uint16_t len)
+                             ^
+2/39 files checked 6% done
+Checking components/ble/ble_service.c ...
+components/ble/ble_service.c:487:23: style: Variable 'old_addr_type' is assigned a value that is never used. [unreadVariable]
+        old_addr_type = s_peer_addr_type;
+                      ^
+3/39 files checked 12% done
+Checking components/carplay_bridge/carplay_bridge.c ...
+components/carplay_bridge/carplay_bridge.c:330:44: style: Parameter 'data' can be declared as pointer to const [constParameterPointer]
+void carplay_bridge_on_sensor_update(void *data, uint16_t len)
+                                           ^
+4/39 files checked 16% done
+Checking components/carplay_bridge/carplay_client.c ...
+components/carplay_bridge/carplay_client.c:533:18: style: Variable 'delay_ms' is assigned a value that is never used. [unreadVariable]
+        delay_ms = CP_RECONNECT_MAX_MS;
+                 ^
+5/39 files checked 20% done
+Checking components/carplay_bridge/carplay_media.c ...
+6/39 files checked 20% done
+Checking components/carplay_bridge/carplay_pairing.c ...
+7/39 files checked 21% done
+Checking components/carplay_bridge/carplay_telemetry.c ...
+8/39 files checked 22% done
+Checking components/diagnostics/diagnostics.c ...
+components/diagnostics/diagnostics.c:510:17: style: struct member 'diag_command_t::help' is never used. [unusedStructMember]
+    const char *help;
+                ^
+9/39 files checked 27% done
+Checking components/diagnostics/dtc.c ...
+10/39 files checked 30% done
+Checking components/diagnostics/selftest.c ...
+components/diagnostics/selftest.c:123:9: style: Condition '!display_cs_ok' is always false [knownConditionTrueFalse]
+    if (!display_cs_ok) {
+        ^
+components/diagnostics/selftest.c:121:42: note: Assignment 'display_cs_ok=10>0', assigned value is 1
+    bool display_cs_ok = (DISPLAY_CS_PIN > 0);
+                                         ^
+components/diagnostics/selftest.c:123:9: note: Condition '!display_cs_ok' is always false
+    if (!display_cs_ok) {
+        ^
+Checking components/diagnostics/selftest.c: SOC_I2C_SUPPORTED...
+11/39 files checked 34% done
+Checking components/display/display.c ...
+12/39 files checked 34% done
+Checking components/display/epaper_driver.c ...
+components/display/epaper_driver.c:156:13: style: Variable 'driver_out' can be declared as const array [constVariable]
+    uint8_t driver_out[] = {0x80, 0x00, 0x00};  /* MUX=128 */
+            ^
+components/display/epaper_driver.c:160:13: style: Variable 'gate_volt' can be declared as const array [constVariable]
+    uint8_t gate_volt[] = {0x0A};
+            ^
+components/display/epaper_driver.c:164:13: style: Variable 'src_volt' can be declared as const array [constVariable]
+    uint8_t src_volt[] = {0x0A, 0x00, 0x0A};
+            ^
+components/display/epaper_driver.c:168:13: style: Variable 'booster' can be declared as const array [constVariable]
+    uint8_t booster[] = {0x8A, 0x05, 0x1A};
+            ^
+components/display/epaper_driver.c:172:13: style: Variable 'vcom' can be declared as const array [constVariable]
+    uint8_t vcom[] = {0x1A};
+            ^
+components/display/epaper_driver.c:176:13: style: Variable 'border' can be declared as const array [constVariable]
+    uint8_t border[] = {0x03};
+            ^
+components/display/epaper_driver.c:180:13: style: Variable 'entry_mode' can be declared as const array [constVariable]
+    uint8_t entry_mode[] = {0x03};  /* AM=0 (X), ID[1:0]=11 (inc X, inc Y) */
+            ^
+components/display/epaper_driver.c:184:13: style: Variable 'ram_x' can be declared as const array [constVariable]
+    uint8_t ram_x[] = {0x00, (uint8_t)((EPD_WIDTH / 8) - 1)};
+            ^
+components/display/epaper_driver.c:188:13: style: Variable 'ram_y' can be declared as const array [constVariable]
+    uint8_t ram_y[] = {0x00, 0x00, (uint8_t)((EPD_HEIGHT - 1) & 0xFF),
+            ^
+components/display/epaper_driver.c:342:13: style: Variable 'ram_x' can be declared as const array [constVariable]
+    uint8_t ram_x[] = {(uint8_t)x_byte,
+            ^
+components/display/epaper_driver.c:346:13: style: Variable 'ram_y' can be declared as const array [constVariable]
+    uint8_t ram_y[] = {(uint8_t)(y & 0xFF), (uint8_t)(y >> 8),
+            ^
+components/display/epaper_driver.c:352:13: style: Variable 'entry_mode' can be declared as const array [constVariable]
+    uint8_t entry_mode[] = {0x02};
+            ^
+components/display/epaper_driver.c:360:18: style: Variable 'line' can be declared as pointer to const [constVariablePointer]
+        uint8_t *line = &s_framebuffer[src_y * (EPD_WIDTH / 8) + x_byte];
+                 ^
+13/39 files checked 37% done
+Checking components/display/renderer.c ...
+14/39 files checked 40% done
+Checking components/display/tft_driver.c ...
+components/display/tft_driver.c:153:13: style: Variable 'frmctr1' can be declared as const array [constVariable]
+    uint8_t frmctr1[] = {0x00, 0x06, 0x03};
+            ^
+components/display/tft_driver.c:157:13: style: Variable 'dfunctr' can be declared as const array [constVariable]
+    uint8_t dfunctr[] = {0x0A, 0x82, 0x27, 0x00};
+            ^
+components/display/tft_driver.c:161:13: style: Variable 'pwctr1' can be declared as const array [constVariable]
+    uint8_t pwctr1[] = {0x23};          /* GVDD=4.6V */
+            ^
+components/display/tft_driver.c:163:13: style: Variable 'pwctr2' can be declared as const array [constVariable]
+    uint8_t pwctr2[] = {0x10};          /* VGH=2x, VGL=-1x */
+            ^
+components/display/tft_driver.c:167:13: style: Variable 'vmctr1' can be declared as const array [constVariable]
+    uint8_t vmctr1[] = {0x3E, 0x28};
+            ^
+components/display/tft_driver.c:169:13: style: Variable 'vmctr2' can be declared as const array [constVariable]
+    uint8_t vmctr2[] = {0x86};
+            ^
+15/39 files checked 43% done
+Checking components/display/widgets.c ...
+16/39 files checked 46% done
+Checking components/gps/gps_task.c ...
+17/39 files checked 48% done
+Checking components/gps/nmea_parser.c ...
+components/gps/nmea_parser.c:121:11: style: Variable 'f' can be declared as pointer to const [constVariablePointer]
+    char *f = nmea_field(sentence, idx, buf, sizeof(buf));
+          ^
+components/gps/nmea_parser.c:133:11: style: Variable 'f' can be declared as pointer to const [constVariablePointer]
+    char *f = nmea_field(sentence, idx, buf, sizeof(buf));
+          ^
+components/gps/nmea_parser.c:262:11: style: Variable 'f' can be declared as pointer to const [constVariablePointer]
+    char *f;
+          ^
+components/gps/nmea_parser.c:278:11: style: Variable 'ns' can be declared as pointer to const [constVariablePointer]
+    char *ns = nmea_field(sentence, 2, field_buf, sizeof(field_buf));
+          ^
+components/gps/nmea_parser.c:289:11: style: Variable 'ew' can be declared as pointer to const [constVariablePointer]
+    char *ew = nmea_field(sentence, 4, field_buf, sizeof(field_buf));
+          ^
+components/gps/nmea_parser.c:345:11: style: Variable 'f' can be declared as pointer to const [constVariablePointer]
+    char *f;
+          ^
+components/gps/nmea_parser.c:355:11: style: Variable 'status' can be declared as pointer to const [constVariablePointer]
+    char *status = nmea_field(sentence, 1, field_buf, sizeof(field_buf));
+          ^
+components/gps/nmea_parser.c:364:11: style: Variable 'ns' can be declared as pointer to const [constVariablePointer]
+    char *ns = nmea_field(sentence, 3, field_buf, sizeof(field_buf));
+          ^
+components/gps/nmea_parser.c:375:11: style: Variable 'ew' can be declared as pointer to const [constVariablePointer]
+    char *ew = nmea_field(sentence, 5, field_buf, sizeof(field_buf));
+          ^
+18/39 files checked 51% done
+Checking components/hid_controller/controller_input.c ...
+components/hid_controller/controller_input.c:102:46: style: Parameter 'arg' can be declared as pointer to const. However it seems that 'gpio_isr_handler' is a callback function, if 'arg' is declared with const you might also need to cast function pointer(s). [constParameterCallback]
+static void IRAM_ATTR gpio_isr_handler(void *arg)
+                                             ^
+components/hid_controller/controller_input.c:359:58: note: You might need to cast the function pointer here
+        gpio_isr_handler_add(s_gpio_buttons[i].gpio_pin, gpio_isr_handler,
+                                                         ^
+components/hid_controller/controller_input.c:102:46: note: Parameter 'arg' can be declared as pointer to const
+static void IRAM_ATTR gpio_isr_handler(void *arg)
+                                             ^
+Checking components/hid_controller/controller_input.c: TEST_HOST=TEST_HOST...
+19/39 files checked 55% done
+Checking components/hid_controller/controller_mapping.c ...
+Checking components/hid_controller/controller_mapping.c: TEST_HOST...
+20/39 files checked 56% done
+Checking components/hid_controller/hid_controller.c ...
+Checking components/hid_controller/hid_controller.c: TEST_HOST=TEST_HOST...
+21/39 files checked 56% done
+Checking components/ota/ota_secure_boot.c ...
+22/39 files checked 59% done
+Checking components/ota/ota_update.c ...
+components/ota/ota_update.c:478:9: style: The scope of the variable 'read_len' can be reduced. [variableScope]
+    int read_len;
+        ^
+components/ota/ota_update.c:348:13: style: struct member 'http_dl_ctx_t::error' is never used. [unusedStructMember]
+    bool    error;
+            ^
+components/ota/ota_update.c:349:13: style: struct member 'http_dl_ctx_t::using_range' is never used. [unusedStructMember]
+    bool    using_range;
+            ^
+23/39 files checked 65% done
+Checking components/power/power.c ...
+components/power/power.c:409:27: style: The statement 'if (s_adc_cali_handle!=NULL) s_adc_cali_handle=NULL' is logically equivalent to 's_adc_cali_handle=NULL'. [duplicateConditionalAssign]
+    if (s_adc_cali_handle != NULL) {
+                          ^
+components/power/power.c:413:27: note: Assignment 's_adc_cali_handle=NULL'
+        s_adc_cali_handle = NULL;
+                          ^
+components/power/power.c:409:27: note: Condition 's_adc_cali_handle!=NULL' is redundant
+    if (s_adc_cali_handle != NULL) {
+                          ^
+Checking components/power/power.c: ADC_CALI_SCHEME_CURVE_FITTING_SUPPORTED...
+Checking components/power/power.c: ADC_CALI_SCHEME_LINE_FITTING_SUPPORTED...
+24/39 files checked 68% done
+Checking components/power/power_manager.c ...
+components/power/power_manager.c:84:15: style: struct member 'rtc_persist_t::charge_cycles' is never used. [unusedStructMember]
+    uint16_t  charge_cycles;
+              ^
+components/power/power_manager.c:85:15: style: struct member 'rtc_persist_t::discharge_cycles' is never used. [unusedStructMember]
+    uint16_t  discharge_cycles;
+              ^
+25/39 files checked 73% done
+Checking components/sensors/fuel_level.c ...
+26/39 files checked 74% done
+Checking components/sensors/gear_indicator.c ...
+27/39 files checked 74% done
+Checking components/sensors/imu.c ...
+28/39 files checked 76% done
+Checking components/sensors/rpm.c ...
+29/39 files checked 77% done
+Checking components/sensors/sensors.c ...
+30/39 files checked 78% done
+Checking components/sensors/temperature.c ...
+31/39 files checked 80% done
+Checking components/storage/config.c ...
+32/39 files checked 85% done
+Checking components/storage/logger.c ...
+33/39 files checked 88% done
+Checking components/storage/sd_card.c ...
+components/storage/sd_card.c:414:20: style: Variable 'de' can be declared as pointer to const [constVariablePointer]
+    struct dirent *de;
+                   ^
+34/39 files checked 91% done
+Checking components/storage/storage.c ...
+35/39 files checked 92% done
+Checking components/utils/event_bus.c ...
+36/39 files checked 92% done
+Checking components/utils/filters.c ...
+37/39 files checked 92% done
+Checking main/app_event_loop.c ...
+main/app_event_loop.c:191:65: style: Parameter 'user_ctx' can be declared as pointer to const [constParameterPointer]
+void app_event_unsubscribe(app_event_callback_t callback, void *user_ctx)
+                                                                ^
+38/39 files checked 95% done
+Checking main/main.c ...
+39/39 files checked 100% done
+components/ble/ble_callbacks.c:526:6: style: The function 'ble_notify_sensor_data' is never used. [unusedFunction]
+void ble_notify_sensor_data(void *data, uint16_t len)
+     ^
+components/ble/ble_callbacks.c:534:6: style: The function 'ble_notify_dtc_list' is never used. [unusedFunction]
+void ble_notify_dtc_list(void)
+     ^
+components/ble/ble_callbacks.c:549:6: style: The function 'ble_notify_sensor_status' is never used. [unusedFunction]
+void ble_notify_sensor_status(void)
+     ^
+components/ble/ble_callbacks.c:564:6: style: The function 'ble_on_sensor_update' is never used. [unusedFunction]
+void ble_on_sensor_update(void *data, uint16_t len)
+     ^
+components/ble/ble_callbacks.c:575:6: style: The function 'ble_on_gps_update' is never used. [unusedFunction]
+void ble_on_gps_update(void *data, uint16_t len)
+     ^
+components/ble/ble_service.c:561:6: style: The function 'ble_cccd_gps_enabled' is never used. [unusedFunction]
+bool ble_cccd_gps_enabled(void)        { return s_cccd_gps; }
+     ^
+components/carplay_bridge/carplay_bridge.c:330:6: style: The function 'carplay_bridge_on_sensor_update' is never used. [unusedFunction]
+void carplay_bridge_on_sensor_update(void *data, uint16_t len)
+     ^
+components/carplay_bridge/carplay_bridge.c:341:6: style: The function 'carplay_bridge_get_inbound' is never used. [unusedFunction]
+bool carplay_bridge_get_inbound(void *out, uint16_t len)
+     ^
+components/carplay_bridge/carplay_bridge.c:374:6: style: The function 'carplay_bridge_get_paired' is never used. [unusedFunction]
+bool carplay_bridge_get_paired(uint8_t *addr_out, uint8_t *addr_type_out)
+     ^
+components/carplay_bridge/carplay_bridge.c:472:6: style: The function 'carplay_bridge_task' is never used. [unusedFunction]
+void carplay_bridge_task(void *arg)
+     ^
+components/carplay_bridge/carplay_client.c:516:6: style: The function 'carplay_client_poll' is never used. [unusedFunction]
+void carplay_client_poll(void)
+     ^
+components/diagnostics/dtc.c:416:9: style: The function 'dtc_get_all' is never used. [unusedFunction]
+uint8_t dtc_get_all(dtc_entry_t *out, int max_count)
+        ^
+components/display/display.c:26:6: style: The function 'display_task' is never used. [unusedFunction]
+void display_task(void *arg)
+     ^
+components/display/epaper_driver.c:117:6: style: The function 'epaper_is_busy' is never used. [unusedFunction]
+bool epaper_is_busy(void)
+     ^
+components/display/epaper_driver.c:256:6: style: The function 'epaper_clear' is never used. [unusedFunction]
+void epaper_clear(void)
+     ^
+components/display/renderer.c:310:6: style: The function 'renderer_set_clip' is never used. [unusedFunction]
+void renderer_set_clip(rect_t clip)
+     ^
+components/display/renderer.c:316:6: style: The function 'renderer_reset_clip' is never used. [unusedFunction]
+void renderer_reset_clip(void)
+     ^
+components/display/renderer.c:330:6: style: The function 'renderer_anim_register' is never used. [unusedFunction]
+void renderer_anim_register(animation_t *anim)
+     ^
+components/display/renderer.c:349:6: style: The function 'renderer_anim_unregister' is never used. [unusedFunction]
+void renderer_anim_unregister(animation_t *anim)
+     ^
+components/display/renderer.c:362:6: style: The function 'renderer_anim_tick' is never used. [unusedFunction]
+void renderer_anim_tick(uint32_t now_ms)
+     ^
+components/display/renderer.c:381:9: style: The function 'renderer_anim_count' is never used. [unusedFunction]
+uint8_t renderer_anim_count(void)
+        ^
+components/display/tft_driver.c:223:10: style: The function 'tft_get_backlight' is never used. [unusedFunction]
+uint16_t tft_get_backlight(void)
+         ^
+components/display/tft_driver.c:319:6: style: The function 'tft_draw_bitmap' is never used. [unusedFunction]
+void tft_draw_bitmap(uint16_t x, uint16_t y, uint16_t w, uint16_t h,
+     ^
+components/display/tft_driver.c:400:6: style: The function 'tft_push_buffer' is never used. [unusedFunction]
+void tft_push_buffer(void)
+     ^
+components/display/widgets.c:405:6: style: The function 'widgets_draw_nav_arrow' is never used. [unusedFunction]
+void widgets_draw_nav_arrow(uint16_t heading, uint16_t next_turn,
+     ^
+components/display/widgets.c:477:6: style: The function 'widgets_draw_warning' is never used. [unusedFunction]
+void widgets_draw_warning(warning_type_t type, const char *msg)
+     ^
+components/gps/gps_task.c:200:6: style: The function 'gps_task' is never used. [unusedFunction]
+void gps_task(void *arg)
+     ^
+components/gps/nmea_parser.c:466:6: style: The function 'gps_get_stats' is never used. [unusedFunction]
+void gps_get_stats(nmea_stats_t *out)
+     ^
+components/hid_controller/controller_input.c:275:6: style: The function 'hid_controller_ble_notify_handler' is never used. [unusedFunction]
+void hid_controller_ble_notify_handler(const uint8_t *data, uint8_t len)
+     ^
+components/hid_controller/controller_input.c:447:6: style: The function 'controller_input_would_accept' is never used. [unusedFunction]
+bool controller_input_would_accept(controller_button_t button, int64_t now_us)
+     ^
+components/hid_controller/controller_input.c:496:6: style: The function 'controller_input_reset_button' is never used. [unusedFunction]
+void controller_input_reset_button(controller_button_t button)
+     ^
+components/hid_controller/controller_input.c:502:6: style: The function 'controller_input_reset_all' is never used. [unusedFunction]
+void controller_input_reset_all(void)
+     ^
+components/hid_controller/controller_mapping.c:70:23: style: The function 'controller_mapping_lookup' is never used. [unusedFunction]
+controller_event_id_t controller_mapping_lookup(controller_button_t button)
+                      ^
+components/hid_controller/controller_mapping.c:78:13: style: The function 'controller_mapping_name' is never used. [unusedFunction]
+const char *controller_mapping_name(controller_button_t button)
+            ^
+components/hid_controller/hid_controller.c:84:6: style: The function 'hid_controller_stop' is never used. [unusedFunction]
+void hid_controller_stop(void)
+     ^
+components/hid_controller/hid_controller.c:94:6: style: The function 'hid_controller_inject_button' is never used. [unusedFunction]
+void hid_controller_inject_button(controller_button_t button, bool pressed)
+     ^
+components/ota/ota_secure_boot.c:172:11: style: The function 'ota_secure_verify_signature' is never used. [unusedFunction]
+esp_err_t ota_secure_verify_signature(const esp_partition_t *partition,
+          ^
+components/ota/ota_secure_boot.c:234:11: style: The function 'ota_secure_check_anti_rollback' is never used. [unusedFunction]
+esp_err_t ota_secure_check_anti_rollback(uint32_t new_version)
+          ^
+components/ota/ota_secure_boot.c:255:11: style: The function 'ota_secure_update_version_counter' is never used. [unusedFunction]
+esp_err_t ota_secure_update_version_counter(uint32_t version)
+          ^
+components/ota/ota_update.c:664:11: style: The function 'ota_update_from_url' is never used. [unusedFunction]
+esp_err_t ota_update_from_url(const char *url)
+          ^
+components/ota/ota_update.c:729:11: style: The function 'ota_update_from_sd' is never used. [unusedFunction]
+esp_err_t ota_update_from_sd(const char *path)
+          ^
+components/ota/ota_update.c:884:11: style: The function 'ota_get_version_info' is never used. [unusedFunction]
+esp_err_t ota_get_version_info(ota_version_info_t *info)
+          ^
+components/ota/ota_update.c:917:11: style: The function 'ota_rollback' is never used. [unusedFunction]
+esp_err_t ota_rollback(void)
+          ^
+components/power/power.c:316:7: style: The function 'power_get_raw_voltage' is never used. [unusedFunction]
+float power_get_raw_voltage(void)
+      ^
+components/power/power.c:346:10: style: The function 'power_get_charge_cycles' is never used. [unusedFunction]
+uint16_t power_get_charge_cycles(void)
+         ^
+components/power/power.c:351:10: style: The function 'power_get_discharge_cycles' is never used. [unusedFunction]
+uint16_t power_get_discharge_cycles(void)
+         ^
+components/power/power.c:407:6: style: The function 'power_adc_deinit' is never used. [unusedFunction]
+void power_adc_deinit(void)
+     ^
+components/power/power_manager.c:151:9: style: The function 'power_get_backlight' is never used. [unusedFunction]
+uint8_t power_get_backlight(void)
+        ^
+components/power/power_manager.c:196:6: style: The function 'power_is_gps_enabled' is never used. [unusedFunction]
+bool power_is_gps_enabled(void)
+     ^
+components/power/power_manager.c:208:6: style: The function 'power_is_ble_enabled' is never used. [unusedFunction]
+bool power_is_ble_enabled(void)
+     ^
+components/power/power_manager.c:239:11: style: The function 'power_register_callback' is never used. [unusedFunction]
+esp_err_t power_register_callback(power_callback_t cb)
+          ^
+components/power/power_manager.c:250:6: style: The function 'power_unregister_callback' is never used. [unusedFunction]
+void power_unregister_callback(power_callback_t cb)
+     ^
+components/power/power_manager.c:396:10: style: The function 'power_get_estimated_current_ma' is never used. [unusedFunction]
+uint16_t power_get_estimated_current_ma(void)
+         ^
+components/power/power_manager.c:588:6: style: The function 'power_set_config' is never used. [unusedFunction]
+void power_set_config(const power_config_t *cfg)
+     ^
+components/power/power_manager.c:598:6: style: The function 'power_get_config' is never used. [unusedFunction]
+void power_get_config(power_config_t *cfg)
+     ^
+components/power/power_manager.c:605:11: style: The function 'power_set_state' is never used. [unusedFunction]
+esp_err_t power_set_state(power_state_t new_state)
+          ^
+components/power/power_manager.c:640:6: style: The function 'power_task' is never used. [unusedFunction]
+void power_task(void *arg)
+     ^
+components/sensors/sensors.c:146:6: style: The function 'sensor_task' is never used. [unusedFunction]
+void sensor_task(void *arg)
+     ^
+components/storage/config.c:149:5: style: The function 'config_load' is never used. [unusedFunction]
+int config_load(void *cfg, uint16_t max_len)
+    ^
+components/storage/config.c:239:11: style: The function 'config_factory_reset' is never used. [unusedFunction]
+esp_err_t config_factory_reset(void)
+          ^
+components/storage/config.c:265:5: style: The function 'config_set_value' is never used. [unusedFunction]
+int config_set_value(config_key_t key, const void *value, uint8_t len)
+    ^
+components/storage/config.c:342:5: style: The function 'config_get_value' is never used. [unusedFunction]
+int config_get_value(config_key_t key, void *value, uint8_t max_len)
+    ^
+components/storage/config.c:424:5: style: The function 'config_export_json' is never used. [unusedFunction]
+int config_export_json(char *buf, size_t max_len)
+    ^
+components/storage/logger.c:361:5: style: The function 'logger_stop_tour' is never used. [unusedFunction]
+int logger_stop_tour(void)
+    ^
+components/storage/logger.c:385:5: style: The function 'logger_pause_tour' is never used. [unusedFunction]
+int logger_pause_tour(void)
+    ^
+components/storage/logger.c:400:5: style: The function 'logger_resume_tour' is never used. [unusedFunction]
+int logger_resume_tour(void)
+    ^
+components/storage/logger.c:456:6: style: The function 'logger_set_rate' is never used. [unusedFunction]
+void logger_set_rate(uint8_t rate_hz)
+     ^
+components/storage/logger.c:504:6: style: The function 'logger_task' is never used. [unusedFunction]
+void logger_task(void *arg)
+     ^
+components/storage/logger.c:576:23: style: The function 'logger_get_tour_context' is never used. [unusedFunction]
+const tour_context_t *logger_get_tour_context(void)
+                      ^
+components/storage/sd_card.c:165:6: style: The function 'sd_card_unmount' is never used. [unusedFunction]
+bool sd_card_unmount(void)
+     ^
+components/storage/sd_card.c:192:6: style: The function 'sd_card_is_present' is never used. [unusedFunction]
+bool sd_card_is_present(void)
+     ^
+components/storage/sd_card.c:203:6: style: The function 'sd_card_is_write_protected' is never used. [unusedFunction]
+bool sd_card_is_write_protected(void)
+     ^
+components/storage/sd_card.c:335:5: style: The function 'sd_card_append_file' is never used. [unusedFunction]
+int sd_card_append_file(const char *path, const void *data, size_t len)
+    ^
+components/storage/sd_card.c:356:5: style: The function 'sd_card_delete_file' is never used. [unusedFunction]
+int sd_card_delete_file(const char *path)
+    ^
+components/storage/sd_card.c:380:6: style: The function 'sd_card_file_exists' is never used. [unusedFunction]
+bool sd_card_file_exists(const char *path)
+     ^
+components/storage/sd_card.c:393:5: style: The function 'sd_card_list_dir' is never used. [unusedFunction]
+int sd_card_list_dir(const char *path, sd_dir_entry_t *entries,
+    ^
+components/storage/storage.c:63:5: style: The function 'storage_write' is never used. [unusedFunction]
+int storage_write(const char *path, const void *data, size_t len)
+    ^
+components/storage/storage.c:86:5: style: The function 'storage_read' is never used. [unusedFunction]
+int storage_read(const char *path, void *buf, size_t max_len)
+    ^
+components/storage/storage.c:109:24: style: The function 'storage_get_stats' is never used. [unusedFunction]
+const storage_stats_t *storage_get_stats(void)
+                       ^
+components/storage/storage.c:128:6: style: The function 'storage_process' is never used. [unusedFunction]
+void storage_process(void)
+     ^
+components/utils/filters.c:12:6: style: The function 'kalman1d_init' is never used. [unusedFunction]
+void kalman1d_init(kalman1d_t *kf, float q, float r, float initial)
+     ^
+components/utils/filters.c:21:7: style: The function 'kalman1d_update' is never used. [unusedFunction]
+float kalman1d_update(kalman1d_t *kf, float measurement)
+      ^
+main/app_event_loop.c:191:6: style: The function 'app_event_unsubscribe' is never used. [unusedFunction]
+void app_event_unsubscribe(app_event_callback_t callback, void *user_ctx)
+     ^
+main/app_event_loop.c:258:6: style: The function 'app_event_loop_is_running' is never used. [unusedFunction]
+bool app_event_loop_is_running(void)
+     ^
+main/main.c:580:6: style: The function 'app_main' is never used. [unusedFunction]
+void app_main(void)
+     ^
+components/ble/ble_callbacks.c:106:6: style: The function 'ble_cmd_enqueue' should have static linkage since it is not used outside of its translation unit. [staticFunction]
+bool ble_cmd_enqueue(ble_cmd_type_t type, uint16_t conn_handle,
+     ^
+components/ble/ble_callbacks.c:309:5: style: The function 'ble_handle_read' should have static linkage since it is not used outside of its translation unit. [staticFunction]
+int ble_handle_read(uint16_t attr_handle, struct ble_gatt_access_ctxt *ctxt)
+    ^
+components/ble/ble_callbacks.c:434:5: style: The function 'ble_handle_write' should have static linkage since it is not used outside of its translation unit. [staticFunction]
+int ble_handle_write(uint16_t conn_handle, uint16_t attr_handle, struct ble_gatt_access_ctxt *ctxt)
+    ^
+components/ble/ble_service.c:413:1: style: The function 'ble_gap_event_handler' should have static linkage since it is not used outside of its translation unit. [staticFunction]
+ble_gap_event_handler(struct ble_gap_event *event, void *arg)
+^
+components/carplay_bridge/carplay_bridge.c:173:5: style: The function 'carplay_gatt_access_cb' should have static linkage since it is not used outside of its translation unit. [staticFunction]
+int carplay_gatt_access_cb(uint16_t conn_handle, uint16_t attr_handle,
+    ^
+components/carplay_bridge/carplay_bridge.c:257:9: style: The function 'carplay_bridge_get_status' should have static linkage since it is not used outside of its translation unit. [staticFunction]
+uint8_t carplay_bridge_get_status(void)
+        ^
+components/carplay_bridge/carplay_bridge.c:266:6: style: The function 'carplay_bridge_is_connected' should have static linkage since it is not used outside of its translation unit. [staticFunction]
+bool carplay_bridge_is_connected(void)
+     ^
+components/carplay_bridge/carplay_bridge.c:314:6: style: The function 'carplay_bridge_notify_telemetry' should have static linkage since it is not used outside of its translation unit. [staticFunction]
+void carplay_bridge_notify_telemetry(void)
+     ^
+components/carplay_bridge/carplay_bridge.c:357:6: style: The function 'carplay_bridge_pair' should have static linkage since it is not used outside of its translation unit. [staticFunction]
+bool carplay_bridge_pair(const uint8_t *addr, uint8_t addr_type)
+     ^
+components/carplay_bridge/carplay_bridge.c:390:6: style: The function 'carplay_bridge_unpair' should have static linkage since it is not used outside of its translation unit. [staticFunction]
+void carplay_bridge_unpair(void)
+     ^
+components/carplay_bridge/carplay_client.c:90:24: style: The function 'carplay_client_get_state' should have static linkage since it is not used outside of its translation unit. [staticFunction]
+carplay_client_state_t carplay_client_get_state(void)
+                       ^
+components/carplay_bridge/carplay_client.c:326:5: style: The function 'carplay_client_gap_event' should have static linkage since it is not used outside of its translation unit. [staticFunction]
+int carplay_client_gap_event(struct ble_gap_event *event, void *arg)
+    ^
+components/diagnostics/diagnostics.c:568:6: style: The function 'diag_console_task' should have static linkage since it is not used outside of its translation unit. [staticFunction]
+void diag_console_task(void *arg)
+     ^
+components/diagnostics/diagnostics.c:652:6: style: The function 'diag_console_init' should have static linkage since it is not used outside of its translation unit. [staticFunction]
+void diag_console_init(void)
+     ^
+components/diagnostics/diagnostics.c:678:6: style: The function 'diag_init' should have static linkage since it is not used outside of its translation unit. [staticFunction]
+void diag_init(void)
+     ^
+components/diagnostics/dtc.c:117:16: style: The function 'dtc_default_severity' should have static linkage since it is not used outside of its translation unit. [staticFunction]
+dtc_severity_t dtc_default_severity(dtc_code_t code)
+               ^
+components/display/tft_driver.c:214:6: style: The function 'tft_set_backlight' should have static linkage since it is not used outside of its translation unit. [staticFunction]
+void tft_set_backlight(uint8_t percent)
+     ^
+components/ota/ota_update.c:947:6: style: The function 'ota_check_on_boot' should have static linkage since it is not used outside of its translation unit. [staticFunction]
+bool ota_check_on_boot(void)
+     ^
+components/ota/ota_update.c:979:6: style: The function 'ota_firmware_self_test' should have static linkage since it is not used outside of its translation unit. [staticFunction]
+bool ota_firmware_self_test(void)
+     ^
+components/power/power_manager.c:142:6: style: The function 'power_set_backlight' should have static linkage since it is not used outside of its translation unit. [staticFunction]
+void power_set_backlight(uint8_t percent)
+     ^
+components/power/power_manager.c:189:6: style: The function 'power_set_gps_enabled' should have static linkage since it is not used outside of its translation unit. [staticFunction]
+void power_set_gps_enabled(bool enabled)
+     ^
+components/power/power_manager.c:201:6: style: The function 'power_set_ble_enabled' should have static linkage since it is not used outside of its translation unit. [staticFunction]
+void power_set_ble_enabled(bool enabled)
+     ^
+components/power/power_manager.c:335:6: style: The function 'power_reset_inactivity' should have static linkage since it is not used outside of its translation unit. [staticFunction]
+void power_reset_inactivity(void)
+     ^
+components/power/power_manager.c:416:17: style: The function 'power_get_wakeup_reason' should have static linkage since it is not used outside of its translation unit. [staticFunction]
+wakeup_reason_t power_get_wakeup_reason(void)
+                ^
+components/power/power_manager.c:535:6: style: The function 'power_init_with_config' should have static linkage since it is not used outside of its translation unit. [staticFunction]
+void power_init_with_config(const power_config_t *cfg)
+     ^
+components/storage/config.c:170:5: style: The function 'config_save' should have static linkage since it is not used outside of its translation unit. [staticFunction]
+int config_save(const void *cfg, uint16_t len)
+    ^
+components/storage/config.c:200:11: style: The function 'config_load_all' should have static linkage since it is not used outside of its translation unit. [staticFunction]
+esp_err_t config_load_all(void)
+          ^
+components/storage/logger.c:136:5: style: The function 'logger_write_csv_header' should have static linkage since it is not used outside of its translation unit. [staticFunction]
+int logger_write_csv_header(FILE *f)
+    ^
+components/storage/logger.c:148:5: style: The function 'logger_write_csv_row' should have static linkage since it is not used outside of its translation unit. [staticFunction]
+int logger_write_csv_row(FILE *f, const log_entry_t *entry)
+    ^
+components/storage/logger.c:279:5: style: The function 'logger_export_gpx' should have static linkage since it is not used outside of its translation unit. [staticFunction]
+int logger_export_gpx(const char *path)
+    ^
+components/storage/logger.c:419:5: style: The function 'logger_add_track_point' should have static linkage since it is not used outside of its translation unit. [staticFunction]
+int logger_add_track_point(const log_entry_t *entry)
+    ^
+components/storage/logger.c:468:5: style: The function 'logger_flush' should have static linkage since it is not used outside of its translation unit. [staticFunction]
+int logger_flush(void)
+    ^
+nofile:0:0: information: Active checkers: 115/189 (use --checkers-report=<filename> to see details) [checkersReport]
+

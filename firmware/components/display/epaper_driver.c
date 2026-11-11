@@ -153,39 +153,39 @@ static void epd_hardware_reset(void)
 static void epd_init_sequence(void)
 {
     /* Driver output control: 128 lines, scan direction */
-    uint8_t driver_out[] = {0x80, 0x00, 0x00};  /* MUX=128 */
+    const uint8_t driver_out[] = {0x80, 0x00, 0x00};  /* MUX=128 */
     epd_write_cmd_data(EPD_DRIVER_OUTPUT, driver_out, 3);
 
     /* Gate driving voltage: 15V */
-    uint8_t gate_volt[] = {0x0A};
+    const uint8_t gate_volt[] = {0x0A};
     epd_write_cmd_data(EPD_GATE_DRIVING_VOLT, gate_volt, 1);
 
     /* Source driving voltage: 15V */
-    uint8_t src_volt[] = {0x0A, 0x00, 0x0A};
+    const uint8_t src_volt[] = {0x0A, 0x00, 0x0A};
     epd_write_cmd_data(EPD_SOURCE_DRIVING_VOLT, src_volt, 3);
 
     /* Booster soft start: phase A=10ms, B=10ms, C=5ms */
-    uint8_t booster[] = {0x8A, 0x05, 0x1A};
+    const uint8_t booster[] = {0x8A, 0x05, 0x1A};
     epd_write_cmd_data(EPD_BOOSTER_SOFT_START, booster, 3);
 
     /* VCOM voltage: -0.1V */
-    uint8_t vcom[] = {0x1A};
+    const uint8_t vcom[] = {0x1A};
     epd_write_cmd_data(EPD_VCOM_VOLTAGE, vcom, 1);
 
     /* Border waveform: don't change border */
-    uint8_t border[] = {0x03};
+    const uint8_t border[] = {0x03};
     epd_write_cmd_data(EPD_BORDER_WAVEFORM, border, 1);
 
     /* Data entry mode: X increment, Y increment */
-    uint8_t entry_mode[] = {0x03};  /* AM=0 (X), ID[1:0]=11 (inc X, inc Y) */
+    const uint8_t entry_mode[] = {0x03};  /* AM=0 (X), ID[1:0]=11 (inc X, inc Y) */
     epd_write_cmd_data(EPD_DATA_ENTRY_MODE, entry_mode, 1);
 
     /* RAM X address: 0 to (EPD_WIDTH/8 - 1) */
-    uint8_t ram_x[] = {0x00, (uint8_t)((EPD_WIDTH / 8) - 1)};
+    const uint8_t ram_x[] = {0x00, (uint8_t)((EPD_WIDTH / 8) - 1)};
     epd_write_cmd_data(EPD_RAM_X_START, ram_x, 2);
 
     /* RAM Y address: 0 to (EPD_HEIGHT - 1) */
-    uint8_t ram_y[] = {0x00, 0x00, (uint8_t)((EPD_HEIGHT - 1) & 0xFF),
+    const uint8_t ram_y[] = {0x00, 0x00, (uint8_t)((EPD_HEIGHT - 1) & 0xFF),
                        (uint8_t)((EPD_HEIGHT - 1) >> 8)};
     epd_write_cmd_data(EPD_RAM_Y_START, ram_y, 4);
 }
@@ -332,24 +332,24 @@ void epaper_display_partial(const uint8_t *buffer, uint16_t x,
     for (uint16_t row = 0; row < h; row++) {
         uint16_t dst_y = y + row;
         if (dst_y >= EPD_HEIGHT) break;
-        uint8_t *dst = &s_framebuffer[dst_y * (EPD_WIDTH / 8) + x_byte];
+        uint8_t *dst = &s_framebuffer[(size_t)dst_y * (EPD_WIDTH / 8) + x_byte];
         const uint8_t *src =
-            &buffer[row * w_bytes];
+            &buffer[(size_t)row * w_bytes];
         memcpy(dst, src, w_bytes);
     }
 
     /* Set RAM window for the changed region */
-    uint8_t ram_x[] = {(uint8_t)x_byte,
+    const uint8_t ram_x[] = {(uint8_t)x_byte,
                        (uint8_t)(x_byte + w_bytes - 1)};
     epd_write_cmd_data(EPD_RAM_X_START, ram_x, 2);
 
-    uint8_t ram_y[] = {(uint8_t)(y & 0xFF), (uint8_t)(y >> 8),
+    const uint8_t ram_y[] = {(uint8_t)(y & 0xFF), (uint8_t)(y >> 8),
                        (uint8_t)((y + h - 1) & 0xFF),
                        (uint8_t)((y + h - 1) >> 8)};
     epd_write_cmd_data(EPD_RAM_Y_START, ram_y, 4);
 
     /* Data entry: X increment, Y decrement (SSD1680 quirk) */
-    uint8_t entry_mode[] = {0x02};
+    const uint8_t entry_mode[] = {0x02};
     epd_write_cmd_data(EPD_DATA_ENTRY_MODE, entry_mode, 1);
 
     /* Write region data to RAM */
@@ -357,7 +357,7 @@ void epaper_display_partial(const uint8_t *buffer, uint16_t x,
     for (int16_t row = h - 1; row >= 0; row--) {
         uint16_t src_y = y + row;
         if (src_y >= EPD_HEIGHT) continue;
-        uint8_t *line = &s_framebuffer[src_y * (EPD_WIDTH / 8) + x_byte];
+        const uint8_t *line = &s_framebuffer[src_y * (EPD_WIDTH / 8) + x_byte];
         epd_write_data(line, w_bytes);
     }
 

@@ -107,7 +107,7 @@ static const struct {
 
 const char *dtc_code_to_string(dtc_code_t code)
 {
-    for (uint16_t i = 0; i < DTC_TABLE_LEN; i++) {
+    for (size_t i = 0; i < DTC_TABLE_LEN; i++) {
         if (s_dtc_table[i].code == code)
             return s_dtc_table[i].str;
     }
@@ -116,7 +116,7 @@ const char *dtc_code_to_string(dtc_code_t code)
 
 dtc_severity_t dtc_default_severity(dtc_code_t code)
 {
-    for (uint16_t i = 0; i < DTC_TABLE_LEN; i++) {
+    for (size_t i = 0; i < DTC_TABLE_LEN; i++) {
         if (s_dtc_table[i].code == code)
             return s_dtc_table[i].sev;
     }

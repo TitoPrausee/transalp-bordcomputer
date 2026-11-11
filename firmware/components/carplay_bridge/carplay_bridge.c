@@ -58,10 +58,8 @@ static bool s_cccd_telemetry = false;
 
 uint16_t carplay_val_handles[CP_H_COUNT] = {0};
 
-/* Forward declaration: referenced by the static service table below,
- * defined later in this file. */
-int carplay_gatt_access_cb(uint16_t conn_handle, uint16_t attr_handle,
-                           struct ble_gatt_access_ctxt *ctxt, void *arg);
+/* carplay_gatt_access_cb is declared in carplay_internal.h (included above)
+ * and referenced by the static service table below. */
 
 /* ============================================================
  * 128-bit UUID definitions
@@ -327,7 +325,7 @@ void carplay_bridge_notify_telemetry(void)
     carplay_notify(carplay_val_handles[CP_H_TLM_LIVE], &pkt, sizeof(pkt));
 }
 
-void carplay_bridge_on_sensor_update(void *data, uint16_t len)
+void carplay_bridge_on_sensor_update(const void *data, uint16_t len)
 {
     if (data == NULL || len < sizeof(carplay_telemetry_input_t)) {
         return;

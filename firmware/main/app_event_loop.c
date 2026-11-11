@@ -188,7 +188,7 @@ esp_err_t app_event_subscribe(uint32_t type_mask,
     return result;
 }
 
-void app_event_unsubscribe(app_event_callback_t callback, void *user_ctx)
+void app_event_unsubscribe(app_event_callback_t callback, const void *user_ctx)
 {
     if (callback == NULL || s_sub_mutex == NULL) {
         return;

@@ -31,6 +31,7 @@ from mock_gps import NmeaGenerator, GpsData
 from mock_display import HeadlessDisplay, DisplayType, DisplayMode, COLOR_WHITE, COLOR_ACCENT_GREEN, COLOR_ACCENT_RED, COLOR_ACCENT_AMBER, COLOR_ACCENT_BLUE
 from mock_ble import MockBle, CHR_TLM_LIVE, CHR_SENSOR_STATUS, CHR_DTC_LIST
 from mock_controller import MockController, ControllerEvent
+from telemetry_logger import TelemetryLogger
 
 
 # ---- Simulations-State ----
@@ -52,6 +53,9 @@ class SimulatorConfig:
     log_interval_s: float = 10.0
     fast: bool = False  # No real-time sleep (for CI long runs)
     skip_display: bool = False  # Skip framebuffer updates (for CI long runs)
+    log_telemetry: bool = False  # Enable CSV/GPX telemetry logging
+    telemetry_dir: str = "/tmp/transalp-telemetry"  # Output dir for telemetry files
+    telemetry_name: str = "sim_tour"  # Base filename for telemetry files
 
 
 @dataclass
@@ -110,6 +114,14 @@ class Simulator:
         self._last_gps_ms = 0.0
         self._last_log_ms = 0.0
 
+        # Telemetry logger (optional CSV/GPX output)
+        self.telemetry: Optional[TelemetryLogger] = None
+        if self.config.log_telemetry:
+            self.telemetry = TelemetryLogger(
+                output_dir=self.config.telemetry_dir,
+                rate_hz=10,
+            )
+
     @property
     def running(self) -> bool:
         return self._running
@@ -124,10 +136,14 @@ class Simulator:
         self.sensors.start()
         self._state.elapsed_ms = 0.0
         self._state.tick_count = 0
+        if self.telemetry:
+            self.telemetry.start_tour(name=self.config.telemetry_name)
 
     def stop(self) -> None:
         """Simulator anhalten."""
         self._running = False
+        if self.telemetry:
+            self.telemetry.stop_tour()
         self.ble.disconnect()
 
     def tick(self, delta_ms: Optional[float] = None) -> SimulatorState:
@@ -166,6 +182,23 @@ class Simulator:
         # 4. BLE Telemetry pushen (sensor + gps data for telemetry_live_t)
         self.ble.set_telemetry_data(self._state.sensor_data,
                                    self._state.gps_data)
+
+        # 4b. Telemetry-Logger (CSV/GPX) — wenn aktiv
+        if self.telemetry and self.telemetry.is_active:
+            s = self._state.sensor_data
+            g = self._state.gps_data
+            self.telemetry.add_track_point(
+                timestamp_ms=int(self._state.elapsed_ms),
+                lat=g.lat, lon=g.lon,
+                speed_kmh=g.speed_kmh if g.has_fix else s.speed_kmh,
+                course_deg=g.course_deg,
+                altitude_m=g.altitude_m,
+                rpm=s.rpm,
+                temp_c=s.coolant_temp_c,
+                roll_deg=s.roll_deg,
+                pitch_deg=s.pitch_deg,
+                fuel_l=s.fuel_level_l,
+            )
 
         # 5. Controller-Events verarbeiten
         events = self.controller.poll_events()
@@ -409,6 +442,21 @@ def main():
         action="store_true",
         help="Display-Updates ueberspringen (fuer CI Langzeitläufe)",
     )
+    parser.add_argument(
+        "--log-telemetry",
+        action="store_true",
+        help="CSV/GPX Telemetry-Logging aktivieren",
+    )
+    parser.add_argument(
+        "--telemetry-dir",
+        default="/tmp/transalp-telemetry",
+        help="Ausgabe-Verzeichnis fuer Telemetry-Dateien",
+    )
+    parser.add_argument(
+        "--telemetry-name",
+        default="sim_tour",
+        help="Basisdateiname fuer Telemetry-Dateien (ohne Erweiterung)",
+    )
 
     args = parser.parse_args()
 
@@ -434,6 +482,9 @@ def main():
         log_nmea=args.log_nmea,
         fast=args.fast,
         skip_display=args.skip_display,
+        log_telemetry=args.log_telemetry,
+        telemetry_dir=args.telemetry_dir,
+        telemetry_name=args.telemetry_name,
     )
 
     sim = Simulator(config)

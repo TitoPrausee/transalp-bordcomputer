@@ -108,7 +108,7 @@ static float filter_push(uint16_t raw_adc_mv)
     for (uint8_t i = 0; i < s_filter_count; i++) {
         sum += s_filter_buf[i];
     }
-    return (float)(sum / s_filter_count);
+    return (float)sum / s_filter_count;
 }
 
 /*
@@ -384,7 +384,8 @@ battery_status_t power_measure_and_update(float vwarn_low, float vwarn_crit,
 
     /* Status-Aenderungen loggen */
     if (new_status != old_status) {
-        const char *status_str[] = {
+        // cppcheck-suppress variableScope
+        static const char *status_str[] = {
             "NORMAL", "CHARGING", "LOW", "CRITICAL", "OVERVOLT"
         };
         ESP_LOGI(TAG, "Battery status: %s -> %s (%.2fV, %u%%)",
@@ -410,8 +411,8 @@ void power_adc_deinit(void)
 #if ADC_CALI_SCHEME_LINE_FITTING_SUPPORTED
         adc_cali_delete_scheme_line_fitting(s_adc_cali_handle);
 #endif
-        s_adc_cali_handle = NULL;
     }
+    s_adc_cali_handle = NULL;
     if (s_adc1_handle != NULL) {
         adc_oneshot_del_unit(s_adc1_handle);
         s_adc1_handle = NULL;

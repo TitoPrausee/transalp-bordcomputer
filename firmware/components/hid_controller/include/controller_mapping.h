@@ -40,7 +40,7 @@ typedef enum {
     CONTROLLER_VOL_DOWN    = 8,
     CONTROLLER_MEDIA_NEXT  = 9,
     CONTROLLER_MEDIA_PREV  = 10,
-    CONTROLLER_EVENT_COUNT,
+    CONTROLLER_EVENT_COUNT = 11,
 } controller_event_id_t;
 
 /* ============================================================

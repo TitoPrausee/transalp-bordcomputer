@@ -22,6 +22,8 @@
 #include "gatt_uuids.h"
 #include "diagnostics.h"
 #include "ota_update.h"
+#include "storage.h"
+#include "app_event_loop.h"
 
 #include <string.h>
 #include <stdint.h>
@@ -113,6 +115,40 @@ esp_err_t ota_ble_get_verify_result(ota_verify_result_t *out) { (void)out; retur
 esp_err_t ota_abort(void) { return ESP_OK; }
 bool event_bus_wait(uint32_t bits, uint32_t timeout_ms) { (void)bits; (void)timeout_ms; return false; }
 
+/* Config + app-event stubs: ble_callbacks.c calls these from the
+ * process_config_write / process_config_import / process_nav_cmd /
+ * process_media_control handlers. The stubs are test-controllable
+ * so the write-handler tests can exercise success and error paths. */
+static device_config_t g_mock_config;
+int g_mock_config_import_rc = 0;          /* config_import_json return (0=ok) */
+esp_err_t g_mock_config_save_rc = ESP_OK; /* config_save_all return */
+uint16_t g_mock_migrate_version = 0;       /* last version passed to migrate */
+int g_mock_migrate_call_count = 0;
+
+device_config_t *config_get(void) { return &g_mock_config; }
+esp_err_t config_save_all(void) { return g_mock_config_save_rc; }
+esp_err_t config_migrate(uint16_t old_version) {
+    g_mock_migrate_version = old_version;
+    g_mock_migrate_call_count++;
+    return ESP_OK;
+}
+int config_import_json(const char *json) {
+    (void)json;
+    return g_mock_config_import_rc;
+}
+
+/* App-event dispatch capture: records every dispatched event so the
+ * nav/media command tests can assert the correct controller event was
+ * fired for each command byte. */
+app_event_type_t g_mock_dispatched_events[16];
+int g_mock_dispatch_count = 0;
+void app_event_dispatch_simple(app_event_type_t type) {
+    if (g_mock_dispatch_count < (int)(sizeof(g_mock_dispatched_events)
+                                      / sizeof(g_mock_dispatched_events[0]))) {
+        g_mock_dispatched_events[g_mock_dispatch_count++] = type;
+    }
+}
+
 #endif /* TEST_HOST */
 
 /* ============================================================
@@ -143,6 +179,20 @@ void setUp(void)
     g_mock_mbuf_alloc_ok = false;
     g_mock_notify_call_count = 0;
     g_mock_indicate_call_count = 0;
+
+    /* Reset config + app-event mock state for write-handler tests */
+    memset(&g_mock_config, 0, sizeof(g_mock_config));
+    g_mock_config.version = CONFIG_VERSION;
+    g_mock_config_import_rc = 0;
+    g_mock_config_save_rc = ESP_OK;
+    g_mock_migrate_version = 0;
+    g_mock_migrate_call_count = 0;
+    g_mock_dispatch_count = 0;
+    g_restart_called = 0;
+    /* Reset BLE write-payload staging so a prior test does not leak */
+    g_mock_write_data = NULL;
+    g_mock_write_len = 0;
+    g_mock_om_pktlen = 0;
 }
 
 void tearDown(void)
@@ -454,6 +504,337 @@ void test_indicate_skipped_when_conn_handle_reused(void)
 }
 
 /* ============================================================
+ * Tests: BLE write-command handlers (config / bond / nav / media)
+ *
+ * These exercise the process_* helpers that ble_task() dispatches.
+ * They cover the pairing/config edge cases and error paths required
+ * by TOT-62: null/empty payloads, version migration, save failure,
+ * command-byte dispatch, and unknown commands.
+ * ============================================================ */
+
+/* --- process_config_write --- */
+
+void test_config_write_applies_json(void)
+{
+    uint8_t payload[] = "{\"rpm_redline\":7500}";
+    process_config_write(payload, sizeof(payload) - 1);
+
+    /* config_import_json mocked to return 0 (success) */
+    TEST_ASSERT_EQUAL(0, g_mock_config_import_rc);
+}
+
+void test_config_write_null_payload_ignored(void)
+{
+    process_config_write(NULL, 4);
+    /* Should not crash; import never called because of the guard */
+    TEST_ASSERT_EQUAL(0, g_mock_config_import_rc);
+}
+
+void test_config_write_empty_payload_ignored(void)
+{
+    uint8_t payload[] = {0x01};
+    process_config_write(payload, 0);
+    TEST_ASSERT_EQUAL(0, g_mock_config_import_rc);
+}
+
+void test_config_write_import_failure_logged(void)
+{
+    g_mock_config_import_rc = -1;  /* simulate JSON parse failure */
+    uint8_t payload[] = "{bad}";
+    process_config_write(payload, sizeof(payload) - 1);
+    /* Handler must not crash on a non-zero import return */
+    TEST_ASSERT_EQUAL(-1, g_mock_config_import_rc);
+}
+
+/* --- process_config_import --- */
+
+void test_config_import_applies_and_saves(void)
+{
+    device_config_t incoming;
+    memset(&incoming, 0, sizeof(incoming));
+    incoming.version = CONFIG_VERSION;
+    incoming.rpm_redline = 7800;
+    incoming.device_name[0] = 'X';
+
+    process_config_import((const uint8_t *)&incoming, sizeof(incoming));
+
+    /* The imported values must be copied into the live config */
+    TEST_ASSERT_EQUAL_UINT16(7800, g_mock_config.rpm_redline);
+    TEST_ASSERT_EQUAL_UINT8('X', g_mock_config.device_name[0]);
+    /* Version stamped to current */
+    TEST_ASSERT_EQUAL_UINT16(CONFIG_VERSION, g_mock_config.version);
+}
+
+void test_config_import_too_small_payload_ignored(void)
+{
+    uint8_t too_small[] = {0x01, 0x02, 0x03};
+    process_config_import(too_small, sizeof(too_small));
+
+    /* Config must be untouched (version stays at reset value) */
+    TEST_ASSERT_EQUAL_UINT16(CONFIG_VERSION, g_mock_config.version);
+    TEST_ASSERT_EQUAL(0, g_mock_migrate_call_count);
+}
+
+void test_config_import_null_ignored(void)
+{
+    process_config_import(NULL, sizeof(device_config_t));
+    TEST_ASSERT_EQUAL(0, g_mock_migrate_call_count);
+}
+
+void test_config_import_newer_version_triggers_migrate(void)
+{
+    device_config_t incoming;
+    memset(&incoming, 0, sizeof(incoming));
+    incoming.version = CONFIG_VERSION + 2;  /* newer than current */
+
+    process_config_import((const uint8_t *)&incoming, sizeof(incoming));
+
+    TEST_ASSERT_EQUAL(1, g_mock_migrate_call_count);
+    TEST_ASSERT_EQUAL_UINT16(CONFIG_VERSION + 2, g_mock_migrate_version);
+}
+
+void test_config_import_current_version_no_migrate(void)
+{
+    device_config_t incoming;
+    memset(&incoming, 0, sizeof(incoming));
+    incoming.version = CONFIG_VERSION;
+
+    process_config_import((const uint8_t *)&incoming, sizeof(incoming));
+
+    TEST_ASSERT_EQUAL(0, g_mock_migrate_call_count);
+}
+
+void test_config_import_save_failure_does_not_crash(void)
+{
+    g_mock_config_save_rc = ESP_FAIL;
+    device_config_t incoming;
+    memset(&incoming, 0, sizeof(incoming));
+    incoming.version = CONFIG_VERSION;
+
+    process_config_import((const uint8_t *)&incoming, sizeof(incoming));
+
+    /* Values still applied even if save fails */
+    TEST_ASSERT_EQUAL_UINT16(CONFIG_VERSION, g_mock_config.version);
+}
+
+/* --- process_bond_delete (pairing flow) --- */
+
+void test_bond_delete_valid_command_reboots(void)
+{
+    uint8_t cmd[] = {0x00};
+    process_bond_delete(cmd, 1);
+    /* ble_store_clear() is a no-op mock; esp_restart() sets g_restart_called */
+    TEST_ASSERT_EQUAL(1, g_restart_called);
+}
+
+void test_bond_delete_wrong_command_ignored(void)
+{
+    uint8_t cmd[] = {0x01};  /* not 0x00 */
+    process_bond_delete(cmd, 1);
+    TEST_ASSERT_EQUAL(0, g_restart_called);
+}
+
+void test_bond_delete_empty_payload_ignored(void)
+{
+    uint8_t cmd[] = {0x00};
+    process_bond_delete(cmd, 0);
+    TEST_ASSERT_EQUAL(0, g_restart_called);
+}
+
+/* --- process_nav_cmd --- */
+
+void test_nav_cmd_cancel_dispatches_back(void)
+{
+    uint8_t cmd[] = {0x01};
+    process_nav_cmd(cmd, 1);
+    TEST_ASSERT_EQUAL(1, g_mock_dispatch_count);
+    TEST_ASSERT_EQUAL(APP_EVENT_CTRL_BACK, g_mock_dispatched_events[0]);
+}
+
+void test_nav_cmd_repeat_dispatches_select(void)
+{
+    uint8_t cmd[] = {0x02};
+    process_nav_cmd(cmd, 1);
+    TEST_ASSERT_EQUAL(1, g_mock_dispatch_count);
+    TEST_ASSERT_EQUAL(APP_EVENT_CTRL_SELECT, g_mock_dispatched_events[0]);
+}
+
+void test_nav_cmd_alternative_dispatches_home(void)
+{
+    uint8_t cmd[] = {0x03};
+    process_nav_cmd(cmd, 1);
+    TEST_ASSERT_EQUAL(1, g_mock_dispatch_count);
+    TEST_ASSERT_EQUAL(APP_EVENT_CTRL_HOME, g_mock_dispatched_events[0]);
+}
+
+void test_nav_cmd_unknown_no_dispatch(void)
+{
+    uint8_t cmd[] = {0xFF};
+    process_nav_cmd(cmd, 1);
+    TEST_ASSERT_EQUAL(0, g_mock_dispatch_count);
+}
+
+void test_nav_cmd_empty_payload_no_dispatch(void)
+{
+    uint8_t cmd[] = {0x01};
+    process_nav_cmd(cmd, 0);
+    TEST_ASSERT_EQUAL(0, g_mock_dispatch_count);
+}
+
+/* --- process_media_control --- */
+
+void test_media_play_pause_dispatches_select(void)
+{
+    uint8_t cmd[] = {0x01};
+    process_media_control(cmd, 1);
+    TEST_ASSERT_EQUAL(1, g_mock_dispatch_count);
+    TEST_ASSERT_EQUAL(APP_EVENT_CTRL_SELECT, g_mock_dispatched_events[0]);
+}
+
+void test_media_next_dispatches_next(void)
+{
+    uint8_t cmd[] = {0x02};
+    process_media_control(cmd, 1);
+    TEST_ASSERT_EQUAL(1, g_mock_dispatch_count);
+    TEST_ASSERT_EQUAL(APP_EVENT_CTRL_MEDIA_NEXT, g_mock_dispatched_events[0]);
+}
+
+void test_media_prev_dispatches_prev(void)
+{
+    uint8_t cmd[] = {0x03};
+    process_media_control(cmd, 1);
+    TEST_ASSERT_EQUAL(1, g_mock_dispatch_count);
+    TEST_ASSERT_EQUAL(APP_EVENT_CTRL_MEDIA_PREV, g_mock_dispatched_events[0]);
+}
+
+void test_media_vol_up_dispatches_vol_up(void)
+{
+    uint8_t cmd[] = {0x04};
+    process_media_control(cmd, 1);
+    TEST_ASSERT_EQUAL(1, g_mock_dispatch_count);
+    TEST_ASSERT_EQUAL(APP_EVENT_CTRL_VOL_UP, g_mock_dispatched_events[0]);
+}
+
+void test_media_vol_down_dispatches_vol_down(void)
+{
+    uint8_t cmd[] = {0x05};
+    process_media_control(cmd, 1);
+    TEST_ASSERT_EQUAL(1, g_mock_dispatch_count);
+    TEST_ASSERT_EQUAL(APP_EVENT_CTRL_VOL_DOWN, g_mock_dispatched_events[0]);
+}
+
+void test_media_unknown_no_dispatch(void)
+{
+    uint8_t cmd[] = {0x99};
+    process_media_control(cmd, 1);
+    TEST_ASSERT_EQUAL(0, g_mock_dispatch_count);
+}
+
+void test_media_empty_payload_no_dispatch(void)
+{
+    uint8_t cmd[] = {0x01};
+    process_media_control(cmd, 0);
+    TEST_ASSERT_EQUAL(0, g_mock_dispatch_count);
+}
+
+/* --- process_self_test --- */
+
+void test_self_test_start_notifies_pass(void)
+{
+    g_ble_conn_handle = 1;
+    g_ble_conn_valid = true;
+    g_mock_mbuf_alloc_ok = true;
+    uint8_t cmd[] = {0x01};
+    process_self_test(cmd, 1);
+    /* selftest_run() mock returns true → status byte 0 (pass) */
+    TEST_ASSERT_EQUAL(1, g_mock_notify_call_count);
+}
+
+void test_self_test_unknown_cmd_no_notify(void)
+{
+    uint8_t cmd[] = {0x02};
+    process_self_test(cmd, 1);
+    TEST_ASSERT_EQUAL(0, g_mock_notify_call_count);
+}
+
+void test_self_test_empty_payload_no_notify(void)
+{
+    uint8_t cmd[] = {0x01};
+    process_self_test(cmd, 0);
+    TEST_ASSERT_EQUAL(0, g_mock_notify_call_count);
+}
+
+/* --- ble_handle_write dispatch --- */
+
+void test_handle_write_maps_nav_cmd_handle(void)
+{
+    ble_val_handles[CHR_H_NAV_CMD] = 100;
+    struct ble_gatt_access_ctxt ctxt;
+    struct os_mbuf om;
+    ctxt.om = &om;
+    ctxt.op = BLE_GATT_ACCESS_OP_WRITE_CHR;
+
+    uint8_t payload[] = {0x01};
+    g_mock_write_data = payload;
+    g_mock_write_len = 1;
+    g_mock_om_pktlen = 1;
+
+    int rc = ble_handle_write(1, 100, &ctxt);
+    TEST_ASSERT_EQUAL(0, rc);
+
+    /* Command must be enqueued as NAV_CMD */
+    ble_cmd_t cmd;
+    TEST_ASSERT_EQUAL(pdTRUE, xQueueReceive(ble_cmd_queue, &cmd, 0));
+    TEST_ASSERT_EQUAL(BLE_CMD_NAV_CMD, cmd.type);
+    TEST_ASSERT_EQUAL_UINT8(0x01, cmd.data[0]);
+}
+
+void test_handle_write_maps_config_write_handle(void)
+{
+    ble_val_handles[CHR_H_CONFIG_WRITE] = 200;
+    struct ble_gatt_access_ctxt ctxt;
+    struct os_mbuf om;
+    ctxt.om = &om;
+    ctxt.op = BLE_GATT_ACCESS_OP_WRITE_CHR;
+
+    uint8_t payload[] = "{\"k\":1}";
+    g_mock_write_data = payload;
+    g_mock_write_len = sizeof(payload) - 1;
+    g_mock_om_pktlen = sizeof(payload) - 1;
+
+    int rc = ble_handle_write(1, 200, &ctxt);
+    TEST_ASSERT_EQUAL(0, rc);
+
+    ble_cmd_t cmd;
+    TEST_ASSERT_EQUAL(pdTRUE, xQueueReceive(ble_cmd_queue, &cmd, 0));
+    TEST_ASSERT_EQUAL(BLE_CMD_CONFIG_WRITE, cmd.type);
+}
+
+void test_handle_write_unknown_handle_rejected(void)
+{
+    struct ble_gatt_access_ctxt ctxt;
+    struct os_mbuf om;
+    ctxt.om = &om;
+    ctxt.op = BLE_GATT_ACCESS_OP_WRITE_CHR;
+    g_mock_om_pktlen = 1;
+
+    int rc = ble_handle_write(1, 9999, &ctxt);
+    TEST_ASSERT_EQUAL(BLE_ATT_ERR_UNLIKELY, rc);
+}
+
+void test_handle_write_too_long_rejected(void)
+{
+    struct ble_gatt_access_ctxt ctxt;
+    struct os_mbuf om;
+    ctxt.om = &om;
+    ctxt.op = BLE_GATT_ACCESS_OP_WRITE_CHR;
+    g_mock_om_pktlen = 300;  /* exceeds 244-byte MTU-3 max */
+
+    int rc = ble_handle_write(1, ble_val_handles[CHR_H_NAV_CMD], &ctxt);
+    TEST_ASSERT_EQUAL(BLE_ATT_ERR_INVALID_ATTR_VALUE_LEN, rc);
+}
+
+/* ============================================================
  * Test Runner
  * ============================================================ */
 int main(void)
@@ -485,6 +866,50 @@ int main(void)
     RUN_TEST(test_notify_sent_when_conn_valid);
     RUN_TEST(test_notify_skipped_when_conn_handle_reused);
     RUN_TEST(test_indicate_skipped_when_conn_handle_reused);
+
+    /* Config write/import handler tests */
+    RUN_TEST(test_config_write_applies_json);
+    RUN_TEST(test_config_write_null_payload_ignored);
+    RUN_TEST(test_config_write_empty_payload_ignored);
+    RUN_TEST(test_config_write_import_failure_logged);
+    RUN_TEST(test_config_import_applies_and_saves);
+    RUN_TEST(test_config_import_too_small_payload_ignored);
+    RUN_TEST(test_config_import_null_ignored);
+    RUN_TEST(test_config_import_newer_version_triggers_migrate);
+    RUN_TEST(test_config_import_current_version_no_migrate);
+    RUN_TEST(test_config_import_save_failure_does_not_crash);
+
+    /* Bond-delete (pairing flow) tests */
+    RUN_TEST(test_bond_delete_valid_command_reboots);
+    RUN_TEST(test_bond_delete_wrong_command_ignored);
+    RUN_TEST(test_bond_delete_empty_payload_ignored);
+
+    /* Nav command dispatch tests */
+    RUN_TEST(test_nav_cmd_cancel_dispatches_back);
+    RUN_TEST(test_nav_cmd_repeat_dispatches_select);
+    RUN_TEST(test_nav_cmd_alternative_dispatches_home);
+    RUN_TEST(test_nav_cmd_unknown_no_dispatch);
+    RUN_TEST(test_nav_cmd_empty_payload_no_dispatch);
+
+    /* Media control dispatch tests */
+    RUN_TEST(test_media_play_pause_dispatches_select);
+    RUN_TEST(test_media_next_dispatches_next);
+    RUN_TEST(test_media_prev_dispatches_prev);
+    RUN_TEST(test_media_vol_up_dispatches_vol_up);
+    RUN_TEST(test_media_vol_down_dispatches_vol_down);
+    RUN_TEST(test_media_unknown_no_dispatch);
+    RUN_TEST(test_media_empty_payload_no_dispatch);
+
+    /* Self-test handler tests */
+    RUN_TEST(test_self_test_start_notifies_pass);
+    RUN_TEST(test_self_test_unknown_cmd_no_notify);
+    RUN_TEST(test_self_test_empty_payload_no_notify);
+
+    /* ble_handle_write dispatch tests */
+    RUN_TEST(test_handle_write_maps_nav_cmd_handle);
+    RUN_TEST(test_handle_write_maps_config_write_handle);
+    RUN_TEST(test_handle_write_unknown_handle_rejected);
+    RUN_TEST(test_handle_write_too_long_rejected);
 
     return UNITY_END();
 }

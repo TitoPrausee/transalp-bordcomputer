@@ -555,11 +555,10 @@ void logger_task(void *arg)
             last_flush_ms = now;
         }
 
-        if (event_bus_wait(EVT_SDCARD_MOUNTED, 0) && s_ring_count > 0) {
-            if ((now - last_flush_ms) >= 1000) {
-                logger_flush();
-                last_flush_ms = now;
-            }
+        if (event_bus_wait(EVT_SDCARD_MOUNTED, 0) && s_ring_count > 0 &&
+            (now - last_flush_ms) >= 1000) {
+            logger_flush();
+            last_flush_ms = now;
         }
 
         vTaskDelay(pdMS_TO_TICKS(50));

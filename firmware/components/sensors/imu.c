@@ -69,7 +69,7 @@ static bool s_imu_present = false;
 
 static esp_err_t imu_write_reg(uint8_t reg, uint8_t val)
 {
-    uint8_t buf[2] = {reg, val};
+    const uint8_t buf[2] = {reg, val};
     return i2c_master_transmit(s_imu_dev, buf, 2, pdMS_TO_TICKS(100));
 }
 

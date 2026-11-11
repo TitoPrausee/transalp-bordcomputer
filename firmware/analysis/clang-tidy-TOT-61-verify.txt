@@ -1,0 +1,894 @@
+Enabled checks:
+    bugprone-argument-comment
+    bugprone-assert-side-effect
+    bugprone-assignment-in-if-condition
+    bugprone-assignment-in-selection-statement
+    bugprone-bad-signal-to-kill-thread
+    bugprone-bitwise-pointer-cast
+    bugprone-bool-pointer-implicit-conversion
+    bugprone-branch-clone
+    bugprone-capturing-this-in-member-variable
+    bugprone-casting-through-void
+    bugprone-chained-comparison
+    bugprone-command-processor
+    bugprone-compare-pointer-to-member-virtual-function
+    bugprone-copy-constructor-init
+    bugprone-copy-constructor-mutates-argument
+    bugprone-crtp-constructor-accessibility
+    bugprone-dangling-handle
+    bugprone-default-operator-new-on-overaligned-type
+    bugprone-derived-method-shadowing-base-method
+    bugprone-dynamic-static-initializers
+    bugprone-empty-catch
+    bugprone-exception-copy-constructor-throws
+    bugprone-exception-escape
+    bugprone-float-loop-counter
+    bugprone-fold-init-type
+    bugprone-forward-declaration-namespace
+    bugprone-forwarding-reference-overload
+    bugprone-implicit-widening-of-multiplication-result
+    bugprone-inaccurate-erase
+    bugprone-inc-dec-in-conditions
+    bugprone-incorrect-enable-if
+    bugprone-incorrect-enable-shared-from-this
+    bugprone-incorrect-roundings
+    bugprone-infinite-loop
+    bugprone-integer-division
+    bugprone-invalid-enum-default-initialization
+    bugprone-lambda-function-name
+    bugprone-macro-parentheses
+    bugprone-macro-repeated-side-effects
+    bugprone-misleading-setter-of-reference
+    bugprone-misplaced-operator-in-strlen-in-alloc
+    bugprone-misplaced-pointer-arithmetic-in-alloc
+    bugprone-misplaced-widening-cast
+    bugprone-missing-end-comparison
+    bugprone-move-forwarding-reference
+    bugprone-multi-level-implicit-pointer-conversion
+    bugprone-multiple-new-in-one-expression
+    bugprone-multiple-statement-macro
+    bugprone-no-escape
+    bugprone-non-zero-enum-to-bool-conversion
+    bugprone-nondeterministic-pointer-iteration-order
+    bugprone-not-null-terminated-result
+    bugprone-optional-value-conversion
+    bugprone-parent-virtual-call
+    bugprone-pointer-arithmetic-on-polymorphic-object
+    bugprone-posix-return
+    bugprone-random-generator-seed
+    bugprone-raw-memory-call-on-non-trivial-type
+    bugprone-redundant-branch-condition
+    bugprone-return-const-ref-from-parameter
+    bugprone-shared-ptr-array-mismatch
+    bugprone-signal-handler
+    bugprone-signed-char-misuse
+    bugprone-sizeof-container
+    bugprone-sizeof-expression
+    bugprone-spuriously-wake-up-functions
+    bugprone-standalone-empty
+    bugprone-std-exception-baseclass
+    bugprone-std-namespace-modification
+    bugprone-string-constructor
+    bugprone-string-integer-assignment
+    bugprone-string-literal-with-embedded-nul
+    bugprone-stringview-nullptr
+    bugprone-suspicious-enum-usage
+    bugprone-suspicious-include
+    bugprone-suspicious-memory-comparison
+    bugprone-suspicious-memset-usage
+    bugprone-suspicious-missing-comma
+    bugprone-suspicious-realloc-usage
+    bugprone-suspicious-semicolon
+    bugprone-suspicious-string-compare
+    bugprone-suspicious-stringview-data-usage
+    bugprone-swapped-arguments
+    bugprone-switch-missing-default-case
+    bugprone-tagged-union-member-count
+    bugprone-terminating-continue
+    bugprone-throw-keyword-missing
+    bugprone-throwing-static-initialization
+    bugprone-too-small-loop-variable
+    bugprone-unchecked-optional-access
+    bugprone-unchecked-string-to-number-conversion
+    bugprone-undefined-memory-manipulation
+    bugprone-undelegated-constructor
+    bugprone-unhandled-code-paths
+    bugprone-unhandled-exception-at-new
+    bugprone-unhandled-self-assignment
+    bugprone-unintended-char-ostream-output
+    bugprone-unique-ptr-array-mismatch
+    bugprone-unsafe-functions
+    bugprone-unsafe-to-allow-exceptions
+    bugprone-unused-local-non-trivial-variable
+    bugprone-unused-raii
+    bugprone-unused-return-value
+    bugprone-use-after-move
+    bugprone-virtual-near-miss
+    cert-arr39-c
+    cert-con36-c
+    cert-con54-cpp
+    cert-ctr56-cpp
+    cert-dcl03-c
+    cert-dcl16-c
+    cert-dcl50-cpp
+    cert-dcl54-cpp
+    cert-dcl58-cpp
+    cert-dcl59-cpp
+    cert-env33-c
+    cert-err09-cpp
+    cert-err52-cpp
+    cert-err60-cpp
+    cert-err61-cpp
+    cert-exp42-c
+    cert-exp45-c
+    cert-fio38-c
+    cert-flp30-c
+    cert-flp37-c
+    cert-int09-c
+    cert-mem57-cpp
+    cert-msc24-c
+    cert-msc30-c
+    cert-msc32-c
+    cert-msc33-c
+    cert-msc50-cpp
+    cert-msc51-cpp
+    cert-msc54-cpp
+    cert-oop11-cpp
+    cert-oop54-cpp
+    cert-oop57-cpp
+    cert-oop58-cpp
+    cert-pos44-c
+    cert-pos47-c
+    cert-sig30-c
+    cert-str34-c
+    clang-analyzer-apiModeling.Errno
+    clang-analyzer-apiModeling.OpaqueSTLFunctionsModeling
+    clang-analyzer-apiModeling.TrustNonnull
+    clang-analyzer-apiModeling.TrustReturnsNonnull
+    clang-analyzer-apiModeling.google.GTest
+    clang-analyzer-apiModeling.llvm.CastValue
+    clang-analyzer-apiModeling.llvm.ReturnValue
+    clang-analyzer-core.BitwiseShift
+    clang-analyzer-core.CallAndMessage
+    clang-analyzer-core.DivideZero
+    clang-analyzer-core.DynamicTypePropagation
+    clang-analyzer-core.NonNullParamChecker
+    clang-analyzer-core.NonnilStringConstants
+    clang-analyzer-core.NullDereference
+    clang-analyzer-core.NullPointerArithm
+    clang-analyzer-core.StackAddressEscape
+    clang-analyzer-core.UndefinedBinaryOperatorResult
+    clang-analyzer-core.VLASize
+    clang-analyzer-core.builtin.AssumeModeling
+    clang-analyzer-core.builtin.BuiltinFunctions
+    clang-analyzer-core.builtin.NoReturnFunctions
+    clang-analyzer-core.uninitialized.ArraySubscript
+    clang-analyzer-core.uninitialized.Assign
+    clang-analyzer-core.uninitialized.Branch
+    clang-analyzer-core.uninitialized.CapturedBlockVariable
+    clang-analyzer-core.uninitialized.NewArraySize
+    clang-analyzer-core.uninitialized.UndefReturn
+    clang-analyzer-cplusplus.ArrayDelete
+    clang-analyzer-cplusplus.InnerPointer
+    clang-analyzer-cplusplus.Move
+    clang-analyzer-cplusplus.NewDelete
+    clang-analyzer-cplusplus.NewDeleteLeaks
+    clang-analyzer-cplusplus.PlacementNew
+    clang-analyzer-cplusplus.PureVirtualCall
+    clang-analyzer-cplusplus.SelfAssignment
+    clang-analyzer-cplusplus.SmartPtrModeling
+    clang-analyzer-cplusplus.StringChecker
+    clang-analyzer-deadcode.DeadStores
+    clang-analyzer-fuchsia.HandleChecker
+    clang-analyzer-nullability.NullPassedToNonnull
+    clang-analyzer-nullability.NullReturnedFromNonnull
+    clang-analyzer-nullability.NullableDereferenced
+    clang-analyzer-nullability.NullablePassedToNonnull
+    clang-analyzer-nullability.NullableReturnedFromNonnull
+    clang-analyzer-optin.core.EnumCastOutOfRange
+    clang-analyzer-optin.core.FixedAddressDereference
+    clang-analyzer-optin.core.UnconditionalVAArg
+    clang-analyzer-optin.cplusplus.UninitializedObject
+    clang-analyzer-optin.cplusplus.VirtualCall
+    clang-analyzer-optin.mpi.MPI-Checker
+    clang-analyzer-optin.osx.OSObjectCStyleCast
+    clang-analyzer-optin.osx.cocoa.localizability.EmptyLocalizationContextChecker
+    clang-analyzer-optin.osx.cocoa.localizability.NonLocalizedStringChecker
+    clang-analyzer-optin.performance.GCDAntipattern
+    clang-analyzer-optin.portability.UnixAPI
+    clang-analyzer-optin.taint.GenericTaint
+    clang-analyzer-optin.taint.TaintPropagation
+    clang-analyzer-optin.taint.TaintedAlloc
+    clang-analyzer-optin.taint.TaintedDiv
+    clang-analyzer-osx.API
+    clang-analyzer-osx.MIG
+    clang-analyzer-osx.NumberObjectConversion
+    clang-analyzer-osx.OSObjectRetainCount
+    clang-analyzer-osx.ObjCProperty
+    clang-analyzer-osx.SecKeychainAPI
+    clang-analyzer-osx.cocoa.AtSync
+    clang-analyzer-osx.cocoa.AutoreleaseWrite
+    clang-analyzer-osx.cocoa.ClassRelease
+    clang-analyzer-osx.cocoa.Dealloc
+    clang-analyzer-osx.cocoa.IncompatibleMethodTypes
+    clang-analyzer-osx.cocoa.Loops
+    clang-analyzer-osx.cocoa.MissingSuperCall
+    clang-analyzer-osx.cocoa.NSAutoreleasePool
+    clang-analyzer-osx.cocoa.NSError
+    clang-analyzer-osx.cocoa.NilArg
+    clang-analyzer-osx.cocoa.NonNilReturnValue
+    clang-analyzer-osx.cocoa.ObjCGenerics
+    clang-analyzer-osx.cocoa.RetainCount
+    clang-analyzer-osx.cocoa.RetainCountBase
+    clang-analyzer-osx.cocoa.RunLoopAutoreleaseLeak
+    clang-analyzer-osx.cocoa.SelfInit
+    clang-analyzer-osx.cocoa.SuperDealloc
+    clang-analyzer-osx.cocoa.UnusedIvars
+    clang-analyzer-osx.cocoa.VariadicMethodTypes
+    clang-analyzer-osx.coreFoundation.CFError
+    clang-analyzer-osx.coreFoundation.CFNumber
+    clang-analyzer-osx.coreFoundation.CFRetainRelease
+    clang-analyzer-osx.coreFoundation.containers.OutOfBounds
+    clang-analyzer-osx.coreFoundation.containers.PointerSizedValues
+    clang-analyzer-security.ArrayBound
+    clang-analyzer-security.FloatLoopCounter
+    clang-analyzer-security.MmapWriteExec
+    clang-analyzer-security.PointerSub
+    clang-analyzer-security.PutenvStackArray
+    clang-analyzer-security.SetgidSetuidOrder
+    clang-analyzer-security.VAList
+    clang-analyzer-security.cert.env.InvalidPtr
+    clang-analyzer-security.insecureAPI.SecuritySyntaxChecker
+    clang-analyzer-security.insecureAPI.UncheckedReturn
+    clang-analyzer-security.insecureAPI.bcmp
+    clang-analyzer-security.insecureAPI.bcopy
+    clang-analyzer-security.insecureAPI.bzero
+    clang-analyzer-security.insecureAPI.decodeValueOfObjCType
+    clang-analyzer-security.insecureAPI.getpw
+    clang-analyzer-security.insecureAPI.gets
+    clang-analyzer-security.insecureAPI.mkstemp
+    clang-analyzer-security.insecureAPI.mktemp
+    clang-analyzer-security.insecureAPI.rand
+    clang-analyzer-security.insecureAPI.strcpy
+    clang-analyzer-security.insecureAPI.vfork
+    clang-analyzer-unix.API
+    clang-analyzer-unix.BlockInCriticalSection
+    clang-analyzer-unix.Chroot
+    clang-analyzer-unix.DynamicMemoryModeling
+    clang-analyzer-unix.Errno
+    clang-analyzer-unix.MallocSizeof
+    clang-analyzer-unix.MismatchedDeallocator
+    clang-analyzer-unix.StdCLibraryFunctions
+    clang-analyzer-unix.Stream
+    clang-analyzer-unix.cstring.BadSizeArg
+    clang-analyzer-unix.cstring.CStringModeling
+    clang-analyzer-unix.cstring.NotNullTerminated
+    clang-analyzer-unix.cstring.NullArg
+    clang-analyzer-unix.cstring.UninitializedRead
+    clang-analyzer-webkit.NoUncountedMemberChecker
+    clang-analyzer-webkit.RefCntblBaseVirtualDtor
+    clang-analyzer-webkit.UncountedLambdaCapturesChecker
+    cppcoreguidelines-avoid-c-arrays
+    cppcoreguidelines-avoid-capturing-lambda-coroutines
+    cppcoreguidelines-avoid-const-or-ref-data-members
+    cppcoreguidelines-avoid-do-while
+    cppcoreguidelines-avoid-goto
+    cppcoreguidelines-avoid-reference-coroutine-parameters
+    cppcoreguidelines-c-copy-assignment-signature
+    cppcoreguidelines-explicit-constructor
+    cppcoreguidelines-explicit-virtual-functions
+    cppcoreguidelines-interfaces-global-init
+    cppcoreguidelines-macro-usage
+    cppcoreguidelines-misleading-capture-default-by-value
+    cppcoreguidelines-missing-std-forward
+    cppcoreguidelines-no-malloc
+    cppcoreguidelines-no-suspend-with-lock
+    cppcoreguidelines-noexcept-destructor
+    cppcoreguidelines-noexcept-move-operations
+    cppcoreguidelines-noexcept-swap
+    cppcoreguidelines-non-private-member-variables-in-classes
+    cppcoreguidelines-owning-memory
+    cppcoreguidelines-prefer-member-initializer
+    cppcoreguidelines-pro-bounds-avoid-unchecked-container-access
+    cppcoreguidelines-pro-bounds-pointer-arithmetic
+    cppcoreguidelines-pro-type-const-cast
+    cppcoreguidelines-pro-type-member-init
+    cppcoreguidelines-pro-type-reinterpret-cast
+    cppcoreguidelines-pro-type-static-cast-downcast
+    cppcoreguidelines-rvalue-reference-param-not-moved
+    cppcoreguidelines-slicing
+    cppcoreguidelines-special-member-functions
+    cppcoreguidelines-use-default-member-init
+    cppcoreguidelines-use-enum-class
+    cppcoreguidelines-virtual-class-destructor
+    misc-anonymous-namespace-in-header
+    misc-confusable-identifiers
+    misc-const-correctness
+    misc-coroutine-hostile-raii
+    misc-definitions-in-headers
+    misc-explicit-constructor
+    misc-header-include-cycle
+    misc-misleading-bidirectional
+    misc-misleading-identifier
+    misc-misplaced-const
+    misc-multiple-inheritance
+    misc-new-delete-overloads
+    misc-non-copyable-objects
+    misc-non-private-member-variables-in-classes
+    misc-override-with-different-visibility
+    misc-predictable-rand
+    misc-redundant-expression
+    misc-static-assert
+    misc-static-initialization-cycle
+    misc-throw-by-value-catch-by-reference
+    misc-unconventional-assign-operator
+    misc-uniqueptr-reset-release
+    misc-unused-alias-decls
+    misc-unused-parameters
+    misc-unused-using-decls
+    misc-use-anonymous-namespace
+    modernize-avoid-bind
+    modernize-avoid-c-arrays
+    modernize-avoid-setjmp-longjmp
+    modernize-avoid-variadic-functions
+    modernize-concat-nested-namespaces
+    modernize-deprecated-headers
+    modernize-deprecated-ios-base-aliases
+    modernize-loop-convert
+    modernize-make-shared
+    modernize-make-unique
+    modernize-min-max-use-initializer-list
+    modernize-pass-by-value
+    modernize-raw-string-literal
+    modernize-redundant-void-arg
+    modernize-replace-auto-ptr
+    modernize-replace-disallow-copy-and-assign-macro
+    modernize-replace-random-shuffle
+    modernize-return-braced-init-list
+    modernize-shrink-to-fit
+    modernize-type-traits
+    modernize-unary-static-assert
+    modernize-use-auto
+    modernize-use-bool-literals
+    modernize-use-constraints
+    modernize-use-designated-initializers
+    modernize-use-emplace
+    modernize-use-equals-default
+    modernize-use-equals-delete
+    modernize-use-integer-sign-comparison
+    modernize-use-noexcept
+    modernize-use-nullptr
+    modernize-use-override
+    modernize-use-ranges
+    modernize-use-scoped-lock
+    modernize-use-starts-ends-with
+    modernize-use-std-bit
+    modernize-use-std-format
+    modernize-use-std-numbers
+    modernize-use-std-print
+    modernize-use-string-view
+    modernize-use-structured-binding
+    modernize-use-transparent-functors
+    modernize-use-uncaught-exceptions
+    modernize-use-using
+    performance-avoid-endl
+    performance-enum-size
+    performance-faster-string-find
+    performance-for-range-copy
+    performance-implicit-conversion-in-loop
+    performance-inefficient-algorithm
+    performance-inefficient-string-concatenation
+    performance-inefficient-vector-operation
+    performance-move-const-arg
+    performance-move-constructor-init
+    performance-no-automatic-move
+    performance-noexcept-destructor
+    performance-noexcept-move-constructor
+    performance-noexcept-swap
+    performance-prefer-single-char-overloads
+    performance-string-view-conversions
+    performance-trivially-destructible
+    performance-type-promotion-in-math-fn
+    performance-unnecessary-copy-initialization
+    performance-unnecessary-value-param
+    performance-use-std-move
+    portability-avoid-pragma-once
+    portability-no-assembler
+    portability-restrict-system-includes
+    portability-simd-intrinsics
+    portability-std-allocator-const
+    portability-template-virtual-member-function
+    readability-ambiguous-smartptr-reset-call
+    readability-avoid-const-params-in-decls
+    readability-avoid-return-with-void-value
+    readability-const-return-type
+    readability-container-contains
+    readability-container-data-pointer
+    readability-container-size-empty
+    readability-delete-null-pointer
+    readability-duplicate-include
+    readability-enum-initial-value
+    readability-function-size
+    readability-identifier-naming
+    readability-inconsistent-ifelse-braces
+    readability-make-member-function-const
+    readability-misleading-indentation
+    readability-misplaced-array-index
+    readability-non-const-parameter
+    readability-operators-representation
+    readability-qualified-auto
+    readability-redundant-control-flow
+    readability-redundant-declaration
+    readability-redundant-function-ptr-dereference
+    readability-redundant-inline-specifier
+    readability-redundant-lambda-parameter-list
+    readability-redundant-member-init
+    readability-redundant-nested-if
+    readability-redundant-parentheses
+    readability-redundant-preprocessor
+    readability-redundant-qualified-alias
+    readability-redundant-smartptr-get
+    readability-redundant-string-cstr
+    readability-redundant-string-init
+    readability-redundant-typename
+    readability-reference-to-constructed-temporary
+    readability-simplify-boolean-expr
+    readability-simplify-subscript-expr
+    readability-static-accessed-through-instance
+    readability-static-definition-in-anonymous-namespace
+    readability-string-compare
+    readability-trivial-switch
+    readability-uniqueptr-delete-release
+    readability-use-anyofallof
+    readability-use-concise-preprocessor-directives
+    readability-use-std-min-max
+
+Running clang-tidy in 10 threads for 39 files out of 39 in compilation database ...
+[ 1/39][0.6s] /opt/homebrew/opt/llvm/bin/clang-tidy -extra-arg=-DTEST_HOST -extra-arg=-std=c11 -extra-arg=-Wno-unused-parameter -extra-arg=-include -extra-arg=test/mocks/esp_idf_mock.h -p=. /Users/tito/.paperclip/instances/default/workspaces/5e816e22-a13d-4e64-86b9-d9cbbe834081/firmware/firmware/components/sensors/imu.c
+components/sensors/imu.c:65:32: error: incompatible pointer to integer conversion initializing 'i2c_master_dev_handle_t' (aka 'int') with an expression of type 'void *' [clang-diagnostic-int-conversion]
+   65 | static i2c_master_dev_handle_t s_imu_dev = NULL;
+      |                                ^
+components/sensors/imu.c:101:28: error: use of undeclared identifier 'I2C_ADDR_BIT_LEN_7' [clang-diagnostic-error]
+  101 |         .dev_addr_length = I2C_ADDR_BIT_LEN_7,
+      |                            ^~~~~~~~~~~~~~~~~~
+388 warnings and 2 errors generated.
+Error while processing /Users/tito/.paperclip/instances/default/workspaces/5e816e22-a13d-4e64-86b9-d9cbbe834081/firmware/firmware/components/sensors/imu.c.
+Suppressed 388 warnings (386 in non-user code, 2 with check filters).
+Use -header-filter=.* or leave it as default to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+Found compiler error(s).
+
+[ 2/39][0.6s] /opt/homebrew/opt/llvm/bin/clang-tidy -extra-arg=-DTEST_HOST -extra-arg=-std=c11 -extra-arg=-Wno-unused-parameter -extra-arg=-include -extra-arg=test/mocks/esp_idf_mock.h -p=. /Users/tito/.paperclip/instances/default/workspaces/5e816e22-a13d-4e64-86b9-d9cbbe834081/firmware/firmware/components/hid_controller/hid_controller.c
+372 warnings generated.
+Suppressed 372 warnings (370 in non-user code, 2 with check filters).
+Use -header-filter=.* or leave it as default to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[ 3/39][0.6s] /opt/homebrew/opt/llvm/bin/clang-tidy -extra-arg=-DTEST_HOST -extra-arg=-std=c11 -extra-arg=-Wno-unused-parameter -extra-arg=-include -extra-arg=test/mocks/esp_idf_mock.h -p=. /Users/tito/.paperclip/instances/default/workspaces/5e816e22-a13d-4e64-86b9-d9cbbe834081/firmware/firmware/components/hid_controller/controller_input.c
+372 warnings generated.
+Suppressed 372 warnings (370 in non-user code, 2 with check filters).
+Use -header-filter=.* or leave it as default to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[ 4/39][0.6s] /opt/homebrew/opt/llvm/bin/clang-tidy -extra-arg=-DTEST_HOST -extra-arg=-std=c11 -extra-arg=-Wno-unused-parameter -extra-arg=-include -extra-arg=test/mocks/esp_idf_mock.h -p=. /Users/tito/.paperclip/instances/default/workspaces/5e816e22-a13d-4e64-86b9-d9cbbe834081/firmware/firmware/components/utils/event_bus.c
+372 warnings generated.
+Suppressed 372 warnings (370 in non-user code, 2 with check filters).
+Use -header-filter=.* or leave it as default to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[ 5/39][0.6s] /opt/homebrew/opt/llvm/bin/clang-tidy -extra-arg=-DTEST_HOST -extra-arg=-std=c11 -extra-arg=-Wno-unused-parameter -extra-arg=-include -extra-arg=test/mocks/esp_idf_mock.h -p=. /Users/tito/.paperclip/instances/default/workspaces/5e816e22-a13d-4e64-86b9-d9cbbe834081/firmware/firmware/components/sensors/fuel_level.c
+385 warnings generated.
+Suppressed 385 warnings (383 in non-user code, 2 with check filters).
+Use -header-filter=.* or leave it as default to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[ 6/39][0.6s] /opt/homebrew/opt/llvm/bin/clang-tidy -extra-arg=-DTEST_HOST -extra-arg=-std=c11 -extra-arg=-Wno-unused-parameter -extra-arg=-include -extra-arg=test/mocks/esp_idf_mock.h -p=. /Users/tito/.paperclip/instances/default/workspaces/5e816e22-a13d-4e64-86b9-d9cbbe834081/firmware/firmware/components/diagnostics/diagnostics.c
+error: too many errors emitted, stopping now [clang-diagnostic-error]
+components/diagnostics/diagnostics.c:144:5: error: call to undeclared function 'uart_write_bytes'; ISO C99 and later do not support implicit function declarations [clang-diagnostic-implicit-function-declaration]
+  144 |     uart_write_bytes(UART_NUM_0, text, strlen(text));
+      |     ^
+components/diagnostics/diagnostics.c:155:9: error: call to undeclared function 'uart_write_bytes'; ISO C99 and later do not support implicit function declarations [clang-diagnostic-implicit-function-declaration]
+  155 |         uart_write_bytes(UART_NUM_0, buf, (size_t)len);
+      |         ^
+components/diagnostics/diagnostics.c:439:5: error: use of undeclared identifier 'TaskStatus_t' [clang-diagnostic-error]
+  439 |     TaskStatus_t task_buf[20];
+      |     ^~~~~~~~~~~~
+components/diagnostics/diagnostics.c:440:5: error: unknown type name 'UBaseType_t'; did you mean 'BaseType_t'? [clang-diagnostic-error]
+  440 |     UBaseType_t n_tasks = uxTaskGetNumberOfTasks();
+      |     ^~~~~~~~~~~
+      |     BaseType_t
+./test/mocks/freertos/freertos_mock.h:28:13: note: 'BaseType_t' declared here
+   28 | typedef int BaseType_t;
+      |             ^
+components/diagnostics/diagnostics.c:440:27: error: call to undeclared function 'uxTaskGetNumberOfTasks'; ISO C99 and later do not support implicit function declarations [clang-diagnostic-implicit-function-declaration]
+  440 |     UBaseType_t n_tasks = uxTaskGetNumberOfTasks();
+      |                           ^
+components/diagnostics/diagnostics.c:441:5: error: unknown type name 'UBaseType_t'; did you mean 'BaseType_t'? [clang-diagnostic-error]
+  441 |     UBaseType_t n_running = uxTaskGetSystemState(task_buf, 20, NULL);
+      |     ^~~~~~~~~~~
+      |     BaseType_t
+./test/mocks/freertos/freertos_mock.h:28:13: note: 'BaseType_t' declared here
+   28 | typedef int BaseType_t;
+      |             ^
+components/diagnostics/diagnostics.c:441:29: error: call to undeclared function 'uxTaskGetSystemState'; ISO C99 and later do not support implicit function declarations [clang-diagnostic-implicit-function-declaration]
+  441 |     UBaseType_t n_running = uxTaskGetSystemState(task_buf, 20, NULL);
+      |                             ^
+components/diagnostics/diagnostics.c:441:50: error: use of undeclared identifier 'task_buf' [clang-diagnostic-error]
+  441 |     UBaseType_t n_running = uxTaskGetSystemState(task_buf, 20, NULL);
+      |                                                  ^~~~~~~~
+components/diagnostics/diagnostics.c:445:54: error: use of undeclared identifier 'configTICK_RATE_HZ' [clang-diagnostic-error]
+  445 |     console_printf("Tick Rate:      %d Hz\r\n", (int)configTICK_RATE_HZ);
+      |                                                      ^~~~~~~~~~~~~~~~~~
+components/diagnostics/diagnostics.c:568:11: error: unknown type name 'uart_config_t' [clang-diagnostic-error]
+  568 |     const uart_config_t uart_cfg = {
+      |           ^
+components/diagnostics/diagnostics.c:570:23: error: use of undeclared identifier 'UART_DATA_8_BITS' [clang-diagnostic-error]
+  570 |         .data_bits  = UART_DATA_8_BITS,
+      |                       ^~~~~~~~~~~~~~~~
+components/diagnostics/diagnostics.c:571:23: error: use of undeclared identifier 'UART_PARITY_DISABLE' [clang-diagnostic-error]
+  571 |         .parity     = UART_PARITY_DISABLE,
+      |                       ^~~~~~~~~~~~~~~~~~~
+components/diagnostics/diagnostics.c:572:23: error: use of undeclared identifier 'UART_STOP_BITS_1' [clang-diagnostic-error]
+  572 |         .stop_bits  = UART_STOP_BITS_1,
+      |                       ^~~~~~~~~~~~~~~~
+components/diagnostics/diagnostics.c:573:23: error: use of undeclared identifier 'UART_HW_FLOWCTRL_DISABLE' [clang-diagnostic-error]
+  573 |         .flow_ctrl  = UART_HW_FLOWCTRL_DISABLE,
+      |                       ^~~~~~~~~~~~~~~~~~~~~~~~
+components/diagnostics/diagnostics.c:574:23: error: use of undeclared identifier 'UART_SCLK_DEFAULT' [clang-diagnostic-error]
+  574 |         .source_clk = UART_SCLK_DEFAULT,
+      |                       ^~~~~~~~~~~~~~~~~
+components/diagnostics/diagnostics.c:576:5: error: call to undeclared function 'uart_param_config'; ISO C99 and later do not support implicit function declarations [clang-diagnostic-implicit-function-declaration]
+  576 |     uart_param_config(UART_NUM_0, &uart_cfg);
+      |     ^
+components/diagnostics/diagnostics.c:585:17: error: call to undeclared function 'uart_read_bytes'; ISO C99 and later do not support implicit function declarations [clang-diagnostic-implicit-function-declaration]
+  585 |         int n = uart_read_bytes(UART_NUM_0, &ch, 1, pdMS_TO_TICKS(100));
+      |                 ^
+components/diagnostics/diagnostics.c:591:9: error: call to undeclared function 'uart_write_bytes'; ISO C99 and later do not support implicit function declarations [clang-diagnostic-implicit-function-declaration]
+  591 |         uart_write_bytes(UART_NUM_0, (const char *)&ch, 1);
+      |         ^
+components/diagnostics/diagnostics.c:647:10: error: call to undeclared function 'uart_is_driver_installed'; ISO C99 and later do not support implicit function declarations [clang-diagnostic-implicit-function-declaration]
+  647 |     if (!uart_is_driver_installed(UART_NUM_0)) {
+      |          ^
+395 warnings and 20 errors generated.
+Error while processing /Users/tito/.paperclip/instances/default/workspaces/5e816e22-a13d-4e64-86b9-d9cbbe834081/firmware/firmware/components/diagnostics/diagnostics.c.
+Suppressed 397 warnings (393 in non-user code, 2 NOLINT, 2 with check filters).
+Use -header-filter=.* or leave it as default to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+Found compiler error(s).
+
+[ 7/39][0.7s] /opt/homebrew/opt/llvm/bin/clang-tidy -extra-arg=-DTEST_HOST -extra-arg=-std=c11 -extra-arg=-Wno-unused-parameter -extra-arg=-include -extra-arg=test/mocks/esp_idf_mock.h -p=. /Users/tito/.paperclip/instances/default/workspaces/5e816e22-a13d-4e64-86b9-d9cbbe834081/firmware/firmware/components/display/widgets.c
+372 warnings generated.
+Suppressed 372 warnings (370 in non-user code, 2 with check filters).
+Use -header-filter=.* or leave it as default to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[ 8/39][0.2s] /opt/homebrew/opt/llvm/bin/clang-tidy -extra-arg=-DTEST_HOST -extra-arg=-std=c11 -extra-arg=-Wno-unused-parameter -extra-arg=-include -extra-arg=test/mocks/esp_idf_mock.h -p=. /Users/tito/.paperclip/instances/default/workspaces/5e816e22-a13d-4e64-86b9-d9cbbe834081/firmware/firmware/components/carplay_bridge/carplay_telemetry.c
+372 warnings generated.
+Suppressed 372 warnings (370 in non-user code, 2 with check filters).
+Use -header-filter=.* or leave it as default to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[ 9/39][0.3s] /opt/homebrew/opt/llvm/bin/clang-tidy -extra-arg=-DTEST_HOST -extra-arg=-std=c11 -extra-arg=-Wno-unused-parameter -extra-arg=-include -extra-arg=test/mocks/esp_idf_mock.h -p=. /Users/tito/.paperclip/instances/default/workspaces/5e816e22-a13d-4e64-86b9-d9cbbe834081/firmware/firmware/components/carplay_bridge/carplay_client.c
+components/carplay_bridge/carplay_client.c:29:10: error: 'nimble/nimble_port.h' file not found [clang-diagnostic-error]
+   29 | #include "nimble/nimble_port.h"
+      |          ^~~~~~~~~~~~~~~~~~~~~~
+384 warnings and 1 error generated.
+Error while processing /Users/tito/.paperclip/instances/default/workspaces/5e816e22-a13d-4e64-86b9-d9cbbe834081/firmware/firmware/components/carplay_bridge/carplay_client.c.
+Suppressed 385 warnings (382 in non-user code, 1 NOLINT, 2 with check filters).
+Use -header-filter=.* or leave it as default to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+Found compiler error(s).
+
+[10/39][0.3s] /opt/homebrew/opt/llvm/bin/clang-tidy -extra-arg=-DTEST_HOST -extra-arg=-std=c11 -extra-arg=-Wno-unused-parameter -extra-arg=-include -extra-arg=test/mocks/esp_idf_mock.h -p=. /Users/tito/.paperclip/instances/default/workspaces/5e816e22-a13d-4e64-86b9-d9cbbe834081/firmware/firmware/components/storage/sd_card.c
+components/storage/sd_card.c:18:10: error: 'esp_vfs_fat.h' file not found [clang-diagnostic-error]
+   18 | #include "esp_vfs_fat.h"
+      |          ^~~~~~~~~~~~~~~
+392 warnings and 1 error generated.
+Error while processing /Users/tito/.paperclip/instances/default/workspaces/5e816e22-a13d-4e64-86b9-d9cbbe834081/firmware/firmware/components/storage/sd_card.c.
+Suppressed 392 warnings (390 in non-user code, 2 with check filters).
+Use -header-filter=.* or leave it as default to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+Found compiler error(s).
+
+[11/39][0.2s] /opt/homebrew/opt/llvm/bin/clang-tidy -extra-arg=-DTEST_HOST -extra-arg=-std=c11 -extra-arg=-Wno-unused-parameter -extra-arg=-include -extra-arg=test/mocks/esp_idf_mock.h -p=. /Users/tito/.paperclip/instances/default/workspaces/5e816e22-a13d-4e64-86b9-d9cbbe834081/firmware/firmware/components/carplay_bridge/carplay_media.c
+372 warnings generated.
+Suppressed 374 warnings (370 in non-user code, 2 NOLINT, 2 with check filters).
+Use -header-filter=.* or leave it as default to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[12/39][0.3s] /opt/homebrew/opt/llvm/bin/clang-tidy -extra-arg=-DTEST_HOST -extra-arg=-std=c11 -extra-arg=-Wno-unused-parameter -extra-arg=-include -extra-arg=test/mocks/esp_idf_mock.h -p=. /Users/tito/.paperclip/instances/default/workspaces/5e816e22-a13d-4e64-86b9-d9cbbe834081/firmware/firmware/components/hid_controller/controller_mapping.c
+372 warnings generated.
+Suppressed 372 warnings (370 in non-user code, 2 with check filters).
+Use -header-filter=.* or leave it as default to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[13/39][0.3s] /opt/homebrew/opt/llvm/bin/clang-tidy -extra-arg=-DTEST_HOST -extra-arg=-std=c11 -extra-arg=-Wno-unused-parameter -extra-arg=-include -extra-arg=test/mocks/esp_idf_mock.h -p=. /Users/tito/.paperclip/instances/default/workspaces/5e816e22-a13d-4e64-86b9-d9cbbe834081/firmware/firmware/components/sensors/sensors.c
+components/sensors/sensors.c:34:27: error: incompatible pointer to integer conversion initializing 'adc_oneshot_unit_handle_t' (aka 'int') with an expression of type 'void *' [clang-diagnostic-int-conversion]
+   34 | adc_oneshot_unit_handle_t g_adc1_handle = NULL;
+      |                           ^
+components/sensors/sensors.c:35:19: error: incompatible pointer to integer conversion initializing 'adc_cali_handle_t' (aka 'int') with an expression of type 'void *' [clang-diagnostic-int-conversion]
+   35 | adc_cali_handle_t g_adc_cali_handle = NULL;
+      |                   ^
+components/sensors/sensors.c:36:25: error: incompatible pointer to integer conversion initializing 'i2c_master_bus_handle_t' (aka 'int') with an expression of type 'void *' [clang-diagnostic-int-conversion]
+   36 | i2c_master_bus_handle_t g_i2c_bus = NULL;
+      |                         ^
+components/sensors/sensors.c:48:5: error: use of undeclared identifier 'adc_oneshot_unit_init_cfg_t' [clang-diagnostic-error]
+   48 |     adc_oneshot_unit_init_cfg_t init_cfg = {
+      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+components/sensors/sensors.c:51:43: error: use of undeclared identifier 'init_cfg' [clang-diagnostic-error]
+   51 |     esp_err_t ret = adc_oneshot_new_unit(&init_cfg, &g_adc1_handle);
+      |                                           ^~~~~~~~
+components/sensors/sensors.c:59:18: error: use of undeclared identifier 'ADC_ATTEN_DB_11' [clang-diagnostic-error]
+   59 |         .atten = ADC_ATTEN_DB_11,       /* bis ~3.1V */
+      |                  ^~~~~~~~~~~~~~~
+components/sensors/sensors.c:60:21: error: use of undeclared identifier 'ADC_BITWIDTH_12' [clang-diagnostic-error]
+   60 |         .bitwidth = ADC_BITWIDTH_12,   /* 12-bit: 0-4095 */
+      |                     ^~~~~~~~~~~~~~~
+components/sensors/sensors.c:75:20: error: use of undeclared identifier 'ADC_UNIT_1' [clang-diagnostic-error]
+   75 |         .unit_id = ADC_UNIT_1,
+      |                    ^~~~~~~~~~
+components/sensors/sensors.c:76:18: error: use of undeclared identifier 'ADC_ATTEN_DB_11' [clang-diagnostic-error]
+   76 |         .atten = ADC_ATTEN_DB_11,
+      |                  ^~~~~~~~~~~~~~~
+components/sensors/sensors.c:77:21: error: use of undeclared identifier 'ADC_BITWIDTH_12' [clang-diagnostic-error]
+   77 |         .bitwidth = ADC_BITWIDTH_12,
+      |                     ^~~~~~~~~~~~~~~
+components/sensors/sensors.c:79:11: error: call to undeclared function 'adc_cali_create_scheme_curve_fitting'; ISO C99 and later do not support implicit function declarations [clang-diagnostic-implicit-function-declaration]
+   79 |     ret = adc_cali_create_scheme_curve_fitting(&cali_cfg, &g_adc_cali_handle);
+      |           ^
+components/sensors/sensors.c:79:11: note: did you mean 'adc_cali_create_curve_fitting'?
+test/mocks/esp_adc/adc_cali.h:17:19: note: 'adc_cali_create_curve_fitting' declared here
+   17 | static inline int adc_cali_create_curve_fitting(void *cfg, adc_cali_handle_t *h) {
+      |                   ^
+components/sensors/sensors.c:83:27: error: incompatible pointer to integer conversion assigning to 'adc_cali_handle_t' (aka 'int') from 'void *' [clang-diagnostic-int-conversion]
+   83 |         g_adc_cali_handle = NULL;
+      |                           ^
+components/sensors/sensors.c:94:23: error: use of undeclared identifier 'I2C_CLK_SRC_DEFAULT' [clang-diagnostic-error]
+   94 |         .clk_source = I2C_CLK_SRC_DEFAULT,
+      |                       ^~~~~~~~~~~~~~~~~~~
+components/sensors/sensors.c:208:9: error: call to undeclared function 'xQueueOverwrite'; ISO C99 and later do not support implicit function declarations [clang-diagnostic-implicit-function-declaration]
+  208 |         xQueueOverwrite(sensor_data_queue, &data);
+      |         ^
+385 warnings and 14 errors generated.
+Error while processing /Users/tito/.paperclip/instances/default/workspaces/5e816e22-a13d-4e64-86b9-d9cbbe834081/firmware/firmware/components/sensors/sensors.c.
+Suppressed 385 warnings (383 in non-user code, 2 with check filters).
+Use -header-filter=.* or leave it as default to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+Found compiler error(s).
+
+[14/39][0.1s] /opt/homebrew/opt/llvm/bin/clang-tidy -extra-arg=-DTEST_HOST -extra-arg=-std=c11 -extra-arg=-Wno-unused-parameter -extra-arg=-include -extra-arg=test/mocks/esp_idf_mock.h -p=. /Users/tito/.paperclip/instances/default/workspaces/5e816e22-a13d-4e64-86b9-d9cbbe834081/firmware/firmware/components/display/epaper_driver.c
+components/display/epaper_driver.c:20:10: error: 'esp_heap_caps.h' file not found [clang-diagnostic-error]
+   20 | #include "esp_heap_caps.h"
+      |          ^~~~~~~~~~~~~~~~~
+372 warnings and 1 error generated.
+Error while processing /Users/tito/.paperclip/instances/default/workspaces/5e816e22-a13d-4e64-86b9-d9cbbe834081/firmware/firmware/components/display/epaper_driver.c.
+Suppressed 372 warnings (370 in non-user code, 2 with check filters).
+Use -header-filter=.* or leave it as default to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+Found compiler error(s).
+
+[15/39][1.0s] /opt/homebrew/opt/llvm/bin/clang-tidy -extra-arg=-DTEST_HOST -extra-arg=-std=c11 -extra-arg=-Wno-unused-parameter -extra-arg=-include -extra-arg=test/mocks/esp_idf_mock.h -p=. /Users/tito/.paperclip/instances/default/workspaces/5e816e22-a13d-4e64-86b9-d9cbbe834081/firmware/firmware/components/diagnostics/selftest.c
+418 warnings generated.
+Suppressed 418 warnings (416 in non-user code, 2 with check filters).
+Use -header-filter=.* or leave it as default to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[16/39][0.1s] /opt/homebrew/opt/llvm/bin/clang-tidy -extra-arg=-DTEST_HOST -extra-arg=-std=c11 -extra-arg=-Wno-unused-parameter -extra-arg=-include -extra-arg=test/mocks/esp_idf_mock.h -p=. /Users/tito/.paperclip/instances/default/workspaces/5e816e22-a13d-4e64-86b9-d9cbbe834081/firmware/firmware/components/carplay_bridge/carplay_pairing.c
+components/carplay_bridge/carplay_pairing.c:126:16: error: use of undeclared identifier 'ESP_ERR_NVS_NOT_FOUND' [clang-diagnostic-error]
+  126 |     if (err == ESP_ERR_NVS_NOT_FOUND) {
+      |                ^~~~~~~~~~~~~~~~~~~~~
+383 warnings and 1 error generated.
+Error while processing /Users/tito/.paperclip/instances/default/workspaces/5e816e22-a13d-4e64-86b9-d9cbbe834081/firmware/firmware/components/carplay_bridge/carplay_pairing.c.
+Suppressed 383 warnings (381 in non-user code, 2 with check filters).
+Use -header-filter=.* or leave it as default to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+Found compiler error(s).
+
+[17/39][0.2s] /opt/homebrew/opt/llvm/bin/clang-tidy -extra-arg=-DTEST_HOST -extra-arg=-std=c11 -extra-arg=-Wno-unused-parameter -extra-arg=-include -extra-arg=test/mocks/esp_idf_mock.h -p=. /Users/tito/.paperclip/instances/default/workspaces/5e816e22-a13d-4e64-86b9-d9cbbe834081/firmware/firmware/components/ble/ble_service.c
+components/ble/ble_service.c:25:10: error: 'nimble/nimble_port.h' file not found [clang-diagnostic-error]
+   25 | #include "nimble/nimble_port.h"
+      |          ^~~~~~~~~~~~~~~~~~~~~~
+396 warnings and 1 error generated.
+Error while processing /Users/tito/.paperclip/instances/default/workspaces/5e816e22-a13d-4e64-86b9-d9cbbe834081/firmware/firmware/components/ble/ble_service.c.
+Suppressed 397 warnings (394 in non-user code, 1 NOLINT, 2 with check filters).
+Use -header-filter=.* or leave it as default to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+Found compiler error(s).
+
+[18/39][1.1s] /opt/homebrew/opt/llvm/bin/clang-tidy -extra-arg=-DTEST_HOST -extra-arg=-std=c11 -extra-arg=-Wno-unused-parameter -extra-arg=-include -extra-arg=test/mocks/esp_idf_mock.h -p=. /Users/tito/.paperclip/instances/default/workspaces/5e816e22-a13d-4e64-86b9-d9cbbe834081/firmware/firmware/components/diagnostics/dtc.c
+405 warnings generated.
+Suppressed 405 warnings (403 in non-user code, 2 with check filters).
+Use -header-filter=.* or leave it as default to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[19/39][0.2s] /opt/homebrew/opt/llvm/bin/clang-tidy -extra-arg=-DTEST_HOST -extra-arg=-std=c11 -extra-arg=-Wno-unused-parameter -extra-arg=-include -extra-arg=test/mocks/esp_idf_mock.h -p=. /Users/tito/.paperclip/instances/default/workspaces/5e816e22-a13d-4e64-86b9-d9cbbe834081/firmware/firmware/components/gps/gps_task.c
+components/gps/gps_task.c:89:5: error: use of undeclared identifier 'uart_config_t' [clang-diagnostic-error]
+   89 |     uart_config_t uart_config = {
+      |     ^~~~~~~~~~~~~
+components/gps/gps_task.c:98:5: error: call to undeclared function 'ESP_ERROR_CHECK'; ISO C99 and later do not support implicit function declarations [clang-diagnostic-implicit-function-declaration]
+   98 |     ESP_ERROR_CHECK(uart_param_config(GPS_UART_NUM, &uart_config));
+      |     ^
+components/gps/gps_task.c:98:21: error: call to undeclared function 'uart_param_config'; ISO C99 and later do not support implicit function declarations [clang-diagnostic-implicit-function-declaration]
+   98 |     ESP_ERROR_CHECK(uart_param_config(GPS_UART_NUM, &uart_config));
+      |                     ^
+components/gps/gps_task.c:98:54: error: use of undeclared identifier 'uart_config' [clang-diagnostic-error]
+   98 |     ESP_ERROR_CHECK(uart_param_config(GPS_UART_NUM, &uart_config));
+      |                                                      ^~~~~~~~~~~
+components/gps/gps_task.c:99:21: error: call to undeclared function 'uart_set_pin'; ISO C99 and later do not support implicit function declarations [clang-diagnostic-implicit-function-declaration]
+   99 |     ESP_ERROR_CHECK(uart_set_pin(GPS_UART_NUM,
+      |                     ^
+components/gps/gps_task.c:102:35: error: use of undeclared identifier 'UART_PIN_NO_CHANGE' [clang-diagnostic-error]
+  102 |                                   UART_PIN_NO_CHANGE,
+      |                                   ^~~~~~~~~~~~~~~~~~
+components/gps/gps_task.c:103:35: error: use of undeclared identifier 'UART_PIN_NO_CHANGE' [clang-diagnostic-error]
+  103 |                                   UART_PIN_NO_CHANGE));
+      |                                   ^~~~~~~~~~~~~~~~~~
+components/gps/gps_task.c:104:21: error: call to undeclared function 'uart_driver_install'; ISO C99 and later do not support implicit function declarations [clang-diagnostic-implicit-function-declaration]
+  104 |     ESP_ERROR_CHECK(uart_driver_install(GPS_UART_NUM,
+      |                     ^
+components/gps/gps_task.c:139:13: error: call to undeclared function 'xQueueOverwrite'; ISO C99 and later do not support implicit function declarations [clang-diagnostic-implicit-function-declaration]
+  139 |             xQueueOverwrite(gps_data_queue, data);
+      |             ^
+components/gps/gps_task.c:219:19: error: call to undeclared function 'uart_read_bytes'; ISO C99 and later do not support implicit function declarations [clang-diagnostic-implicit-function-declaration]
+  219 |         int len = uart_read_bytes(GPS_UART_NUM, rx_buf, sizeof(rx_buf) - 1,
+      |                   ^
+372 warnings and 10 errors generated.
+Error while processing /Users/tito/.paperclip/instances/default/workspaces/5e816e22-a13d-4e64-86b9-d9cbbe834081/firmware/firmware/components/gps/gps_task.c.
+Suppressed 372 warnings (370 in non-user code, 2 with check filters).
+Use -header-filter=.* or leave it as default to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+Found compiler error(s).
+
+[20/39][0.1s] /opt/homebrew/opt/llvm/bin/clang-tidy -extra-arg=-DTEST_HOST -extra-arg=-std=c11 -extra-arg=-Wno-unused-parameter -extra-arg=-include -extra-arg=test/mocks/esp_idf_mock.h -p=. /Users/tito/.paperclip/instances/default/workspaces/5e816e22-a13d-4e64-86b9-d9cbbe834081/firmware/firmware/components/utils/filters.c
+375 warnings generated.
+Suppressed 375 warnings (373 in non-user code, 2 with check filters).
+Use -header-filter=.* or leave it as default to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[21/39][0.3s] /opt/homebrew/opt/llvm/bin/clang-tidy -extra-arg=-DTEST_HOST -extra-arg=-std=c11 -extra-arg=-Wno-unused-parameter -extra-arg=-include -extra-arg=test/mocks/esp_idf_mock.h -p=. /Users/tito/.paperclip/instances/default/workspaces/5e816e22-a13d-4e64-86b9-d9cbbe834081/firmware/firmware/components/ota/ota_secure_boot.c
+436 warnings generated.
+Suppressed 436 warnings (434 in non-user code, 2 with check filters).
+Use -header-filter=.* or leave it as default to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[22/39][0.3s] /opt/homebrew/opt/llvm/bin/clang-tidy -extra-arg=-DTEST_HOST -extra-arg=-std=c11 -extra-arg=-Wno-unused-parameter -extra-arg=-include -extra-arg=test/mocks/esp_idf_mock.h -p=. /Users/tito/.paperclip/instances/default/workspaces/5e816e22-a13d-4e64-86b9-d9cbbe834081/firmware/firmware/components/storage/config.c
+components/storage/config.c:127:16: error: use of undeclared identifier 'ESP_ERR_NVS_NO_FREE_PAGES' [clang-diagnostic-error]
+  127 |     if (err == ESP_ERR_NVS_NO_FREE_PAGES ||
+      |                ^~~~~~~~~~~~~~~~~~~~~~~~~
+components/storage/config.c:128:16: error: use of undeclared identifier 'ESP_ERR_NVS_NEW_VERSION_FOUND' [clang-diagnostic-error]
+  128 |         err == ESP_ERR_NVS_NEW_VERSION_FOUND) {
+      |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+396 warnings and 2 errors generated.
+Error while processing /Users/tito/.paperclip/instances/default/workspaces/5e816e22-a13d-4e64-86b9-d9cbbe834081/firmware/firmware/components/storage/config.c.
+Suppressed 396 warnings (394 in non-user code, 2 with check filters).
+Use -header-filter=.* or leave it as default to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+Found compiler error(s).
+
+[23/39][0.3s] /opt/homebrew/opt/llvm/bin/clang-tidy -extra-arg=-DTEST_HOST -extra-arg=-std=c11 -extra-arg=-Wno-unused-parameter -extra-arg=-include -extra-arg=test/mocks/esp_idf_mock.h -p=. /Users/tito/.paperclip/instances/default/workspaces/5e816e22-a13d-4e64-86b9-d9cbbe834081/firmware/firmware/components/sensors/gear_indicator.c
+388 warnings generated.
+Suppressed 388 warnings (386 in non-user code, 2 with check filters).
+Use -header-filter=.* or leave it as default to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[24/39][0.2s] /opt/homebrew/opt/llvm/bin/clang-tidy -extra-arg=-DTEST_HOST -extra-arg=-std=c11 -extra-arg=-Wno-unused-parameter -extra-arg=-include -extra-arg=test/mocks/esp_idf_mock.h -p=. /Users/tito/.paperclip/instances/default/workspaces/5e816e22-a13d-4e64-86b9-d9cbbe834081/firmware/firmware/components/storage/storage.c
+383 warnings generated.
+Suppressed 383 warnings (381 in non-user code, 2 with check filters).
+Use -header-filter=.* or leave it as default to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[25/39][0.3s] /opt/homebrew/opt/llvm/bin/clang-tidy -extra-arg=-DTEST_HOST -extra-arg=-std=c11 -extra-arg=-Wno-unused-parameter -extra-arg=-include -extra-arg=test/mocks/esp_idf_mock.h -p=. /Users/tito/.paperclip/instances/default/workspaces/5e816e22-a13d-4e64-86b9-d9cbbe834081/firmware/firmware/components/display/renderer.c
+components/display/renderer.c:19:10: error: 'esp_heap_caps.h' file not found [clang-diagnostic-error]
+   19 | #include "esp_heap_caps.h"
+      |          ^~~~~~~~~~~~~~~~~
+372 warnings and 1 error generated.
+Error while processing /Users/tito/.paperclip/instances/default/workspaces/5e816e22-a13d-4e64-86b9-d9cbbe834081/firmware/firmware/components/display/renderer.c.
+Suppressed 372 warnings (370 in non-user code, 2 with check filters).
+Use -header-filter=.* or leave it as default to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+Found compiler error(s).
+
+[26/39][0.2s] /opt/homebrew/opt/llvm/bin/clang-tidy -extra-arg=-DTEST_HOST -extra-arg=-std=c11 -extra-arg=-Wno-unused-parameter -extra-arg=-include -extra-arg=test/mocks/esp_idf_mock.h -p=. /Users/tito/.paperclip/instances/default/workspaces/5e816e22-a13d-4e64-86b9-d9cbbe834081/firmware/firmware/components/sensors/rpm.c
+385 warnings generated.
+Suppressed 385 warnings (383 in non-user code, 2 with check filters).
+Use -header-filter=.* or leave it as default to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[27/39][0.2s] /opt/homebrew/opt/llvm/bin/clang-tidy -extra-arg=-DTEST_HOST -extra-arg=-std=c11 -extra-arg=-Wno-unused-parameter -extra-arg=-include -extra-arg=test/mocks/esp_idf_mock.h -p=. /Users/tito/.paperclip/instances/default/workspaces/5e816e22-a13d-4e64-86b9-d9cbbe834081/firmware/firmware/components/display/tft_driver.c
+components/display/tft_driver.c:20:10: error: 'esp_heap_caps.h' file not found [clang-diagnostic-error]
+   20 | #include "esp_heap_caps.h"
+      |          ^~~~~~~~~~~~~~~~~
+372 warnings and 1 error generated.
+Error while processing /Users/tito/.paperclip/instances/default/workspaces/5e816e22-a13d-4e64-86b9-d9cbbe834081/firmware/firmware/components/display/tft_driver.c.
+Suppressed 372 warnings (370 in non-user code, 2 with check filters).
+Use -header-filter=.* or leave it as default to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+Found compiler error(s).
+
+[28/39][0.2s] /opt/homebrew/opt/llvm/bin/clang-tidy -extra-arg=-DTEST_HOST -extra-arg=-std=c11 -extra-arg=-Wno-unused-parameter -extra-arg=-include -extra-arg=test/mocks/esp_idf_mock.h -p=. /Users/tito/.paperclip/instances/default/workspaces/5e816e22-a13d-4e64-86b9-d9cbbe834081/firmware/firmware/components/carplay_bridge/carplay_bridge.c
+components/carplay_bridge/carplay_bridge.c:26:10: error: 'nimble/nimble_port.h' file not found [clang-diagnostic-error]
+   26 | #include "nimble/nimble_port.h"
+      |          ^~~~~~~~~~~~~~~~~~~~~~
+384 warnings and 1 error generated.
+Error while processing /Users/tito/.paperclip/instances/default/workspaces/5e816e22-a13d-4e64-86b9-d9cbbe834081/firmware/firmware/components/carplay_bridge/carplay_bridge.c.
+Suppressed 386 warnings (382 in non-user code, 2 NOLINT, 2 with check filters).
+Use -header-filter=.* or leave it as default to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+Found compiler error(s).
+
+[29/39][0.3s] /opt/homebrew/opt/llvm/bin/clang-tidy -extra-arg=-DTEST_HOST -extra-arg=-std=c11 -extra-arg=-Wno-unused-parameter -extra-arg=-include -extra-arg=test/mocks/esp_idf_mock.h -p=. /Users/tito/.paperclip/instances/default/workspaces/5e816e22-a13d-4e64-86b9-d9cbbe834081/firmware/firmware/components/ble/ble_callbacks.c
+components/ble/ble_callbacks.c:659:5: error: call to undeclared function 'ble_store_clear'; ISO C99 and later do not support implicit function declarations [clang-diagnostic-implicit-function-declaration]
+  659 |     ble_store_clear();
+      |     ^
+449 warnings and 1 error generated.
+Error while processing /Users/tito/.paperclip/instances/default/workspaces/5e816e22-a13d-4e64-86b9-d9cbbe834081/firmware/firmware/components/ble/ble_callbacks.c.
+Suppressed 457 warnings (447 in non-user code, 8 NOLINT, 2 with check filters).
+Use -header-filter=.* or leave it as default to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+Found compiler error(s).
+
+[30/39][0.1s] /opt/homebrew/opt/llvm/bin/clang-tidy -extra-arg=-DTEST_HOST -extra-arg=-std=c11 -extra-arg=-Wno-unused-parameter -extra-arg=-include -extra-arg=test/mocks/esp_idf_mock.h -p=. /Users/tito/.paperclip/instances/default/workspaces/5e816e22-a13d-4e64-86b9-d9cbbe834081/firmware/firmware/components/ble/ble.c
+372 warnings generated.
+Suppressed 372 warnings (370 in non-user code, 2 with check filters).
+Use -header-filter=.* or leave it as default to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[31/39][0.2s] /opt/homebrew/opt/llvm/bin/clang-tidy -extra-arg=-DTEST_HOST -extra-arg=-std=c11 -extra-arg=-Wno-unused-parameter -extra-arg=-include -extra-arg=test/mocks/esp_idf_mock.h -p=. /Users/tito/.paperclip/instances/default/workspaces/5e816e22-a13d-4e64-86b9-d9cbbe834081/firmware/firmware/main/main.c
+main/main.c:37:10: error: 'esp_task_wdt.h' file not found [clang-diagnostic-error]
+   37 | #include "esp_task_wdt.h"
+      |          ^~~~~~~~~~~~~~~~
+428 warnings and 1 error generated.
+Error while processing /Users/tito/.paperclip/instances/default/workspaces/5e816e22-a13d-4e64-86b9-d9cbbe834081/firmware/firmware/main/main.c.
+Suppressed 430 warnings (426 in non-user code, 2 NOLINT, 2 with check filters).
+Use -header-filter=.* or leave it as default to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+Found compiler error(s).
+
+[32/39][0.2s] /opt/homebrew/opt/llvm/bin/clang-tidy -extra-arg=-DTEST_HOST -extra-arg=-std=c11 -extra-arg=-Wno-unused-parameter -extra-arg=-include -extra-arg=test/mocks/esp_idf_mock.h -p=. /Users/tito/.paperclip/instances/default/workspaces/5e816e22-a13d-4e64-86b9-d9cbbe834081/firmware/firmware/components/power/power.c
+components/power/power.c:34:34: error: incompatible pointer to integer conversion initializing 'adc_oneshot_unit_handle_t' (aka 'int') with an expression of type 'void *' [clang-diagnostic-int-conversion]
+   34 | static adc_oneshot_unit_handle_t s_adc1_handle   = NULL;
+      |                                  ^
+components/power/power.c:35:34: error: incompatible pointer to integer conversion initializing 'adc_cali_handle_t' (aka 'int') with an expression of type 'void *' [clang-diagnostic-int-conversion]
+   35 | static adc_cali_handle_t         s_adc_cali_handle = NULL;
+      |                                  ^
+components/power/power.c:196:5: error: use of undeclared identifier 'adc_oneshot_unit_init_cfg_t' [clang-diagnostic-error]
+  196 |     adc_oneshot_unit_init_cfg_t init_config = {
+      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+components/power/power.c:199:33: error: use of undeclared identifier 'init_config' [clang-diagnostic-error]
+  199 |     ret = adc_oneshot_new_unit(&init_config, &s_adc1_handle);
+      |                                 ^~~~~~~~~~~
+components/power/power.c:207:21: error: use of undeclared identifier 'ADC_ATTEN_DB_12' [clang-diagnostic-error]
+  207 |         .atten    = ADC_ATTEN_DB_12,    /* 0-2900 mV */
+      |                     ^~~~~~~~~~~~~~~
+components/power/power.c:208:21: error: use of undeclared identifier 'ADC_BITWIDTH_12' [clang-diagnostic-error]
+  208 |         .bitwidth = ADC_BITWIDTH_12,   /* 12-bit (0-4095) */
+      |                     ^~~~~~~~~~~~~~~
+components/power/power.c:235:23: error: incompatible pointer to integer conversion assigning to 'adc_cali_handle_t' (aka 'int') from 'void *' [clang-diagnostic-int-conversion]
+  235 |     s_adc_cali_handle = NULL;
+      |                       ^
+components/power/power.c:241:27: error: incompatible pointer to integer conversion assigning to 'adc_cali_handle_t' (aka 'int') from 'void *' [clang-diagnostic-int-conversion]
+  241 |         s_adc_cali_handle = NULL;
+      |                           ^
+components/power/power.c:414:23: error: incompatible pointer to integer conversion assigning to 'adc_cali_handle_t' (aka 'int') from 'void *' [clang-diagnostic-int-conversion]
+  414 |     s_adc_cali_handle = NULL;
+      |                       ^
+components/power/power.c:416:9: error: call to undeclared function 'adc_oneshot_del_unit'; ISO C99 and later do not support implicit function declarations [clang-diagnostic-implicit-function-declaration]
+  416 |         adc_oneshot_del_unit(s_adc1_handle);
+      |         ^
+components/power/power.c:416:9: note: did you mean 'adc_oneshot_new_unit'?
+test/mocks/esp_adc/adc_oneshot.h:22:19: note: 'adc_oneshot_new_unit' declared here
+   22 | static inline int adc_oneshot_new_unit(void *cfg, adc_oneshot_unit_handle_t *h) {
+      |                   ^
+components/power/power.c:417:23: error: incompatible pointer to integer conversion assigning to 'adc_oneshot_unit_handle_t' (aka 'int') from 'void *' [clang-diagnostic-int-conversion]
+  417 |         s_adc1_handle = NULL;
+      |                       ^
+377 warnings and 11 errors generated.
+Error while processing /Users/tito/.paperclip/instances/default/workspaces/5e816e22-a13d-4e64-86b9-d9cbbe834081/firmware/firmware/components/power/power.c.
+Suppressed 377 warnings (372 in non-user code, 5 with check filters).
+Use -header-filter=.* or leave it as default to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+Found compiler error(s).
+
+[33/39][0.2s] /opt/homebrew/opt/llvm/bin/clang-tidy -extra-arg=-DTEST_HOST -extra-arg=-std=c11 -extra-arg=-Wno-unused-parameter -extra-arg=-include -extra-arg=test/mocks/esp_idf_mock.h -p=. /Users/tito/.paperclip/instances/default/workspaces/5e816e22-a13d-4e64-86b9-d9cbbe834081/firmware/firmware/components/sensors/temperature.c
+388 warnings generated.
+Suppressed 388 warnings (386 in non-user code, 2 with check filters).
+Use -header-filter=.* or leave it as default to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[34/39][0.7s] /opt/homebrew/opt/llvm/bin/clang-tidy -extra-arg=-DTEST_HOST -extra-arg=-std=c11 -extra-arg=-Wno-unused-parameter -extra-arg=-include -extra-arg=test/mocks/esp_idf_mock.h -p=. /Users/tito/.paperclip/instances/default/workspaces/5e816e22-a13d-4e64-86b9-d9cbbe834081/firmware/firmware/main/app_event_loop.c
+372 warnings generated.
+Suppressed 374 warnings (370 in non-user code, 2 NOLINT, 2 with check filters).
+Use -header-filter=.* or leave it as default to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[35/39][0.9s] /opt/homebrew/opt/llvm/bin/clang-tidy -extra-arg=-DTEST_HOST -extra-arg=-std=c11 -extra-arg=-Wno-unused-parameter -extra-arg=-include -extra-arg=test/mocks/esp_idf_mock.h -p=. /Users/tito/.paperclip/instances/default/workspaces/5e816e22-a13d-4e64-86b9-d9cbbe834081/firmware/firmware/components/display/display.c
+385 warnings generated.
+Suppressed 385 warnings (383 in non-user code, 2 with check filters).
+Use -header-filter=.* or leave it as default to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[36/39][2.0s] /opt/homebrew/opt/llvm/bin/clang-tidy -extra-arg=-DTEST_HOST -extra-arg=-std=c11 -extra-arg=-Wno-unused-parameter -extra-arg=-include -extra-arg=test/mocks/esp_idf_mock.h -p=. /Users/tito/.paperclip/instances/default/workspaces/5e816e22-a13d-4e64-86b9-d9cbbe834081/firmware/firmware/components/power/power_manager.c
+380 warnings generated.
+Suppressed 380 warnings (370 in non-user code, 10 with check filters).
+Use -header-filter=.* or leave it as default to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[37/39][1.1s] /opt/homebrew/opt/llvm/bin/clang-tidy -extra-arg=-DTEST_HOST -extra-arg=-std=c11 -extra-arg=-Wno-unused-parameter -extra-arg=-include -extra-arg=test/mocks/esp_idf_mock.h -p=. /Users/tito/.paperclip/instances/default/workspaces/5e816e22-a13d-4e64-86b9-d9cbbe834081/firmware/firmware/components/gps/nmea_parser.c
+372 warnings generated.
+Suppressed 375 warnings (370 in non-user code, 3 NOLINT, 2 with check filters).
+Use -header-filter=.* or leave it as default to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[38/39][1.7s] /opt/homebrew/opt/llvm/bin/clang-tidy -extra-arg=-DTEST_HOST -extra-arg=-std=c11 -extra-arg=-Wno-unused-parameter -extra-arg=-include -extra-arg=test/mocks/esp_idf_mock.h -p=. /Users/tito/.paperclip/instances/default/workspaces/5e816e22-a13d-4e64-86b9-d9cbbe834081/firmware/firmware/components/ota/ota_update.c
+437 warnings generated.
+Suppressed 439 warnings (435 in non-user code, 2 NOLINT, 2 with check filters).
+Use -header-filter=.* or leave it as default to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[39/39][2.0s] /opt/homebrew/opt/llvm/bin/clang-tidy -extra-arg=-DTEST_HOST -extra-arg=-std=c11 -extra-arg=-Wno-unused-parameter -extra-arg=-include -extra-arg=test/mocks/esp_idf_mock.h -p=. /Users/tito/.paperclip/instances/default/workspaces/5e816e22-a13d-4e64-86b9-d9cbbe834081/firmware/firmware/components/storage/logger.c
+405 warnings generated.
+Suppressed 405 warnings (403 in non-user code, 2 with check filters).
+Use -header-filter=.* or leave it as default to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+

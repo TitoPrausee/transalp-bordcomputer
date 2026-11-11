@@ -411,7 +411,7 @@ int sd_card_list_dir(const char *path, sd_dir_entry_t *entries,
     }
 
     int count = 0;
-    struct dirent *de;
+    const struct dirent *de;
     while ((de = readdir(dir)) != NULL && count < max_entries) {
         if (strcmp(de->d_name, ".") == 0 || strcmp(de->d_name, "..") == 0) {
             continue;

@@ -56,7 +56,7 @@
 #define OTA_TASK_PRIORITY      4
 
 /* Maximale Firmware-Image-Groesse (3 MB = Partitiongroesse) */
-#define OTA_MAX_IMAGE_SIZE      (3 * 1024 * 1024)
+#define OTA_MAX_IMAGE_SIZE      (3L * 1024 * 1024)
 
 /* RSA Public-Key-Laenge (3072-bit fuer Secure Boot V2) */
 #define OTA_RSA_KEY_LEN         384

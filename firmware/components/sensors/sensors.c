@@ -145,6 +145,7 @@ static uint32_t get_millis(void)
 
 void sensor_task(void *arg)
 {
+    (void)arg;
     sensor_data_t data = {0};
     memset(&data, 0, sizeof(data));
 

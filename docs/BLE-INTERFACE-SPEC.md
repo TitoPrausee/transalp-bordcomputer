@@ -25,10 +25,66 @@ review is closed. It supersedes the older `docs/research/13-connectivity-app.md`
 | MTU | 247 bytes (app should `requestMTU(247)` after connect) |
 | Security | LE Secure Connections, bonding, MITM, IO cap = DisplayYesNo |
 | Bond storage | NVS (`ble_store_util_status_rr` rollover) |
+| Address privacy | Resolvable Private Address (RPA), rotates every 900 s (see §1.1) |
 
 **Discovery flow:** scan filtering on `device.name === "Transalp-BC"` → connect →
 `discoverAllServicesAndCharacteristics()` → subscribe to desired notify/indicate
 characteristics by writing `0x0100` (notify) or `0x0200` (indicate) to each CCCD.
+
+> ⚠️ Because the device uses an RPA (see §1.1), the companion app **must not**
+> cache or filter by the BLE device address across sessions — the address
+> changes every `CONFIG_BT_NIMBLE_RPA_TIMEOUT` seconds. Resolve the device via
+> the bonded IRK (the app receives the IRK during LE Secure Connections pairing)
+> or reconnect by device name. Bonding is required before the address is
+> resolvable.
+
+---
+
+## 1.1 Privacy & Addressing (RPA + IRK)
+
+The device advertises and connects with a **Resolvable Private Address (RPA)**
+instead of its public/static BLE address, so a passive scanner cannot track the
+device across sessions by its address. The RPA rotates every
+`CONFIG_BT_NIMBLE_RPA_TIMEOUT` seconds (default 900 s / 15 min, set in
+`sdkconfig.defaults`).
+
+### How it works
+
+| Concern | Owner | Mechanism |
+|---|---|---|
+| RPA generation | NimBLE controller (ESP32-S3) | Derives the on-air RPA from the device IRK. Host-based privacy is not used (it is ESP32-only). |
+| Device IRK | NimBLE host | Generated and persisted automatically in the bond store (`CONFIG_BT_NIMBLE_NVS_PERSIST=y`) during host startup. The application does **not** manage the IRK. |
+| Static random identity address | `ble_privacy` component | Generated and persisted in NVS namespace `ble_priv` (key `rnd_addr`), registered with the host via `ble_hs_id_set_rnd()` in the sync callback. Survives `ble_store_clear()` (bond deletion). |
+| IRK distribution | `ble_hs_cfg.sm_our_key_dist` | `BLE_SM_PAIR_KEY_DIST_ID` is set so bonded peers receive the IRK + identity address and can resolve the device's RPA. The peer's IRK is requested too (`sm_their_key_dist`). |
+| Own address type | `ble_hs_id_infer_auto(1, …)` | Returns `BLE_OWN_ADDR_RPA_RANDOM_DEFAULT` once the static random identity address is registered. Used for both `ble_gap_adv_start()` and `ble_gap_connect()`. |
+
+### Companion-app requirements (TOT-20, @felix)
+
+1. The app **must** complete LE Secure Connections pairing before the device's
+   address is resolvable — the IRK is only available to bonded peers.
+2. After bonding, the app resolves the device's rotating RPA using the stored
+   IRK (standard BLE address-resolution procedure, e.g.
+   `device.resolveRPA(rpa, irk)`).
+3. The app **must not** persist or filter by the raw BLE address across
+   sessions (it changes every 900 s). Reconnect by bonded identity or device
+   name.
+4. On bond deletion, the app loses the IRK and can no longer resolve the
+   device — re-pairing is required.
+
+### Fallback behaviour
+
+If privacy initialisation fails (NVS unavailable, the host rejects the identity
+address, or RPA inference fails), `ble_privacy_own_addr_type()` falls back to
+`BLE_OWN_ADDR_PUBLIC` so advertising and CarPlay connection initiation still
+work in a degraded (non-private) mode instead of failing closed. This is
+logged at `ERROR`/`WARN` level.
+
+### Source
+
+Implementation: `firmware/components/ble_privacy/` (`ble_privacy.c`,
+`ble_privacy.h`). Wired into `ble_service.c` (advertising) and
+`carplay_client.c` (CarPlay central connection). Host unit test:
+`firmware/test/test_ble_privacy.c`.
 
 ---
 

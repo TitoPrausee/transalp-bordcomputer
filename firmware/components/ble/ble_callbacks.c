@@ -128,8 +128,8 @@ static void build_telemetry_live(telemetry_live_t *pkt)
 {
     xSemaphoreTake(s_data_mutex, portMAX_DELAY);
 
-    sensor_data_t *s = &s_sensor_cache;
-    gps_data_t    *g = &s_gps_cache;
+    const sensor_data_t *s = &s_sensor_cache;
+    const gps_data_t    *g = &s_gps_cache;
 
     pkt->speed_kmh = (uint8_t)(s->speed_kmh + 0.5f);
     pkt->rpm = s->rpm;
@@ -317,12 +317,12 @@ int ble_handle_read(uint16_t attr_handle, struct ble_gatt_access_ctxt *ctxt)
         buf[0] = MANEUVER_STRAIGHT;
         len = 1;
     }
-    else if (attr_handle == ble_val_handles[CHR_H_NAV_ROUTE]) {
+    else if (attr_handle == ble_val_handles[CHR_H_NAV_ROUTE]) {  // NOLINT(bugprone-branch-clone) placeholder read; per-CHR implementation pending
         /* Return route info placeholder */
         memset(buf, 0, 16);
         len = 16;
     }
-    else if (attr_handle == ble_val_handles[CHR_H_NAV_ROAD]) {
+    else if (attr_handle == ble_val_handles[CHR_H_NAV_ROAD]) {  // NOLINT(bugprone-branch-clone) placeholder read; per-CHR implementation pending
         /* Return road placeholder */
         buf[0] = 0;  /* speed limit unknown */
         len = 1;
@@ -362,8 +362,8 @@ int ble_handle_read(uint16_t attr_handle, struct ble_gatt_access_ctxt *ctxt)
     else if (attr_handle == ble_val_handles[CHR_H_TLM_SNAPSHOT]) {
         /* Full sensor snapshot (~60 bytes) */
         xSemaphoreTake(s_data_mutex, portMAX_DELAY);
-        sensor_data_t *s = &s_sensor_cache;
-        gps_data_t    *g = &s_gps_cache;
+        const sensor_data_t *s = &s_sensor_cache;
+        const gps_data_t    *g = &s_gps_cache;
 
         /* Pack snapshot */
         memset(buf, 0, sizeof(buf));
@@ -400,7 +400,7 @@ int ble_handle_read(uint16_t attr_handle, struct ble_gatt_access_ctxt *ctxt)
     /* Diagnose Service reads */
     else if (attr_handle == ble_val_handles[CHR_H_DTC_LIST]) {
         len = build_dtc_list((dtc_binary_t *)buf,
-                             sizeof(buf) / sizeof(dtc_binary_t));
+                             sizeof(buf) / sizeof(dtc_binary_t));  // NOLINT(bugprone-sizeof-expression,cert-arr39-c) buf is a shared 256-byte read buffer; count is intentionally floored to fit whole dtc_binary_t (7 B) records
     }
     else if (attr_handle == ble_val_handles[CHR_H_SENSOR_STATUS]) {
         sensor_status_t st;
@@ -561,7 +561,7 @@ void ble_notify_sensor_status(void)
  * Event-bus callbacks — called by sensor/GPS tasks
  * ============================================================ */
 
-void ble_on_sensor_update(void *data, uint16_t len)
+void ble_on_sensor_update(const void *data, uint16_t len)
 {
     if (data == NULL || len < sizeof(sensor_data_t)) {
         return;
@@ -572,7 +572,7 @@ void ble_on_sensor_update(void *data, uint16_t len)
     xSemaphoreGive(s_data_mutex);
 }
 
-void ble_on_gps_update(void *data, uint16_t len)
+void ble_on_gps_update(const void *data, uint16_t len)
 {
     if (data == NULL || len < sizeof(gps_data_t)) {
         return;
@@ -764,6 +764,10 @@ static void process_log_export_ctrl(const uint8_t *data, uint16_t len)
 
 static uint8_t ota_state_to_spec(ota_state_t s)
 {
+    /* Distinct internal OTA states intentionally map to the same CarPlay
+     * spec value (e.g. FLASHING+REBOOTING -> "done", ERROR+ROLLBACK ->
+     * "failed"). Suppressed per TOT-61 strict-analysis pass. */
+    // NOLINTBEGIN(bugprone-branch-clone)
     switch (s) {
     case OTA_STATE_IDLE:         return 0;  /* idle */
     case OTA_STATE_DOWNLOADING:  return 1;  /* uploading */
@@ -774,6 +778,7 @@ static uint8_t ota_state_to_spec(ota_state_t s)
     case OTA_STATE_ROLLBACK:     return 4;  /* failed */
     default:                     return 4;
     }
+    // NOLINTEND(bugprone-branch-clone)
 }
 
 static void notify_ota_status(void)

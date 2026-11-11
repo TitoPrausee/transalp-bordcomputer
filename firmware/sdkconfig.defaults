@@ -23,6 +23,13 @@ CONFIG_BT_NIMBLE_MAX_BONDS=4
 CONFIG_BT_NIMBLE_MAX_CCCDS=8
 CONFIG_BT_NIMBLE_50_FEATURES_SUPPORTED=y
 CONFIG_BT_NIMBLE_EXT_ADV=n
+# BLE Privacy — Resolvable Private Address (RPA). The ESP32-S3 controller
+# generates RPAs from the device IRK registered at runtime (see
+# components/ble_privacy/). This rotates the on-air address every RPA_TIMEOUT
+# seconds so a static address can no longer be used to track the device across
+# sessions. Bonded peers resolve the RPA via the IRK distributed during pairing.
+# TOT-64.
+CONFIG_BT_NIMBLE_RPA_TIMEOUT=900
 # FAT FS für SD-Karte
 CONFIG_FATFS_CODEPAGE_850=y
 CONFIG_FATFS_LFN_STACK=y
